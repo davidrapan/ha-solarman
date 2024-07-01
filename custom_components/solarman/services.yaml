@@ -1,0 +1,51 @@
+write_holding_register:
+  name: Write Holding Register (Modbus Function Code 6)
+  description: NOTE USE WITH CARE!
+
+  fields:
+    register:
+      name: Register
+      description: Modbus register address
+      example: "16384"
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+
+    value:
+      name: Values
+      description: Value to write
+      example: "1"
+      required: true
+      selector:
+        number:
+          mode: box
+
+write_multiple_holding_registers:
+  name: Write Multiple Holding Registers (Modbus Function Code 16)
+  description: NOTE USE WITH CARE!
+
+  fields:
+    register:
+      name: Register
+      description: Modbus register address
+      example: "16384"
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+
+    values:
+      name: Values
+      description: Values to write
+      example: |
+        - 1
+        - 2
+        - 3
+      required: true
+      selector:
+        object:

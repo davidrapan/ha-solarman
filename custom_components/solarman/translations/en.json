@@ -1,0 +1,29 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured"
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_host": "Invalid hostname or IP address",
+      "unknown": "Unexpected error"
+    },
+    "step": {
+      "user": {
+        "title": "Inverter configuration",
+        "data": {
+          "name": "This name will be prefixed to all parameter values (change as you like)",
+          "inverter_discovery": "Enable device discovery",
+          "inverter_host": "Host (default ip or hostname)",
+          "inverter_serial": "Device Serial Number (retrieve from the web interface)",
+          "inverter_port": "Port (usually 8899)",
+          "mb_slave_id": "Modbus Slave ID (usually 1)",
+          "lookup_file": "The yaml file containing inverter parameter definitions",
+          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
+          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
+          "disable_templating": "Disable template sensors"
+        }
+      }
+    }
+  }
+}
