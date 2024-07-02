@@ -8,10 +8,10 @@ Integration for Solarman Stick Logger
 > - Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA
 > - Improved stability (no more disconnects and missing values)
 >
-> - Discovery not just for configuration but also as part of initialization (i.e. adapts to changed IP)
+> - Discovery and not just for configuration but also as part of initialization (i.e. adapts to changed IP)
 >
 > - Registers which are requested are decided dynamically (when missing from the inverter definition file)
-> - Different registers can be requested in different intervals according their 'update_interval' set in inverter definition file
+> - Different registers can be requested in different intervals according to their 'update_interval' set in inverter definition file
 >
 > - Added attribute type of a sensor which can be attached to any other sensor
 > - Added template sensors defined by simple formulas and parameters which are then evaluated during runtime
@@ -36,7 +36,7 @@ Integration for Solarman Stick Logger
 > [!WARNING]  
 > TODO: Rest of the info :-D
 
-## Dignostics
+## Diagnostics
 
 I was using during the development also this sensor bundle:
 ```
