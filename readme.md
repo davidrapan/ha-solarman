@@ -20,6 +20,12 @@ Integration for Solarman Stick Logger
 >
 > - And many more fixes and improvements (while trying to fully preserve backward compatibility)
 
+> [!WARNING]  
+> Is note worthy that some names of the SG04LP3 sensors did change for different reasons (some were due to aestetics, etc.)  
+> So look through the file and change them as you see fit manually before I'll make it available from the HA configuration.
+>
+> One more thing.. It's not possible to use this integration side by side (with the same device) with the implementation from Stephen! It will override it.
+
 > [!NOTE]  
 > It's still work in progress but I'm now over 3 weeks of uptime so it's really stable ;)  
 >
