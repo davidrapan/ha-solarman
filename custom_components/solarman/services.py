@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 
 from .const import *
-from .inverter import Inverter
+from .api import Inverter
 
 SERVICE_WRITE_REGISTER = "write_holding_register"
 SERVICE_WRITE_MULTIPLE_REGISTERS = "write_multiple_holding_registers"

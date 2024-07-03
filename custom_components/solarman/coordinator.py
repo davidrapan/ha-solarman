@@ -9,12 +9,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import *
-from .inverter import Inverter
 
 _LOGGER = logging.getLogger(__name__)
 
 class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, inverter: Inverter):
+    def __init__(self, hass: HomeAssistant, inverter):
         super().__init__(hass, _LOGGER, name = SENSOR_PREFIX, update_interval = COORDINATOR_UPDATE_INTERVAL, always_update = False)
         self.inverter = inverter
         self.counter = -1
@@ -30,7 +29,7 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return int(self.counter * self._update_interval_seconds)
 
     async def _async_update_data(self) -> dict[str, Any]:
-        async with asyncio.timeout(COORDINATOR_TIMEOUT):
+        async with asyncio.timeout(COORDINATOR_TIMEOUT2):
             return await self.inverter.async_get(self._accounting())
 
     #async def _reload(self):

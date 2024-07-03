@@ -111,9 +111,7 @@ class ParameterParser:
         return
 
     def try_parse_field(self, rawData, definition, start, length):
-        rule = definition["rule"]
-        
-        match rule:
+        match definition["rule"]:
             case 1:
                 self.try_parse_unsigned(rawData, definition, start, length)
             case 2:
@@ -144,7 +142,7 @@ class ParameterParser:
         shift = 0
 
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 value += (rawData[index] & 0xFFFF) << shift
                 shift += 16
@@ -184,7 +182,7 @@ class ParameterParser:
         maxint = 0
 
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 maxint <<= 16
                 maxint |= 0xFFFF
@@ -217,7 +215,7 @@ class ParameterParser:
         found = True
         value = ""
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index]
                 value = value + chr(temp >> 8) + chr(temp & 0xFF)
@@ -233,7 +231,7 @@ class ParameterParser:
         found = True
         value = []
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index]
                 value.append(hex(temp))
@@ -249,7 +247,7 @@ class ParameterParser:
         found = True
         value = ""
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index]
                 value = value + str(temp >> 12) + "." +  str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
@@ -266,7 +264,7 @@ class ParameterParser:
         value = ""
         print("start: ", start)
         for i,r in enumerate(definition["registers"]):
-            index = r - start # get the decimal value of the register
+            index = r - start
             print ("index: ",index)
             if (index >= 0) and (index < length):
                 temp = rawData[index]
@@ -290,7 +288,7 @@ class ParameterParser:
         found = True
         value = ""
         for r in definition["registers"]:
-            index = r - start # get the decimal value of the register
+            index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index]
                 value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))

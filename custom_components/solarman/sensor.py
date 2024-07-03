@@ -19,21 +19,21 @@ from .const import *
 from .common import *
 from .discovery import InverterDiscovery
 from .coordinator import InverterCoordinator
-from .inverter import Inverter
+from .api import Inverter
 from .services import *
 
 _LOGGER = logging.getLogger(__name__)
 
 _FMT = string.Formatter()
 
-def _create_sensor(coordinator, inverter_name, inverter, sensor, disable_templating, config):
+def _create_sensor(coordinator, inverter_name, inverter, sensor, config, disable_templating):
     try:
         if "artificial" in sensor:
             entity = SolarmanStatus(coordinator, inverter_name, inverter, sensor["name"])
         elif "isstr" in sensor:
-            entity = SolarmanSensorText(coordinator, inverter_name, inverter, sensor, disable_templating, config)
+            entity = SolarmanSensorText(coordinator, inverter_name, inverter, sensor, config, disable_templating)
         else:
-            entity = SolarmanSensor(coordinator, inverter_name, inverter, sensor, disable_templating, config)
+            entity = SolarmanSensor(coordinator, inverter_name, inverter, sensor, config, disable_templating)
 
         entity.update()
 
@@ -45,7 +45,7 @@ def _create_sensor(coordinator, inverter_name, inverter, sensor, disable_templat
 async def async_setup(hass: HomeAssistant, config, async_add_entities: AddEntitiesCallback, id = None):
     _LOGGER.debug(f"async_setup: {config}")
 
-    lookup_path = hass.config.path(f"custom_components/{DOMAIN}/{LOOKUP_DIRECTORY}/")
+    lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
 
     inverter_name = config.get(CONF_NAME)
     inverter_discovery = config.get(CONF_INVERTER_DISCOVERY)
@@ -105,7 +105,7 @@ async def async_setup(hass: HomeAssistant, config, async_add_entities: AddEntiti
     await coordinator.async_config_entry_first_refresh()
 
     _LOGGER.debug(f"async_setup: async_add_entities")
-    async_add_entities(_create_sensor(coordinator, inverter_name, inverter, sensor, disable_templating, { "Battery Nominal Voltage": battery_nominal_voltage, "Battery Life Cycle Rating": battery_life_cycle_rating }) for sensor in sensors)
+    async_add_entities(_create_sensor(coordinator, inverter_name, inverter, sensor, { "Battery Nominal Voltage": battery_nominal_voltage, "Battery Life Cycle Rating": battery_life_cycle_rating }, disable_templating) for sensor in sensors)
 
     _LOGGER.debug(f"async_setup: register_services")
     register_services(hass, inverter)
@@ -186,7 +186,7 @@ class SolarmanStatus(InverterCoordinatorEntity):
         self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_lastUpdate
 
 class SolarmanSensorText(SolarmanStatus):
-    def __init__(self, coordinator, inverter_name, inverter, sensor, disable_templating, config):
+    def __init__(self, coordinator, inverter_name, inverter, sensor, config, disable_templating):
         SolarmanStatus.__init__(self, coordinator, inverter_name, inverter, sensor["name"])
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
@@ -205,13 +205,22 @@ class SolarmanSensorText(SolarmanStatus):
 
         self.attributes = sensor["attributes"] if "attributes" in sensor else None
 
-        if not disable_templating:
-            self.params = sensor["params"] if "params" in sensor else None
-            self.formula = sensor["formula"] if "formula" in sensor else None
-
         self.config = config
 
         self.is_ok = True
+
+        self.params = sensor["params"] if "params" in sensor else None
+
+        self.formula = sensor["formula"] if "formula" in sensor else None
+
+        if not disable_templating:
+            if self.params and self.formula:
+                self.formula_pcount = len([p for p in _FMT.parse(self.formula) if p[2] is not None])
+                if self.formula_pcount != len(self.params):
+                    self.is_ok = False
+                    _LOGGER.error(f"{self._field_name} template is not valid.")
+        elif "formula" in sensor:
+            self.is_ok = False
 
     def _lookup_param(self, p):
         if p in self.coordinator.data:
@@ -238,18 +247,15 @@ class SolarmanSensorText(SolarmanStatus):
                 if self._field_name + " enum" in self.coordinator.data:
                     self._attr_extra_state_attributes["Value"] = self.coordinator.data[self._field_name + " enum"]
             elif self.formula:
-                if len([p for p in _FMT.parse(self.formula) if p[2] is not None]) == len(self.params):
-                    if self.params[0] in self.coordinator.data:
-                        params = [self._lookup_param(p) for p in self.params]
+                if set(self.params) <= self.coordinator.data.keys() | self.config:
+                    params = [self._lookup_param(p) for p in self.params]
+                    if self.formula_pcount == len(params):
                         formula = self.formula.format(*params)
                         self._attr_state = eval(formula)
-                else:
-                    self.is_ok = False
-                    _LOGGER.error(f"{self._field_name} template is not valid.")
 
 class SolarmanSensor(SolarmanSensorText):
-    def __init__(self, coordinator, inverter_name, inverter, sensor, disable_templating, config):
-        SolarmanSensorText.__init__(self, coordinator, inverter_name, inverter, sensor, disable_templating, config)
+    def __init__(self, coordinator, inverter_name, inverter, sensor, config, disable_templating):
+        SolarmanSensorText.__init__(self, coordinator, inverter_name, inverter, sensor, config, disable_templating)
 
         if device_class := sensor["class"]:
             self._attr_device_class = device_class
