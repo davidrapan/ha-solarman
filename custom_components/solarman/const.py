@@ -1,13 +1,13 @@
 from datetime import timedelta as td
 
-DOMAIN = 'solarman'
+DOMAIN = "solarman"
 PLATFORMS: list[str] = ["sensor"]
 SENSOR_PREFIX = "Solarman"
 
 DISCOVERY_MESSAGE = "WIFIKIT-214028-READ"
 DISCOVERY_PORT = 48899
+DISCOVERY_RECV_MESSAGE_SIZE = 1024
 
-DEFINITIONS = 'inverter_definitions'
 LOOKUP_DIRECTORY = "inverter_definitions"
 LOOKUP_DIRECTORY_PATH = f"custom_components/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 

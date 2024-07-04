@@ -38,7 +38,7 @@ class InverterDiscovery:
 
                 while True:
                     try:
-                        recv = await loop.sock_recv(sock, 1024)
+                        recv = await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)
                         data = recv.decode().split(',')
                         if len(data) == 3:
                             self._ip = data[0]

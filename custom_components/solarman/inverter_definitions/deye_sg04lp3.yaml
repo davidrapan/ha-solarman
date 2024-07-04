@@ -31,6 +31,8 @@ parameters:
             value: "Microinverter"
           - key: 0x0005
             value: "LV 3-Phase Hybrid Inverter"
+          - key: 0x0006
+            value: "HV 3-Phase Hybrid Inverter"
           - key: 0x0600
             value: "HV 3-Phase Inverter 6-15kw"
           - key: 0x0601
