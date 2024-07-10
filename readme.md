@@ -24,7 +24,7 @@ Integration for Solarman Stick Logger
 > Is note worthy that some names of the SG04LP3 sensors did change for different reasons (some were due to aestetics, etc.)  
 > So look through the file and change them as you see fit manually before I'll make it available from the HA configuration.
 >
-> One more thing.. It's not possible to use this integration side by side (with the same device) with the implementation from Stephen! It will override it.
+> One more thing.. It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.
 
 > [!NOTE]  
 > It's still work in progress but I'm now over 3 weeks of uptime so it's really stable ;)  
@@ -35,6 +35,29 @@ Integration for Solarman Stick Logger
 
 > [!WARNING]  
 > TODO: Rest of the info :-D
+
+## Miscellaneous
+
+Some might wonder why Energy Dashboard shows different(higher) Load Consumption than sensor like for example "Today(Daily) Load Consumption. And it's because the Energy Dashboard does it's own calculations by summing up Imported(Bought) and Produced energy which also includes consumption of the inverter itself + some AC/DC losses along the way."
+
+_So for those curious enough here is some insight..._
+
+#### Inverter power losses calculation [W]:
+```
+Power losses = Battery Power + PV1 Power + PV2 Power - Inverter Power
+```
+
+#### Total losses calculation [kWh]:
+```
+Total losses = Total Energy Imported(Bought) + Total Production + Total Battery Discharge - Total Energy Exported(Sold) - Total Battery Charge - Total Load Consumption
+```
+
+#### Today(Daily) losses calculation [kWh]:
+```
+Today(Daily) losses = Today(Daily) Energy Imported(Bought) + Today(Daily) Production + Today(Daily) Battery Discharge - Today(Daily) Energy Exported(Sold) - Today(Daily) Battery Charge - Today(Daily) Load Consumption
+```
+
+_To get value which is in Energy Dashboard as "Home Consumption" remove subtraction of Load Consumption from the above._
 
 ## Diagnostics
 

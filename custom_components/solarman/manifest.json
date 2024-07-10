@@ -4,7 +4,7 @@
   "codeowners": ["@davidrapan"],
   "config_flow": true,
   "dependencies": ["network", "dhcp"],
-  "documentation": "https://github.com/davidrapan/ha-solarman/",
+  "documentation": "https://github.com/davidrapan/ha-solarman",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
