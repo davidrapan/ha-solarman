@@ -25,7 +25,7 @@ class InverterDiscovery:
         self._mac = None
         self._serial = None
 
-    async def _discover(self, address = "<broadcast>", source = "0.0.0.0"):
+    async def _discover(self, address = IP_BROADCAST, source = IP_ANY):
         loop = asyncio.get_running_loop()
 
         try:
@@ -33,8 +33,10 @@ class InverterDiscovery:
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
                 sock.setblocking(False)
-                sock.settimeout(1.0)
-                #sock.bind((source, 0))
+                sock.settimeout(DISCOVERY_TIMEOUT)
+
+                if source != IP_ANY:
+                    sock.bind((source, PORT_ANY))
 
                 await loop.sock_sendto(sock, self._message, (address, self._port))
 
@@ -64,7 +66,7 @@ class InverterDiscovery:
                 _LOGGER.debug(f"_discover_all: Broadcasting on {net.with_prefixlen}")
 
                 await self._discover(str(IPv4Network(net, False).broadcast_address))
-                #await self._discover("<broadcast>", ipv4["address"])
+                #await self._discover(IP_BROADCAST, ipv4["address"])
 
                 if self._ip is not None:
                     return None
