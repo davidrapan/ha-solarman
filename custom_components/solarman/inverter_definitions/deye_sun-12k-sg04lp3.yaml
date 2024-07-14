@@ -10,6 +10,10 @@
 # The 500-2000 register address is a readable register type 0x03 function code.
 #
 
+default:
+  update_interval: 60
+  digits: 6
+
 parameters:
   - group: Parameters
     items:
@@ -582,7 +586,12 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        params: ["Today Battery Charge", "Battery Capacity", "Battery Nominal Voltage"]
+        params:
+          [
+            "Today Battery Charge",
+            "Battery Capacity",
+            "Battery Nominal Voltage",
+          ]
         formula: "round({0} / ({1} * {2} / 1000), 2)"
         icon: "mdi:battery-sync"
 
@@ -592,7 +601,12 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        params: ["Total Battery Charge", "Battery Capacity", "Battery Nominal Voltage"]
+        params:
+          [
+            "Total Battery Charge",
+            "Battery Capacity",
+            "Battery Nominal Voltage",
+          ]
         formula: "round({0} / ({1} * {2} / 1000), 2)"
         icon: "mdi:battery-sync"
 
@@ -652,19 +666,63 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
-        rule: 0
-        params: ["Today Energy Bought", "Today Production", "Today Battery Discharge", "Today Energy Sold", "Today Load Consumption", "Today Battery Charge"]
-        formula: "max(round({0} + {1} + {2} - {3} - {4} - {5}, 1), 0)"
+        rule: 1
+        digits: 1
+        registers: [0x0208, 0x0211, 0x0203, 0x0209, 0x020E, 0x0202]
+        sensors:
+          - scale: 0.1
+            registers: [0x0208]
+          - scale: 0.1
+            registers: [0x0211]
+          - scale: 0.1
+            registers: [0x0203]
+          - subtract:
+            scale: 0.1
+            registers: [0x0209]
+          - subtract:
+            scale: 0.1
+            registers: [0x020E]
+          - subtract:
+            scale: 0.1
+            registers: [0x0202]
 
       - name: "Total Losses"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
-        rule: 0
-        params: ["Total Energy Bought", "Total Production", "Total Battery Discharge", "Total Energy Sold", "Total Load Consumption", "Total Battery Charge"]
-        formula: "max(round({0} + {1} + {2} - {3} - {4} - {5}, 1), 0)"
+        rule: 3
+        digits: 1
+        registers:
+          [
+            0x020A,
+            0x020B,
+            0x0216,
+            0x0217,
+            0x0206,
+            0x0207,
+            0x020C,
+            0x020D,
+            0x020F,
+            0x0210,
+            0x0204,
+            0x0205,
+          ]
+        sensors:
+          - scale: 0.1
+            registers: [0x020A, 0x020B]
+          - scale: 0.1
+            registers: [0x0216, 0x0217]
+          - scale: 0.1
+            registers: [0x0206, 0x0207]
+          - subtract:
+            scale: 0.1
+            registers: [0x020C, 0x020D]
+          - subtract:
+            scale: 0.1
+            registers: [0x020F, 0x0210]
+          - subtract:
+            scale: 0.1
+            registers: [0x0204, 0x0205]
 
       - name: "Today Production"
         class: "energy"
@@ -764,11 +822,26 @@ parameters:
         state_class: ""
         uom: ""
         scale: 1
-        rule: 0
-        params: ["Device Relay Status enum"]
-        formula: "'On-grid' if {0} & 4 == 4 else 'Off-grid'"
+        rule: 1
+        registers: [0x0228]
+        icon: "mdi:information"
         isstr: true
-        icon: "mdi:transmission-tower-off"
+        lookup_default: "X-grid"
+        lookup:
+          - key: 0x0001
+            value: "Off-grid"
+          - key: 0x0004
+            value: "On-grid"
+          - key: 0x0005
+            value: "On-grid"
+          - key: 0x0008
+            value: "Off-grid"
+          - key: 0x0009
+            value: "Off-grid"
+          - key: 0x000C
+            value: "On-grid"
+          - key: 0x000D
+            value: "On-grid"
 
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alert"
@@ -882,7 +955,13 @@ parameters:
         uom: "%"
         scale: 1
         rule: 0
-        params: ["Total Battery Charge", "Battery Capacity", "Battery Nominal Voltage", "Battery Life Cycle Rating"]
+        params:
+          [
+            "Total Battery Charge",
+            "Battery Capacity",
+            "Battery Nominal Voltage",
+            "Battery Life Cycle Rating",
+          ]
         formula: "round(100 - {0} / ({1} * {2} / 1000) / ({3} * 0.05), 2)"
         icon: "mdi:battery-heart"
 
@@ -1146,10 +1225,7 @@ parameters:
         rule: 4
         registers: [0x0271, 0x02B2]
         icon: "mdi:transmission-tower"
-        attributes:
-          [
-            "Zero Export",
-          ]
+        attributes: ["Zero Export"]
 
   - group: Inverter
     items:
@@ -1252,10 +1328,17 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
-        rule: 0
-        params: ["Battery Power", "PV1 Power", "PV2 Power", "Inverter Power"]
-        formula: "max({0} + {1} + {2} - {3}, 0)"
+        rule: 1
+        digits: 0
+        registers: [0x024E, 0x02A0, 0x02A1, 0x027C, 0x02B6]
+        sensors:
+          - signed:
+            registers: [0x024E]
+          - registers: [0x02A0]
+          - registers: [0x02A1]
+          - subtract:
+            signed:
+            registers: [0x027C, 0x02B6]
 
       # Inverter - Frequency
       - name: "Inverter Frequency"
@@ -1388,10 +1471,12 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
-        rule: 0
-        params: ["PV1 Power", "PV2 Power"]
-        formula: "{0} + {1}"
+        rule: 1
+        digits: 0
+        registers: [0x02A0, 0x02A1]
+        sensors:
+          - registers: [0x02A0]
+          - registers: [0x02A1]
         icon: "mdi:solar-power-variant"
 
       # Photovoltaic - The power of Input 1 (L:1W, H:10W)

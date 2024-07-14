@@ -1,3 +1,9 @@
+import asyncio
+
+async def async_execute(x):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, x)
+
 def group_when(iterable, predicate):
     i, x, size = 0, 0, len(iterable)
     while i < size - 1:

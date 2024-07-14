@@ -1,10 +1,6 @@
-from __future__ import annotations
-
-import voluptuous as vol
-
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
-
+import voluptuous as vol
 from .const import *
 from .api import Inverter
 
