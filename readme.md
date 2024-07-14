@@ -76,7 +76,7 @@ template:
       - name: "Inverter Device Since Last update"
         unique_id: "inverter_device_since_last_update"
         availability: "{{ has_value('sensor.inverter_connection_status') }}"
-        state: "{{ (states('sensor.update_ticker') | float - as_timestamp(states.sensor.inverter_connection_status.last_updated)) | round(0, 'ceil') }}"
+        state: "{{ max((states('sensor.update_ticker') | float - as_timestamp(states.sensor.inverter_connection_status.last_updated)) | round(0, 'ceil'), 0) }}"
         state_class: "Measurement"
         device_class: "Duration"
         unit_of_measurement: "s"
