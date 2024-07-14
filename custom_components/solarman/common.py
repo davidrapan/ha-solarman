@@ -1,5 +1,7 @@
 import asyncio
 
+from .const import *
+
 async def async_execute(x):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, x)
@@ -18,3 +20,12 @@ def format_exception(e):
 
 def Raise(exception) -> None:
     raise exception
+
+def get_request_code(request):
+    return request[REQUEST_CODE] if REQUEST_CODE in request else request[REQUEST_CODE_ALT]
+
+def get_request_start(request):
+    return request[REQUEST_START]
+
+def get_request_end(request):
+    return request[REQUEST_END]

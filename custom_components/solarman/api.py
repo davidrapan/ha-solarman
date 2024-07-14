@@ -167,9 +167,9 @@ class Inverter(InverterApi):
 
         try:
             for request in requests:
-                code = request["mb_functioncode"]
-                start = request["start"]
-                end = request["end"]
+                code = get_request_code(request)
+                start = get_request_start(request)
+                end = get_request_end(request)
 
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
