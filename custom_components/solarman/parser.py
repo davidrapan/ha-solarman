@@ -13,23 +13,26 @@ class ParameterParser:
     def __init__(self, parameter_definition):
         self._lookups = parameter_definition
         self._update_interval = TIMINGS_QUERY_INTERVAL_DEFAULT
-        self._digits = DIGITS_DEFAULT
+        self._min_span = REGISTERS_MIN_SPAN_DEFAULT
+        self._digits = REGISTERS_DIGITS_DEFAULT
         self._result = {}
 
         if "default" in parameter_definition:
             default = parameter_definition["default"]
             if "update_interval" in default:
                 self._update_interval = default["update_interval"]
+            if "min_span" in default:
+                self._min_span = default["min_span"]
             if "digits" in default:
                 self._digits = default["digits"]
 
-        _LOGGER.debug(f"Default update_interval: {self._update_interval}, digits: {self._digits}")
+        _LOGGER.debug(f"Default update_interval: {self._update_interval}, min_span: {self._min_span}, digits: {self._digits}")
 
     def lookup(self):
         return self._lookups["parameters"]
 
     def is_valid(self, parameters):
-        return "name" in parameters and "rule" in parameters
+        return "name" in parameters and "rule" in parameters # and "registers" in parameters
 
     def is_enabled(self, parameters):
         return not "disabled" in parameters
@@ -80,9 +83,9 @@ class ParameterParser:
 
         registers.sort()
 
-        groups = group_when(registers, lambda x, y: y - x > 25)
+        groups = group_when(registers, lambda x, y: y - x > self._min_span)
         
-        return [{ "start": r[0], "end": r[-1], "mb_functioncode": 0x03 } for r in groups]
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: 0x03 } for r in groups]
 
     def parse(self, rawData, start, length):
         for i in self.lookup():

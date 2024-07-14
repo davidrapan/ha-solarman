@@ -22,7 +22,7 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if self.last_update_success:
             self.counter += 1
 
-        # Temporary fix to retrieve all data after disconnect
+        # Temporary fix to retrieve all data after reconnect
         if self.inverter.status != 1:
             self.counter = 0
 
