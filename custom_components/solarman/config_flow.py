@@ -30,14 +30,14 @@ async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None
 
 async def step_user_data_process(discovery):
     _LOGGER.debug(f"step_user_data_process: discovery: {discovery}")
-    return { CONF_NAME: DEFAULT_NAME, CONF_INVERTER_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: await discovery.get_ip(), CONF_INVERTER_SERIAL: await discovery.get_serial(), CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING, CONF_DISABLE_TEMPLATING: DEFAULT_DISABLE_TEMPLATING }
+    return { CONF_NAME: DEFAULT_NAME, CONF_INVERTER_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: await discovery.get_ip(), CONF_INVERTER_SERIAL: await discovery.get_serial(), CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
 
-async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_INVERTER_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING, CONF_DISABLE_TEMPLATING: DEFAULT_DISABLE_TEMPLATING }) -> Schema:
+async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_INVERTER_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }, wname: bool = True) -> vol.Schema:
     lookup_files = sorted([f for f in await async_execute(lambda: os.listdir(hass.config.path(LOOKUP_DIRECTORY_PATH))) if os.path.isfile(LOOKUP_DIRECTORY_PATH + f)])
     _LOGGER.debug(f"step_user_data_schema: data: {data}, {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
-    STEP_USER_DATA_SCHEMA = vol.Schema(
+    STEP_USER_DATA_SCHEMA = vol.Schema({ vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str }, extra = vol.PREVENT_EXTRA) if wname else vol.Schema({}, extra = vol.PREVENT_EXTRA)
+    STEP_USER_DATA_SCHEMA = STEP_USER_DATA_SCHEMA.extend(
         {
-            vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str,
             vol.Required(CONF_INVERTER_DISCOVERY, default = data.get(CONF_INVERTER_DISCOVERY)): bool,
             vol.Required(CONF_INVERTER_HOST, default = data.get(CONF_INVERTER_HOST)): str,
             vol.Required(CONF_INVERTER_SERIAL, default = data.get(CONF_INVERTER_SERIAL)): int,
@@ -46,9 +46,7 @@ async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CO
             vol.Optional(CONF_LOOKUP_FILE, default = data.get(CONF_LOOKUP_FILE)): vol.In(lookup_files),
             vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = data.get(CONF_BATTERY_NOMINAL_VOLTAGE)): int,
             vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = data.get(CONF_BATTERY_LIFE_CYCLE_RATING)): int,
-            vol.Optional(CONF_DISABLE_TEMPLATING, default = data.get(CONF_DISABLE_TEMPLATING)): bool,
-        },
-        extra = vol.PREVENT_EXTRA
+        }
     )
     _LOGGER.debug(f"step_user_data_schema: STEP_USER_DATA_SCHEMA: {STEP_USER_DATA_SCHEMA}")
     return STEP_USER_DATA_SCHEMA
@@ -134,7 +132,7 @@ class OptionsFlowHandler(OptionsFlow):
         """Handle options flow."""
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: {user_input}")
         if user_input is None:
-            return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, self.entry.options))
+            return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, self.entry.options, False))
 
         errors = {}
 
@@ -150,7 +148,7 @@ class OptionsFlowHandler(OptionsFlow):
         else:
             return self.async_create_entry(title = info["title"], data = user_input)
 
-        return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, user_input), errors = errors)
+        return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, user_input, False), errors = errors)
 
 class InvalidHost(HomeAssistantError):
     """Error to indicate there is invalid hostname or IP address."""
