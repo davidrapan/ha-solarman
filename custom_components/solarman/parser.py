@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import struct
 import logging
 
@@ -42,6 +43,19 @@ class ParameterParser:
     def is_scheduled(self, parameters, runtime):
         return "realtime" in parameters or (runtime % (parameters["update_interval"] if "update_interval" in parameters else self._update_interval) == 0)
 
+    def default_from_unit_of_measurement(self, parameters):
+        return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
+
+    def set_state(self, key, value):
+        self._result[key] = {}
+        self._result[key]["state"] = value
+
+    def set_state_number(self, key, value, digits):
+        if isinstance(value, int) or (isinstance(value, float) and value.is_integer()):
+            self.set_state(key, int(value))
+        else:
+            self.set_state(key, round(value, digits))
+
     def get_sensors(self):
         result = [{"name": "Connection Status", "artificial": ""}]
         for i in self.lookup():
@@ -60,8 +74,7 @@ class ParameterParser:
         for i in self.lookup():
             for j in i["items"]:
                 if self.is_requestable(j) and self.is_scheduled(j, runtime):
-                    self._result[j["name"]] = {}
-                    self._result[j["name"]]["state"] = ""
+                    self.set_state(j["name"], self.default_from_unit_of_measurement(j))
                     for r in j["registers"]:
                         registers.append(r)
 
@@ -78,16 +91,6 @@ class ParameterParser:
                     self.try_parse(rawData, j, start, length)
 
         return
-
-    def set_state(self, key, value):
-        self._result[key] = {}
-        self._result[key]["state"] = value
-
-    def set_state_number(self, key, value, digits):
-        if isinstance(value, int) or (isinstance(value, float) and value.is_integer()):
-            self.set_state(key, int(value))
-        else:
-            self.set_state(key, round(value, digits))
 
     def get_result(self):
         return self._result
