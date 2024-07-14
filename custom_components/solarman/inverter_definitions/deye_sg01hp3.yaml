@@ -1526,7 +1526,7 @@ parameters:
 
   - group: Photovoltaic
     items:
-      # Photovoltaic - The combined power of Input 1 & 2
+      # Photovoltaic - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
       - name: "PV Power"
         realtime:
         class: "power"
@@ -1534,12 +1534,16 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x02A0, 0x02A1]
+        registers: [0x02A0, 0x02A1, 0x02A2, 0x02A3]
         sensors:
           - scale: 10
             registers: [0x02A0]
           - scale: 10
             registers: [0x02A1]
+          - scale: 10
+            registers: [0x02A2]
+          - scale: 10
+            registers: [0x02A3]
         icon: "mdi:solar-power-variant"
 
       # Photovoltaic - The power of Input 1 (L:1W, H:10W)
