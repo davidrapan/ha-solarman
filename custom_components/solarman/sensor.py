@@ -215,5 +215,9 @@ class SolarmanSensor(SolarmanSensorBase):
         if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
             self._attr_unit_of_measurement = unit_of_measurement
 
+        if "options" in sensor and (options := sensor["options"]):
+            self._attr_options = options
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
+
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Life Cycle Rating": battery_life_cycle_rating }

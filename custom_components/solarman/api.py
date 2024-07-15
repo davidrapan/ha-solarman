@@ -163,7 +163,7 @@ class Inverter(InverterApi):
         requests_count = len(requests)
         result = 0
 
-        _LOGGER.debug(f"Scheduling {requests_count} query requests.  #{runtime}")
+        _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
 
         try:
             for request in requests:

@@ -14,7 +14,7 @@ requests:
     mb_functioncode: 0x03
 
 parameters:
-  - group: solar
+  - group: PV
     items:
       - name: "PV1 Power"
         class: "power"
@@ -23,7 +23,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00BA]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Power"
         class: "power"
@@ -32,7 +32,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00BB]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
         class: "voltage"
@@ -41,7 +41,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006D]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -50,7 +50,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006F]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Current"
         class: "current"
@@ -58,7 +58,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006E]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Current"
         class: "current"
@@ -67,7 +67,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0070]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "Daily Production"
         class: "energy"
@@ -135,13 +135,13 @@ parameters:
         icon: "mdi:battery-minus"
 
       - name: "Battery Status"
-        class: ""
-        state_class: "measurement"
+        class: "enum"
+        state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00BD]
-        isstr: true
+        options: ["Charge", "Stand-by", "Discharge"]
         lookup:
           - key: 0
             value: "Charge"
@@ -158,7 +158,6 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x00BE]
-        icon: "mdi:battery"
 
       - name: "Battery Voltage"
         class: "voltage"
@@ -167,7 +166,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00B7]
-        icon: "mdi:battery"
 
       - name: "Battery SOC"
         class: "battery"
@@ -176,7 +174,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00B8]
-        icon: "mdi:battery"
 
       - name: "Battery Current"
         class: "current"
@@ -185,7 +182,6 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x00BF]
-        icon: "mdi:battery"
 
       - name: "Battery Temperature"
         class: "temperature"
@@ -195,7 +191,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x00B6]
-        icon: "mdi:battery"
 
   - group: Grid
     items:
@@ -224,7 +219,8 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00A0]
-        icon: "mdi:current-ac"
+        icon: "mdi:transmission-tower"
+
       - name: "Grid Voltage L2"
         class: "voltage"
         state_class: "measurement"
@@ -241,7 +237,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00A1]
-        icon: "mdi:current-ac"
+        icon: "mdi:transmission-tower"
 
       - name: "Internal CT L1 Power"
         class: "power"
@@ -333,7 +329,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00B2]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "Load L1 Power"
         class: "power"
@@ -342,7 +337,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00B0]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "Load L2 Power"
         class: "power"
@@ -351,7 +345,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00B1]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "Load Voltage"
         class: "voltage"
@@ -360,7 +353,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x009D]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "Daily Load Consumption"
         class: "energy"
@@ -369,7 +361,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0054]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "Total Load Consumption"
         class: "energy"
@@ -378,43 +369,47 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x0055, 0x0056]
-        icon: "mdi:lightning-bolt-outline"
 
       - name: "SmartLoad Enable Status"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00C3]
-        isstr: true
+        options: ["OFF", "ON"]
         lookup:
           - key: 0
             value: "OFF"
           - key: 1
             value: "ON"
-        icon: "mdi:lightning-bolt-outline"
+        icon: "mdi:lightning-bolt-circle"
 
   - group: Inverter
     items:
       - name: "Running Status"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x003B]
-        isstr: true
+        range:
+          min: 0
+          max: 5
+        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
-          - key: 0
-            value: "Stand-by"
-          - key: 1
-            value: "Self-checking"
-          - key: 2
+          - key: 0x0000
+            value: "Standby"
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
             value: "Normal"
-          - key: 3
-            value: "FAULT"
-        icon: "mdi:home-lightning-bolt"
+          - key: 0x0003
+            value: "Alarm"
+          - key: 0x0004
+            value: "Fault"
+        icon: "mdi:information"
 
       - name: "Total Power"
         class: "power"
@@ -423,7 +418,6 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x00AF]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Grid Frequency"
         class: "frequency"
@@ -432,7 +426,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x004F]
-        icon: "mdi:sine-wave"
 
       - name: "Current L1"
         class: "current"
@@ -441,7 +434,6 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x00A4]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Current L2"
         class: "current"
@@ -449,7 +441,6 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x00A5]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Inverter L1 Power"
         class: "power"
@@ -458,7 +449,6 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x00AD]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Inverter L2 Power"
         class: "power"
@@ -467,7 +457,6 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x00AE]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Load Frequency"
         class: ""
@@ -476,7 +465,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00C0]
-        icon: "mdi:sine-wave"
 
       - name: "DC Temperature"
         class: "temperature"
@@ -486,7 +474,6 @@ parameters:
         rule: 2
         offset: 1000
         registers: [0x005A]
-        icon: "mdi:thermometer"
 
       - name: "AC Temperature"
         class: "temperature"
@@ -496,7 +483,6 @@ parameters:
         rule: 2
         offset: 1000
         registers: [0x005B]
-        icon: "mdi:thermometer"
 
       - name: "Inverter ID"
         class: ""
@@ -526,13 +512,13 @@ parameters:
         isstr: true
 
       - name: "Grid-connected Status"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00C2]
-        isstr: true
+        options: ["Off-Grid", "On-Grid"]
         lookup:
           - key: 0
             value: "Off-Grid"
@@ -540,13 +526,13 @@ parameters:
             value: "On-Grid"
 
       - name: "Gen-connected Status"
-        class: ""
-        uom: ""
+        class: "enum"
         state_class: ""
+        uom: ""
         scale: 1
         rule: 1
         registers: [0x00A6]
-        isstr: true
+        options: ["none", "On"]
         lookup:
           - key: 0
             value: "none"
@@ -562,13 +548,20 @@ parameters:
         registers: [0x00A6]
 
       - name: "Work Mode"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 3
         registers: [0x00F4, 0x00F7]
-        isstr: true
+        options:
+          [
+            "Selling First",
+            "Zero-Export to Load&Solar Sell",
+            "Zero-Export to Home&Solar Sell",
+            "Zero-Export to Load",
+            "Zero-Export to Home",
+          ]
         lookup:
           - key: 0
             value: "Selling First"
@@ -817,7 +810,7 @@ parameters:
         icon: "mdi:checkbox-marked-outline"
 
       - name: "Time of use"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
@@ -825,7 +818,7 @@ parameters:
         mask: 1
         registers: [0x00F8]
         icon: "mdi:checkbox-marked-outline"
-        isstr: true
+        options: ["Disable", "Enable"]
         lookup:
           - key: 0
             value: "Disable"

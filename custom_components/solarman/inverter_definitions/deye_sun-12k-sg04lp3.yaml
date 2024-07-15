@@ -20,14 +20,23 @@ parameters:
       # Device - Type of the Device
       - name: "Device"
         update_interval: 300
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0000]
         icon: "mdi:information"
-        isstr: true
+        options:
+          [
+            "String Inverter",
+            "Single-Phase Hybrid Inverter",
+            "Microinverter",
+            "LV 3-Phase Hybrid Inverter",
+            "HV 3-Phase Hybrid Inverter",
+            "HV 3-Phase Inverter 6-15kw",
+            "HV 3-Phase Inverter 20-50kw"
+          ]
         lookup:
           - key: 0x0200
             value: "String Inverter"
@@ -66,14 +75,14 @@ parameters:
       - name: "Device Protocol Version"
         attribute:
         update_interval: 300
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0002]
         icon: "mdi:information"
-        isstr: true
+        options: ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5"]
         lookup:
           - key: 0x0100
             value: "1.0"
@@ -116,14 +125,14 @@ parameters:
     items:
       - name: "Battery Control Mode"
         attribute:
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0062]
         icon: "mdi:battery"
-        isstr: true
+        options: ["Lead-Battery, four-stage charging method", "Lithium"]
         lookup:
           - key: 0x0000
             value: "Lead-Battery, four-stage charging method"
@@ -283,14 +292,14 @@ parameters:
 
       - name: "Battery Grid Charging"
         attribute:
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0082]
         icon: "mdi:battery"
-        isstr: true
+        options: ["Disabled", "Enabled"]
         lookup:
           - key: 0x0000
             value: "Disabled"
@@ -298,14 +307,14 @@ parameters:
             value: "Enabled"
 
       - name: "SmartLoad Mode"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0085]
         icon: "mdi:lightning-bolt-circle"
-        isstr: true
+        options: ["Generator", "Output", "Microinverter"]
         lookup:
           - key: 0x0000
             value: "Generator"
@@ -339,14 +348,14 @@ parameters:
           max: 100
 
       - name: "SmartLoad State"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0228]
         icon: "mdi:lightning-bolt-circle"
-        isstr: true
+        options: ["Off", "On"]
         lookup:
           - key: 0x0001
             value: "Off"
@@ -361,6 +370,8 @@ parameters:
           - key: 0x000C
             value: "Off"
           - key: 0x000D
+            value: "On"
+          - key: "default"
             value: "On"
 
   - group: BMS
@@ -464,19 +475,20 @@ parameters:
         icon: "mdi:battery"
 
       - name: "BMS Alarm"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
-        isstr: true
-        lookup_default: "Active"
+        options: ["Inactive", "Active"]
         lookup:
           - key: 0
             value: "Inactive"
           - key: 1
+            value: "Active"
+          - key: "default"
             value: "Active"
 
       - name: "BMS Fault Location"
@@ -507,14 +519,27 @@ parameters:
 
       - name: "BMS Type"
         attribute:
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00DF]
         icon: "mdi:battery"
-        isstr: true
+        options:
+          [
+            "PYLON",
+            "Tianbangda",
+            "KOK",
+            "Keith",
+            "Toppai",
+            "Peneng 485",
+            "Jeris 485",
+            "Sunwoda 485",
+            "Xinrui 485",
+            "Tianbangda 485",
+            "Shenggao Electric CAN",
+          ]
         lookup:
           - key: 0x0000
             value: "PYLON"
@@ -523,7 +548,7 @@ parameters:
           - key: 0x0002
             value: "KOK"
           - key: 0x0003
-            value: "keith"
+            value: "Keith"
           - key: 0x0004
             value: "Toppai"
           - key: 0x0005
@@ -544,7 +569,7 @@ parameters:
       # Device - Operating (Running) status
       - name: "Device Status"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
@@ -554,7 +579,7 @@ parameters:
         range:
           min: 0
           max: 5
-        isstr: true
+        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
             value: "Standby"
@@ -799,14 +824,14 @@ parameters:
       # Device - Power on/off status
       - name: "Device Power Status"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0227]
         icon: "mdi:information"
-        isstr: true
+        options: ["Off", "On"]
         lookup:
           - key: 0x0000
             value: "Off"
@@ -816,15 +841,24 @@ parameters:
       # Device - AC Relay status
       - name: "Device Relay Status"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0228]
         icon: "mdi:information"
-        isstr: true
-        lookup_default: "Power Supply"
+        options:
+          [
+            "Inverter",
+            "Grid",
+            "Inverter-Grid",
+            "Generator",
+            "Inverter-Gen",
+            "Grid-Generator",
+            "Inv-Grid-Gen",
+            "Power Supply"
+          ]
         lookup:
           - key: 0x0001
             value: "Inverter"
@@ -840,17 +874,20 @@ parameters:
             value: "Grid-Generator"
           - key: 0x000D
             value: "Inv-Grid-Gen"
+          - key: "default"
+            value: "Power Supply"
 
       # Device - AC Grid state
       - name: "Device State"
-        class: ""
+        update_interval: 30
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0228]
         icon: "mdi:information"
-        isstr: true
+        options: ["Off-grid", "On-grid"]
         lookup:
           - key: 0x0001
             value: "Off-grid"
@@ -870,15 +907,22 @@ parameters:
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alert"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 3
         registers: [0x0229, 0x022A]
         icon: "mdi:alert-circle"
-        isstr: true
-        lookup_default: "Error"
+        options:
+          [
+            "Ok",
+            "Fan failure",
+            "Grid error",
+            "Battery loss",
+            "Parallel communication quality",
+            "Error"
+          ]
         lookup:
           - key: 0x0000
             value: "Ok"
@@ -890,6 +934,8 @@ parameters:
             value: "Battery loss"
           - key: 0x8000
             value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
 
       # Device - Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
@@ -1347,19 +1393,21 @@ parameters:
         rule: 4
         registers: [0x027C, 0x02B6]
 
-      # Inverter - Includes consumption of the device itself aswell power losses of AC/DC conversions
+      # Inverter - Includes consumption of the inverter device itself as well AC/DC conversion losses
       - name: "Power losses"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x024E, 0x02A0, 0x02A1, 0x027C, 0x02B6]
+        registers: [0x024E, 0x02A0, 0x02A1, 0x02A2, 0x02A3, 0x027C, 0x02B6]
         sensors:
           - signed:
             registers: [0x024E]
           - registers: [0x02A0]
           - registers: [0x02A1]
+          - registers: [0x02A2]
+          - registers: [0x02A3]
           - subtract:
             signed:
             registers: [0x027C, 0x02B6]
@@ -1374,10 +1422,10 @@ parameters:
         rule: 1
         registers: [0x027E]
 
-  - group: Upload
+  - group: UPS
     items:
-      # UPS output - The power of phase A is U16bit (low 16 bits) + U16bit (high 16 bits)
-      - name: "UPS L1 Power"
+      # Load UPS output - The power of phase A is U16bit (low 16 bits) + U16bit (high 16 bits)
+      - name: "Load UPS L1 Power"
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1387,8 +1435,8 @@ parameters:
         registers: [0x0280, 0x02B8]
         icon: "mdi:home-lightning-bolt"
 
-      # UPS output - The power of phase B is U16bit (low 16 bits) + U16bit (high 16 bits)
-      - name: "UPS L2 Power"
+      # Load UPS output - The power of phase B is U16bit (low 16 bits) + U16bit (high 16 bits)
+      - name: "Load UPS L2 Power"
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1398,8 +1446,8 @@ parameters:
         registers: [0x0281, 0x02B9]
         icon: "mdi:home-lightning-bolt"
 
-      # UPS output - The power of phase C is U16bit (low 16 bits) + U16bit (high 16 bits)
-      - name: "UPS L3 Power"
+      # Load UPS output - The power of phase C is U16bit (low 16 bits) + U16bit (high 16 bits)
+      - name: "Load UPS L3 Power"
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1409,8 +1457,8 @@ parameters:
         registers: [0x0282, 0x02BA]
         icon: "mdi:home-lightning-bolt"
 
-      # UPS output - The power is U16bit (low 16 bits) + U16bit (high 16 bits)
-      - name: "UPS Power"
+      # Load UPS output - The power is U16bit (low 16 bits) + U16bit (high 16 bits)
+      - name: "Load UPS Power"
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1420,6 +1468,8 @@ parameters:
         registers: [0x0283, 0x02BB]
         icon: "mdi:home-lightning-bolt"
 
+  - group: Load
+    items:
       # Load output - The voltage of phase A
       - name: "Load L1 Voltage"
         class: "voltage"
@@ -1454,7 +1504,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         scale: 1
-        rule: 2
+        rule: 4
         registers: [0x028A, 0x0290]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
@@ -1464,7 +1514,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         scale: 1
-        rule: 2
+        rule: 4
         registers: [0x028B, 0x0291]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
@@ -1474,7 +1524,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         scale: 1
-        rule: 2
+        rule: 4
         registers: [0x028C, 0x0292]
 
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
@@ -1484,7 +1534,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         scale: 1
-        rule: 2
+        rule: 4
         registers: [0x028D, 0x0293]
 
   - group: SmartLoad/Generator
@@ -1556,9 +1606,9 @@ parameters:
         rule: 2
         registers: [0x029B, 0x029F]
 
-  - group: Photovoltaic
+  - group: PV
     items:
-      # Photovoltaic - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
+      # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
       - name: "PV Power"
         realtime:
         class: "power"
@@ -1574,7 +1624,7 @@ parameters:
           - registers: [0x02A3]
         icon: "mdi:solar-power-variant"
 
-      # Photovoltaic - The power of Input 1 (L:1W, H:10W)
+      # PV - The power of Input 1 (L:1W, H:10W)
       - name: "PV1 Power"
         realtime:
         class: "power"
@@ -1585,7 +1635,7 @@ parameters:
         registers: [0x02A0]
         icon: "mdi:solar-power-variant"
 
-      # Photovoltaic - The power of Input 2 (L:1W, H:10W)
+      # PV - The power of Input 2 (L:1W, H:10W)
       - name: "PV2 Power"
         realtime:
         class: "power"
@@ -1596,7 +1646,7 @@ parameters:
         registers: [0x02A1]
         icon: "mdi:solar-power-variant"
 
-      # Photovoltaic - The power of Input 3 (L:1W, H:10W)
+      # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         disabled:
         realtime:
@@ -1608,7 +1658,7 @@ parameters:
         registers: [0x02A2]
         icon: "mdi:solar-power-variant"
 
-      # Photovoltaic - The power of Input 4 (L:1W, H:10W)
+      # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         disabled:
         realtime:
@@ -1620,7 +1670,7 @@ parameters:
         registers: [0x02A3]
         icon: "mdi:solar-power-variant"
 
-      # Photovoltaic - The voltage of Input 1
+      # PV - The voltage of Input 1
       - name: "PV1 Voltage"
         realtime:
         class: "voltage"
@@ -1634,7 +1684,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The current of Input 1
+      # PV - The current of Input 1
       - name: "PV1 Current"
         realtime:
         class: "current"
@@ -1648,7 +1698,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The voltage of Input 2
+      # PV - The voltage of Input 2
       - name: "PV2 Voltage"
         realtime:
         class: "voltage"
@@ -1662,7 +1712,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The current of Input 2
+      # PV - The current of Input 2
       - name: "PV2 Current"
         realtime:
         class: "current"
@@ -1676,7 +1726,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The voltage of Input 3
+      # PV - The voltage of Input 3
       - name: "PV3 Voltage"
         disabled:
         realtime:
@@ -1691,7 +1741,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The current of Input 3
+      # PV - The current of Input 3
       - name: "PV3 Current"
         disabled:
         realtime:
@@ -1706,7 +1756,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The voltage of Input 4
+      # PV - The voltage of Input 4
       - name: "PV4 Voltage"
         disabled:
         realtime:
@@ -1721,7 +1771,7 @@ parameters:
           min: 0
           max: 65535
 
-      # Photovoltaic - The current of Input 4
+      # PV - The current of Input 4
       - name: "PV4 Current"
         disabled:
         realtime:

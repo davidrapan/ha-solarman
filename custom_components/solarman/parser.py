@@ -107,12 +107,12 @@ class ParameterParser:
 
         return True
 
-    def lookup_value(self, value, definition):
-        for o in definition["lookup"]:
-            if (o["key"] == value):
+    def lookup_value(self, value, keyvaluepairs):
+        for o in keyvaluepairs:
+            if o["key"] == value or o["key"] == "default":
                 return o["value"]
 
-        return value if not "lookup_default" in definition else f"{definition["lookup_default"]} [{value}]"
+        return keyvaluepairs[0]["value"]
 
     def do_validate(self, key, value, rule):
         if "min" in rule:
@@ -243,7 +243,7 @@ class ParameterParser:
 
         if found:
             if "lookup" in definition:
-                self.set_state(key, self.lookup_value(value, definition))
+                self.set_state(key, self.lookup_value(value, definition["lookup"]))
                 self._result[key]["value"] = int(value)
             else:
                 if "validation" in definition:
