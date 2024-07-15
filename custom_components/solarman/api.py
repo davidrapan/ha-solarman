@@ -1,5 +1,6 @@
 import time
 import yaml
+import errno
 import struct
 import socket
 import logging
@@ -71,6 +72,11 @@ class InverterApi(PySolarmanV5Async):
             raise
         except TimeoutError:
             raise
+        except OSError as e:
+            if e.errno == errno.EHOSTUNREACH:
+                self.log.debug("[%s] EHOSTUNREACH error: %s", self.serial, e)
+            self.log.debug("[%s] Send/Receive error: %s", self.serial, e)
+            raise TimeoutError()
         except Exception as e:
             self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
             raise
@@ -104,7 +110,10 @@ class InverterApi(PySolarmanV5Async):
                 _LOGGER.debug(f"{e} can be during closing ignored.")
             finally:
                 self.writer.close()
-                await self.writer.wait_closed()
+                try:
+                    await self.writer.wait_closed()
+                except OSError as e: # Happens when host is unreachable.
+                    _LOGGER.debug(f"{e} can be during closing ignored.")
 
     async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
