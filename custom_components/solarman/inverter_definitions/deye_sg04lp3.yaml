@@ -591,7 +591,7 @@ parameters:
 
   - group: Meter
     items:
-      - name: "Today Battery Charge"
+      - name: "Daily Battery Charge"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -600,7 +600,7 @@ parameters:
         registers: [0x0202]
         icon: "mdi:battery-plus"
 
-      - name: "Today Battery Discharge"
+      - name: "Daily Battery Discharge"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -627,7 +627,25 @@ parameters:
         registers: [0x0206, 0x0207]
         icon: "mdi:battery-minus"
 
-      - name: "Today Energy Bought"
+      - name: "Daily Battery Life Cycles"
+        class: ""
+        state_class: "total_increasing"
+        uom: ""
+        scale: 1
+        rule: 0
+        digits: 2
+        icon: "mdi:battery-sync"
+
+      - name: "Total Battery Life Cycles"
+        class: ""
+        state_class: "total_increasing"
+        uom: ""
+        scale: 1
+        rule: 0
+        digits: 2
+        icon: "mdi:battery-sync"
+
+      - name: "Daily Energy Bought"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -636,7 +654,7 @@ parameters:
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Today Energy Sold"
+      - name: "Daily Energy Sold"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -663,7 +681,7 @@ parameters:
         registers: [0x020C, 0x020D]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Today Load Consumption"
+      - name: "Daily Load Consumption"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -679,7 +697,7 @@ parameters:
         rule: 3
         registers: [0x020F, 0x0210]
 
-      - name: "Today Losses"
+      - name: "Daily Losses"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -741,7 +759,7 @@ parameters:
             scale: 0.1
             registers: [0x0204, 0x0205]
 
-      - name: "Today Production"
+      - name: "Daily Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -984,6 +1002,26 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x024E]
+
+      # Battery - The state of health
+      - name: "Battery SOH"
+        class: ""
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 0
+        digits: 2
+        icon: "mdi:battery-heart"
+
+      # Battery - The state of battery
+      - name: "Battery State"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 0
+        digits: 2
+        icon: "mdi:battery"
 
       # Battery - The current of battery 1 is S16bit (low 16 bits)
       - name: "Battery Current"

@@ -29,3 +29,9 @@ def get_request_start(request):
 
 def get_request_end(request):
     return request[REQUEST_END]
+
+def get_battery_power_capacity(capacity, voltage):
+    return capacity * voltage / 1000
+
+def get_battery_cycles(charge, capacity, voltage):
+    return charge / get_battery_power_capacity(capacity, voltage)

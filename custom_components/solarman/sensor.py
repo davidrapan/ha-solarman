@@ -22,12 +22,14 @@ from .services import *
 
 _LOGGER = logging.getLogger(__name__)
 
-def _create_sensor(coordinator, sensor, battery_life_cycle_rating):
+def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
     try:
         if "artificial" in sensor:
             entity = SolarmanStatus(coordinator, sensor)
         elif "isstr" in sensor:
             entity = SolarmanSensorBase(coordinator, sensor)
+        elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
+            entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         else:
             entity = SolarmanSensor(coordinator, sensor, battery_life_cycle_rating)
 
@@ -49,6 +51,7 @@ async def async_setup(hass: HomeAssistant, config, async_add_entities: AddEntiti
     inverter_mb_slave_id = config.get(CONF_INVERTER_MB_SLAVE_ID)
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = config.get(CONF_LOOKUP_FILE)
+    battery_nominal_voltage = config.get(CONF_BATTERY_NOMINAL_VOLTAGE)
     battery_life_cycle_rating = config.get(CONF_BATTERY_LIFE_CYCLE_RATING)
 
     inverter_discovery = InverterDiscovery(hass, inverter_host)
@@ -92,7 +95,7 @@ async def async_setup(hass: HomeAssistant, config, async_add_entities: AddEntiti
     #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor, battery_life_cycle_rating) for sensor in sensors)
+    async_add_entities(_create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating) for sensor in sensors)
 
     # Register the services with home assistant.
     #
@@ -180,24 +183,38 @@ class SolarmanSensorBase(SolarmanStatus):
         if "state_class" in sensor and sensor["state_class"]:
             self._attr_extra_state_attributes = { "state_class": sensor["state_class"] }
 
+        self._digits = sensor["digits"] if "digits" in sensor else REGISTERS_DIGITS_DEFAULT
+
         self._attr_entity_category = (None)
 
         self._attr_icon = sensor["icon"] if "icon" in sensor else None
 
         self.attributes = sensor["attributes"] if "attributes" in sensor else None
 
+    def get_data_state(self, name):
+        return self.coordinator.data[name]["state"]
+
+    def get_data_value(self, name):
+        return self.coordinator.data[name]["value"]
+
+    def get_data(self, name, default):
+        if name in self.coordinator.data:
+                return self.get_data_state(name)
+
+        return default
+
     def update(self):
         c = len(self.coordinator.data)
         if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
             if self.sensor_name in self.coordinator.data:
-                self._attr_state = self.coordinator.data[self.sensor_name]["state"]
+                self._attr_state = self.get_data_state(self.sensor_name)
                 if "value" in self.coordinator.data[self.sensor_name]:
-                    self._attr_extra_state_attributes["value"] = self.coordinator.data[self.sensor_name]["value"]
+                    self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
                 if self.attributes:
                     for attr in self.attributes:
                         if attr in self.coordinator.data:
                             attr_name = attr.replace(f"{self.sensor_name} ", "")
-                            self._attr_extra_state_attributes[attr_name] = self.coordinator.data[attr]["state"]
+                            self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)
 
 class SolarmanSensor(SolarmanSensorBase):
     def __init__(self, coordinator, sensor, battery_life_cycle_rating):
@@ -221,3 +238,37 @@ class SolarmanSensor(SolarmanSensorBase):
 
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Life Cycle Rating": battery_life_cycle_rating }
+
+class SolarmanBatterySensor(SolarmanSensor):
+    def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
+        SolarmanSensor.__init__(self, coordinator, sensor, battery_life_cycle_rating)
+        self._battery_nominal_voltage = battery_nominal_voltage
+        self._battery_life_cycle_rating = battery_life_cycle_rating
+
+    def update(self):
+        #super().update()
+        c = len(self.coordinator.data)
+        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
+            match self.sensor_name:
+                case "Battery SOH":
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    total_battery_charge = self.get_data("Total Battery Charge", None)
+                    today_battery_charge = self.get_data("Today Battery Charge", None)
+                    if total_battery_charge and battery_capacity and self._battery_nominal_voltage and self._battery_life_cycle_rating:
+                        self._attr_state = round(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits)
+                case "Battery State":
+                    battery_power = self.get_data("Battery Power", None)
+                    if battery_power:
+                        self._attr_state = "discharging" if battery_power > 50 else "charging" if battery_power < -50 else "standby"
+                case "Today Battery Life Cycles":
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    total_battery_charge = self.get_data("Total Battery Charge", None)
+                    today_battery_charge = self.get_data("Today Battery Charge", None)
+                    if today_battery_charge and battery_capacity and self._battery_nominal_voltage:
+                        self._attr_state = round(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)
+                case "Total Battery Life Cycles":
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    total_battery_charge = self.get_data("Total Battery Charge", None)
+                    today_battery_charge = self.get_data("Today Battery Charge", None)
+                    if total_battery_charge and battery_capacity and self._battery_nominal_voltage:
+                        self._attr_state = round(get_battery_cycles(total_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)

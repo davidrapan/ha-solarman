@@ -628,8 +628,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        params: ["Today Battery Charge", "Battery Capacity", "Battery Nominal Voltage"]
-        formula: "round({0} / ({1} * {2} / 1000), 2)"
+        digits: 2
         icon: "mdi:battery-sync"
 
       - name: "Total Battery Life Cycles"
@@ -638,8 +637,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        params: ["Total Battery Charge", "Battery Capacity", "Battery Nominal Voltage"]
-        formula: "round({0} / ({1} * {2} / 1000), 2)"
+        digits: 2
         icon: "mdi:battery-sync"
 
       - name: "Today Energy Export"
@@ -993,8 +991,7 @@ parameters:
         uom: "%"
         scale: 1
         rule: 0
-        params: ["Total Battery Charge", "Battery Capacity", "Battery Nominal Voltage", "Battery Life Cycle Rating"]
-        formula: "round(100 - {0} / ({1} * {2} / 1000) / ({3} * 0.05), 2)"
+        digits: 2
         icon: "mdi:battery-heart"
 
       # Battery - The state of battery
@@ -1004,9 +1001,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        params: ["Battery Power", "Battery Power"]
-        formula: "'discharging' if {0} > 50 else 'charging' if {1} < -50 else 'static'"
-        isstr: true
+        digits: 2
         icon: "mdi:battery"
 
       # Battery - The current of battery 1 is S16bit (low 16 bits)
