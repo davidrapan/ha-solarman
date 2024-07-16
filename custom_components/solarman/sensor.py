@@ -141,18 +141,24 @@ class SolarmanStatus(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator)
         self.sensor_name = sensor["name"]
+        self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
+        self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
 
-        #  Return the category of the sensor.
+        # Set the category of the sensor.
         self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
 
-        #  Return the icon of the sensor.
+        # Set the icon of the sensor.
         self._attr_icon = "mdi:information"
 
-        #  Return the name of the sensor.
+        # Set the name of the sensor.
         self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name)
 
-        #  Return a unique_id based on the serial number
-        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_name)
+        # Set the entity_id of the sensor.
+        if self.sensor_entity_id:
+            self.entity_id = "sensor.{}_{}".format(self.coordinator.inverter.name, self.sensor_entity_id)
+
+        # Set a unique_id based on the serial number
+        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id)
 
     @property
     def available(self) -> bool:

@@ -256,6 +256,9 @@ class ParameterParser:
         value = self._read_registers_signed(rawData, definition, start, length)
 
         if value is not None:
+            if "inverted" in definition and definition["inverted"]:
+                value = -value
+
             if "validation" in definition:
                 if not self.do_validate(key, value, definition["validation"]):
                     return

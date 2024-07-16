@@ -975,7 +975,7 @@ parameters:
             "Battery Grid Charging Current",
           ]
 
-      # Battery - The power of battery is S16bit (low 16 bits | L:1W, H:10W)
+      # Battery - The power of battery is S16bit
       - name: "Battery Power"
         class: "power"
         state_class: "measurement"
