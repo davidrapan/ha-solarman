@@ -1,5 +1,11 @@
 # ⚡ Solarman Stick Logger integration
 
+[![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman.svg)](https://github.com/davidrapan/ha-solarman/releases/latest)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman.svg?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
+[![License](https://img.shields.io/github/license/davidrapan/ha-solarman.svg)](LICENSE)
+[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green.svg)](https://github.com/custom-components/hacs)
+[![Discussions](https://img.shields.io/badge/community-discussions-brightgreen.svg)](https://github.com/davidrapan/ha-solarman/discussions)
+
 > [!NOTE]  
 > If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
 > Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A and 💡 Development Planning, etc. and leave [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting, 🎁 feature requests and such...  
