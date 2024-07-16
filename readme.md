@@ -1,7 +1,7 @@
 # ⚡ Solarman Stick Logger integration
 
 > [!NOTE]  
-> Use 💬 Discussions for 🙏 Q&A and 💡 Development Planning, etc. and leave 🚩 Issues for 🐞 bug reporting, 🎁 feature requests and such...  
+> Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A and 💡 Development Planning, etc. and leave [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting, 🎁 feature requests and such...  
 
 > [!NOTE]  
 > It's still 🚧 work in progress but currently very 🐎 stable 😉  
