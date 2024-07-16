@@ -1361,6 +1361,7 @@ parameters:
         rule: 1
         digits: 0
         registers: [0x024E, 0x02A0, 0x02A1, 0x02A2, 0x02A3, 0x027C, 0x02B6]
+        uint: enforce
         sensors:
           - signed:
             scale: 10

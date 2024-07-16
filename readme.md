@@ -13,12 +13,11 @@
 > - Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA
 > - Improved stability (no more disconnects and missing values)
 > - Discovery and not just for configuration but also as part of initialization (i.e. adapts to changed IP)
-> - Registers which are requested are decided dynamically (when missing from the inverter definition file)
-> - Different registers can be requested in different intervals according to their 'update_interval' set in inverter definition file
 > - New Inverter profiles features **See 'deye_sg04lp3.yaml' for examples*:
+>   - Different registers can be requested in different intervals according to their 'update_interval' set in inverter definition file
+>   - Registers which will be part of a request are decided dynamically (when missing from the inverter definition file)
 >   - Added attribute type of a sensor which can be attached to any other sensor
->   - Added template sensors defined by simple formulas and parameters which are then evaluated during runtime
->   - Added configuration for Battery Nominal Voltage and Battery Life Cycle Rating for calculating SOH of the battery  
+>   - Added configuration for Battery Nominal Voltage and Battery Life Cycle Rating for calculating SOH and life cycles of the battery  
 > - And many more fixes and improvements (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  

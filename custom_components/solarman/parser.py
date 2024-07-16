@@ -53,12 +53,6 @@ class ParameterParser:
         self._result[key] = {}
         self._result[key]["state"] = value
 
-    def set_state_number(self, key, value, digits):
-        if isinstance(value, int) or (isinstance(value, float) and value.is_integer()):
-            self.set_state(key, int(value))
-        else:
-            self.set_state(key, round(value, digits))
-
     def get_sensors(self):
         result = [{"name": "Connection Status", "artificial": ""}]
         for i in self.lookup():
@@ -242,6 +236,9 @@ class ParameterParser:
             found = value is not None
 
         if found:
+            if "uint" in definition and value < 0:
+                value = 0
+
             if "lookup" in definition:
                 self.set_state(key, self.lookup_value(value, definition["lookup"]))
                 self._result[key]["value"] = int(value)
@@ -250,7 +247,7 @@ class ParameterParser:
                     if not self.do_validate(key, value, definition["validation"]):
                         return
 
-                self.set_state_number(key, value, definition["digits"] if "digits" in definition else self._digits)
+                self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
         return
 
@@ -263,7 +260,7 @@ class ParameterParser:
                 if not self.do_validate(key, value, definition["validation"]):
                     return
 
-            self.set_state_number(key, value, definition["digits"] if "digits" in definition else self._digits)
+            self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
         return
 

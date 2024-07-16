@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import logging
 import asyncio
 import voluptuous as vol
@@ -255,7 +254,7 @@ class SolarmanBatterySensor(SolarmanSensor):
                     total_battery_charge = self.get_data("Total Battery Charge", None)
                     today_battery_charge = self.get_data("Today Battery Charge", None)
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage and self._battery_life_cycle_rating:
-                        self._attr_state = round(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits)
+                        self._attr_state = get_number(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits)
                 case "Battery State":
                     battery_power = self.get_data("Battery Power", None)
                     if battery_power:
@@ -265,10 +264,10 @@ class SolarmanBatterySensor(SolarmanSensor):
                     total_battery_charge = self.get_data("Total Battery Charge", None)
                     today_battery_charge = self.get_data("Today Battery Charge", None)
                     if today_battery_charge and battery_capacity and self._battery_nominal_voltage:
-                        self._attr_state = round(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)
+                        self._attr_state = get_number(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)
                 case "Total Battery Life Cycles":
                     battery_capacity = self.get_data("Battery Capacity", None)
                     total_battery_charge = self.get_data("Total Battery Charge", None)
                     today_battery_charge = self.get_data("Today Battery Charge", None)
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage:
-                        self._attr_state = round(get_battery_cycles(total_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)
+                        self._attr_state = get_number(get_battery_cycles(total_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits)
