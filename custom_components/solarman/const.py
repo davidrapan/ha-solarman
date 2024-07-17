@@ -1,8 +1,7 @@
 from datetime import timedelta as td
 
 DOMAIN = "solarman"
-PLATFORMS: list[str] = ["sensor"]
-SENSOR_PREFIX = "Solarman"
+PLATFORMS: list[str] = ["sensor", "switch"]
 
 IP_BROADCAST = "<broadcast>"
 IP_ANY = "0.0.0.0"

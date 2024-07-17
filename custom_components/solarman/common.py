@@ -1,10 +1,20 @@
+import yaml
 import asyncio
+import aiofiles
 
 from .const import *
 
 async def async_execute(x):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, x)
+
+def execute_async(x):
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(x)
+
+async def yaml_open(file):
+    async with aiofiles.open(file) as f:
+        return yaml.safe_load(await f.read())
 
 def group_when(iterable, predicate):
     i, x, size = 0, 0, len(iterable)

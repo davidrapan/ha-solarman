@@ -4,20 +4,27 @@ import logging
 import asyncio
 import voluptuous as vol
 
+from functools import cached_property, partial
+
+from homeassistant.components.template.sensor import SensorTemplate
+from homeassistant.components.template.sensor import TriggerSensorEntity
+from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
+from homeassistant.helpers.template import Template
+
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME, EntityCategory
+from homeassistant.const import EntityCategory, STATE_OFF, STATE_ON
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import Entity, ToggleEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import *
 from .common import *
-from .api import Inverter
-from .discovery import InverterDiscovery
-from .coordinator import InverterCoordinator
 from .services import *
+from .api import Inverter
+from .coordinator import InverterCoordinator
+from .entity import SolarmanCoordinatorEntity, SolarmanBaseEntity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,10 +32,10 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
     try:
         if "artificial" in sensor:
             entity = SolarmanStatus(coordinator, sensor)
-        elif "isstr" in sensor:
-            entity = SolarmanSensorBase(coordinator, sensor)
         elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
             entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+        #elif "switch" in sensor and sensor["switch"]:
+        #    entity = SolarmanSwitchSensor(coordinator, sensor, battery_life_cycle_rating)
         else:
             entity = SolarmanSensor(coordinator, sensor, battery_life_cycle_rating)
 
@@ -39,147 +46,46 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
         _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
         raise
 
-async def async_setup(hass: HomeAssistant, config, async_add_entities: AddEntitiesCallback, id = None):
-    _LOGGER.debug(f"async_setup: {config}")
+async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+    _LOGGER.debug(f"async_setup_entry: {config.options}")
+    coordinator = hass.data[DOMAIN][config.entry_id]
 
-    inverter_name = config.get(CONF_NAME)
-    inverter_discovery = config.get(CONF_INVERTER_DISCOVERY)
-    inverter_host = config.get(CONF_INVERTER_HOST)
-    inverter_serial = config.get(CONF_INVERTER_SERIAL)
-    inverter_port = config.get(CONF_INVERTER_PORT)
-    inverter_mb_slave_id = config.get(CONF_INVERTER_MB_SLAVE_ID)
-    lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
-    lookup_file = config.get(CONF_LOOKUP_FILE)
-    battery_nominal_voltage = config.get(CONF_BATTERY_NOMINAL_VOLTAGE)
-    battery_life_cycle_rating = config.get(CONF_BATTERY_LIFE_CYCLE_RATING)
+    options = config.options
 
-    inverter_discovery = InverterDiscovery(hass, inverter_host)
+    battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE)
+    battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
 
-    if inverter_discovery:
-        if inverter_host_scanned := await inverter_discovery.get_ip():
-            inverter_host = inverter_host_scanned
-
-    if inverter_serial == 0:
-        if inverter_serial_scanned := await inverter_discovery.get_serial():
-            inverter_serial = inverter_serial_scanned
-
-    inverter_mac = await inverter_discovery.get_mac()
-
-    if not inverter_mb_slave_id:
-        inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
-
-    if inverter_host is None:
-        raise vol.Invalid("configuration parameter [inverter_host] does not have a value")
-    if inverter_serial is None:
-        raise vol.Invalid("configuration parameter [inverter_serial] does not have a value")
-
-    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, inverter_name, inverter_mac, lookup_path, lookup_file)
-    sensors = await inverter.get_sensors()
-
-    coordinator = InverterCoordinator(hass, inverter)
-
-    # Fetch initial data so we have data when entities subscribe.
-    #
-    # If the refresh fails, async_config_entry_first_refresh will
-    # raise ConfigEntryNotReady and setup will try again later.
-    #
-    # If you do not want to retry setup on failure, use
-    # coordinator.async_refresh() instead.
-    #
-    _LOGGER.debug(f"async_setup: coordinator.async_config_entry_first_refresh")
-
-    await coordinator.async_config_entry_first_refresh()
+    sensors = coordinator.inverter.get_sensors()
 
     # Add entities.
     #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating) for sensor in sensors)
-
-    # Register the services with home assistant.
-    #
-    _LOGGER.debug(f"async_setup: register_services")
-    
-    hass.data.setdefault(DOMAIN, {})[id] = coordinator
-
-    register_services(hass, inverter)
-
-async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
-    _LOGGER.debug(f"async_setup_entry: {config.options}")
-    await async_setup(hass, config.options, async_add_entities, config.entry_id)
+    async_add_entities(_create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating) for sensor in sensors if not "switch" in sensor)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
-    remove_services(hass)
     return True
 
-class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
-    def __init__(self, coordinator: InverterCoordinator, name: str = None):
-        super().__init__(coordinator)
-        self.model = self.coordinator.inverter.lookup_file.replace(".yaml", "")
-
-        if '_' in self.model:
-            dev_man = self.model.split('_')
-            self.manufacturer = dev_man[0].capitalize()
-            self.model = dev_man[1].upper()
-
-        self._attr_device_info = {
-            "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.coordinator.inverter.mac))}
-        } if self.coordinator.inverter.mac else {} | {
-            "identifiers": {(DOMAIN, self.coordinator.inverter.serial)},
-            "name": self.coordinator.inverter.name,
-            "manufacturer": self.manufacturer,
-            "model": self.model,
-            "serial_number": self.coordinator.inverter.serial
-        }
-
-        #self._attr_extra_state_attributes = { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
-        self._attr_extra_state_attributes = {}
-
-class SolarmanStatus(SolarmanCoordinatorEntity):
+class SolarmanStatus(SolarmanEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator)
-        self.sensor_name = sensor["name"]
-        self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
-        self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
+        super().__init__(coordinator, sensor)
 
-        # Set the category of the sensor.
         self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
-
-        # Set the icon of the sensor.
-        self._attr_icon = "mdi:information"
-
-        # Set the name of the sensor.
-        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name)
-
-        # Set the entity_id of the sensor.
-        if self.sensor_entity_id:
-            self.entity_id = "sensor.{}_{}".format(self.coordinator.inverter.name, self.sensor_entity_id)
-
-        # Set a unique_id based on the serial number
-        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        if type(self) is SolarmanStatus:
-            return True
-        return self._attr_available and self.coordinator.inverter.is_connected()
-
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        self.update()
-        self.async_write_ha_state()
+        return True
 
     def update(self):
         self._attr_state = self.coordinator.inverter.get_connection_status()
         self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_lastUpdate
 
-class SolarmanSensorBase(SolarmanStatus):
-    def __init__(self, coordinator, sensor):
-        SolarmanStatus.__init__(self, coordinator, sensor)
+class SolarmanSensor(SolarmanBaseEntity):
+    def __init__(self, coordinator, sensor, battery_life_cycle_rating):
+        super().__init__(coordinator, sensor)
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
         if "suggested_display_precision" in sensor:
@@ -195,35 +101,6 @@ class SolarmanSensorBase(SolarmanStatus):
         self._attr_icon = sensor["icon"] if "icon" in sensor else None
 
         self.attributes = sensor["attributes"] if "attributes" in sensor else None
-
-    def get_data_state(self, name):
-        return self.coordinator.data[name]["state"]
-
-    def get_data_value(self, name):
-        return self.coordinator.data[name]["value"]
-
-    def get_data(self, name, default):
-        if name in self.coordinator.data:
-                return self.get_data_state(name)
-
-        return default
-
-    def update(self):
-        c = len(self.coordinator.data)
-        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
-            if self.sensor_name in self.coordinator.data:
-                self._attr_state = self.get_data_state(self.sensor_name)
-                if "value" in self.coordinator.data[self.sensor_name]:
-                    self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
-                if self.attributes:
-                    for attr in self.attributes:
-                        if attr in self.coordinator.data:
-                            attr_name = attr.replace(f"{self.sensor_name} ", "")
-                            self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)
-
-class SolarmanSensor(SolarmanSensorBase):
-    def __init__(self, coordinator, sensor, battery_life_cycle_rating):
-        SolarmanSensorBase.__init__(self, coordinator, sensor)
 
         if "class" in sensor and (device_class := sensor["class"]):
             self._attr_device_class = device_class

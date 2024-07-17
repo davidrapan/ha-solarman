@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, inverter):
-        super().__init__(hass, _LOGGER, name = SENSOR_PREFIX, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
+        super().__init__(hass, _LOGGER, name = inverter.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
         self.inverter = inverter
         self._counter = -1
 

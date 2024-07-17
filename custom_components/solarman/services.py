@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import voluptuous as vol
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.helpers import config_validation as cv
 
 from .const import *
@@ -27,13 +27,13 @@ SERVICE_WRITE_MULTIPLE_REGISTERS_SCHEMA = vol.Schema(
 )
 
 def register_services(hass: HomeAssistant, inverter: Inverter):
-    async def write_holding_register(call) -> None:
+    async def write_holding_register(call: ServiceCall) -> None:
         await inverter.service_write_holding_register(
             register = call.data.get(SERVICES_PARAM_REGISTER), 
             value = call.data.get(SERVICES_PARAM_VALUE))
         return
 
-    async def write_multiple_holding_registers(call) -> None:
+    async def write_multiple_holding_registers(call: ServiceCall) -> None:
         await inverter.service_write_multiple_holding_registers(
             register = call.data.get(SERVICES_PARAM_REGISTER),
             values = call.data.get(SERVICES_PARAM_VALUES))

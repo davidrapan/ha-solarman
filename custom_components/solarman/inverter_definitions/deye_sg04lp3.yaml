@@ -371,6 +371,18 @@ parameters:
           - key: "default"
             value: "On"
 
+  - group: Solar Sell
+    items:
+      - name: "Solar Sell"
+        update_interval: 30
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        switch: True
+        registers: [0x0091]
+
   - group: BMS
     items:
       - name: "BMS Charged Voltage"

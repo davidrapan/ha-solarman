@@ -1,11 +1,9 @@
 import time
-import yaml
 import errno
 import struct
 import socket
 import logging
 import asyncio
-import aiofiles
 import threading
 import concurrent.futures
 
@@ -136,9 +134,12 @@ class Inverter(InverterApi):
         self.lookup_path = lookup_path
         self.lookup_file = lookup_file if lookup_file and not lookup_file == "parameters.yaml" else "deye_hybrid.yaml"
 
-    async def get_sensors(self):
-        async with aiofiles.open(self.lookup_path + self.lookup_file) as f:
-            self.parameter_definition = yaml.safe_load(await f.read())
+        #execute_async(self.load())
+
+    async def load(self):
+        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
+
+    def get_sensors(self):
         if self.parameter_definition:
             params = ParameterParser(self.parameter_definition)
             return params.get_sensors()
@@ -221,20 +222,22 @@ class Inverter(InverterApi):
         _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
         try:
             await self.async_connect()
-            await self.write_holding_register(register, value)
+            response = await self.write_holding_register(register, value)
+            _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
         except Exception as e:
             _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed. [{format_exception(e)}]")
-            await self.async_disconnect()
-            return False
+            #await self.async_disconnect()
+            raise
         return True
 
-    async def service_write_multiple_holding_registers(self, registers, values) -> bool:
-        _LOGGER.debug(f"service_write_multiple_holding_registers: {registers}, values: {values}")
+    async def service_write_multiple_holding_registers(self, register, values) -> bool:
+        _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
         try:
             await self.async_connect()
-            await self.write_multiple_holding_registers(registers, values)
+            response = await self.write_multiple_holding_registers(register, values)
+            _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
         except Exception as e:
-            _LOGGER.warning(f"service_write_multiple_holding_registers: {registers}, values: {values} failed. [{format_exception(e)}]")
-            await self.async_disconnect()
-            return False
+            _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed. [{format_exception(e)}]")
+            #await self.async_disconnect()
+            raise
         return True

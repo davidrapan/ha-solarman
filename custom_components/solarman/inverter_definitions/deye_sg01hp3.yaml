@@ -27,7 +27,7 @@ parameters:
             "LV 3-Phase Hybrid Inverter",
             "HV 3-Phase Hybrid Inverter",
             "HV 3-Phase Inverter 6-15kw",
-            "HV 3-Phase Inverter 20-50kw"
+            "HV 3-Phase Inverter 20-50kw",
           ]
         lookup:
           - key: 0x0200
@@ -365,6 +365,18 @@ parameters:
             value: "On"
           - key: "default"
             value: "On"
+
+  - group: Solar Sell
+    items:
+      - name: "Solar Sell"
+        update_interval: 30
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        switch: True
+        registers: [0x0091]
 
   - group: BMS
     items:
@@ -722,7 +734,21 @@ parameters:
         uom: "kWh"
         rule: 3
         digits: 1
-        registers: [0x020A, 0x020B, 0x0216, 0x0217, 0x0206, 0x0207, 0x020C, 0x020D, 0x020F, 0x0210, 0x0204, 0x0205]
+        registers:
+          [
+            0x020A,
+            0x020B,
+            0x0216,
+            0x0217,
+            0x0206,
+            0x0207,
+            0x020C,
+            0x020D,
+            0x020F,
+            0x0210,
+            0x0204,
+            0x0205,
+          ]
         sensors:
           - scale: 0.1
             registers: [0x020A, 0x020B]
@@ -823,7 +849,7 @@ parameters:
             "Inverter-Gen",
             "Grid-Generator",
             "Inv-Grid-Gen",
-            "Power Supply"
+            "Power Supply",
           ]
         lookup:
           - key: 0x0001
@@ -887,7 +913,7 @@ parameters:
             "Grid error",
             "Battery loss",
             "Parallel communication quality",
-            "Error"
+            "Error",
           ]
         lookup:
           - key: 0x0000
@@ -1252,10 +1278,7 @@ parameters:
         rule: 4
         registers: [0x0271, 0x02B2]
         icon: "mdi:transmission-tower"
-        attributes:
-          [
-            "Zero Export",
-          ]
+        attributes: ["Zero Export"]
 
   - group: Inverter
     items:
