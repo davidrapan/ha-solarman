@@ -9,7 +9,7 @@ from functools import cached_property, partial
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.const import CONF_NAME, STATE_OFF, STATE_ON, EntityCategory
-from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass, SwitchEntityDescription
+from homeassistant.components.number import NumberEntity, NumberDeviceClass, NumberEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -23,7 +23,7 @@ _PLATFORM = get_current_file_name(__name__)
 
 def _create_sensor(coordinator, sensor):
     try:
-        entity = SolarmanSwitchEntity(coordinator, sensor)
+        entity = SolarmanNumberEntity(coordinator, sensor)
 
         entity.update()
 
@@ -42,18 +42,17 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if ("class" in sensor and sensor["class"] == _PLATFORM))
+    async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if "configurable" in sensor)
+    #if ("class" in sensor and sensor["class"] == _PLATFORM)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
     return True
 
-class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
+class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
     def __init__(self, coordinator, sensor):
         SolarmanSensor.__init__(self, coordinator, sensor, 0)
-        # Set The Device Class of the entity.
-        self._attr_device_class = SwitchDeviceClass.SWITCH
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 
@@ -62,21 +61,24 @@ class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
         if registers_length > 0:
             self.register = sensor["registers"][0]
         if registers_length > 1:
-            _LOGGER.warning(f"SolarmanSwitchEntity.__init__: Contains more than 1 register!")
+            _LOGGER.warning(f"SolarmanNumberEntity.__init__: Contains more than 1 register!")
+
+        configurable = sensor["configurable"]
+        if "min" in configurable:
+            self._attr_native_min_value = configurable["min"]
+        if "max" in configurable:
+            self._attr_native_max_value = configurable["max"]
 
     @property
-    def is_on(self) -> bool | None:
-        """Return True if entity is on."""
-        return self._attr_state != 0
+    def native_value(self) -> float:
+        """Return the state of the setting entity."""
+        return self._attr_state
 
-    async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn the entity on."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [1,])
-        self._attr_state = 1
+    async def async_set_native_value(self, value: float) -> None:
+        """Update the setting."""
+        int_value = int(value)
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int_value,])
+        self._attr_state = int_value
         self.async_write_ha_state()
-
-    async def async_turn_off(self, **kwargs: Any) -> None:
-        """Turn the entity off."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [0,])
-        self._attr_state = 0
-        self.async_write_ha_state()
+        #await self.entity_description.update_fn(self.coordinator., int(value))
+        #await self.coordinator.async_request_refresh()
