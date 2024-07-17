@@ -198,8 +198,6 @@ class Inverter(InverterApi):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
                         await asyncio.sleep(TIMINGS_QUERY_EXCEPT_SLEEP)
-                        #if (n := ACTION_RETRY_ATTEMPTS - attempts_left) >= 1:
-                        #    await asyncio.sleep(n)
 
                     _LOGGER.debug(f"Querying {'succeeded.' if result == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 

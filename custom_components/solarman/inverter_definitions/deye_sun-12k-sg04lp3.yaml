@@ -378,12 +378,11 @@ parameters:
     items:
       - name: "Solar Sell"
         update_interval: 30
-        class: ""
+        class: "switch"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
-        switch: True
         registers: [0x0091]
 
   - group: BMS
@@ -819,25 +818,20 @@ parameters:
           min: 0
           max: 3000
 
-  - group: Status
+  - group: "Controls"
     items:
-      # Device - Power on/off status
-      - name: "Device Power Status"
+      # Device - Power the Inverter On/Off 
+      - name: ""
         update_interval: 30
-        class: "enum"
+        class: "switch"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0227]
-        icon: "mdi:information"
-        options: ["Off", "On"]
-        lookup:
-          - key: 0x0000
-            value: "Off"
-          - key: 0x0001
-            value: "On"
 
+  - group: Status
+    items:
       # Device - AC Relay status
       - name: "Device Relay Status"
         update_interval: 30

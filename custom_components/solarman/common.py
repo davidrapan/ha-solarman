@@ -4,6 +4,12 @@ import aiofiles
 
 from .const import *
 
+def get_current_file_name(value):
+    result = value.rsplit('.', 1)
+    if len(result) > 0:
+        return result[-1]
+    return ""
+
 async def async_execute(x):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, x)

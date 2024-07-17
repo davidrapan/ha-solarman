@@ -29,9 +29,11 @@ from .sensor import SolarmanSensor
 
 _LOGGER = logging.getLogger(__name__)
 
-def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
+_PLATFORM = get_current_file_name(__name__)
+
+def _create_sensor(coordinator, sensor):
     try:
-        entity = SolarmanSwitchEntity(coordinator, sensor, battery_life_cycle_rating)
+        entity = SolarmanSwitchEntity(coordinator, sensor)
 
         entity.update()
 
@@ -44,18 +46,13 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     _LOGGER.debug(f"async_setup_entry: {config.options}")
     coordinator = hass.data[DOMAIN][config.entry_id]
 
-    options = config.options
-
-    battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE)
-    battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
-
     sensors = coordinator.inverter.get_sensors()
 
     # Add entities.
     #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating) for sensor in sensors if "switch" in sensor)
+    async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if ("class" in sensor and sensor["class"] == _PLATFORM))
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
@@ -63,8 +60,8 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     return True
 
 class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
-    def __init__(self, coordinator, sensor, battery_life_cycle_rating):
-        SolarmanSensor.__init__(self, coordinator, sensor, battery_life_cycle_rating)
+    def __init__(self, coordinator, sensor):
+        SolarmanSensor.__init__(self, coordinator, sensor, 0)
         # Set The Device Class of the entity.
         self._attr_device_class = SwitchDeviceClass.SWITCH
         # Set The Category of the entity.
@@ -84,7 +81,7 @@ class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [65280,])
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [1,])
         self._attr_state = 1
         self.async_write_ha_state()
 
