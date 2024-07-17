@@ -18,8 +18,8 @@ from .parser import ParameterParser
 _LOGGER = logging.getLogger(__name__)
 
 class InverterApi(PySolarmanV5Async):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = True, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+    def __init__(self, address, serial, port, mb_slave_id, auto_reconnect):
+        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = auto_reconnect, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self.status_lastUpdate = "N/A"
         self.status = -1
 
@@ -128,11 +128,12 @@ class InverterApi(PySolarmanV5Async):
 
 class Inverter(InverterApi):
     def __init__(self, address, serial, port, mb_slave_id, name, mac, lookup_path, lookup_file):
-        super().__init__(address, serial, port, mb_slave_id)
+        super().__init__(address, serial, port, mb_slave_id, AUTO_RECONNECT)
         self.name = name
         self.mac = mac
         self.lookup_path = lookup_path
         self.lookup_file = lookup_file if lookup_file and not lookup_file == "parameters.yaml" else "deye_hybrid.yaml"
+        self.auto_reconnect = AUTO_RECONNECT
 
         #execute_async(self.load())
 
@@ -197,6 +198,8 @@ class Inverter(InverterApi):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
                         await asyncio.sleep(TIMINGS_QUERY_EXCEPT_SLEEP)
+                        #if (n := ACTION_RETRY_ATTEMPTS - attempts_left) >= 1:
+                        #    await asyncio.sleep(n)
 
                     _LOGGER.debug(f"Querying {'succeeded.' if result == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
@@ -226,7 +229,8 @@ class Inverter(InverterApi):
             _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
         except Exception as e:
             _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed. [{format_exception(e)}]")
-            #await self.async_disconnect()
+            if not self.auto_reconnect:
+                await self.async_disconnect()
             raise
         return True
 
@@ -238,6 +242,7 @@ class Inverter(InverterApi):
             _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
         except Exception as e:
             _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed. [{format_exception(e)}]")
-            #await self.async_disconnect()
+            if not self.auto_reconnect:
+                await self.async_disconnect()
             raise
         return True

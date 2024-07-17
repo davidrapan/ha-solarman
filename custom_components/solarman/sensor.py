@@ -35,7 +35,7 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
         elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
             entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         #elif "switch" in sensor and sensor["switch"]:
-        #    entity = SolarmanSwitchSensor(coordinator, sensor, battery_life_cycle_rating)
+        #    entity = SolarmanSwitchEntity(coordinator, sensor, battery_life_cycle_rating)
         else:
             entity = SolarmanSensor(coordinator, sensor, battery_life_cycle_rating)
 

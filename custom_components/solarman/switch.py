@@ -8,7 +8,7 @@ from functools import cached_property, partial
 
 from homeassistant.components.template.sensor import SensorTemplate
 from homeassistant.components.template.sensor import TriggerSensorEntity
-from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
+from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.helpers.template import Template
 
 from homeassistant.core import HomeAssistant, callback
@@ -31,7 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
     try:
-        entity = SolarmanSwitchSensor(coordinator, sensor, battery_life_cycle_rating)
+        entity = SolarmanSwitchEntity(coordinator, sensor, battery_life_cycle_rating)
 
         entity.update()
 
@@ -62,23 +62,20 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
     return True
 
-class SolarmanSwitchSensor(SolarmanSensor, SwitchEntity):
+class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
     def __init__(self, coordinator, sensor, battery_life_cycle_rating):
         SolarmanSensor.__init__(self, coordinator, sensor, battery_life_cycle_rating)
-
-        # Set the category of the sensor.
-        self._attr_entity_category = (EntityCategory.CONFIG)
-
-        self._attr_device_class = "switch"
+        # Set The Device Class of the entity.
+        self._attr_device_class = SwitchDeviceClass.SWITCH
+        # Set The Category of the entity.
+        self._attr_entity_category = EntityCategory.CONFIG
 
         registers = sensor["registers"]
         registers_length = len(registers)
-
         if registers_length > 0:
             self.register = sensor["registers"][0]
-
         if registers_length > 1:
-            _LOGGER.warning(f"SolarmanSwitchSensor.__init__: Contains more than 1 register!")
+            _LOGGER.warning(f"SolarmanSwitchEntity.__init__: Contains more than 1 register!")
 
     @property
     def is_on(self) -> bool | None:
