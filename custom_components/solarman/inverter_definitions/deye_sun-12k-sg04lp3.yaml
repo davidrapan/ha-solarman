@@ -1382,7 +1382,7 @@ parameters:
 
       # Grid - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid Power"
-        desciption: Combined power of all three phases
+        description: Combined power of all three phases
         realtime:
         class: "measurement"
         state_class: "measurement"
@@ -1394,7 +1394,7 @@ parameters:
 
       # Grid - The inverted power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid Power ∇"
-        desciption: Combined power of all three phases
+        description: Combined power of all three phases
         entity_id: "grid_power_inverted"
         realtime:
         class: "measurement"
@@ -1639,7 +1639,7 @@ parameters:
 
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load Power"
-        desciption: Combined power of all three phases
+        description: Combined power of all three phases
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1709,7 +1709,7 @@ parameters:
 
       # SmartLoad/Generator - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad Power"
-        desciption: Combined power of all three phases
+        description: Combined power of all three phases
         realtime:
         class: "power"
         state_class: "measurement"
@@ -1722,7 +1722,7 @@ parameters:
     items:
       # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
       - name: "PV Power"
-        desciption: Combined power of all inputs
+        description: Combined power of all inputs
         realtime:
         class: "power"
         state_class: "measurement"
