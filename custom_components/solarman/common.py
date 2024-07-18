@@ -37,6 +37,9 @@ def format_exception(e):
 def Raise(exception) -> None:
     raise exception
 
+def get_numbe(value):
+    return int(value) if isinstance(value, int) or (isinstance(value, float) and value.is_integer()) else float(value)
+
 def get_number(value, digits):
     return int(value) if isinstance(value, int) or (isinstance(value, float) and value.is_integer()) else (n if (n := round(value, digits)) and not n.is_integer() else int(n))
 

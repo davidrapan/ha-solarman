@@ -56,6 +56,10 @@ class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 
+        self.scale = 1
+        if "scale" in sensor:
+            self.scale = get_numbe(sensor["scale"])
+
         registers = sensor["registers"]
         registers_length = len(registers)
         if registers_length > 0:
@@ -68,6 +72,8 @@ class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
             self._attr_native_min_value = configurable["min"]
         if "max" in configurable:
             self._attr_native_max_value = configurable["max"]
+        if "step" in configurable:
+            self._attr_native_step = configurable["step"]
 
     @property
     def native_value(self) -> float:
@@ -76,9 +82,8 @@ class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the setting."""
-        int_value = int(value)
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int_value,])
-        self._attr_state = int_value
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int(value / self.scale),])
+        self._attr_state = get_numbe(value)
         self.async_write_ha_state()
         #await self.entity_description.update_fn(self.coordinator., int(value))
         #await self.coordinator.async_request_refresh()
