@@ -52,7 +52,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanSensor.__init__(self, coordinator, sensor, 0)
+        SolarmanSensor.__init__(self, coordinator, sensor, 0, 0)
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 

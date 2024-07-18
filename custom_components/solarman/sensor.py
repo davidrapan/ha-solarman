@@ -35,7 +35,7 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
         elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
             entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         else:
-            entity = SolarmanSensor(coordinator, sensor, battery_life_cycle_rating)
+            entity = SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
         entity.update()
 
@@ -82,7 +82,7 @@ class SolarmanStatus(SolarmanEntity):
         self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_lastUpdate
 
 class SolarmanSensor(SolarmanBaseEntity):
-    def __init__(self, coordinator, sensor, battery_life_cycle_rating):
+    def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, sensor)
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
@@ -117,11 +117,11 @@ class SolarmanSensor(SolarmanBaseEntity):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
 
         if "name" in sensor and sensor["name"] == "Battery":
-            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Life Cycle Rating": battery_life_cycle_rating }
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
 class SolarmanBatterySensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
-        SolarmanSensor.__init__(self, coordinator, sensor, battery_life_cycle_rating)
+        SolarmanSensor.__init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
 

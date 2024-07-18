@@ -447,7 +447,8 @@ parameters:
         registers: [0x00D5]
         icon: "mdi:battery"
 
-      - name: "BMS"
+      - name: "BMS SOC"
+        attribute:
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -458,18 +459,9 @@ parameters:
         validation:
           min: 0
           max: 101
-        attributes:
-          [
-            "BMS Type",
-            "BMS Charged Voltage",
-            "BMS Discharged Voltage",
-            "BMS Charging Current Limit",
-            "BMS Discharging Current Limit",
-            "BMS Max Charging Current",
-            "BMS Max Discharging Current",
-          ]
 
       - name: "BMS Voltage"
+        attribute:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -478,6 +470,7 @@ parameters:
         registers: [0x00D7]
 
       - name: "BMS Current"
+        attribute:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -505,7 +498,7 @@ parameters:
         registers: [0x00DB]
         icon: "mdi:battery"
 
-      - name: "BMS Alarm"
+      - name: "Battery BMS Alarm"
         class: "enum"
         state_class: ""
         uom: ""
@@ -521,8 +514,10 @@ parameters:
             value: "Active"
           - key: "default"
             value: "Active"
+        attributes: ["BMS Fault Location"]
 
       - name: "BMS Fault Location"
+        attribute:
         class: ""
         state_class: ""
         uom: ""
@@ -1005,7 +1000,22 @@ parameters:
         validation:
           min: 0
           max: 101
-        attributes: ["Battery Control Mode", "Battery Corrected Capacity"]
+        attributes:
+          [
+            "Battery Control Mode",
+            "Battery Corrected Capacity",
+            "BMS SOC",
+            "BMS Current",
+            "BMS Voltage",
+            "BMS Type",
+            "BMS Other Symbol",
+            "BMS Charged Voltage",
+            "BMS Discharged Voltage",
+            "BMS Charging Current Limit",
+            "BMS Discharging Current Limit",
+            "BMS Max Charging Current",
+            "BMS Max Discharging Current"
+          ]
 
       # Battery - The power of battery is S16bit
       - name: "Battery Power"

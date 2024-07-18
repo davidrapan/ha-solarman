@@ -51,7 +51,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanSensor.__init__(self, coordinator, sensor, 0)
+        SolarmanSensor.__init__(self, coordinator, sensor, 0, 0)
         # Set The Device Class of the entity.
         self._attr_device_class = SwitchDeviceClass.SWITCH
         # Set The Category of the entity.
