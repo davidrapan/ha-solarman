@@ -743,6 +743,7 @@ parameters:
         icon: "mdi:battery-minus"
 
       - name: "Today Battery Life Cycles"
+        description: Calculates today's battery life cycles based on today's charged amount
         class: ""
         state_class: "total_increasing"
         uom: ""
@@ -752,6 +753,7 @@ parameters:
         icon: "mdi:battery-sync"
 
       - name: "Total Battery Life Cycles"
+        description: Calculates total battery life cycles based on total charged amount
         class: ""
         state_class: "total_increasing"
         uom: ""
@@ -813,6 +815,7 @@ parameters:
         registers: [0x020F, 0x0210]
 
       - name: "Today Losses"
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -837,6 +840,7 @@ parameters:
             registers: [0x0202]
 
       - name: "Total Losses"
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1125,6 +1129,7 @@ parameters:
 
       # Battery - The state of health
       - name: "Battery SOH"
+        description: Calculates state of health based on total charged amount
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -1135,11 +1140,13 @@ parameters:
 
       # Battery - The state of battery
       - name: "Battery State"
-        class: ""
+        description: Determines battery state from battery power by +-50 W
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 0
+        options: ["charging", "standby", "discharging"]
         icon: "mdi:battery"
 
       # Battery - The current of battery 1 is S16bit (low 16 bits)
@@ -1504,6 +1511,7 @@ parameters:
 
       # Inverter - Includes consumption of the inverter device itself as well AC/DC conversion losses
       - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
         class: "power"
         state_class: "measurement"
         uom: "W"
