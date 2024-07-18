@@ -4,6 +4,7 @@ import logging
 import asyncio
 import voluptuous as vol
 
+from typing import Any
 from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry

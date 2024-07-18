@@ -221,26 +221,42 @@ class Inverter(InverterApi):
 
     async def service_write_holding_register(self, register, value) -> bool:
         _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
-        try:
-            await self.async_connect()
-            response = await self.write_holding_register(register, value)
-            _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
-        except Exception as e:
-            _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed. [{format_exception(e)}]")
-            if not self.auto_reconnect:
-                await self.async_disconnect()
-            raise
-        return True
+
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_holding_register(register, value)
+                _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WRITE_EXCEPT_SLEEP)
 
     async def service_write_multiple_holding_registers(self, register, values) -> bool:
         _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
-        try:
-            await self.async_connect()
-            response = await self.write_multiple_holding_registers(register, values)
-            _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
-        except Exception as e:
-            _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed. [{format_exception(e)}]")
-            if not self.auto_reconnect:
-                await self.async_disconnect()
-            raise
-        return True
+
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_multiple_holding_registers(register, values)
+                _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WRITE_EXCEPT_SLEEP)
