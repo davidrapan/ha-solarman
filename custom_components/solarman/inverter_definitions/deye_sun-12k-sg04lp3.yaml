@@ -201,7 +201,6 @@ parameters:
         range:
           min: 0
           max: 2000
-        attributes: ["Battery Corrected Capacity"]
 
       - name: "Battery Empty"
         class: "voltage"
@@ -1007,7 +1006,7 @@ parameters:
         validation:
           min: 0
           max: 101
-        attributes: ["Battery Control Mode"]
+        attributes: ["Battery Control Mode", "Battery Corrected Capacity"]
 
       # Battery - The power of battery is S16bit
       - name: "Battery Power"
