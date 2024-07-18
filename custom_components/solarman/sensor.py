@@ -92,7 +92,7 @@ class SolarmanSensor(SolarmanBaseEntity):
         if "state_class" in sensor and sensor["state_class"]:
             self._attr_extra_state_attributes = { "state_class": sensor["state_class"] }
 
-        self._digits = sensor["digits"] if "digits" in sensor else REGISTERS_DIGITS_DEFAULT
+        self._digits = sensor["digits"] if "digits" in sensor else DEFAULT_DIGITS
 
         self._attr_entity_category = (None)
 

@@ -72,9 +72,8 @@ class InverterApi(PySolarmanV5Async):
             raise
         except OSError as e:
             if e.errno == errno.EHOSTUNREACH:
-                self.log.debug("[%s] EHOSTUNREACH error: %s", self.serial, e)
-            self.log.debug("[%s] Send/Receive error: %s", self.serial, e)
-            raise TimeoutError()
+                raise TimeoutError from e
+            raise
         except Exception as e:
             self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
             raise
@@ -194,7 +193,7 @@ class Inverter(InverterApi):
                     except (V5FrameError, TimeoutError, Exception) as e:
                         result = 0
 
-                        if not isinstance(e, TimeoutError) or not attempts_left >= 1 or _LOGGER.isEnabledFor(logging.DEBUG):
+                        if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
                         await asyncio.sleep(TIMINGS_QUERY_EXCEPT_SLEEP)

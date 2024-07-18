@@ -12,9 +12,9 @@ _LOGGER = logging.getLogger(__name__)
 class ParameterParser:
     def __init__(self, parameter_definition):
         self._lookups = parameter_definition
-        self._update_interval = TIMINGS_QUERY_INTERVAL_DEFAULT
-        self._min_span = REGISTERS_MIN_SPAN_DEFAULT
-        self._digits = REGISTERS_DIGITS_DEFAULT
+        self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
+        self._min_span = DEFAULT_REGISTERS_MIN_SPAN
+        self._digits = DEFAULT_DIGITS
         self._result = {}
 
         if "default" in parameter_definition:
