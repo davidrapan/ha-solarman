@@ -112,6 +112,12 @@ class SolarmanSensor(SolarmanBaseEntity):
         if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
             self._attr_unit_of_measurement = unit_of_measurement
 
+        if "alt" in sensor and (alt := sensor["alt"]):
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Alt Name": alt }
+
+        if "description" in sensor and (description := sensor["description"]):
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
+
         if "options" in sensor and (options := sensor["options"]):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
