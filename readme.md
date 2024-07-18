@@ -1,10 +1,15 @@
 # ⚡ Solarman Stick Logger integration
 
-[![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman.svg)](https://github.com/davidrapan/ha-solarman/releases/latest)
-[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman.svg?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
-[![License](https://img.shields.io/github/license/davidrapan/ha-solarman.svg)](LICENSE)
-[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green.svg)](https://github.com/custom-components/hacs)
-[![Discussions](https://img.shields.io/badge/community-discussions-brightgreen.svg)](https://github.com/davidrapan/ha-solarman/discussions)
+[![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman)](https://github.com/davidrapan/ha-solarman/releases/latest)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
+[![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](LICENSE)
+[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green)](https://github.com/custom-components/hacs)
+[![Discussions](https://img.shields.io/badge/community-discussions-brightgreen)](https://github.com/davidrapan/ha-solarman/discussions)
+[![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
+
+#### Signpost
+- [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
+- [Sensor renaming](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme-%E2%80%90-sensor-renaming)
 
 > [!NOTE]  
 > If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
@@ -18,6 +23,7 @@
 > This integration builds on and is heavily inspired by [@StephanJoubert](https://github.com/StephanJoubert/home_assistant_solarman) (but W/ decent amount of changes):
 > - Using asynchronous part of [@jmccrohan](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself
 > - Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA
+> - Supports configuration of inverter parameters (Battery, Work Mode, ...)
 > - Improved stability (no more disconnects and missing values)
 > - Discovery and not just for configuration but also as part of initialization (i.e. adapts to changed IP)
 > - New Inverter profiles features **See 'deye_sg04lp3.yaml' for examples*:
@@ -97,4 +103,4 @@ Maybe it will be useful for some, but since the stability of the polling improve
 - Find newly added Solarman, open it and then click on the DOWNLOAD button
 
 ### 🔧 Manually
-- Copy the contents of 'custom_components/solarman' directory into the Home Assistant with exactly the same hirearchy withing the '/config' directory
+- Copy the contents of 'custom_components/solarman' directory into the Home Assistant with exactly the same hirearchy within the '/config' directory
