@@ -1,4 +1,4 @@
-# ⚡ Solarman Stick Logger integration
+# ⚡ Solarman Stick Logger
 
 [![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman)](https://github.com/davidrapan/ha-solarman/releases/latest)
 [![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
@@ -9,6 +9,7 @@
 
 #### Signpost
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
+- [Custom sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-sensors)
 - [Sensor renaming](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme-%E2%80%90-sensor-renaming)
 
 > [!NOTE]  
