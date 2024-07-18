@@ -1,6 +1,7 @@
+#
 # KSTAR Hybrid Inverter
 # Modbus information taken from "MODBUS RS485 Communication Protocol V2.5" document provided by KSTAR
-
+#
 # This inverter exposes its data in the following registers (although not all of them are used by this definition file):
 #
 #  - INPUT_REGISTERS   3000 - 3660 decimal, 0x0BB8 - 0x0E4C hexadecimal
@@ -8,6 +9,11 @@
 #
 # Each request can get a maximum of 125 registers as per modbus protocol (start and end included), so we need to
 # split up the list of used registers into multiple requests of maximum 125 registers each.
+#
+
+default:
+  update_interval: 10
+  digits: 6
 
 requests:
   # Start requesting from the first needed register (3000)

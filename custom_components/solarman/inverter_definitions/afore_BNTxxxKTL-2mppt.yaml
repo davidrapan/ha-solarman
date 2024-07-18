@@ -1,4 +1,6 @@
+#
 # To use modbus function in Afore BNTxxxKTL inverters, You first need to change protocol from RS485 to MODBUS in inverter menu
+#
 
 default:
   update_interval: 60

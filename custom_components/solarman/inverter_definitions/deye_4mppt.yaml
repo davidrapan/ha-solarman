@@ -1,8 +1,10 @@
+#
 # First version: 08.05.2022
 # Latest update: 08.09.2023
 # Microinverter SUN2000G3 (DEYE/VESDAS)
 # 4x MPPT, 4x inverter
 # 1x Logger, 4x Module,
+#
 
 default:
   update_interval: 60

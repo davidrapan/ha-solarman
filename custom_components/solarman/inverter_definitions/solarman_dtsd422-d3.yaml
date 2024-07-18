@@ -2,6 +2,10 @@
 # Solarman Smart Meter DTSD422-D3
 #
 
+default:
+  update_interval: 5
+  digits: 6
+
 parameters:
   - group: Voltage
     items:
