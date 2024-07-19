@@ -1,27 +1,38 @@
 from __future__ import annotations
 
-import yaml
+import re
 import struct
 import logging
 
-from itertools import groupby
-from operator import itemgetter
-
-from .const import COORDINATOR_QUERY_INTERVAL_DEFAULT, FLOAT_ROUND_TO
+from .const import *
 from .common import *
 
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
     def __init__(self, parameter_definition):
-        self._lookups = yaml.safe_load(parameter_definition)
-        self.result = {}
+        self._lookups = parameter_definition
+        self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
+        self._min_span = DEFAULT_REGISTERS_MIN_SPAN
+        self._digits = DEFAULT_DIGITS
+        self._result = {}
+
+        if "default" in parameter_definition:
+            default = parameter_definition["default"]
+            if "update_interval" in default:
+                self._update_interval = default["update_interval"]
+            if "min_span" in default:
+                self._min_span = default["min_span"]
+            if "digits" in default:
+                self._digits = default["digits"]
+
+        _LOGGER.debug(f"Default update_interval: {self._update_interval}, min_span: {self._min_span}, digits: {self._digits}")
 
     def lookup(self):
         return self._lookups["parameters"]
 
     def is_valid(self, parameters):
-        return "name" in parameters and "rule" in parameters
+        return "name" in parameters and "rule" in parameters # and "registers" in parameters
 
     def is_enabled(self, parameters):
         return not "disabled" in parameters
@@ -33,7 +44,14 @@ class ParameterParser:
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
     def is_scheduled(self, parameters, runtime):
-        return "realtime" in parameters or (runtime % (parameters["update_interval"] if "update_interval" in parameters else COORDINATOR_QUERY_INTERVAL_DEFAULT) == 0)
+        return "realtime" in parameters or (runtime % (parameters["update_interval"] if "update_interval" in parameters else self._update_interval) == 0)
+
+    def default_from_unit_of_measurement(self, parameters):
+        return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
+
+    def set_state(self, key, value):
+        self._result[key] = {}
+        self._result[key]["state"] = value
 
     def get_sensors(self):
         result = [{"name": "Connection Status", "artificial": ""}]
@@ -41,6 +59,7 @@ class ParameterParser:
             for j in i["items"]:
                 if self.is_sensor(j):
                     result.append(j)
+
         return result
 
     def get_requests(self, runtime = 0):
@@ -52,25 +71,26 @@ class ParameterParser:
         for i in self.lookup():
             for j in i["items"]:
                 if self.is_requestable(j) and self.is_scheduled(j, runtime):
-                    self.result[j["name"]] = ""
+                    self.set_state(j["name"], self.default_from_unit_of_measurement(j))
                     for r in j["registers"]:
                         registers.append(r)
 
         registers.sort()
 
-        groups = group_when(registers, lambda x, y: y - x > 25)
+        groups = group_when(registers, lambda x, y: y - x > self._min_span)
         
-        return [{ "start": r[0], "end": r[-1], "mb_functioncode": 0x03 } for r in groups]
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: 0x03 } for r in groups]
 
     def parse(self, rawData, start, length):
         for i in self.lookup():
             for j in i["items"]:
                 if self.is_valid(j) and self.is_enabled(j):
                     self.try_parse(rawData, j, start, length)
+
         return
 
     def get_result(self):
-        return self.result
+        return self._result
 
     def in_range(self, value, definition):
         if "range" in definition:
@@ -78,25 +98,27 @@ class ParameterParser:
             if "min" in range and "max" in range:
                 if value < range["min"] or value > range["max"]:
                     return False
+
         return True
 
-    def lookup_value(self, value, definition):
-        for o in definition["lookup"]:
-            if (o["key"] == value):
+    def lookup_value(self, value, keyvaluepairs):
+        for o in keyvaluepairs:
+            if o["key"] == value or o["key"] == "default":
                 return o["value"]
-        return value if not "lookup_default" in definition else f"{definition["lookup_default"]} [{value}]"
 
-    def do_validate(self, title, value, rule):
+        return keyvaluepairs[0]["value"]
+
+    def do_validate(self, key, value, rule):
         if "min" in rule:
             if rule["min"] > value:
                 if "invalidate_all" in rule:
-                    raise ValueError(f"Invalidate complete dataset ({title} ~ {value})")
+                    raise ValueError(f"Invalidate complete dataset ({key} ~ {value})")
                 return False
 
         if "max" in rule:
             if rule["max"] < value:
                 if "invalidate_all" in rule:
-                    raise ValueError(f"Invalidate complete dataset ({title} ~ {value})")
+                    raise ValueError(f"Invalidate complete dataset ({key} ~ {value})")
                 return False
 
         return True
@@ -131,19 +153,19 @@ class ParameterParser:
             case 9:
                 self.try_parse_time(rawData, definition, start, length)
             case 10:
-                self.try_parse_raw(rawData,definition, start, length)
+                self.try_parse_raw(rawData, definition, start, length)
+
         return
 
-    def try_parse_unsigned(self, rawData, definition, start, length):
-        title = definition["name"]
-        scale = definition["scale"]
-        value = 0
+    def _read_registers(self, rawData, definition, start, length):
+        scale = definition["scale"] if "scale" in definition else 1
         found = True
+        value = 0
         shift = 0
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 value += (rawData[index] & 0xFFFF) << shift
                 shift += 16
             else:
@@ -151,39 +173,29 @@ class ParameterParser:
 
         if found:
             if not self.in_range(value, definition):
-                return
+                return None
 
             if "mask" in definition:
-                mask = definition["mask"]
-                value &= mask
+                value &= definition["mask"]
 
-            if "lookup" in definition:
-                self.result[title] = self.lookup_value(value, definition)
-                self.result[title + " enum"] = int(value)
-            else:
+            if "lookup" not in definition:
                 if "offset" in definition:
                     value = value - definition["offset"]
-
                 value = value * scale
 
-                if "validation" in definition:
-                    if not self.do_validate(title, value, definition["validation"]):
-                        return
+        return value if found else None
 
-                self.num_to_result(title, value)
-        return
-
-    def try_parse_signed(self, rawData, definition, start, length):
-        title = definition["name"]
-        scale = definition["scale"]
-        value = 0
+    def _read_registers_signed(self, rawData, definition, start, length):
+        magnitude = definition["magnitude"] if "magnitude" in definition else False
+        scale = definition["scale"] if "scale" in definition else 1
         found = True
-        shift = 0
         maxint = 0
+        value = 0
+        shift = 0
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 maxint <<= 16
                 maxint |= 0xFFFF
                 value += (rawData[index] & 0xFFFF) << shift
@@ -193,27 +205,73 @@ class ParameterParser:
 
         if found:
             if not self.in_range(value, definition):
-                return
+                return None
 
             if "offset" in definition:
                 value = value - definition["offset"]
 
-            if value > maxint / 2:
-                value = (value - maxint) * scale
+            if value > (maxint >> 1):
+                value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+
+            value = value * scale
+
+        return value if found else None
+
+    def try_parse_unsigned(self, rawData, definition, start, length):
+        key = definition["name"]
+        value = 0
+        found = True
+
+        if "sensors" in definition:
+            for s in definition["sensors"]:
+                if (n := (self._read_registers(rawData, s, start, length) if not "signed" in s else self._read_registers_signed(rawData, s, start, length))) is not None:
+                    if not "subtract" in s:
+                        value += n
+                    else:
+                        value -= n
+                else:
+                    found = False
+        else:
+            value = self._read_registers(rawData, definition, start, length)
+            found = value is not None
+
+        if found:
+            if "uint" in definition and value < 0:
+                value = 0
+
+            if "lookup" in definition:
+                self.set_state(key, self.lookup_value(value, definition["lookup"]))
+                self._result[key]["value"] = int(value)
             else:
-                value = value * scale
+                if "validation" in definition:
+                    if not self.do_validate(key, value, definition["validation"]):
+                        return
+
+                self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
+
+        return
+
+    def try_parse_signed(self, rawData, definition, start, length):
+        key = definition["name"]
+        value = self._read_registers_signed(rawData, definition, start, length)
+
+        if value is not None:
+            if "inverted" in definition and definition["inverted"]:
+                value = -value
 
             if "validation" in definition:
-                if not self.do_validate(title, value, definition["validation"]):
+                if not self.do_validate(key, value, definition["validation"]):
                     return
 
-            self.num_to_result(title, value)
+            self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
+
         return
 
     def try_parse_ascii(self, rawData, definition, start, length):
-        title = definition["name"]         
+        key = definition["name"]         
         found = True
         value = ""
+
         for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
@@ -223,13 +281,15 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return  
     
     def try_parse_bits(self, rawData, definition, start, length):
-        title = definition["name"]         
+        key = definition["name"]         
         found = True
         value = []
+
         for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
@@ -239,13 +299,15 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return 
     
     def try_parse_version(self, rawData, definition, start, length):
-        title = definition["name"]
+        key = definition["name"]
         found = True
         value = ""
+
         for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
@@ -255,14 +317,17 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return
 
     def try_parse_datetime(self, rawData, definition, start, length):
-        title = definition["name"]         
+        key = definition["name"]         
         found = True
         value = ""
+
         print("start: ", start)
+
         for i,r in enumerate(definition["registers"]):
             index = r - start
             print ("index: ",index)
@@ -280,13 +345,15 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return
 
     def try_parse_time(self, rawData, definition, start, length):
-        title = definition["name"]         
+        key = definition["name"]         
         found = True
         value = ""
+
         for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
@@ -296,14 +363,16 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return
 
     def try_parse_raw(self, rawData, definition, start, length):
-        title = definition['name']
+        key = definition["name"]
         found = True
         value = []
-        for r in definition['registers']:
+
+        for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index]
@@ -312,18 +381,6 @@ class ParameterParser:
                 found = False
 
         if found:
-            self.result[title] = value
+            self.set_state(key, value)
+
         return
-
-    def num_to_result(self, title, value):
-        if self.is_integer_num(value):
-            self.result[title] = int(value)
-        else:   
-            self.result[title] = round(value, FLOAT_ROUND_TO)
-
-    def is_integer_num(self, n):
-        if isinstance(n, int):
-            return True
-        if isinstance(n, float):
-            return n.is_integer()
-        return False

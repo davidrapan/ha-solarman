@@ -1,10 +1,9 @@
-import socket
 import time
-import yaml
+import errno
 import struct
+import socket
 import logging
 import asyncio
-import aiofiles
 import threading
 import concurrent.futures
 
@@ -18,16 +17,11 @@ from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
 
-def read_file(filepath):
-    with open(filepath) as file:
-        return file.read()
-
 class InverterApi(PySolarmanV5Async):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = True, socket_timeout = COORDINATOR_TIMEOUT)
-        self._last_frame: bytes = b""
-        self.status = -1
+    def __init__(self, address, serial, port, mb_slave_id, auto_reconnect):
+        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = auto_reconnect, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self.status_lastUpdate = "N/A"
+        self.status = -1
 
     def is_connecting(self):
         return self.status == 0
@@ -53,7 +47,7 @@ class InverterApi(PySolarmanV5Async):
                 self.writer.write(self._last_frame)
                 await self.writer.drain()
         except Exception as e:
-            self.log.exception(format_exception(e))
+            self.log.exception(f"Cannot open connection to {self.address}. [{format_exception(e)}]")
 
     async def _send_receive_v5_frame(self, data_logging_stick_frame):
         """
@@ -70,14 +64,18 @@ class InverterApi(PySolarmanV5Async):
             v5_response = await asyncio.wait_for(self.data_queue.get(), self.socket_timeout)
             if v5_response == b"":
                 raise NoSocketAvailableError("Connection closed on read. Retry if auto-reconnect is enabled")
-        except AttributeError as exc:
-            raise NoSocketAvailableError("Connection already closed") from exc
+        except AttributeError as e:
+            raise NoSocketAvailableError("Connection already closed") from e
         except NoSocketAvailableError:
             raise
         except TimeoutError:
             raise
-        except Exception as exc:
-            self.log.exception("[%s] Send/Receive error: %s", self.serial, exc)
+        except OSError as e:
+            if e.errno == errno.EHOSTUNREACH:
+                raise TimeoutError from e
+            raise
+        except Exception as e:
+            self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
             raise
         finally:
             self.data_wanted_ev.clear()
@@ -88,11 +86,10 @@ class InverterApi(PySolarmanV5Async):
     async def async_connect(self) -> None:
         if self.reader_task:
             _LOGGER.debug(f"Reader Task done: {self.reader_task.done()}, cancelled: {self.reader_task.cancelled()}.")
-        #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
-        if not self.reader_task:
+        if not self.reader_task: #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
             _LOGGER.info(f"Connecting to {self.address}:{self.port}")
             await self.connect()
-        elif not self.is_connected():
+        elif not self.status > 0:
             await self.reconnect()
 
     async def async_disconnect(self, loud = True) -> None:
@@ -110,15 +107,15 @@ class InverterApi(PySolarmanV5Async):
                 _LOGGER.debug(f"{e} can be during closing ignored.")
             finally:
                 self.writer.close()
-                await self.writer.wait_closed()
+                try:
+                    await self.writer.wait_closed()
+                except OSError as e: # Happens when host is unreachable.
+                    _LOGGER.debug(f"{e} can be during closing ignored.")
 
-    async def async_reconnect(self) -> None:
-        await self.async_disconnect(False)
-        loop = asyncio.get_running_loop()
-        loop.create_task(self.reconnect())
-
-    async def _read_registers(self, code, params, start, end) -> None:
+    async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
+
+        await self.async_connect()
 
         match code:
             case 3:
@@ -128,24 +125,21 @@ class InverterApi(PySolarmanV5Async):
 
         params.parse(response, start, length)
 
-    async def async_read(self, code, params, start, end) -> None:
-        await self.async_connect()
-        await self._read_registers(code, params, start, end)
-
 class Inverter(InverterApi):
-    def __init__(self, address, mac, serial, port, mb_slave_id, lookup_path, lookup_file):
-        super().__init__(address, serial, port, mb_slave_id)
+    def __init__(self, address, serial, port, mb_slave_id, name, mac, lookup_path, lookup_file):
+        super().__init__(address, serial, port, mb_slave_id, AUTO_RECONNECT)
+        self.name = name
         self.mac = mac
         self.lookup_path = lookup_path
         self.lookup_file = lookup_file if lookup_file and not lookup_file == "parameters.yaml" else "deye_hybrid.yaml"
+        self.auto_reconnect = AUTO_RECONNECT
 
-    async def async_load(self):
-        loop = asyncio.get_running_loop()
-        self.parameter_definition = await loop.run_in_executor(None, lambda: yaml.safe_load(read_file(self.path + self.lookup_file)))
+        #execute_async(self.load())
 
-    async def get_sensors(self):
-        async with aiofiles.open(self.lookup_path + self.lookup_file) as f:
-            self.parameter_definition = await f.read()
+    async def load(self):
+        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
+
+    def get_sensors(self):
         if self.parameter_definition:
             params = ParameterParser(self.parameter_definition)
             return params.get_sensors()
@@ -162,9 +156,7 @@ class Inverter(InverterApi):
             self.status_lastUpdate = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             self.status = 1
 
-        result = middleware.get_result() if middleware else {}
-        result["Connection Status"] = self.get_connection_status()
-        return result
+        return middleware.get_result() if middleware else {}
 
     async def async_get_failed(self, message):
         _LOGGER.debug(f"Request failed. [Previous Status: {self.get_connection_status()}]")
@@ -185,26 +177,26 @@ class Inverter(InverterApi):
 
         try:
             for request in requests:
-                code = request['mb_functioncode']
-                start = request['start']
-                end = request['end']
+                code = get_request_code(request)
+                start = get_request_start(request)
+                end = get_request_end(request)
 
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
-                attempts_left = COORDINATOR_QUERY_RETRY_ATTEMPTS
+                attempts_left = ACTION_RETRY_ATTEMPTS
                 while attempts_left > 0:
                     attempts_left -= 1
 
                     try:
-                        await self.async_read(code, params, start, end)
+                        await self.async_read(params, code, start, end)
                         result = 1
                     except (V5FrameError, TimeoutError, Exception) as e:
                         result = 0
 
-                        if not isinstance(e, TimeoutError) or not attempts_left > 0 or _LOGGER.isEnabledFor(logging.DEBUG):
+                        if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
-                        await asyncio.sleep(COORDINATOR_ERROR_SLEEP)
+                        await asyncio.sleep(TIMINGS_QUERY_EXCEPT_SLEEP)
 
                     _LOGGER.debug(f"Querying {'succeeded.' if result == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
@@ -222,27 +214,68 @@ class Inverter(InverterApi):
         except UpdateFailed:
             raise
         except Exception as e:
-            await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed during connection start. [{format_exception(e)}]")
+            await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed. [{format_exception(e)}]")
 
         return self.get_result()
 
-# Service calls
-    async def service_write_holding_register(self, register, value):
-        _LOGGER.debug(f'Service Call: write_holding_register : [{register}], value : [{value}]')
+    async def service_read_holding_register(self, register, value):
+        _LOGGER.debug(f'Service Call: read_holding_registers : [{register}], value : [{value}]')
         try:
             await self.async_connect()
-            await self.write_holding_register(register, value)
+            await self.read_holding_registers(register, value)
         except Exception as e:
-            _LOGGER.warning(f"Service Call: write_holding_register : [{register}], value : [{value}] failed. [{format_exception(e)}]")
+            _LOGGER.warning(f"Service Call: read_holding_registers : [{register}], value : [{value}] failed. [{format_exception(e)}]")
             await self.async_disconnect()
         return
 
-    async def service_write_multiple_holding_registers(self, register, values):
-        _LOGGER.debug(f'Service Call: write_multiple_holding_registers: [{register}], values : [{values}]')
+    async def service_read_multiple_holding_registers(self, register, values):
+        _LOGGER.debug(f'Service Call: read_multiple_holding_registers: [{register}], values : [{values}]')
         try:
             await self.async_connect()
-            await self.write_multiple_holding_registers(register, values)
+            await self.read_multiple_holding_registers(register, values)
         except Exception as e:
-            _LOGGER.warning(f"Service Call: write_multiple_holding_registers: [{register}], values : [{values}] failed. [{format_exception(e)}]")
+            _LOGGER.warning(f"Service Call: read_multiple_holding_registers: [{register}], values : [{values}] failed. [{format_exception(e)}]")
             await self.async_disconnect()
         return
+
+    async def service_write_holding_register(self, register, value) -> bool:
+        _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
+
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_holding_register(register, value)
+                _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WRITE_EXCEPT_SLEEP)
+
+    async def service_write_multiple_holding_registers(self, register, values) -> bool:
+        _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
+
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_multiple_holding_registers(register, values)
+                _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WRITE_EXCEPT_SLEEP)

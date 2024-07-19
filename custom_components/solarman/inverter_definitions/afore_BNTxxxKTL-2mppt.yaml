@@ -1,4 +1,10 @@
+#
 # To use modbus function in Afore BNTxxxKTL inverters, You first need to change protocol from RS485 to MODBUS in inverter menu
+#
+
+default:
+  update_interval: 60
+  digits: 6
 
 requests:
   - start: 0x0000
@@ -8,7 +14,7 @@ requests:
   - start: 0x0000
     end: 0x000F
     mb_functioncode: 0x03
-      
+
 parameters:
   - group: solar
     items:
@@ -165,6 +171,6 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 1
-      
+
         registers: [0x000D]
         icon: "mdi:thermometer"

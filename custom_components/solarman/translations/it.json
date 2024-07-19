@@ -20,8 +20,7 @@
           "mb_slave_id": "Slave ID di Modbus (solitamente 1)",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
-          "disable_templating": "Disable template sensors"
+          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
           "inverter_host": "The hostname or IP address of the device to connect to.",
@@ -48,8 +47,7 @@
           "mb_slave_id": "Slave ID di Modbus (solitamente 1)",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
-          "disable_templating": "Disable template sensors"
+          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
           "inverter_host": "The hostname or IP address of the device to connect to.",
