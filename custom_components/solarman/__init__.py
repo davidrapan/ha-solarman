@@ -70,21 +70,21 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     await coordinator.async_config_entry_first_refresh()
 
-    # Register the services with home assistant.
-    #
-    _LOGGER.debug(f"async_setup: register_services")
-
-    register_services(hass, inverter)
-
     # Forward setup
     #
+    _LOGGER.debug(f"hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
+
     await hass.config_entries.async_forward_entry_setups(config, PLATFORMS)
     config.async_on_unload(config.add_update_listener(async_update_listener))
+
+    register_services(hass)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry({config.as_dict()})")
+
     if unload_ok := await hass.config_entries.async_unload_platforms(config, PLATFORMS):
         _ = hass.data[DOMAIN].pop(config.entry_id)
+
     remove_services(hass)
     return unload_ok

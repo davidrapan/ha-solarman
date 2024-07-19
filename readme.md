@@ -105,3 +105,8 @@ Maybe it will be useful for some, but since the stability of the polling improve
 
 ### 🔧 Manually
 - Copy the contents of 'custom_components/solarman' directory into the Home Assistant with exactly the same hirearchy within the '/config' directory
+
+## 👤 Contributors
+<a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=davidrapan/ha-solarman" />
+</a>

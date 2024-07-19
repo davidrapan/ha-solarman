@@ -1,12 +1,11 @@
 read_holding_register:
   name: Read Holding Register (Modbus Function Code 3)
   description: Read a single register value
-
   fields:
     device:
       name: Device
       description: The Device
-      example: "inverter_roof"
+      example: "Inverter"
       required: true
       selector:
         device:
@@ -26,12 +25,11 @@ read_holding_register:
 read_multiple_holding_registers:
   name: Read Multiple Holding Registers (Modbus Function Code 3)
   description: Read values from multiple consecutive registers at once.
-
   fields:
     device:
       name: Device
       description: The Device
-      example: "inverter_roof"
+      example: "Inverter"
       required: true
       selector:
         device:
@@ -60,13 +58,12 @@ read_multiple_holding_registers:
 
 write_holding_register:
   name: Write Holding Register (Modbus Function Code 6)
-  description: NOTE USE WITH CARE! (Some devices might not accept Code 6 in this case try to use 'Write Multiple Holding Registers')
-
+  description: USE WITH CARE! (Some devices might not accept Code 6 in this case try to use 'Write Multiple Holding Registers')
   fields:
     device:
       name: Device
       description: The Device
-      example: "inverter_roof"
+      example: "Inverter"
       required: true
       selector:
         device:
@@ -83,23 +80,24 @@ write_holding_register:
           max: 65535 
           mode: box
     value:
-      name: Values
+      name: Value
       description: Value to write
       example: "1"
       required: true
       selector:
         number:
+          min: 0
+          max: 65535 
           mode: box
 
 write_multiple_holding_registers:
   name: Write Multiple Holding Registers (Modbus Function Code 16)
-  description: NOTE USE WITH CARE! (Some devices might not accept Code 16 in this case try to use 'Write Holding Register')
-
+  description: USE WITH CARE! (Some devices might not accept Code 16 in this case try to use 'Write Holding Register')
   fields:
     device:
       name: Device
       description: The Device
-      example: "inverter_roof"
+      example: "Inverter"
       required: true
       selector:
         device:
@@ -128,6 +126,3 @@ write_multiple_holding_registers:
           min: 0
           max: 65535 
           mode: box
-      object:
-
-
