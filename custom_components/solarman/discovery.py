@@ -15,6 +15,7 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class InverterDiscovery:
+    _port = DISCOVERY_PORT
     _message = DISCOVERY_MESSAGE.encode()
 
     def __init__(self, hass: HomeAssistant, address = None):
@@ -24,7 +25,7 @@ class InverterDiscovery:
         self._mac = None
         self._serial = None
 
-    async def _discover(self, address = "<broadcast>"):
+    async def _discover(self, address = IP_BROADCAST, source = IP_ANY):
         loop = asyncio.get_running_loop()
 
         try:
@@ -32,9 +33,12 @@ class InverterDiscovery:
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
                 sock.setblocking(False)
-                sock.settimeout(1.0)
+                sock.settimeout(DISCOVERY_TIMEOUT)
 
-                await loop.sock_sendto(sock, self._message, (address, DISCOVERY_PORT))
+                if source != IP_ANY:
+                    sock.bind((source, PORT_ANY))
+
+                await loop.sock_sendto(sock, self._message, (address, self._port))
 
                 while True:
                     try:
@@ -62,6 +66,7 @@ class InverterDiscovery:
                 _LOGGER.debug(f"_discover_all: Broadcasting on {net.with_prefixlen}")
 
                 await self._discover(str(IPv4Network(net, False).broadcast_address))
+                #await self._discover(IP_BROADCAST, ipv4["address"])
 
                 if self._ip is not None:
                     return None
@@ -70,7 +75,7 @@ class InverterDiscovery:
         if self._address:
             await self._discover(self._address)
 
-        attempts_left = COORDINATOR_QUERY_RETRY_ATTEMPTS
+        attempts_left = ACTION_RETRY_ATTEMPTS
         while self._ip is None and attempts_left > 0:
             attempts_left -= 1
 

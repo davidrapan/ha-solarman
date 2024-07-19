@@ -1,5 +1,11 @@
+#
 # ZCS Azzurro 3-phase hybrid inverters
 # with LSW-3 WiFi logger with SN 27xxxxxxxx and FW LSW3_15_270A_1.53:
+#
+
+default:
+  update_interval: 10
+  digits: 6
 
 requests:
   - start: 0x0404

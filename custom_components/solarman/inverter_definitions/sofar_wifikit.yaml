@@ -1,3 +1,22 @@
+#
+# Tested with Solarman ME3000-SP with an embedded
+# "wifikit" logger. Might work for other devices
+# too.
+
+# The ME3000-SP is basically a glorified battery
+# charger - it is not directly connected to any
+# generation infrastructure, but can calculate
+# generated energy based on any CT clamps it is
+# connected to. For most people this entity will
+# be a generally accurate representation of their
+# PV panel output, but since this tracks generation
+# from _any_ source, it is named generically.
+#
+
+default:
+  update_interval: 5
+  digits: 6
+
 requests:
   # Inverter State
   - start: 0x0200
@@ -11,19 +30,6 @@ requests:
   - start: 0x2000
     end: 0x200B
     mb_functioncode: 0x04
-
-# Tested with Solarman ME3000-SP with an embedded
-# "wifikit" logger. Might work for other devices
-# too.
-
-# The ME3000-SP is basically a glorified battery
-# charger - it is not directly connected to any
-# generation infrastructure, but can calculate
-# generated energy based on any CT clamps it is
-# connected to. For most people this entity will
-# be a generally accurate representation of their
-# PV panel output, but since this tracks generation
-# from _any_ source, it is named generically.
 
 parameters:
  - group: Generation
