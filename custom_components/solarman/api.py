@@ -225,7 +225,8 @@ class Inverter(InverterApi):
             await self.read_holding_registers(register, value)
         except Exception as e:
             _LOGGER.warning(f"Service Call: read_holding_registers : [{register}], value : [{value}] failed. [{format_exception(e)}]")
-            await self.async_disconnect()
+            if not self.auto_reconnect:
+                await self.async_disconnect()
         return
 
     async def service_read_multiple_holding_registers(self, register, values):
@@ -235,7 +236,8 @@ class Inverter(InverterApi):
             await self.read_multiple_holding_registers(register, values)
         except Exception as e:
             _LOGGER.warning(f"Service Call: read_multiple_holding_registers: [{register}], values : [{values}] failed. [{format_exception(e)}]")
-            await self.async_disconnect()
+            if not self.auto_reconnect:
+                await self.async_disconnect()
         return
 
     async def service_write_holding_register(self, register, value) -> bool:

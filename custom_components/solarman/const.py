@@ -18,7 +18,7 @@ COMPONENTS_DIRECTORY = "custom_components"
 LOOKUP_DIRECTORY = "inverter_definitions"
 LOOKUP_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 
-CONF_INVERTER_DISCOVERY = "inverter_discovery"
+CONF_DISCOVERY = "inverter_discovery"
 CONF_INVERTER_HOST = "inverter_host"
 CONF_INVERTER_PORT = "inverter_port"
 CONF_INVERTER_SERIAL = "inverter_serial"

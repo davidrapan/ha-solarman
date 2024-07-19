@@ -21,7 +21,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     options = config.options
 
-    inverter_name = options.get(CONF_NAME)
+    name = options.get(CONF_NAME)
+    discovery = options.get(CONF_DISCOVERY)
     inverter_host = options.get(CONF_INVERTER_HOST)
     inverter_serial = options.get(CONF_INVERTER_SERIAL)
     inverter_port = options.get(CONF_INVERTER_PORT)
@@ -31,7 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     inverter_discovery = InverterDiscovery(hass, inverter_host)
 
-    if inverter_discovery:
+    if discovery:
         if inverter_host_scanned := await inverter_discovery.get_ip():
             inverter_host = inverter_host_scanned
 
@@ -50,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     if not inverter_mb_slave_id:
         inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
 
-    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, inverter_name, inverter_mac, lookup_path, lookup_file)
+    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, name, inverter_mac, lookup_path, lookup_file)
 
     await inverter.load()
 
