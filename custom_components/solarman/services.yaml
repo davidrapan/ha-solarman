@@ -45,9 +45,9 @@ read_multiple_holding_registers:
           min: 0
           max: 65535 
           mode: box
-    count:
-      name: Count
-      description: Count of registers to read
+    quantity:
+      name: Quantity
+      description: Quantity of registers to read
       example: "4"
       required: true
       selector:

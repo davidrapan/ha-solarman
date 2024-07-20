@@ -128,6 +128,7 @@ class InverterApi(PySolarmanV5Async):
 class Inverter(InverterApi):
     def __init__(self, address, serial, port, mb_slave_id, name, mac, lookup_path, lookup_file):
         super().__init__(address, serial, port, mb_slave_id, AUTO_RECONNECT)
+        self._is_reading = 0
         self.name = name
         self.mac = mac
         self.lookup_path = lookup_path
@@ -151,6 +152,8 @@ class Inverter(InverterApi):
         return "Disconnected"
 
     def get_result(self, middleware = None):
+        self._is_reading = 0
+
         if middleware:
             _LOGGER.debug(f"Querying succeeded, exposing updated values. [Previous Status: {self.get_connection_status()}]")
             self.status_lastUpdate = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -174,6 +177,8 @@ class Inverter(InverterApi):
         result = 0
 
         _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
+
+        self._is_reading = 1
 
         try:
             for request in requests:
@@ -218,32 +223,38 @@ class Inverter(InverterApi):
 
         return self.get_result()
 
-    async def service_read_holding_register(self, register, value):
-        _LOGGER.debug(f'Service Call: read_holding_registers : [{register}], value : [{value}]')
-        try:
-            await self.async_connect()
-            await self.read_holding_registers(register, value)
-        except Exception as e:
-            _LOGGER.warning(f"Service Call: read_holding_registers : [{register}], value : [{value}] failed. [{format_exception(e)}]")
-            if not self.auto_reconnect:
-                await self.async_disconnect()
-        return
+    async def wait_for_reading_done(self):
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while self._is_reading == 1 and attempts_left > 0:
+            attempts_left -= 1
 
-    async def service_read_multiple_holding_registers(self, register, values):
-        _LOGGER.debug(f'Service Call: read_multiple_holding_registers: [{register}], values : [{values}]')
+            await asyncio.sleep(TIMINGS_SLEEP)
+
+        return self._is_reading == 1
+
+    async def service_read_holding_registers(self, register, quantity):
+        _LOGGER.debug(f"service_read_holding_registers: [{register}], quantity: [{quantity}]")
+
+        if await self.wait_for_reading_done():
+            _LOGGER.debug(f"service_read_holding_registers: Timeout.")
+            raise TimeoutError
+
         try:
             await self.async_connect()
-            await self.read_multiple_holding_registers(register, values)
+            return await self.read_holding_registers(register, quantity)
         except Exception as e:
-            _LOGGER.warning(f"Service Call: read_multiple_holding_registers: [{register}], values : [{values}] failed. [{format_exception(e)}]")
+            _LOGGER.warning(f"service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
-        return
 
     async def service_write_holding_register(self, register, value) -> bool:
         _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
 
-        attempts_left = ACTION_RETRY_ATTEMPTS
+        if await self.wait_for_reading_done():
+            _LOGGER.debug(f"service_write_holding_register: Timeout.")
+            raise TimeoutError
+
+        attempts_left = ACTION_RETRY_ATTEMPTS - 2
         while attempts_left > 0:
             attempts_left -= 1
 
@@ -264,14 +275,18 @@ class Inverter(InverterApi):
     async def service_write_multiple_holding_registers(self, register, values) -> bool:
         _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
 
-        attempts_left = ACTION_RETRY_ATTEMPTS
+        if await self.wait_for_reading_done():
+            _LOGGER.debug(f"service_write_multiple_holding_registers: Timeout.")
+            raise TimeoutError
+
+        attempts_left = ACTION_RETRY_ATTEMPTS - 2
         while attempts_left > 0:
             attempts_left -= 1
 
             try:
                 await self.async_connect()
                 response = await self.write_multiple_holding_registers(register, values)
-                _LOGGER.debug(f"service_write_multiple_holding_register: {register}, response: {response}")
+                _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, response: {response}")
                 return True
             except Exception as e:
                 _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")

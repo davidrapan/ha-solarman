@@ -30,7 +30,7 @@ SERVICE_READ_MULTIPLE_REGISTERS_SCHEMA = vol.Schema(
     {
         vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
         vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_COUNT): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
+        vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
     }
 )
 
@@ -65,6 +65,7 @@ def register_services(hass: HomeAssistant) -> None:
 
     async def read_holding_register(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_holding_register: {call}")
+
         if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
@@ -72,8 +73,10 @@ def register_services(hass: HomeAssistant) -> None:
                 translation_key = "no_interface_found"
             )
 
+        register = call.data.get(SERVICES_PARAM_REGISTER)
+
         try:
-            response = await inverter.service_read_holding_register(register = call.data.get(SERVICES_PARAM_REGISTER))
+            response = await inverter.service_read_holding_registers(register, 1)
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -85,6 +88,7 @@ def register_services(hass: HomeAssistant) -> None:
 
     async def read_multiple_holding_registers(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_multiple_holding_registers: {call}")
+
         if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
@@ -92,10 +96,11 @@ def register_services(hass: HomeAssistant) -> None:
                 translation_key = "no_interface_found"
             )
 
+        register = call.data.get(SERVICES_PARAM_REGISTER)
+        quantity = call.data.get(SERVICES_PARAM_QUANTITY)
+
         try:
-            response = await inverter.service_read_multiple_holding_registers( 
-                register = call.data.get(SERVICES_PARAM_REGISTER),
-                count = call.data.get(SERVICES_PARAM_COUNT))
+            response = await inverter.service_read_holding_registers(register, quantity)
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -104,9 +109,8 @@ def register_services(hass: HomeAssistant) -> None:
             )
 
         result = {}
-        register = call.data.get(SERVICES_PARAM_REGISTER)
 
-        for i in range(0, call.data.get(SERVICES_PARAM_COUNT)):
+        for i in range(0, quantity):
             result[register + i] = response[i]
 
         return result
