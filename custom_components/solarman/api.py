@@ -131,6 +131,8 @@ class Inverter(InverterApi):
         self._is_reading = 0
         self.name = name
         self.mac = mac
+        self.manufacturer = None
+        self.model = None
         self.lookup_path = lookup_path
         self.lookup_file = lookup_file if lookup_file and not lookup_file == "parameters.yaml" else "deye_hybrid.yaml"
         self.auto_reconnect = AUTO_RECONNECT
@@ -139,6 +141,12 @@ class Inverter(InverterApi):
 
     async def load(self):
         self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
+        if "info" in self.parameter_definition:
+            info = self.parameter_definition["info"]
+            if "manufacturer" in info:
+                self.manufacturer = info["manufacturer"]
+            if "model" in info:
+                self.model = info["model"]
 
     def get_sensors(self):
         if self.parameter_definition:

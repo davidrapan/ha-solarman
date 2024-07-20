@@ -37,6 +37,14 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
             dev_man = self.model.split('_')
             self.manufacturer = dev_man[0].capitalize()
             self.model = dev_man[1].upper()
+        else:
+            self.manufacturer = "Solarman"
+            self.model = "Stick Logger"
+
+        if self.coordinator.inverter.manufacturer:
+            self.manufacturer = self.coordinator.inverter.manufacturer
+        if self.coordinator.inverter.model:
+            self.model = self.coordinator.inverter.model
 
         self._attr_device_info = {
             "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.coordinator.inverter.mac))}

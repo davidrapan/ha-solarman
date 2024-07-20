@@ -8,6 +8,10 @@
 # The 500-2000 register address is a readable register type 0x03 function code.
 #
 
+info:
+  manufacturer: Deye
+  model: SG04LP3
+
 default:
   update_interval: 60
   digits: 6

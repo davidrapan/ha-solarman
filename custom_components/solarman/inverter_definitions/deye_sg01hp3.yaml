@@ -2,6 +2,10 @@
 # SUN-5/6/8/10/12/15/20/25K-SG01HP3-EU-AM2 | 5-25kW | Three Phase | 2 MPPT | Hybrid Inverter | HV Battery Supported
 #
 
+info:
+  manufacturer: Deye
+  model: SG01HP3
+
 default:
   update_interval: 60
   digits: 6
