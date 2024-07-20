@@ -79,7 +79,7 @@ class InverterDiscovery:
         if self._address:
             await self._discover(self._address)
 
-        attempts_left = ACTION_RETRY_ATTEMPTS
+        attempts_left = ACTION_ATTEMPTS
         while self._ip is None and attempts_left > 0:
             attempts_left -= 1
 
@@ -94,7 +94,7 @@ class InverterDiscovery:
         if self._address:
             await self._discover(self._address)
 
-        attempts_left = ACTION_RETRY_ATTEMPTS
+        attempts_left = ACTION_ATTEMPTS
         while not self._ip and attempts_left > 0:
             attempts_left -= 1
 

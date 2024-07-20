@@ -10,7 +10,7 @@ from typing import Any
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers import config_validation as cv
 from homeassistant.components.dhcp import DhcpServiceInfo
@@ -97,6 +97,8 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None:
             #inverter_discovery = InverterDiscovery(self.hass)
+            #await self._async_try_and_abort_if_unique_id("27XXXXXXXX")
+            #await self._async_try_and_abort_if_unique_id("27XXXXXXXX")
             #await inverter_discovery.discover_until_ok(self._async_try_and_abort_if_unique_id)
             #discovery_options = (await step_user_data_process(InverterDiscovery(self.hass))) if inverter_discovery._ip else step_user_data_prefill()
             discovery_options = await step_user_data_process(InverterDiscovery(self.hass))

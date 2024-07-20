@@ -188,7 +188,7 @@ class Inverter(InverterApi):
 
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
-                attempts_left = ACTION_RETRY_ATTEMPTS
+                attempts_left = ACTION_ATTEMPTS
                 while attempts_left > 0:
                     attempts_left -= 1
 
@@ -224,7 +224,7 @@ class Inverter(InverterApi):
         return self.get_result()
 
     async def wait_for_reading_done(self):
-        attempts_left = ACTION_RETRY_ATTEMPTS
+        attempts_left = ACTION_ATTEMPTS
         while self._is_reading == 1 and attempts_left > 0:
             attempts_left -= 1
 
@@ -237,7 +237,7 @@ class Inverter(InverterApi):
 
         if await self.wait_for_reading_done():
             _LOGGER.debug(f"service_read_holding_registers: Timeout.")
-            raise TimeoutError
+            raise TimeoutError("Coordinator is currently reading data from the device!")
 
         try:
             await self.async_connect()
@@ -252,9 +252,9 @@ class Inverter(InverterApi):
 
         if await self.wait_for_reading_done():
             _LOGGER.debug(f"service_write_holding_register: Timeout.")
-            raise TimeoutError
+            raise TimeoutError("Coordinator is currently reading data from the device!")
 
-        attempts_left = ACTION_RETRY_ATTEMPTS - 2
+        attempts_left = ACTION_ATTEMPTS
         while attempts_left > 0:
             attempts_left -= 1
 
@@ -277,9 +277,9 @@ class Inverter(InverterApi):
 
         if await self.wait_for_reading_done():
             _LOGGER.debug(f"service_write_multiple_holding_registers: Timeout.")
-            raise TimeoutError
+            raise TimeoutError("Coordinator is currently reading data from the device!")
 
-        attempts_left = ACTION_RETRY_ATTEMPTS - 2
+        attempts_left = ACTION_ATTEMPTS
         while attempts_left > 0:
             attempts_left -= 1
 
