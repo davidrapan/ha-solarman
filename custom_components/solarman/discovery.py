@@ -55,6 +55,8 @@ class InverterDiscovery:
             _LOGGER.exception(f"_discover: {format_exception(e)}")
 
     async def _discover_all(self):
+        _LOGGER.debug(f"_discover_all")
+
         adapters = await network.async_get_adapters(self._hass)
 
         for adapter in adapters:
@@ -72,6 +74,8 @@ class InverterDiscovery:
                     return None
 
     async def discover(self):
+        _LOGGER.debug(f"discover")
+
         if self._address:
             await self._discover(self._address)
 
@@ -80,6 +84,26 @@ class InverterDiscovery:
             attempts_left -= 1
 
             await self._discover_all()
+
+            if self._ip is None:
+                _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+
+    async def discover_until_ok(self, x):
+        _LOGGER.debug(f"discover_until_ok")
+
+        if self._address:
+            await self._discover(self._address)
+
+        attempts_left = ACTION_RETRY_ATTEMPTS
+        while not self._ip and attempts_left > 0:
+            attempts_left -= 1
+
+            await self._discover_all()
+
+            try:
+                await x(self._serial)
+            except:
+                self._ip = None
 
             if self._ip is None:
                 _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")

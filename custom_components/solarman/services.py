@@ -5,12 +5,13 @@ import logging
 import voluptuous as vol
 
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.helpers import config_validation as cv, entity_registry, entity
+from homeassistant.helpers import config_validation as cv, device_registry as dr, entity
 from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.exceptions import ServiceValidationError
 
 from .const import *
 from .api import Inverter
+from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,38 +50,22 @@ SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS_SCHEMA = vol.Schema(
     }
 )
 
-def register_services(hass: HomeAssistant) -> Inverter:
+def register_services(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register_services")
 
-    def getInverter(device_id):
-        inverter: Inverter | None
-        entity_comp: EntityComponent[entity.Entity] | None       
-        registry = entity_registry.async_get(hass)
-        entries = entity_registry.async_entries_for_device(registry, device_id)
+    def getDevice(device_id) -> Inverter:
+        device_registry = dr.async_get(hass)
+        device = device_registry.async_get(device_id)
 
-        for entity_reg in entries:
-            entity_id = entity_reg.entity_id
-            domain = entity_id.partition(".")[0]
-            entity_comp = hass.data.get("entity_components", {}).get(domain)
-            if entity_comp is None:
-                _LOGGER.info(f"read_holding_register: Component for {entity_id} not loaded")
-                continue
+        for config_entry in device.config_entries:
+            if config_entry in hass.data[DOMAIN] and isinstance(hass.data[DOMAIN][config_entry], InverterCoordinator):
+                return hass.data[DOMAIN][config_entry].inverter
 
-            if (entity_obj := entity_comp.get_entity(entity_id)) is None:
-                _LOGGER.info(f"read_holding_register: Entity {entity_id} not found")
-                continue
-
-            if (inverter := entity_obj.inverter) is None:
-                _LOGGER.info(f"read_holding_register: Entity {entity_id} has no inverter")
-                continue
-
-            break
-
-        return inverter
+        return None
 
     async def read_holding_register(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_holding_register: {call}")
-        if (inverter := getInverter(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -88,7 +73,7 @@ def register_services(hass: HomeAssistant) -> Inverter:
             )
 
         try:
-            response = inverter.service_read_holding_register(register = call.data.get(SERVICES_PARAM_REGISTER))
+            response = await inverter.service_read_holding_register(register = call.data.get(SERVICES_PARAM_REGISTER))
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -96,12 +81,11 @@ def register_services(hass: HomeAssistant) -> Inverter:
                 translation_key = "call_failed"
             )
 
-        result = { call.data.get(SERVICES_PARAM_REGISTER): response[0] }
-        return result
+        return { call.data.get(SERVICES_PARAM_REGISTER): response[0] }
 
     async def read_multiple_holding_registers(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_multiple_holding_registers: {call}")
-        if (inverter := getInverter(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -109,7 +93,7 @@ def register_services(hass: HomeAssistant) -> Inverter:
             )
 
         try:
-            response = inverter.service_read_multiple_holding_registers( 
+            response = await inverter.service_read_multiple_holding_registers( 
                 register = call.data.get(SERVICES_PARAM_REGISTER),
                 count = call.data.get(SERVICES_PARAM_COUNT))
         except Exception as e:
@@ -121,13 +105,16 @@ def register_services(hass: HomeAssistant) -> Inverter:
 
         result = {}
         register = call.data.get(SERVICES_PARAM_REGISTER)
-        for i in range(0,call.data.get(SERVICES_PARAM_COUNT)):
+
+        for i in range(0, call.data.get(SERVICES_PARAM_COUNT)):
             result[register + i] = response[i]
+
         return result
 
     async def write_holding_register(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_holding_register: {call}")
-        if (inverter := getInverter(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+
+        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -135,7 +122,7 @@ def register_services(hass: HomeAssistant) -> Inverter:
             )
 
         try:
-            inverter.service_write_holding_register(
+            await inverter.service_write_holding_register(
                 register = call.data.get(SERVICES_PARAM_REGISTER), 
                 value = call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
@@ -144,11 +131,13 @@ def register_services(hass: HomeAssistant) -> Inverter:
                 translation_domain = DOMAIN,
                 translation_key = "call_failed"
             )
+
         return
 
     async def write_multiple_holding_registers(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_multiple_holding_registers: {call}")
-        if (inverter := getInverter(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+
+        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -156,7 +145,7 @@ def register_services(hass: HomeAssistant) -> Inverter:
             )
 
         try:
-            inverter.service_write_multiple_holding_registers(
+            await inverter.service_write_multiple_holding_registers(
                 register = call.data.get(SERVICES_PARAM_REGISTER),
                 values = call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
@@ -165,6 +154,7 @@ def register_services(hass: HomeAssistant) -> Inverter:
                 translation_domain = DOMAIN,
                 translation_key = "call_failed"
             )
+
         return
 
     hass.services.async_register(
@@ -182,11 +172,15 @@ def register_services(hass: HomeAssistant) -> Inverter:
     hass.services.async_register(
         DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS_SCHEMA
     )
+
     return
 
-def remove_services(hass: HomeAssistant):
+def remove_services(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"remove_services")
+
     hass.services.async_remove(DOMAIN, SERVICE_READ_HOLDING_REGISTER)
     hass.services.async_remove(DOMAIN, SERVICE_READ_MULTIPLE_HOLDING_REGISTERS)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_HOLDING_REGISTER)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS)
+
+    return

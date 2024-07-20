@@ -28,6 +28,10 @@ async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None
     #entry.title = entry.options[CONF_NAME]
     await hass.config_entries.async_reload(entry.entry_id)
 
+def step_user_data_prefill():
+    _LOGGER.debug(f"step_user_data_process")
+    return { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: "", CONF_INVERTER_SERIAL: 0, CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
+
 async def step_user_data_process(discovery):
     _LOGGER.debug(f"step_user_data_process: discovery: {discovery}")
     return { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: await discovery.get_ip(), CONF_INVERTER_SERIAL: await discovery.get_serial(), CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
@@ -68,11 +72,15 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     except timeout:
         raise CannotConnect
 
-    return {"title": data[CONF_NAME]}
+    return data
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     """Handle a solarman stick logger config flow."""
     VERSION = 1
+
+    async def _async_try_and_abort_if_unique_id(self, unique_id):
+        await self.async_set_unique_id(unique_id)
+        self._abort_if_unique_id_configured()
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
         """Handle a flow initiated by the DHCP client."""
@@ -88,13 +96,16 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         """Handle the initial step."""
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None:
+            #inverter_discovery = InverterDiscovery(self.hass)
+            #await inverter_discovery.discover_until_ok(self._async_try_and_abort_if_unique_id)
+            #discovery_options = (await step_user_data_process(InverterDiscovery(self.hass))) if inverter_discovery._ip else step_user_data_prefill()
             discovery_options = await step_user_data_process(InverterDiscovery(self.hass))
             return self.async_show_form(step_id = "user", data_schema = await step_user_data_schema(self.hass, discovery_options))
 
         errors = {}
 
         try:
-            info = await validate_input(self.hass, user_input)
+            await validate_input(self.hass, user_input)
         except InvalidHost:
             errors["base"] = "invalid_host"
         except CannotConnect:
@@ -104,10 +115,8 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             errors["base"] = "unknown"
         else:
             _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation passed: {user_input}")
-            # not sure this is permitted as the user can change the device_id
-            # await self.async_set_unique_id(user_input.device_id) 
-            # self._abort_if_unique_id_configured()
-            return self.async_create_entry(title = info["title"], data = user_input, options = user_input)
+            #await self._async_try_and_abort_if_unique_id(user_input[CONF_INVERTER_SERIAL])
+            return self.async_create_entry(title = user_input[CONF_NAME], data = user_input, options = user_input)
 
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation failed: {user_input}")
 
@@ -137,16 +146,16 @@ class OptionsFlowHandler(OptionsFlow):
         errors = {}
 
         try:
-            info = await validate_input(self.hass, user_input)
+            await validate_input(self.hass, user_input)
         except InvalidHost:
             errors["base"] = "invalid_host"
         except CannotConnect:
             errors["base"] = "cannot_connect"
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
-            return self.async_create_entry(title = info["title"], data = user_input)
+            return self.async_create_entry(title = "Configuration", data = user_input)
 
         return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, user_input, False), errors = errors)
 

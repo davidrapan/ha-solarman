@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 
+from ipaddress import IPv4Address
+
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
@@ -22,25 +24,31 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     options = config.options
 
     name = options.get(CONF_NAME)
+
     discovery = options.get(CONF_DISCOVERY)
+
     inverter_host = options.get(CONF_INVERTER_HOST)
     inverter_serial = options.get(CONF_INVERTER_SERIAL)
     inverter_port = options.get(CONF_INVERTER_PORT)
     inverter_mb_slave_id = options.get(CONF_INVERTER_MB_SLAVE_ID)
+    inverter_mac = None
+
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = options.get(CONF_LOOKUP_FILE)
 
-    inverter_discovery = InverterDiscovery(hass, inverter_host)
+    if IPv4Address(inverter_host).is_private:
+        inverter_discovery = InverterDiscovery(hass, inverter_host)
 
-    if discovery:
-        if inverter_host_scanned := await inverter_discovery.get_ip():
-            inverter_host = inverter_host_scanned
+        if discovery:
+            if inverter_host_scanned := await inverter_discovery.get_ip():
+                inverter_host = inverter_host_scanned
 
-    if inverter_serial == 0:
-        if inverter_serial_scanned := await inverter_discovery.get_serial():
-            inverter_serial = inverter_serial_scanned
+        if inverter_serial == 0:
+            if inverter_serial_scanned := await inverter_discovery.get_serial():
+                inverter_serial = inverter_serial_scanned
 
-    inverter_mac = await inverter_discovery.get_mac()
+        if (mac := await inverter_discovery.get_mac()) and inverter_serial == await inverter_discovery.get_serial():
+            inverter_mac = mac
 
     if inverter_host is None:
         raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")

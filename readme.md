@@ -4,6 +4,7 @@
 [![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
 [![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](LICENSE)
 [![HACS Supported](https://img.shields.io/badge/HACS-Supported-green)](https://github.com/custom-components/hacs)
+[![Community Forum](https://img.shields.io/badge/community-forum-brightgreen.svg)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
 [![Discussions](https://img.shields.io/badge/community-discussions-brightgreen)](https://github.com/davidrapan/ha-solarman/discussions)
 [![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
 
@@ -53,12 +54,12 @@ Power losses = Battery Power + PV1 Power + PV2 Power - Inverter Power
 
 #### Total losses calculation [kWh]:
 ```
-Total losses = Total Energy Imported(Bought) + Total Production + Total Battery Discharge - Total Energy Exported(Sold) - Total Battery Charge - Total Load Consumption
+Total losses = Total Energy Import(Bought) + Total Production + Total Battery Discharge - Total Energy Export(Sold) - Total Battery Charge - Total Load Consumption
 ```
 
 #### Today(Daily) losses calculation [kWh]:
 ```
-Today(Daily) losses = Today(Daily) Energy Imported(Bought) + Today(Daily) Production + Today(Daily) Battery Discharge - Today(Daily) Energy Exported(Sold) - Today(Daily) Battery Charge - Today(Daily) Load Consumption
+Today(Daily) losses = Today(Daily) Energy Import(Bought) + Today(Daily) Production + Today(Daily) Battery Discharge - Today(Daily) Energy Export(Sold) - Today(Daily) Battery Charge - Today(Daily) Load Consumption
 ```
 
 _To get value which is in Energy Dashboard as "Home Consumption" remove subtraction of Load Consumption from the above._  

@@ -32,7 +32,7 @@ class ParameterParser:
         return self._lookups["parameters"]
 
     def is_valid(self, parameters):
-        return "name" in parameters and "rule" in parameters # and "registers" in parameters
+        return "name" in parameters and "rule" in parameters  # and "registers" in parameters
 
     def is_enabled(self, parameters):
         return not "disabled" in parameters

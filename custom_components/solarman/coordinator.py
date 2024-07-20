@@ -18,7 +18,7 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.inverter = inverter
         self._counter = -1
 
-    def _accounting(self):
+    def _accounting(self) -> int:
         if self.last_update_success:
             self._counter += 1
 
@@ -28,8 +28,8 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         try:
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                 return await self.inverter.async_get(self._accounting())
-        except Exception:
-            self._counter = -1 # Temporary fix to retrieve all data after reconnect
+        except Exception:  # Temporary fix to retrieve all data after reconnect
+            self._counter = 0
             raise
 
     #async def _reload(self):

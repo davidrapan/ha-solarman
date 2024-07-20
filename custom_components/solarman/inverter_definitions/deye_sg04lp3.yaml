@@ -110,7 +110,7 @@ parameters:
 
       # Device - Rated Power of the Device
       - name: "Rated Power"
-        disabled:
+        disabled: "Value not provided by the inverter"
         attribute:
         class: "power"
         state_class: "measurement"
@@ -397,7 +397,7 @@ parameters:
     items:
       - name: Grid Export Surplus
         alt: Solar Sell
-        update_interval: 30
+        update_interval: 300
         class: "switch"
         state_class: ""
         uom: ""
@@ -406,7 +406,7 @@ parameters:
         registers: [0x0091]
 
       - name: Program 1 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -420,7 +420,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 2 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -434,7 +434,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 3 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -448,7 +448,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 4 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -462,7 +462,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 5 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -476,7 +476,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 6 SOC
-        update_interval: 30
+        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -704,7 +704,9 @@ parameters:
 
   - group: Meter
     items:
-      - name: "Daily Battery Charge"
+      - name: Today Battery Charge
+        alt: Daily Battery Charge
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -713,7 +715,9 @@ parameters:
         registers: [0x0202]
         icon: "mdi:battery-plus"
 
-      - name: "Daily Battery Discharge"
+      - name: Today Battery Discharge
+        alt: Daily Battery Discharge
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -723,6 +727,7 @@ parameters:
         icon: "mdi:battery-minus"
 
       - name: "Total Battery Charge"
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -732,6 +737,7 @@ parameters:
         icon: "mdi:battery-plus"
 
       - name: "Total Battery Discharge"
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -740,7 +746,9 @@ parameters:
         registers: [0x0206, 0x0207]
         icon: "mdi:battery-minus"
 
-      - name: "Daily Battery Life Cycles"
+      - name: Today Battery Life Cycles
+        alt: Daily Battery Life Cycles
+        update_interval: 30
         description: Calculates today's battery life cycles based on today's charged amount
         class: ""
         state_class: "total_increasing"
@@ -751,6 +759,7 @@ parameters:
         icon: "mdi:battery-sync"
 
       - name: "Total Battery Life Cycles"
+        update_interval: 30
         description: Calculates total battery life cycles based on total charged amount
         class: ""
         state_class: "total_increasing"
@@ -760,7 +769,10 @@ parameters:
         digits: 2
         icon: "mdi:battery-sync"
 
-      - name: "Daily Energy Bought"
+      - name: Today Energy Bought
+        alt: Daily Energy Bought
+        description: Today's energy from the grid
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -769,7 +781,10 @@ parameters:
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Daily Energy Sold"
+      - name: Today Energy Sold
+        alt: Daily Energy Sold
+        description: Today's energy returned to the grid
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -779,6 +794,8 @@ parameters:
         icon: "mdi:transmission-tower-import"
 
       - name: "Total Energy Bought"
+        description: Total energy from the grid
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -788,6 +805,8 @@ parameters:
         icon: "mdi:transmission-tower-export"
 
       - name: "Total Energy Sold"
+        description: Total energy returned to the grid
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -796,7 +815,9 @@ parameters:
         registers: [0x020C, 0x020D]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Daily Load Consumption"
+      - name: Today Load Consumption
+        alt: Daily Load Consumption
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -805,6 +826,7 @@ parameters:
         registers: [0x020E]
 
       - name: "Total Load Consumption"
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -812,7 +834,9 @@ parameters:
         rule: 3
         registers: [0x020F, 0x0210]
 
-      - name: "Daily Losses"
+      - name: Today Losses
+        alt: Daily Losses
+        update_interval: 30
         description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
@@ -838,6 +862,7 @@ parameters:
             registers: [0x0202]
 
       - name: "Total Losses"
+        update_interval: 30
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
@@ -876,7 +901,9 @@ parameters:
             scale: 0.1
             registers: [0x0204, 0x0205]
 
-      - name: "Daily Production"
+      - name: Today Production
+        alt: Daily Production
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -886,6 +913,7 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "Total Production"
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -895,6 +923,7 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "DC Temperature"
+        update_interval: 30
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -909,6 +938,7 @@ parameters:
           max: 3000
 
       - name: "Temperature"
+        update_interval: 30
         class: "temperature"
         state_class: "measurement"
         uom: "°C"

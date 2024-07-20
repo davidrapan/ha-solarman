@@ -44,10 +44,12 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if "configurable" in sensor)
     #if ("class" in sensor and sensor["class"] == _PLATFORM)
+
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
+
     return True
 
 class SolarmanNumberEntity(SolarmanSensor, NumberEntity):

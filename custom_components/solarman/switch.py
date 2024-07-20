@@ -44,10 +44,12 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     _LOGGER.debug(f"async_setup: async_add_entities")
 
     async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if ("class" in sensor and sensor["class"] == _PLATFORM))
+
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
+
     return True
 
 class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
