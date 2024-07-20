@@ -11,6 +11,7 @@
 #### 🠶 Signpost
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
 - [Custom sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-sensors)
+- [Dashboards](https://github.com/davidrapan/ha-solarman/wiki/Dashboards)
 - [Sensor renaming](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme-%E2%80%90-sensor-renaming)
 
 > [!NOTE]  
