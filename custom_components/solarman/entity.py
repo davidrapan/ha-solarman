@@ -29,35 +29,10 @@ from .coordinator import InverterCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
-    def __init__(self, coordinator: InverterCoordinator, name: str = None):
+    def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
-        self.model = self.coordinator.inverter.lookup_file.replace(".yaml", "")
-
-        if '_' in self.model:
-            dev_man = self.model.split('_')
-            self.manufacturer = dev_man[0].capitalize()
-            self.model = dev_man[1].upper()
-        else:
-            self.manufacturer = "Solarman"
-            self.model = "Stick Logger"
-
-        if self.coordinator.inverter.manufacturer:
-            self.manufacturer = self.coordinator.inverter.manufacturer
-        if self.coordinator.inverter.model:
-            self.model = self.coordinator.inverter.model
-
-        self._attr_device_info = {
-            "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.coordinator.inverter.mac))}
-        } if self.coordinator.inverter.mac else {} | {
-            "identifiers": {(DOMAIN, self.coordinator.inverter.serial)},
-            "name": self.coordinator.inverter.name,
-            "manufacturer": self.manufacturer,
-            "model": self.model,
-            "serial_number": self.coordinator.inverter.serial
-        }
-
-        #self._attr_extra_state_attributes = { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
-        self._attr_extra_state_attributes = {}
+        self._attr_device_info = self.coordinator.inverter.device_info
+        self._attr_extra_state_attributes = {}  # { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, sensor):

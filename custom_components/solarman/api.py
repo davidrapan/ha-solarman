@@ -9,6 +9,7 @@ import concurrent.futures
 
 from datetime import datetime
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError, NoSocketAvailableError
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .const import *
@@ -133,20 +134,38 @@ class Inverter(InverterApi):
         self.mac = mac
         self.manufacturer = None
         self.model = None
+        self.device_info = {}
         self.lookup_path = lookup_path
-        self.lookup_file = lookup_file if lookup_file and not lookup_file == "parameters.yaml" else "deye_hybrid.yaml"
+        self.lookup_file = lookup_file if lookup_file else "deye_hybrid.yaml"
         self.auto_reconnect = AUTO_RECONNECT
-
-        #execute_async(self.load())
 
     async def load(self):
         self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
-        if "info" in self.parameter_definition:
+        self.model = self.lookup_file.replace(".yaml", "")
+
+        if "info" in self.parameter_definition and "model" in self.parameter_definition["info"]:
             info = self.parameter_definition["info"]
             if "manufacturer" in info:
                 self.manufacturer = info["manufacturer"]
             if "model" in info:
                 self.model = info["model"]
+        elif '_' in self.model:
+            dev_man = self.model.split('_')
+            self.manufacturer = dev_man[0].capitalize()
+            self.model = dev_man[1].upper()
+        else:
+            self.manufacturer = "Solarman"
+            self.model = "Stick Logger"
+
+        self.device_info = ({ "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.mac))} } if self.mac else {}) | {
+            "identifiers": {(DOMAIN, self.serial)},
+            "name": self.name,
+            "manufacturer": self.manufacturer,
+            "model": self.model,
+            "serial_number": self.serial
+        }
+
+        _LOGGER.debug(self.device_info)
 
     def get_sensors(self):
         if self.parameter_definition:
