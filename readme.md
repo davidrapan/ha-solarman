@@ -8,7 +8,7 @@
 [![Discussions](https://img.shields.io/badge/community-discussions-brightgreen)](https://github.com/davidrapan/ha-solarman/discussions)
 [![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
 
-#### Signpost
+#### 🠶 Signpost
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
 - [Custom sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-sensors)
 - [Sensor renaming](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme-%E2%80%90-sensor-renaming)
@@ -93,6 +93,10 @@ template:
 ```
 Which provides informantion about how long it is since last update (with resolution of seconds).  
 Maybe it will be useful for some, but since the stability of the polling improved a lot it's not really needed.  
+
+## 💡 Tips and Tricks
+
+If you are not living in a place where is energy cost calculated as sum of all three phases (e.g. Germany) but living in a place where is energy cost calculated for each phase individualy (e.g. Czechia) in a three-phase systems then set the Zero Export value to at least 100 W. You will save some money! 😉
 
 ## 🔨 Installation
 
