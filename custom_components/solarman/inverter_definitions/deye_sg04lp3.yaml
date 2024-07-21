@@ -123,6 +123,17 @@ parameters:
         rule: 1
         registers: [0x0008]
 
+  - group: Control
+    items:
+      # Device - On/Off Switch 
+      - name: ""
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0050]
+
   - group: Settings
     items:
       - name: "Battery Control Mode"
@@ -571,6 +582,60 @@ parameters:
           max: 100
         icon: mdi:sun-clock
 
+      - name: Program 1 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00AC]
+        icon: mdi:sun-clock
+
+      - name: Program 2 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00AD]
+        icon: mdi:sun-clock
+
+      - name: Program 3 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00AE]
+        icon: mdi:sun-clock
+
+      - name: Program 4 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00AF]
+        icon: mdi:sun-clock
+
+      - name: Program 5 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00B0]
+        icon: mdi:sun-clock
+
+      - name: Program 6 Grid Charging
+        class: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00B1]
+        icon: mdi:sun-clock
+
   - group: BMS
     items:
       - name: "BMS Charged Voltage"
@@ -758,8 +823,8 @@ parameters:
 
   - group: Device
     items:
-      # Device - Operating (Running) status
-      - name: "Device Status"
+      # Device - Operating (Running) state
+      - name: "Device State"
         update_interval: 30
         class: "enum"
         state_class: ""
@@ -1033,22 +1098,27 @@ parameters:
           min: 0
           max: 3000
 
-  - group: "Controls"
+  - group: State
     items:
-      # Device - Power the Inverter On/Off 
-      - name: ""
+      # Device - Power state On/Off 
+      - name: "Device Power State"
         update_interval: 30
-        class: "switch"
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0227]
+        icon: "mdi:lightning-bolt-circle"
+        options: ["Off", "On"]
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "On"
 
-  - group: Status
-    items:
-      # Device - AC Relay status
-      - name: "Device Relay Status"
+      # Device - AC Relay state
+      - name: "Device Relay State"
         update_interval: 30
         class: "enum"
         state_class: ""
@@ -1085,33 +1155,6 @@ parameters:
             value: "Inv-Grid-Gen"
           - key: "default"
             value: "Power Supply"
-
-      # Device - AC Grid state
-      - name: "Device State"
-        update_interval: 30
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0228]
-        icon: "mdi:information"
-        options: ["Off-grid", "On-grid"]
-        lookup:
-          - key: 0x0001
-            value: "Off-grid"
-          - key: 0x0004
-            value: "On-grid"
-          - key: 0x0005
-            value: "On-grid"
-          - key: 0x0008
-            value: "Off-grid"
-          - key: 0x0009
-            value: "Off-grid"
-          - key: 0x000C
-            value: "On-grid"
-          - key: 0x000D
-            value: "On-grid"
 
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alert"
@@ -1274,6 +1317,33 @@ parameters:
 
   - group: Grid
     items:
+      # Device - Grid state
+      - name: "Grid State"
+        update_interval: 30
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0228]
+        icon: "mdi:transmission-tower"
+        options: ["Off", "On"]
+        lookup:
+          - key: 0x0001
+            value: "Off"
+          - key: 0x0004
+            value: "On"
+          - key: 0x0005
+            value: "On"
+          - key: 0x0008
+            value: "Off"
+          - key: 0x0009
+            value: "Off"
+          - key: 0x000C
+            value: "On"
+          - key: 0x000D
+            value: "On"
+
       # Grid side - The voltage of phase A
       - name: "Grid L1 Voltage"
         class: "voltage"
