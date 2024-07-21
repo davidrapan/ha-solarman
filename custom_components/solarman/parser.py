@@ -26,7 +26,7 @@ class ParameterParser:
             if "digits" in default:
                 self._digits = default["digits"]
 
-        _LOGGER.debug(f"Default update_interval: {self._update_interval}, min_span: {self._min_span}, digits: {self._digits}")
+        _LOGGER.debug(f"{'Defaults' if 'default' in parameter_definition else 'Stock values'} for update_interval: {self._update_interval}, min_span: {self._min_span}, digits: {self._digits}")
 
     def lookup(self):
         return self._lookups["parameters"]
