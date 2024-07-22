@@ -8,35 +8,6 @@ default:
   update_interval: 10
   digits: 6
 
-requests:
-  - start: 0x0404 # inverter and faults
-    end: 0x042B
-    mb_functioncode: 0x03
-  - start: 0x0445 # serial number, hw, sw and firmare versions
-    end: 0x0465
-    mb_functioncode: 0x03
-  - start: 0x0484 # on-grid
-    end: 0x04AF
-    mb_functioncode: 0x03
-  - start: 0x0504 # off-grid
-    end: 0x051F
-    mb_functioncode: 0x03
-  - start: 0x0584 # dc
-    end: 0x0589
-    mb_functioncode: 0x03
-  - start: 0x0604 # battery 1
-    end: 0x060A # end of first battery, last battery (8th) ends in 0x063A
-    mb_functioncode: 0x03
-  - start: 0x0684 # generation
-    end: 0x069B
-    mb_functioncode: 0x03
-  - start: 0x104D # battery dod and eod
-    end: 0x104E
-    mb_functioncode: 0x03
-  - start: 0x1052 # battery eps buffer
-    end: 0x1052
-    mb_functioncode: 0x03
-
 parameters:
   - group: Inverter
     items:

@@ -7,35 +7,6 @@ default:
   update_interval: 10
   digits: 6
 
-requests:
-  - start: 0x0404
-    end: 0x0410
-    mb_functioncode: 0x03
-  - start: 0x0418
-    end: 0x041A
-    mb_functioncode: 0x03    
-  - start: 0x042b
-    end: 0x042b
-    mb_functioncode: 0x03
-  - start: 0x0484
-    end: 0x048d
-    mb_functioncode: 0x03    
-  - start: 0x04AF
-    end: 0x04AF
-    mb_functioncode: 0x03      
-  - start: 0x0504
-    end: 0x0504
-    mb_functioncode: 0x03
-  - start: 0x0584
-    end: 0x0589
-    mb_functioncode: 0x03
-  - start: 0x0604
-    end: 0x060A
-    mb_functioncode: 0x03
-  - start: 0x0683
-    end: 0x069B
-    mb_functioncode: 0x03
-
 parameters:
   - group: Solar
     items:

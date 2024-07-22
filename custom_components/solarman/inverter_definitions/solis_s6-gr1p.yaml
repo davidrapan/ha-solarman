@@ -5,18 +5,8 @@
 
 default:
   update_interval: 5
+  code: 0x04
   digits: 6
-
-requests:
-  - start: 2999
-    end: 3024
-    mb_functioncode: 0x04
-  - start: 3035
-    end: 3043
-    mb_functioncode: 0x04
-  - start: 3071
-    end: 3071
-    mb_functioncode: 0x04
 
 parameters:
   - group: InverterStatus

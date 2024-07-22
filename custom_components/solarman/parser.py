@@ -20,12 +20,12 @@ class ParameterParser:
 
         if "default" in parameter_definition:
             default = parameter_definition["default"]
-            if "update_interval" in default:
-                self._update_interval = default["update_interval"]
-            if "code" in default:
-                self._code = default["code"]
-            if "min_span" in default:
-                self._min_span = default["min_span"]
+            if REQUEST_UPDATE_INTERVAL in default:
+                self._update_interval = default[REQUEST_UPDATE_INTERVAL]
+            if REQUEST_CODE in default:
+                self._code = default[REQUEST_CODE]
+            if REQUEST_MIN_SPAN in default:
+                self._min_span = default[REQUEST_MIN_SPAN]
             if "digits" in default:
                 self._digits = default["digits"]
 
@@ -47,7 +47,7 @@ class ParameterParser:
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
     def is_scheduled(self, parameters, runtime):
-        return "realtime" in parameters or (runtime % (parameters["update_interval"] if "update_interval" in parameters else self._update_interval) == 0)
+        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else self._update_interval) == 0)
 
     def default_from_unit_of_measurement(self, parameters):
         return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""

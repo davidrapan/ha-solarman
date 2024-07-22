@@ -6,19 +6,9 @@
 #
 
 default:
-  update_interval: 5
+  update_interval: 30
+  code: 0x04
   digits: 6
-
-requests:
-  - start: 2999
-    end: 3024
-    mb_functioncode: 0x04
-  - start: 3035
-    end: 3043
-    mb_functioncode: 0x04
-  - start: 3071
-    end: 3071
-    mb_functioncode: 0x04
 
 parameters:
   - group: InverterStatus
@@ -50,14 +40,14 @@ parameters:
         registers: [3041]
         icon: "mdi:thermometer"
 
-      #    - name: "Inverter ID"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
-      #      rule: 5
-      #      registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
-      #      isstr: true
+#      - name: "Inverter ID"
+#        class: ""
+#        state_class: ""
+#        uom: ""
+#        scale: 1
+#        rule: 5
+#        registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
+#        isstr: true
 
       - name: "Product Model"
         class: ""
@@ -123,6 +113,32 @@ parameters:
         registers: [3024]
         icon: "mdi:current-dc"
 
+      - name: PV1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        scale: 1
+        digits: 3
+        registers: [3021, 3022]
+        sensors:
+          - registers: [3021]
+          - operator: multiply
+            scale: 0.001
+            registers: [3022]
+
+      - name: PV2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        scale: 1
+        digits: 3
+        registers: [3023, 3024]
+        sensors:
+          - registers: [3023]
+          - operator: multiply
+            scale: 0.001
+            registers: [3024]
+
       - name: "Total DC Power"
         class: "power"
         state_class: "measurement"
@@ -169,6 +185,25 @@ parameters:
         rule: 1
         registers: [3042]
         icon: "mdi:sine-wave"
+
+      - name: Inverter Efficiency
+        class: ""
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        digits: 1
+        uint: enforce
+        registers: [3005, 3004, 3007, 3006]
+        sensors:
+          - signed:
+            registers: [3005, 3004]
+          - operator: divide
+            signed:
+            scale: 100
+            registers: [3007, 3006]
+        validation:
+          min: 0
+          max: 99
 
   - group: Generation
     items:
