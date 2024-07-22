@@ -939,7 +939,7 @@ parameters:
 
       - name: Today Energy Bought
         alt: Daily Energy Bought
-        description: Today's energy from the grid
+        description: Today's energy imported from the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -951,7 +951,7 @@ parameters:
 
       - name: Today Energy Sold
         alt: Daily Energy Sold
-        description: Today's energy returned to the grid
+        description: Today's energy exported/returned to the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -962,7 +962,7 @@ parameters:
         icon: "mdi:transmission-tower-import"
 
       - name: "Total Energy Bought"
-        description: Total energy from the grid
+        description: Total energy imported from the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -973,7 +973,7 @@ parameters:
         icon: "mdi:transmission-tower-export"
 
       - name: "Total Energy Sold"
-        description: Total energy returned to the grid
+        description: Total energy exported/returned to the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"

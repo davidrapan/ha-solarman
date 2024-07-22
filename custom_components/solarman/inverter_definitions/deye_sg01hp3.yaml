@@ -931,9 +931,9 @@ parameters:
         digits: 2
         icon: "mdi:battery-sync"
 
-      - name: Today Energy Export
-        alt: Daily Energy Export
-        description: Today's energy from the grid
+      - name: Today Energy Import
+        alt: Daily Energy Import
+        description: Today's energy imported from the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -943,9 +943,9 @@ parameters:
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
 
-      - name: Today Energy Import
-        alt: Daily Energy Import
-        description: Today's energy returned to the grid
+      - name: Today Energy Export
+        alt: Daily Energy Export
+        description: Today's energy exported/returned to the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -955,8 +955,8 @@ parameters:
         registers: [0x0209]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Total Energy Export"
-        description: Total energy from the grid
+      - name: "Total Energy Import"
+        description: Total energy imported from the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -966,8 +966,8 @@ parameters:
         registers: [0x020A, 0x020B]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Total Energy Import"
-        description: Total energy returned to the grid
+      - name: "Total Energy Export"
+        description: Total energy exported/returned to the grid
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
