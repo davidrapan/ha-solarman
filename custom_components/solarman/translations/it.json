@@ -17,7 +17,7 @@
           "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
           "inverter_port": "Porta (solitamente 8899)",
-          "mb_slave_id": "Slave ID di Modbus (solitamente 1)",
+          "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
@@ -44,7 +44,7 @@
           "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
           "inverter_port": "Porta (solitamente 8899)",
-          "mb_slave_id": "Slave ID di Modbus (solitamente 1)",
+          "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"

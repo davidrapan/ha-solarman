@@ -17,7 +17,7 @@
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "inverter_port": "Port (normalerweise 8899)",
-          "mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
+          "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
           "lookup_file": "YAML-Datei mit der Parameter-Definition",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
@@ -43,7 +43,7 @@
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "inverter_port": "Port (normalerweise 8899)",
-          "mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
+          "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
           "lookup_file": "YAML-Datei mit der Parameter-Definition",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"

@@ -38,15 +38,10 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     if IPv4Address(inverter_host).is_private:
         inverter_discovery = InverterDiscovery(hass, inverter_host)
-
-        if discovery:
-            if inverter_host_scanned := await inverter_discovery.get_ip():
-                inverter_host = inverter_host_scanned
-
-        if inverter_serial == 0:
-            if inverter_serial_scanned := await inverter_discovery.get_serial():
-                inverter_serial = inverter_serial_scanned
-
+        if discovery and (inverter_host_scanned := await inverter_discovery.get_ip()):
+            inverter_host = inverter_host_scanned
+        if inverter_serial == 0 and (inverter_serial_scanned := await inverter_discovery.get_serial()):
+            inverter_serial = inverter_serial_scanned
         if (mac := await inverter_discovery.get_mac()) and inverter_serial == await inverter_discovery.get_serial():
             inverter_mac = mac
 
@@ -58,6 +53,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
     if not inverter_mb_slave_id:
         inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
+    if lookup_file is None:
+        raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
 
     inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, name, inverter_mac, lookup_path, lookup_file)
 
