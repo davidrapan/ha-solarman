@@ -225,10 +225,16 @@ class ParameterParser:
         if "sensors" in definition:
             for s in definition["sensors"]:
                 if (n := (self._read_registers(rawData, s, start, length) if not "signed" in s else self._read_registers_signed(rawData, s, start, length))) is not None:
-                    if not "subtract" in s:
+                    if not "operator" in s:
                         value += n
                     else:
-                        value -= n
+                        match s["operator"]:
+                            case "subtract":
+                                value -= n
+                            case "multiply":
+                                value *= n
+                            case "divide":
+                                value /= n
                 else:
                     found = False
         else:
