@@ -14,7 +14,7 @@ read_holding_register:
     register:
       name: Register
       description: Modbus register address
-      example: "16384"
+      example: 16384
       required: true
       selector:
         number:
@@ -38,7 +38,7 @@ read_multiple_holding_registers:
     register:
       name: Register
       description: Modbus register address
-      example: "16384"
+      example: 16384
       required: true
       selector:
         number:
@@ -48,7 +48,7 @@ read_multiple_holding_registers:
     quantity:
       name: Quantity
       description: Quantity of registers to read
-      example: "4"
+      default: 1
       required: true
       selector:
         number:
@@ -72,7 +72,7 @@ write_holding_register:
     register:
       name: Register
       description: Modbus register address
-      example: "16384"
+      example: 16384
       required: true
       selector:
         number:
@@ -106,7 +106,7 @@ write_multiple_holding_registers:
     register:
       name: Register
       description: Modbus register address
-      example: "16384"
+      example: 16384
       required: true
       selector:
         number:

@@ -115,6 +115,7 @@ parameters:
       # Device - Rated Power of the Device
       - name: "Rated Power"
         disabled: "Value not provided by the inverter"
+        update_interval: 300
         attribute:
         class: "power"
         state_class: "measurement"
@@ -127,6 +128,7 @@ parameters:
     items:
       # Device - On/Off Switch 
       - name: ""
+        update_interval: 300
         class: "switch"
         state_class: ""
         uom: ""
@@ -137,8 +139,8 @@ parameters:
   - group: Settings
     items:
       - name: "Battery Control Mode"
-        attribute:
-        class: "enum"
+        update_interval: 300
+        class: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -153,6 +155,7 @@ parameters:
             value: "Lithium"
 
       - name: "Battery Equalization"
+        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -169,6 +172,7 @@ parameters:
           max: 6100
 
       - name: "Battery Absorption"
+        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -185,6 +189,7 @@ parameters:
           max: 6100
 
       - name: "Battery Float"
+        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -201,6 +206,7 @@ parameters:
           max: 6100
 
       - name: "Battery Capacity"
+        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "Ah"
@@ -216,6 +222,7 @@ parameters:
           max: 2000
 
       - name: "Battery Empty"
+        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -229,6 +236,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Grid Zero Export power"
+        update_interval: 300
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -241,6 +249,7 @@ parameters:
         icon: "mdi:transmission-tower-import"
 
       - name: "Battery Equalization Cycle"
+        update_interval: 300
         class: "duration"
         state_class: "measurement"
         uom: "d"
@@ -256,6 +265,7 @@ parameters:
           max: 90
 
       - name: "Battery Equalization Time"
+        update_interval: 300
         class: "duration"
         state_class: "measurement"
         uom: "h"
@@ -271,6 +281,7 @@ parameters:
           max: 20
 
       - name: "Battery Temperature Compensation"
+        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "mV/*C"
@@ -287,6 +298,7 @@ parameters:
           max: 50
 
       - name: "Battery Max Charging Current"
+        update_interval: 300
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -302,6 +314,7 @@ parameters:
           max: 185
 
       - name: "Battery Max Discharging Current"
+        update_interval: 300
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -317,6 +330,7 @@ parameters:
           max: 185
 
       - name: "Battery Grid Charging Current"
+        update_interval: 300
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -332,6 +346,7 @@ parameters:
           max: 185
 
       - name: "Battery Grid Charging"
+        update_interval: 300
         class: "switch"
         state_class: ""
         uom: ""
@@ -341,7 +356,8 @@ parameters:
         icon: "mdi:battery"
 
       - name: "SmartLoad Mode"
-        class: "enum"
+        update_interval: 300
+        class: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -358,6 +374,7 @@ parameters:
             value: "Microinverter"
 
       - name: "SmartLoad Off"
+        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -365,11 +382,13 @@ parameters:
         rule: 1
         registers: [0x0087]
         icon: "mdi:lightning-bolt-circle"
+        configurable:
         range:
           min: 0
           max: 100
 
       - name: "SmartLoad On"
+        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -377,11 +396,13 @@ parameters:
         rule: 1
         registers: [0x0089]
         icon: "mdi:lightning-bolt-circle"
+        configurable:
         range:
           min: 0
           max: 100
 
       - name: "SmartLoad State"
+        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
@@ -638,7 +659,7 @@ parameters:
 
   - group: BMS
     items:
-      - name: "BMS Charged Voltage"
+      - name: "BMS Charging Voltage"
         attribute:
         class: "voltage"
         state_class: "measurement"
@@ -648,7 +669,7 @@ parameters:
         registers: [0x00D2]
         icon: "mdi:battery"
 
-      - name: "BMS Discharged Voltage"
+      - name: "BMS Discharging Voltage"
         attribute:
         class: "voltage"
         state_class: "measurement"
@@ -1245,15 +1266,14 @@ parameters:
           max: 101
         attributes:
           [
-            "Battery Control Mode",
             "Battery Corrected Capacity",
             "BMS SOC",
             "BMS Current",
             "BMS Voltage",
             "BMS Type",
             "BMS Other Symbol",
-            "BMS Charged Voltage",
-            "BMS Discharged Voltage",
+            "BMS Charging Voltage",
+            "BMS Discharging Voltage",
             "BMS Charging Current Limit",
             "BMS Discharging Current Limit",
             "BMS Max Charging Current",
