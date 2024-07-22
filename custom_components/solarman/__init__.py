@@ -84,6 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     config.async_on_unload(config.add_update_listener(async_update_listener))
 
     register_services(hass)
+
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
@@ -93,4 +94,5 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         _ = hass.data[DOMAIN].pop(config.entry_id)
 
     remove_services(hass)
+
     return unload_ok

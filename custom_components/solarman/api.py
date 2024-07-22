@@ -238,7 +238,7 @@ class Inverter(InverterApi):
                 if result == 0:
                     break
 
-            if result == 1:
+            if result == 1 or len(requests) == 0:
                 return self.get_result(params)
             else:
                 await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
