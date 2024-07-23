@@ -60,6 +60,9 @@ class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 
+        if self.sensor_entity_id:
+            self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
+
         registers = sensor["registers"]
         registers_length = len(registers)
         if registers_length > 0:

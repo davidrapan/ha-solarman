@@ -988,6 +988,7 @@ parameters:
         icon: "mdi:transmission-tower-import"
 
       - name: "Total Energy Bought"
+        friendly_name: Total Energy Import
         description: Total energy imported from the grid
         update_interval: 30
         class: "energy"
@@ -999,6 +1000,7 @@ parameters:
         icon: "mdi:transmission-tower-export"
 
       - name: "Total Energy Sold"
+        friendly_name: Total Energy Export
         description: Total energy exported/returned to the grid
         update_interval: 30
         class: "energy"

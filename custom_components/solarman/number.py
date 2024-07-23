@@ -58,6 +58,9 @@ class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 
+        if self.sensor_entity_id:
+            self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
+
         self.scale = 1
         if "scale" in sensor:
             self.scale = get_number(sensor["scale"])
