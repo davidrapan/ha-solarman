@@ -189,6 +189,8 @@ class ParameterParser:
                 if "offset" in definition:
                     value = value - definition["offset"]
                 value = value * scale
+                if "divide" in definition:
+                    value //= definition["divide"]
 
         return value if found else None
 
@@ -221,6 +223,9 @@ class ParameterParser:
                 value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
             value = value * scale
+
+            if "divide" in definition:
+                value //= definition["divide"]
 
         return value if found else None
 
