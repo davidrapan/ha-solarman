@@ -9,6 +9,7 @@
 [![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
 
 #### 🠶 Signpost
+- [Wiki](https://github.com/davidrapan/ha-solarman/wiki)
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
 - [Custom sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-sensors)
 - [Dashboards](https://github.com/davidrapan/ha-solarman/wiki/Dashboards)
