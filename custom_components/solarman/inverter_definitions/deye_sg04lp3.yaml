@@ -874,6 +874,7 @@ parameters:
     items:
       - name: Today Battery Charge
         alt: Daily Battery Charge
+        friendly_name: Today's Battery Charge
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -885,6 +886,7 @@ parameters:
 
       - name: Today Battery Discharge
         alt: Daily Battery Discharge
+        friendly_name: Today's Battery Discharge
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -916,8 +918,9 @@ parameters:
 
       - name: Today Battery Life Cycles
         alt: Daily Battery Life Cycles
+        friendly_name: Today's Battery Life Cycles
+        description: Calculates today's battery life cycles based on today's charged amount¨
         update_interval: 30
-        description: Calculates today's battery life cycles based on today's charged amount
         class: ""
         state_class: "total_increasing"
         uom: ""
@@ -939,6 +942,7 @@ parameters:
 
       - name: Today Energy Bought
         alt: Daily Energy Bought
+        friendly_name: Today's Energy Import
         description: Today's energy imported from the grid
         update_interval: 30
         class: "energy"
@@ -951,6 +955,7 @@ parameters:
 
       - name: Today Energy Sold
         alt: Daily Energy Sold
+        friendly_name: Today's Energy Export
         description: Today's energy exported/returned to the grid
         update_interval: 30
         class: "energy"
@@ -985,6 +990,7 @@ parameters:
 
       - name: Today Load Consumption
         alt: Daily Load Consumption
+        friendly_name: Today's Load Consumption
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -1003,6 +1009,7 @@ parameters:
         registers: [0x020F, 0x0210]
 
       - name: Today Losses
+        friendly_name: Today's Losses
         alt: Daily Losses
         update_interval: 30
         description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
@@ -1071,6 +1078,7 @@ parameters:
 
       - name: Today Production
         alt: Daily Production
+        friendly_name: Today's Production
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"

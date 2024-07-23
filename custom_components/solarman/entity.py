@@ -18,6 +18,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, Device
 from homeassistant.helpers.entity import Entity, ToggleEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
 from .const import *
 from .common import *
@@ -38,24 +39,28 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator)
         self.sensor_name = sensor["name"]
+        self.sensor_friendly_name = sensor[ATTR_FRIENDLY_NAME] if ATTR_FRIENDLY_NAME in sensor else self.sensor_name
         self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
         self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
 
         # Set the category of the sensor.
         self._attr_entity_category = (None)
 
-        # Set the icon of the sensor.
-        self._attr_icon = "mdi:information"
-
         # Set the name of the sensor.
         self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name)
 
-        # Set the entity_id of the sensor.
-        if self.sensor_entity_id:
-            self.entity_id = "sensor.{}_{}".format(self.coordinator.inverter.name, self.sensor_entity_id)
+        # Set the friendly name of the sensor.
+        self._attr_friendly_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_friendly_name)
 
         # Set a unique_id based on the serial number
         self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id)
+
+        # Set the icon of the sensor.
+        self._attr_icon = "mdi:information"
+
+    def _friendly_name_internal(self) -> str | None:
+        """Return the friendly name of the device."""
+        return self._attr_friendly_name
 
     @property
     def available(self) -> bool:

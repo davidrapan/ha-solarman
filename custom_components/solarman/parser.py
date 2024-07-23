@@ -10,16 +10,16 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
-    def __init__(self, parameter_definition):
-        self._lookups = parameter_definition
+    def __init__(self, profile):
+        self._profile = profile
         self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
         self._code = DEFAULT_REGISTERS_CODE
         self._min_span = DEFAULT_REGISTERS_MIN_SPAN
         self._digits = DEFAULT_DIGITS
         self._result = {}
 
-        if "default" in parameter_definition:
-            default = parameter_definition["default"]
+        if "default" in self._profile:
+            default = self._profile["default"]
             if REQUEST_UPDATE_INTERVAL in default:
                 self._update_interval = default[REQUEST_UPDATE_INTERVAL]
             if REQUEST_CODE in default:
@@ -29,10 +29,10 @@ class ParameterParser:
             if "digits" in default:
                 self._digits = default["digits"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in parameter_definition else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, digits: {self._digits}")
+        _LOGGER.debug(f"{'Defaults' if 'default' in self._profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, digits: {self._digits}")
 
-    def lookup(self):
-        return self._lookups["parameters"]
+    def parameters(self):
+        return self._profile["parameters"]
 
     def is_valid(self, parameters):
         return "name" in parameters and "rule" in parameters  # and "registers" in parameters
@@ -58,7 +58,7 @@ class ParameterParser:
 
     def get_sensors(self):
         result = [{"name": "Connection Status", "artificial": ""}]
-        for i in self.lookup():
+        for i in self.parameters():
             for j in i["items"]:
                 if self.is_sensor(j):
                     result.append(j)
@@ -66,17 +66,21 @@ class ParameterParser:
         return result
 
     def get_requests(self, runtime = 0):
-        if "requests" in self._lookups:
-            return self._lookups["requests"]
+        if "requests" in self._profile:
+            _LOGGER.debug("Dynamic requests and many more features are disabled cause of an old profile format!")
+            return self._profile["requests"]
 
         registers = []
 
-        for i in self.lookup():
-            for j in i["items"]:
-                if self.is_requestable(j) and self.is_scheduled(j, runtime):
-                    self.set_state(j["name"], self.default_from_unit_of_measurement(j))
-                    for r in j["registers"]:
+        for p in self.parameters():
+            for i in p["items"]:
+                if self.is_requestable(i) and self.is_scheduled(i, runtime):
+                    self.set_state(i["name"], self.default_from_unit_of_measurement(i))
+                    for r in i["registers"]:
                         registers.append(r)
+
+        if len(registers) == 0:
+            return {} 
 
         registers.sort()
 
@@ -85,7 +89,7 @@ class ParameterParser:
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code } for r in groups]
 
     def parse(self, rawData, start, length):
-        for i in self.lookup():
+        for i in self.parameters():
             for j in i["items"]:
                 if self.is_valid(j) and self.is_enabled(j):
                     self.try_parse(rawData, j, start, length)

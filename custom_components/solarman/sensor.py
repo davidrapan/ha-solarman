@@ -88,6 +88,9 @@ class SolarmanSensor(SolarmanBaseEntity):
         super().__init__(coordinator, sensor)
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
+        if self.sensor_entity_id:
+            self.entity_id = "sensor.{}_{}".format(self.coordinator.inverter.name, self.sensor_entity_id)
+
         if "suggested_display_precision" in sensor:
             self._attr_suggested_display_precision = sensor["suggested_display_precision"]
 
