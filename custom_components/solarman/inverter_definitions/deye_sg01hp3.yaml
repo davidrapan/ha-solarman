@@ -53,7 +53,9 @@ parameters:
             "Device Modbus Address",
             "Device Protocol Version",
             "Device Serial Number",
-            "Device Rated Power"
+            "Device Rated Power",
+            "Device MPPTs",
+            "Device Phases"
           ]
 
       # Device - Modbus Address
@@ -117,6 +119,38 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x0014, 0x0015]
+        validation:
+          min: 0
+          max: 24000
+
+      # Device - MPPTs
+      - name: "Device MPPTs"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x0F00
+        divide: 256
+        registers: [0x0016]
+        range:
+          min: 257
+          max: 2051
+
+      # Device - Phases
+      - name: "Device Phases"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x000F
+        registers: [0x0016]
+        range:
+          min: 257
+          max: 2051
 
   - group: Control
     items:
