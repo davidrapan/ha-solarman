@@ -250,8 +250,7 @@ class Inverter(InverterApi):
 
         return self.get_result()
 
-    async def wait_for_reading_done(self):
-        attempts_left = ACTION_ATTEMPTS
+    async def wait_for_reading_done(self, attempts_left = ACTION_ATTEMPTS):
         while self._is_reading == 1 and attempts_left > 0:
             attempts_left -= 1
 
@@ -274,10 +273,10 @@ class Inverter(InverterApi):
             if not self.auto_reconnect:
                 await self.async_disconnect()
 
-    async def service_write_holding_register(self, register, value) -> bool:
+    async def service_write_holding_register(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
         _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
 
-        if await self.wait_for_reading_done():
+        if await self.wait_for_reading_done(wait_for_attempts):
             _LOGGER.debug(f"service_write_holding_register: Timeout.")
             raise TimeoutError("Coordinator is currently reading data from the device!")
 
@@ -299,10 +298,10 @@ class Inverter(InverterApi):
 
                 await asyncio.sleep(TIMINGS_WRITE_EXCEPT_SLEEP)
 
-    async def service_write_multiple_holding_registers(self, register, values) -> bool:
+    async def service_write_multiple_holding_registers(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
         _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
 
-        if await self.wait_for_reading_done():
+        if await self.wait_for_reading_done(wait_for_attempts):
             _LOGGER.debug(f"service_write_multiple_holding_registers: Timeout.")
             raise TimeoutError("Coordinator is currently reading data from the device!")
 

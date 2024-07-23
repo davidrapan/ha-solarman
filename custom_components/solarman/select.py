@@ -71,6 +71,6 @@ class SolarmanSelectEntity(SolarmanSensor, SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self.options.index(option),])
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self.options.index(option),], ACTION_ATTEMPTS_MAX)
         self._attr_state = option
         self.async_write_ha_state()

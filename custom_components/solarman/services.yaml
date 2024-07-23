@@ -126,3 +126,13 @@ write_multiple_holding_registers:
           min: 0
           max: 65535 
           mode: box
+    wait_for_attempts:
+      name: Wait for attempts
+      description: Wait for coordinator attempts
+      default: 5
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 30
+          mode: box

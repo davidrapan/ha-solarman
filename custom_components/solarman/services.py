@@ -47,6 +47,7 @@ SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS_SCHEMA = vol.Schema(
         vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
         vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
         vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))]),
+        vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30)),
     }
 )
 
@@ -151,7 +152,8 @@ def register_services(hass: HomeAssistant) -> None:
         try:
             await inverter.service_write_multiple_holding_registers(
                 register = call.data.get(SERVICES_PARAM_REGISTER),
-                values = call.data.get(SERVICES_PARAM_VALUES))
+                values = call.data.get(SERVICES_PARAM_VALUES),
+                wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,

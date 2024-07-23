@@ -89,7 +89,7 @@ class SolarmanNumberEntity(SolarmanSensor, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the setting."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int(value / self.scale),])
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int(value / self.scale),], ACTION_ATTEMPTS_MAX)
         self._attr_state = get_number(value)
         self.async_write_ha_state()
         #await self.entity_description.update_fn(self.coordinator., int(value))

@@ -332,6 +332,24 @@ parameters:
           min: 0
           max: 185
 
+      - name: "Battery Operation Mode"
+        update_interval: 300
+        class: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x006F]
+        icon: mdi:battery
+        options: [Voltage, Capacity, No Battery]
+        lookup:
+          - key: 0x0000
+            value: Voltage
+          - key: 0x0001
+            value: Capacity
+          - key: 0x0002
+            value: No Battery
+
       - name: "Battery Grid Charging Current"
         update_interval: 300
         class: "current"

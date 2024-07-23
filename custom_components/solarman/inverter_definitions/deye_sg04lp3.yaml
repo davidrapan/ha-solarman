@@ -329,6 +329,24 @@ parameters:
           min: 0
           max: 185
 
+      - name: "Battery Operation Mode"
+        update_interval: 300
+        class: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x006F]
+        icon: mdi:battery
+        options: [Voltage, Capacity, No Battery]
+        lookup:
+          - key: 0x0000
+            value: Voltage
+          - key: 0x0001
+            value: Capacity
+          - key: 0x0002
+            value: No Battery
+
       - name: "Battery Grid Charging Current"
         update_interval: 300
         class: "current"
@@ -919,7 +937,7 @@ parameters:
       - name: Today Battery Life Cycles
         alt: Daily Battery Life Cycles
         friendly_name: Today's Battery Life Cycles
-        description: Calculates today's battery life cycles based on today's charged amount¨
+        description: Calculates today's battery life cycles based on today's charged amount
         update_interval: 30
         class: ""
         state_class: "total_increasing"

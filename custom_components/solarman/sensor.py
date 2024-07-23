@@ -28,6 +28,8 @@ from .entity import SolarmanCoordinatorEntity, SolarmanBaseEntity, SolarmanEntit
 
 _LOGGER = logging.getLogger(__name__)
 
+_PLATFORM = get_current_file_name(__name__)
+
 def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
     try:
         if "artificial" in sensor:
@@ -86,10 +88,9 @@ class SolarmanStatus(SolarmanEntity):
 class SolarmanSensor(SolarmanBaseEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, sensor)
-        self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
         if self.sensor_entity_id:
-            self.entity_id = "sensor.{}_{}".format(self.coordinator.inverter.name, self.sensor_entity_id)
+            self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
 
         if "suggested_display_precision" in sensor:
             self._attr_suggested_display_precision = sensor["suggested_display_precision"]

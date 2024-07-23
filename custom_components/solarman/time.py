@@ -75,6 +75,6 @@ class SolarmanTimeEntity(SolarmanSensor, TimeEntity):
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
         value_int = int(value.strftime("%H%M"))
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [value_int,])
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [value_int,], ACTION_ATTEMPTS_MAX)
         self._attr_state = value_int
         self.async_write_ha_state()
