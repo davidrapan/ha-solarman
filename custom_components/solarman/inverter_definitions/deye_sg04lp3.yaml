@@ -598,6 +598,195 @@ parameters:
           max: 2359
         icon: mdi:sun-clock
 
+      # Program x power is the max discharge power during the time slot
+      #
+      - name: Program 1 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009A]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+        icon: mdi:sun-clock
+
+      - name: Program 2 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009B]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+        icon: mdi:sun-clock
+
+      - name: Program 3 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009C]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+
+        icon: mdi:sun-clock
+      - name: Program 4 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009D]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+        icon: mdi:sun-clock
+
+      - name: Program 5 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009E]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+        icon: mdi:sun-clock
+
+      - name: Program 6 Power
+        update_interval: 300
+        class: "power"
+        state_class: measurement
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x009F]
+        configurable:
+        range:
+          min: 0000
+          max: 12000
+        icon: mdi:sun-clock
+
+      # Program x voltage is the voltage at/until the program operation is valid.
+      - name: Program 1 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A0]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
+      - name: Program 2 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A1]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
+      - name: Program 3 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A2]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
+      - name: Program 4 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A3]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
+      - name: Program 5 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A4]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
+      - name: Program 6 Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00A5]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+        icon: mdi:sun-clock
+
       - name: Program 1 SOC
         update_interval: 300
         class: ""
