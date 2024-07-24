@@ -12,7 +12,7 @@
       "user": {
         "title": "Configurazione della connessione inverter",
         "data": {
-          "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
+          "name": "Nome del dispositivo",
           "inverter_discovery": "Enable device discovery",
           "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
@@ -23,6 +23,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }
@@ -39,7 +40,7 @@
       "init": {
         "title": "Configurazione della connessione inverter",
         "data": {
-          "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
+          "name": "Nome del dispositivo",
           "inverter_discovery": "Enable device discovery",
           "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
@@ -50,6 +51,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }

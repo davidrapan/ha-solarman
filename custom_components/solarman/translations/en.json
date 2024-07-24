@@ -12,7 +12,7 @@
       "user": {
         "title": "Inverter configuration",
         "data": {
-          "name": "This name will be prefixed to all parameter values (change as you like)",
+          "name": "Device name",
           "inverter_discovery": "Enable device discovery",
           "inverter_host": "Host or IP address",
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
@@ -23,6 +23,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "This name will be prefixed to all sensors (change as you like).",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }
@@ -39,7 +40,7 @@
       "init": {
         "title": "Inverter configuration",
         "data": {
-          "name": "This name will be prefixed to all parameter values (change as you like)",
+          "name": "Device name",
           "inverter_discovery": "Enable device discovery",
           "inverter_host": "Host or IP address",
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
@@ -50,6 +51,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "This name will be prefixed to all sensors (change as you like).",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }

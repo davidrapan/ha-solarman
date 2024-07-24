@@ -12,7 +12,7 @@
       "user": {
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
-          "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
+          "name": "Gerätename",
           "inverter_discovery": "Enable device discovery",
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
@@ -23,6 +23,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }
@@ -39,7 +40,7 @@
       "init": {
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
-          "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
+          "name": "Gerätename",
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "inverter_port": "Port (normalerweise 8899)",
@@ -49,6 +50,7 @@
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
         },
         "data_description": {
+          "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
           "inverter_host": "The hostname or IP address of the device to connect to.",
           "inverter_port": "The TCP port (8899) of the device to connect to."
         }

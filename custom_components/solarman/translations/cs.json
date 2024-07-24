@@ -1,0 +1,61 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Zařízení je již nakonfigurováno"
+    },
+    "error": {
+      "cannot_connect": "Nepodařilo se připojit",
+      "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "unknown": "Neočekávaná chyba"
+    },
+    "step": {
+      "user": {
+        "title": "Konfigurace měniče",
+        "data": {
+          "name": "Název zařízení",
+          "inverter_discovery": "Povolit discovery zařízení",
+          "inverter_host": "Hostitel nebo IP adresa",
+          "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
+          "inverter_port": "Port",
+          "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
+          "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
+          "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
+          "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"
+        },
+        "data_description": {
+          "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete).",
+          "inverter_host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit.",
+          "inverter_port": "TCP port (8899) zařízení, ke kterému se chcete připojit."
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Nepodařilo se připojit",
+      "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "unknown": "Neočekávaná chyba"
+    },
+    "step": {
+      "init": {
+        "title": "Konfigurace měniče",
+        "data": {
+          "name": "Název zařízení",
+          "inverter_discovery": "Povolit discovery zařízení",
+          "inverter_host": "Hostitel nebo IP adresa",
+          "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
+          "inverter_port": "Port",
+          "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
+          "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
+          "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
+          "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"
+        },
+        "data_description": {
+          "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete).",
+          "inverter_host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit.",
+          "inverter_port": "TCP port (8899) zařízení, ke kterému se chcete připojit."
+        }
+      }
+    }
+  }
+}
