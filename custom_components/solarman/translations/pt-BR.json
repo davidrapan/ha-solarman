@@ -13,19 +13,19 @@
         "title": "Configuração de conexão do inversor",
         "data": {
           "name": "Nome do dispositivo",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "Habilitar descoberta",
           "inverter_host": "Host (ip ou nome do host)",
           "inverter_serial": "Número de série do dispositivo (recuperar da interface da web)",
           "inverter_port": "Porta (geralmente 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (geralmente 1)",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
+          "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio"
         },
         "data_description": {
           "name": "Este nome será prefixado para todos os valores de parâmetro (altere como quiser)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "O nome do host ou endereço IP do dispositivo ao qual se conectar.",
+          "inverter_port": "A porta TCP (8899) do dispositivo ao qual se conectar."
         }
       }
     }
@@ -41,19 +41,19 @@
         "title": "Configuração de conexão do inversor",
         "data": {
           "name": "Nome do dispositivo",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "Habilitar descoberta",
           "inverter_host": "Host (ip ou nome do host)",
           "inverter_serial": "Número de série do dispositivo (recuperar da interface da web)",
           "inverter_port": "Porta (geralmente 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (geralmente 1)",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
+          "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio"
         },
         "data_description": {
           "name": "Este nome será prefixado para todos os valores de parâmetro (altere como quiser)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "O nome do host ou endereço IP do dispositivo ao qual se conectar.",
+          "inverter_port": "A porta TCP (8899) do dispositivo ao qual se conectar."
         }
       }
     }

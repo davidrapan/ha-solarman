@@ -12,8 +12,8 @@
       "user": {
         "title": "Konfigurace měniče",
         "data": {
-          "name": "Název zařízení",
-          "inverter_discovery": "Povolit discovery zařízení",
+          "name": "Název",
+          "inverter_discovery": "Povolit discovery",
           "inverter_host": "Hostitel nebo IP adresa",
           "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
           "inverter_port": "Port",
@@ -40,8 +40,8 @@
       "init": {
         "title": "Konfigurace měniče",
         "data": {
-          "name": "Název zařízení",
-          "inverter_discovery": "Povolit discovery zařízení",
+          "name": "Název",
+          "inverter_discovery": "Povolit discovery",
           "inverter_host": "Hostitel nebo IP adresa",
           "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
           "inverter_port": "Port",

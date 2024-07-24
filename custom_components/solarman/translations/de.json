@@ -13,19 +13,19 @@
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
           "name": "Gerätename",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "Erkennung aktivieren",
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "inverter_port": "Port (normalerweise 8899)",
           "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
           "lookup_file": "YAML-Datei mit der Parameter-Definition",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
+          "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie"
         },
         "data_description": {
           "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll.",
+          "inverter_port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll."
         }
       }
     }
@@ -41,18 +41,19 @@
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
           "name": "Gerätename",
+          "inverter_discovery": "Erkennung aktivieren",
           "inverter_host": "Host (IP-Adresse oder Hostname)",
           "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "inverter_port": "Port (normalerweise 8899)",
           "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
           "lookup_file": "YAML-Datei mit der Parameter-Definition",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
+          "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie"
         },
         "data_description": {
           "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll.",
+          "inverter_port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll."
         }
       }
     }

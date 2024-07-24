@@ -13,7 +13,7 @@
         "title": "Inverter configuration",
         "data": {
           "name": "Device name",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "Enable discovery",
           "inverter_host": "Host or IP address",
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
           "inverter_port": "Port",
@@ -41,7 +41,7 @@
         "title": "Inverter configuration",
         "data": {
           "name": "Device name",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "Enable discovery",
           "inverter_host": "Host or IP address",
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
           "inverter_port": "Port",

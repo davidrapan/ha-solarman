@@ -13,19 +13,19 @@
         "title": "Konfiguracja po\u0142\u0105czenia falownika",
         "data": {
           "name": "Nazwa urz\u0105dzenia",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "W\u0142\u0105cz wykrywanie",
           "inverter_host": "Host (adres IP lub nazwa hosta)",
           "inverter_serial": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "inverter_port": "Port (zwykle 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (zwykle 1)",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
+          "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego"
         },
         "data_description": {
           "name": "Ta nazwa b\u0119dzie poprzedza\u0107 wszystkie warto\u015bci parametr\u00f3w (zmie\u0144 wedle uznania)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć.",
+          "inverter_port": "Port TCP (8899) urządzenia, z którym chcesz się połączyć."
         }
       }
     }
@@ -41,19 +41,19 @@
         "title": "Konfiguracja po\u0142\u0105czenia falownika",
         "data": {
           "name": "Nazwa urz\u0105dzenia",
-          "inverter_discovery": "Enable device discovery",
+          "inverter_discovery": "W\u0142\u0105cz wykrywanie",
           "inverter_host": "Host (adres IP lub nazwa hosta)",
           "inverter_serial": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "inverter_port": "Port (zwykle 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (zwykle 1)",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
+          "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego"
         },
         "data_description": {
           "name": "Ta nazwa b\u0119dzie poprzedza\u0107 wszystkie warto\u015bci parametr\u00f3w (zmie\u0144 wedle uznania)",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "inverter_host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć.",
+          "inverter_port": "Port TCP (8899) urządzenia, z którym chcesz się połączyć."
         }
       }
     }
