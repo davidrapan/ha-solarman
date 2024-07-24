@@ -21,7 +21,8 @@ _LOGGER = logging.getLogger(__name__)
 class InverterApi(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id, auto_reconnect):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = auto_reconnect, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
-        self.status_lastUpdate = "N/A"
+        self.status_updated = datetime.now()
+        self.status_interval = 0
         self.status = -1
 
     def is_connecting(self):
@@ -183,7 +184,9 @@ class Inverter(InverterApi):
 
         if middleware:
             _LOGGER.debug(f"Querying succeeded, exposing updated values. [Previous Status: {self.get_connection_status()}]")
-            self.status_lastUpdate = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+            now = datetime.now()
+            self.status_interval = now - self.status_updated
+            self.status_updated = now
             self.status = 1
 
         return middleware.get_result() if middleware else {}

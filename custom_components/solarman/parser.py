@@ -57,7 +57,7 @@ class ParameterParser:
         self._result[key]["state"] = value
 
     def get_sensors(self):
-        result = [{"name": "Connection Status", "artificial": "", "friendly_name": "Connection State"}]
+        result = [{"name": "Connection Status", "artificial": "state", "friendly_name": "Connection State"}, {"name": "Update Interval", "artificial": "interval"}]
         for i in self.parameters():
             for j in i["items"]:
                 if self.is_sensor(j):
@@ -188,9 +188,11 @@ class ParameterParser:
             if "lookup" not in definition:
                 if "offset" in definition:
                     value = value - definition["offset"]
+
                 value = value * scale
-                if "divide" in definition:
-                    value //= definition["divide"]
+
+                if "divide" in definition and (divide := definition["divide"]) and divide != 0:
+                    value //= divide
 
         return value if found else None
 
@@ -224,8 +226,8 @@ class ParameterParser:
 
             value = value * scale
 
-            if "divide" in definition:
-                value //= definition["divide"]
+            if "divide" in definition and (divide := definition["divide"]) and divide != 0:
+                value //= divide
 
         return value if found else None
 
@@ -245,8 +247,10 @@ class ParameterParser:
                                 value -= n
                             case "multiply":
                                 value *= n
-                            case "divide":
+                            case "divide" if n != 0:
                                 value /= n
+                            case _:
+                                value += n
                 else:
                     found = False
         else:

@@ -33,7 +33,11 @@ _PLATFORM = get_current_file_name(__name__)
 def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
     try:
         if "artificial" in sensor:
-            entity = SolarmanStatus(coordinator, sensor)
+            match sensor["artificial"]:
+                case "state":
+                    entity = SolarmanStatus(coordinator, sensor)
+                case "interval":
+                    entity = SolarmanInterval(coordinator, sensor)
         elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
             entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         else:
@@ -73,17 +77,28 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanStatus(SolarmanEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
-
         self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
 
     @property
     def available(self) -> bool:
-        """Return if entity is available."""
         return True
 
     def update(self):
         self._attr_state = self.coordinator.inverter.get_connection_status()
-        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_lastUpdate
+        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_updated.strftime("%m/%d/%Y, %H:%M:%S")
+
+class SolarmanInterval(SolarmanEntity):
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
+        self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
+        self._attr_extra_state_attributes = { "state_class": "measurement" }
+
+    @property
+    def available(self) -> bool:
+        return self._attr_state > 0
+
+    def update(self):
+        self._attr_state = self.coordinator.inverter.status_interval.total_seconds()
 
 class SolarmanSensor(SolarmanBaseEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
