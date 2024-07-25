@@ -1063,8 +1063,8 @@ parameters:
         registers: [0x020F, 0x0210]
 
       - name: Today Losses
-        friendly_name: Today's Losses
         alt: Daily Losses
+        friendly_name: Today's Losses
         update_interval: 30
         description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
@@ -1083,7 +1083,7 @@ parameters:
           - operator: subtract
             scale: 0.1
             registers: [0x0209]
-          - soperator: subtract
+          - operator: subtract
             scale: 0.1
             registers: [0x020E]
           - operator: subtract
