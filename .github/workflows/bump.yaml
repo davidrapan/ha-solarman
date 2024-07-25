@@ -1,0 +1,23 @@
+name: Bump version
+
+on:
+  schedule:
+  - cron: "00 00 * * *"
+  workflow_dispatch:
+
+jobs:
+  bump:
+    name: Do
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            custom_components/solarman/manifest.json
+          sparse-checkout-cone-mode: false
+      - run: 'sed -i "s/.*version.*/  \"version\": \"$(date +''%y.%m.%d'')\"/" custom_components/solarman/manifest.json'
+      - run: |
+          git config --global user.name "Continuous Integration"
+          git config --global user.email "david@rapan.cz"
+          git commit -m "chore: bump version" custom_components/solarman/manifest.json
+          git push
