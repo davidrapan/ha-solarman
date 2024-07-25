@@ -10,360 +10,381 @@ default:
   digits: 6
 
   parameters:
-  - group: InverterStatus
-    items:
-      - name: "Working Mode"
-        update_interval: 300
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [3040]
-        icon: "mdi:list-status"
-        lookup:
-          - key: 0x0
-            value: "No response mode"
-          - key: 0x1
-            value: "Volt–watt default"
-          - key: 0x2
-            value: "Volt–var"
-          - key: 0x3
-            value: "Fixed power factor"
-          - key: 0x4
-            value: "Fix reactive power"
-          - key: 0x5
-            value: "Power-PF"
-          - key: 0x6
-            value: "Rule21Volt–watt"
+    - group: InverterStatus
+      items:
+        - name: "Working Mode"
+          update_interval: 300
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 1
+          registers: [3040]
+          icon: "mdi:list-status"
+          lookup:
+            - key: 0x0
+              value: "No response mode"
+            - key: 0x1
+              value: "Volt–watt default"
+            - key: 0x2
+              value: "Volt–var"
+            - key: 0x3
+              value: "Fixed power factor"
+            - key: 0x4
+              value: "Fix reactive power"
+            - key: 0x5
+              value: "Power-PF"
+            - key: 0x6
+              value: "Rule21Volt–watt"
 
-      - name: "Inverter Status"
-        update_interval: 60
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [3043]
-        icon: "mdi:list-status"
-        isstr: true
-        lookup:
-          - key: 0x0
-            value: "Waiting"
-          - key: 0x1
-            value: "OpenRun"
-          - key: 0x2
-            value: "SoftRun"
-          - key: 0x3
-            value: "Generating"
-          - key: 0x1004
-            value: "Grid off"
-          - key: 0x1010
-            value: "Grid Over Voltage"
-          - key: 0x1011
-            value: "Grid Under Voltage"
-          - key: 0x1015
-            value: "No Grid"
-          - key: 0x1032
-            value: "Temperature Protection"
-          - key: 0x2011
-            value: "Fail Safe"
+        - name: "Inverter Status"
+          update_interval: 60
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 1
+          registers: [3043]
+          icon: "mdi:list-status"
+          isstr: true
+          lookup:
+            - key: 0x0
+              value: "Waiting"
+            - key: 0x1
+              value: "OpenRun"
+            - key: 0x2
+              value: "SoftRun"
+            - key: 0x3
+              value: "Generating"
+            - key: 0x1004
+              value: "Grid off"
+            - key: 0x1010
+              value: "Grid Over Voltage"
+            - key: 0x1011
+              value: "Grid Under Voltage"
+            - key: 0x1015
+              value: "No Grid"
+            - key: 0x1032
+              value: "Temperature Protection"
+            - key: 0x2011
+              value: "Fail Safe"
 
-      - name: "Working Status"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "Working Status"
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      # Working Status Bit decode
-      - name: "WStatus Normal"
-        class: "running"
-        state_class: ""
-        uom: ""
-        mask: 0x01
-        divide: 1
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        # Working Status Bit decode
+        - name: "WStatus Normal"
+          class: "running"
+          state_class: ""
+          uom: ""
+          mask: 0x01
+          divide: 1
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "WStatus Initialising"
-        class: ""
-        state_class: ""
-        uom: ""
-        mask: 0x02
-        divide: 2
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "WStatus Initialising"
+          class: ""
+          state_class: ""
+          uom: ""
+          mask: 0x02
+          divide: 2
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "WStatus Grid off"
-        class: ""
-        state_class: ""
-        uom: ""
-        mask: 0x04
-        divide: 4
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "WStatus Grid off"
+          class: ""
+          state_class: ""
+          uom: ""
+          mask: 0x04
+          divide: 4
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "WStatus Standby"
-        class: ""
-        state_class: ""
-        uom: ""
-        mask: 0x10
-        divide: 16
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "WStatus Standby"
+          class: ""
+          state_class: ""
+          uom: ""
+          mask: 0x10
+          divide: 16
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "WStatus Derating"
-        class: ""
-        state_class: ""
-        uom: ""
-        mask: 0x20
-        divide: 32
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "WStatus Derating"
+          class: ""
+          state_class: ""
+          uom: ""
+          mask: 0x20
+          divide: 32
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "WStatus Limiting"
-        class: ""
-        state_class: ""
-        uom: ""
-        mask: 0x40
-        divide: 64
-        rule: 1
-        registers: [3071]
-        icon: "mdi:list-status"
+        - name: "WStatus Limiting"
+          class: ""
+          state_class: ""
+          uom: ""
+          mask: 0x40
+          divide: 64
+          rule: 1
+          registers: [3071]
+          icon: "mdi:list-status"
 
-      - name: "Inverter Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [3041]
-        icon: "mdi:thermometer"
+        - name: "Inverter Temperature"
+          class: "temperature"
+          state_class: "measurement"
+          uom: "°C"
+          scale: 0.1
+          rule: 2
+          registers: [3041]
+          icon: "mdi:thermometer"
 
-      - name: "Inverter Efficiency"
-        class: ""
-        state_class: measurement
-        uom: "%"
-        rule: 1
-        digits: 1
-        uint: enforce
-        registers: [3005, 3004, 3007, 3006]
-        sensors:
-          - signed:
-            registers: [3005, 3004]
-            scale: 100
-          - operator: divide
-            signed:
-            registers: [3007, 3006]
-        validation:
-          min: 0
-          max: 99
+        - name: "Inverter Efficiency"
+          class: ""
+          state_class: measurement
+          uom: "%"
+          rule: 1
+          digits: 1
+          uint: enforce
+          registers: [3005, 3004, 3007, 3006]
+          sensors:
+            - signed:
+              registers: [3005, 3004]
+              scale: 100
+            - operator: divide
+              signed:
+              registers: [3007, 3006]
+          validation:
+            min: 0
+            max: 99
 
-  # commented out as not something that changes on this inverter
-  #      - name: "Inverter ID"
-  #        class: ""
-  #        state_class: ""
-  #        uom: ""
-  #        scale: 1
-  #        rule: 5
-  #        registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
-  #        isstr: true
-  #
-  #       - name: "Product Model"
-  #         class: ""
-  #         state_class: ""
-  #         uom: ""
-  #         scale: 1
-  #         rule: 6
-  #         registers: [2999]
-  #         isstr: true
-  #
-  #       - name: "DSP Software Version"
-  #         class: ""
-  #         state_class: ""
-  #         uom: ""
-  #         scale: 1
-  #         rule: 6
-  #         registers: [3000]
-  #         isstr: true
-  #
-  #       - name: "LCD Software Version"
-  #         class: ""
-  #         state_class: ""
-  #         uom: ""
-  #         scale: 1
-  #         rule: 6
-  #         registers: [3001]
-  #         isstr: true
+        - name: "Inverter ID"
+          disabled:
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 5
+          registers:
+            [
+              33004,
+              33005,
+              33006,
+              33007,
+              33008,
+              33009,
+              33010,
+              33011,
+              33012,
+              33013,
+              33014,
+              33015,
+              33016,
+              33017,
+              33018,
+              33019,
+            ]
+          isstr: true
 
-  - group: InverterDC
-    items:
-      - name: "PV1 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [3021]
-        icon: "mdi:solar-power"
+        - name: "Product Model"
+          disabled:
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 6
+          registers: [2999]
+          isstr: true
 
-      - name: "PV2 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [3023]
-        icon: "mdi:solar-power"
+        - name: "DSP Software Version"
+          disabled:
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 6
+          registers: [3000]
+          isstr: true
 
-      - name: "PV1 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [3022]
-        icon: "mdi:current-dc"
+        - name: "LCD Software Version"
+          disabled:
+          class: ""
+          state_class: ""
+          uom: ""
+          scale: 1
+          rule: 6
+          registers: [3001]
+          isstr: true
 
-      - name: "PV2 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [3024]
-        icon: "mdi:current-dc"
+    - group: InverterDC
+      items:
+        - name: "PV1 Voltage"
+          class: "voltage"
+          state_class: "measurement"
+          uom: "V"
+          scale: 0.1
+          rule: 1
+          registers: [3021]
+          icon: "mdi:solar-power"
 
-      - name: "PV1 Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        rule: 1
-        digits: 3
-        registers: [3021, 3022]
-        sensors:
-          - registers: [3021]
-            scale: 0.1
-          - operator: multiply
-            scale: 0.0001
-            registers: [3022]
+        - name: "PV2 Voltage"
+          class: "voltage"
+          state_class: "measurement"
+          uom: "V"
+          scale: 0.1
+          rule: 1
+          registers: [3023]
+          icon: "mdi:solar-power"
 
-      - name: "PV2 Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        rule: 1
-        digits: 3
-        registers: [3023, 3024]
-        sensors:
-          - registers: [3023]
-            scale: 0.1
-          - operator: multiply
-            scale: 0.0001
-            registers: [3024]
+        - name: "PV1 Current"
+          class: "current"
+          state_class: "measurement"
+          uom: "A"
+          scale: 0.1
+          rule: 1
+          registers: [3022]
+          icon: "mdi:current-dc"
 
-      - name: "Total DC Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        scale: 0.001
-        rule: 3
-        registers: [3007, 3006]
-        icon: "mdi:solar-power"
+        - name: "PV2 Current"
+          class: "current"
+          state_class: "measurement"
+          uom: "A"
+          scale: 0.1
+          rule: 1
+          registers: [3024]
+          icon: "mdi:current-dc"
 
-  - group: InverterAC
-    items:
-      - name: "Inverter AC Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        scale: 0.001
-        rule: 3
-        registers: [3005, 3004]
-        icon: "mdi:solar-power"
+        - name: "PV1 Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          rule: 1
+          digits: 3
+          registers: [3021, 3022]
+          sensors:
+            - registers: [3021]
+              scale: 0.1
+            - operator: multiply
+              scale: 0.0001
+              registers: [3022]
 
-      - name: "Inverter Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [3035]
-        icon: "mdi:transmission-tower"
+        - name: "PV2 Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          rule: 1
+          digits: 3
+          registers: [3023, 3024]
+          sensors:
+            - registers: [3023]
+              scale: 0.1
+            - operator: multiply
+              scale: 0.0001
+              registers: [3024]
 
-      - name: "Inverter Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [3038]
-        icon: "mdi:current-ac"
+        - name: "Total DC Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          scale: 0.001
+          rule: 3
+          registers: [3007, 3006]
+          icon: "mdi:solar-power"
 
-      - name: "Inverter Frequency"
-        class: "frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [3042]
-        icon: "mdi:sine-wave"
+    - group: InverterAC
+      items:
+        - name: "Inverter AC Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          scale: 0.001
+          rule: 3
+          registers: [3005, 3004]
+          icon: "mdi:solar-power"
 
-      - name: "Inverter AC Export Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        scale: 0.01
-        rule: 1
-        registers: [3113]
-        icon: "mdi:transmission-tower"
-        validation:
-          min: 0
-          max: 8
+        - name: "Inverter Voltage"
+          class: "voltage"
+          state_class: "measurement"
+          uom: "V"
+          scale: 0.1
+          rule: 1
+          registers: [3035]
+          icon: "mdi:transmission-tower"
 
-  - group: Generation
-    items:
-      - name: "Total Generation"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 1
-        rule: 3
-        registers: [3009, 3008]
-        icon: 'mdi:solar-power'
+        - name: "Inverter Current"
+          class: "current"
+          state_class: "measurement"
+          uom: "A"
+          scale: 0.1
+          rule: 1
+          registers: [3038]
+          icon: "mdi:current-ac"
 
-      - name: "Daily Generation"
-        update_interval: 300
-        class: "energy"
-        state_class: "measurement"
-        uom: "kWh"
-        scale: 0.1
-        rule: 1
-        registers: [3014]
-        icon: "mdi:solar-power"
+        - name: "Inverter Frequency"
+          class: "frequency"
+          state_class: "measurement"
+          uom: "Hz"
+          scale: 0.01
+          rule: 1
+          registers: [3042]
+          icon: "mdi:sine-wave"
 
-      - name: "Monthly Generation"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 1
-        rule: 3
-        registers: [3011, 3010]
-        icon: 'mdi:solar-power'
+        - name: "Inverter AC Export Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          scale: 0.01
+          rule: 1
+          registers: [3113]
+          icon: "mdi:transmission-tower"
+          validation:
+            min: 0
+            max: 8
 
-      - name: "Yearly Generation"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 1
-        rule: 3
-        registers: [3017, 3016]
-        icon: 'mdi:solar-power'
+    - group: Generation
+      items:
+        - name: "Total Generation"
+          class: "energy"
+          state_class: "total_increasing"
+          uom: "kWh"
+          scale: 1
+          rule: 3
+          registers: [3009, 3008]
+          icon: "mdi:solar-power"
+
+        - name: "Daily Generation"
+          update_interval: 300
+          class: "energy"
+          state_class: "measurement"
+          uom: "kWh"
+          scale: 0.1
+          rule: 1
+          registers: [3014]
+          icon: "mdi:solar-power"
+
+        - name: "Monthly Generation"
+          class: "energy"
+          state_class: "total_increasing"
+          uom: "kWh"
+          scale: 1
+          rule: 3
+          registers: [3011, 3010]
+          icon: "mdi:solar-power"
+
+        - name: "Yearly Generation"
+          class: "energy"
+          state_class: "total_increasing"
+          uom: "kWh"
+          scale: 1
+          rule: 3
+          registers: [3017, 3016]
+          icon: "mdi:solar-power"
