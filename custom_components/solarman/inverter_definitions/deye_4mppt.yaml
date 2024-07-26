@@ -1,13 +1,14 @@
 #
 # First version: 08.05.2022
-# Latest update: 08.09.2023
+# Latest update: 25.07.2024 
 # Microinverter SUN2000G3 (DEYE/VESDAS)
+# v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 4x MPPT, 4x inverter
 # 1x Logger, 4x Module,
 #
 
 default:
-  update_interval: 60
+  update_interval: 5
   digits: 6
 
 parameters:
@@ -102,6 +103,24 @@ parameters:
         rule: 1
         registers: [0x003C]
         icon: "mdi:solar-power"
+        
+      - name: "Daily Production 1"
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x0041]
+        icon: "mdi:solar-power"
+
+      - name: "Daily Production 2"
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x0042]
+        icon: "mdi:solar-power"
 
       - name: "Total Production"
         realtime:
@@ -115,6 +134,28 @@ parameters:
         validation:
           min: 0.1
           invalidate_all:
+ 
+      - name: "Total Production 1"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x0045]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: "Total Production 2"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x0047]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Active Power Regulations"
         realtime:
@@ -157,6 +198,105 @@ parameters:
         rule: 1
         registers: [0x004F]
         icon: "mdi:home-lightning-bolt"
+ 
+      - name: "Grid Voltage Upp Limit"
+        class: "voltage"
+        state_class: ""
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x001B]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Voltage Lower Limit"
+        class: "voltage"
+        state_class: ""
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x001C]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency Upper Limit"
+        class: "frequency"
+        state_class: ""
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x001D]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Grid Frequency Lower Limit"
+        class: "frequency"
+        state_class: ""
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x001E]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Overfrequency And Load Reduction Starting Point"
+        class: "frequency"
+        state_class: ""
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0022]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Overfrequency And Load Reduction Percentage"
+        class: ""
+        state_class: ""
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x0023]
+        icon: ""
+
+      - name: "ON-OFF Enable"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002B]
+        isstr: true
+        lookup:
+          - key: 0
+            value: "OFF"
+          - key: 1
+            value: "ON"
+        icon: "mdi:toggle-switch"
+
+      - name: "Island Protection Enable"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002E]
+        isstr: true
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+        icon: "mdi:island"
+
+      - name: "Overfrequency&Load-shedding Enable"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0031]
+        isstr: true
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+        icon: "mdi:toggle-switch"
 
   - group: Inverter
     items:
@@ -181,6 +321,15 @@ parameters:
           - key: 4
             value: "Fault"
         icon: "mdi:home-lightning-bolt"
+        
+      - name: "Running Status Code"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x003B]
+        icon: "mdi:numeric"
 
       - name: "Total AC Output Power (Active)"
         realtime:
@@ -211,6 +360,35 @@ parameters:
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
         isstr: true
+        
+      - name: "Hardware Version"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000C]
+        icon: "mdi:map-marker"
+
+      - name: "DC Master Firmware Version"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000D]
+        icon: "mdi:map-marker"
+        isstr: true
+
+      - name: "AC Version. Number"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000E]
+        icon: "mdi:map-marker"
+        isstr: true
 
       - name: "Rated Power"
         realtime:
@@ -222,6 +400,16 @@ parameters:
         registers: [0x0010]
         icon: "mdi:solar-power"
 
+      - name: "Communication Protocol Version"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x0012]
+        icon: "mdi:wrench"
+        isstr: true
+        
       - name: "Start-up Self-checking Time "
         class: ""
         state_class: ""
@@ -230,6 +418,40 @@ parameters:
         rule: 1
         registers: [0x0015]
         icon: "mdi:solar-power"
+        
+      - name: "Device Time"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 8
+        registers: [0x0016, 0x0017, 0x0018]
+        icon: "mdi:clock-time-three-outline"
+        isstr: true
+
+      - name: "Device Rated Power"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0008]
+        isstr: true
+        lookup:
+          - key: 1
+            value: "single-phase"
+          - key: 2
+            value: "three-phase"
+        icon: "mdi:map-marker"
+
+      - name: "Device Chip-Typ"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 6
+        registers: [0x0009]
+        icon: "mdi:map-marker"
 
       - name: "Soft Start Enable"
         realtime:
@@ -272,3 +494,66 @@ parameters:
           - key: 1
             value: "Enabled"
         icon: "mdi:factory"
+        
+ - group: Alert
+    items:
+      - name: "Fault information"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 3
+        registers: [0x0067, 0x0068, 0x0069, 0x006a]
+        icon: "mdi:alert-octagon-outline"
+        isstr: true
+        lookup:
+          - key: 0
+            value: "None"
+          - key: F07
+            value: "F07 - DC/DC_Softsart_Fault"
+          - key: 128
+            value: "DC DC too low"
+
+      - name: "Warning Code"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0065, 0x0066]
+        icon: "mdi:information-slab-circle-outline"
+        isstr: true
+        lookup:
+          - key: 0
+            value: "None"
+          - key: W01
+            value: "W01 reserve"
+          - key: 1
+            value: "W01 reserve"
+          - key: W02
+            value: "W02 FAN_WARN"
+          - key: 2
+            value: "W02 FAN_WARN"
+          - key: W03
+            value: "W03 Grid phase wrong"
+          - key: 3
+            value: "W03 Grid phase wrong"
+          - key: W04
+            value: "W04 meter_Comm_Fail"
+          - key: 4
+            value: "W04 meter_Comm_Fail"
+          - key: 128
+            value: "DC DC too low"
+
+      - name: "Alert"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 6
+        registers: [0x0075, 0x0076]
+        icon: "mdi:message-alert-outline"
+        isstr: true
+        lookup:
+          - key: 0
+            value: "None"
