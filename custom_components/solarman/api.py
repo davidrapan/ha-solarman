@@ -113,6 +113,10 @@ class InverterApi(PySolarmanV5Async):
                     await self.writer.wait_closed()
                 except OSError as e:  # Happens when host is unreachable.
                     _LOGGER.debug(f"{e} can be during closing ignored.")
+                finally:
+                    self.reader_task = None
+                    self.reader = None
+                    self.writer = None
 
     async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
