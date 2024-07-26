@@ -187,13 +187,17 @@ class Inverter(InverterApi):
         self._is_reading = 0
 
         if middleware:
+            self.status = 1
+
+        result = middleware.get_result() if middleware else {}
+
+        if len(result) > 0:
             _LOGGER.debug(f"Querying succeeded, exposing updated values. [Previous Status: {self.get_connection_status()}]")
             now = datetime.now()
             self.status_interval = now - self.status_updated
             self.status_updated = now
-            self.status = 1
 
-        return middleware.get_result() if middleware else {}
+        return result
 
     async def async_get_failed(self, message):
         _LOGGER.debug(f"Request failed. [Previous Status: {self.get_connection_status()}]")

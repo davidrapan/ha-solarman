@@ -483,7 +483,22 @@ parameters:
 
   - group: Work Mode
     items:
-      - name: Grid Export Surplus
+      - name: Energy Pattern
+        update_interval: 300
+        class: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x008D]
+        options: ["Battery First", "Load First"]
+        lookup:
+          - key: 0x0000
+            value: "Battery First"
+          - key: 0x0001
+            value: "Load First"
+
+      - name: Export Surplus
         alt: Solar Sell
         update_interval: 300
         class: "switch"
@@ -492,6 +507,18 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0091]
+
+      - name: Time of Use
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0092]
+        value:
+          on: 0x00FF
+          off: 0x0000
 
       - name: Program 1 Time
         update_interval: 300

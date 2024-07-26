@@ -63,6 +63,16 @@ class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
         if self.sensor_entity_id:
             self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
 
+        self._value_on = 1
+        self._value_off = 0
+
+        if "value" in sensor:
+            value = sensor["value"]
+            if "on" in value:
+                self._value_on = value["on"]
+            if "off" in value:
+                self._value_off = value["off"]
+
         registers = sensor["registers"]
         registers_length = len(registers)
         if registers_length > 0:
@@ -77,12 +87,12 @@ class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [1,], ACTION_ATTEMPTS_MAX)
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self._value_on,], ACTION_ATTEMPTS_MAX)
         self._attr_state = 1
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [0,], ACTION_ATTEMPTS_MAX)
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self._value_off,], ACTION_ATTEMPTS_MAX)
         self._attr_state = 0
         self.async_write_ha_state()
