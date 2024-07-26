@@ -1,3 +1,4 @@
+import os
 import yaml
 import asyncio
 import aiofiles
@@ -13,6 +14,9 @@ def get_current_file_name(value):
 async def async_execute(x):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, x)
+
+async def async_listdir(path, prefix = ""):
+    return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []
 
 def execute_async(x):
     loop = asyncio.get_event_loop()

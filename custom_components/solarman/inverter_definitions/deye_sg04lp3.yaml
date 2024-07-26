@@ -1154,7 +1154,6 @@ parameters:
 
       - name: "DC Temperature"
         update_interval: 30
-        disabled:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
