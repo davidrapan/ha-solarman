@@ -19,18 +19,12 @@ _LOGGER = logging.getLogger(__name__)
 # Apart from this, it also need to be defined in the file 
 # services.yaml for the Home Assistant UI in "Developer Tools"
 
-SERVICE_READ_REGISTER_SCHEMA = vol.Schema(
-    {
-        vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
-        vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
-    }
-)
-
-SERVICE_READ_MULTIPLE_REGISTERS_SCHEMA = vol.Schema(
+SERVICE_READ_HOLDING_REGISTERS_SCHEMA = vol.Schema(
     {
         vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
         vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
+        vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
+        vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
     }
 )
 
@@ -65,31 +59,8 @@ def register_services(hass: HomeAssistant) -> None:
 
         return None
 
-    async def read_holding_register(call: ServiceCall) -> int:
-        _LOGGER.debug(f"read_holding_register: {call}")
-
-        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
-            raise ServiceValidationError(
-                "No communication interface for device found",
-                translation_domain = DOMAIN,
-                translation_key = "no_interface_found"
-            )
-
-        register = call.data.get(SERVICES_PARAM_REGISTER)
-
-        try:
-            response = await inverter.service_read_holding_registers(register, 1)
-        except Exception as e:
-            raise ServiceValidationError(
-                e,
-                translation_domain = DOMAIN,
-                translation_key = "call_failed"
-            )
-
-        return { call.data.get(SERVICES_PARAM_REGISTER): response[0] }
-
-    async def read_multiple_holding_registers(call: ServiceCall) -> int:
-        _LOGGER.debug(f"read_multiple_holding_registers: {call}")
+    async def read_holding_registers(call: ServiceCall) -> int:
+        _LOGGER.debug(f"read_holding_registers: {call}")
 
         if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
@@ -102,7 +73,8 @@ def register_services(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.service_read_holding_registers(register, quantity)
+            response = await inverter.service_read_holding_registers(register, quantity,
+            wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -166,11 +138,7 @@ def register_services(hass: HomeAssistant) -> None:
         return
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_HOLDING_REGISTER, read_holding_register, schema = SERVICE_READ_REGISTER_SCHEMA, supports_response = SupportsResponse.OPTIONAL
-    )
-
-    hass.services.async_register(
-        DOMAIN, SERVICE_READ_MULTIPLE_HOLDING_REGISTERS, read_multiple_holding_registers, schema = SERVICE_READ_MULTIPLE_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = SERVICE_READ_HOLDING_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(

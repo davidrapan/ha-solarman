@@ -1,30 +1,6 @@
-read_holding_register:
-  name: Read Holding Register (Modbus Function Code 3)
-  description: Read a single register value
-  fields:
-    device:
-      name: Device
-      description: The Device
-      example: "Inverter"
-      required: true
-      selector:
-        device:
-          filter:
-            - integration: solarman
-    register:
-      name: Register
-      description: Modbus register address
-      example: 16384
-      required: true
-      selector:
-        number:
-          min: 0
-          max: 65535 
-          mode: box
-
-read_multiple_holding_registers:
-  name: Read Multiple Holding Registers (Modbus Function Code 3)
-  description: Read values from multiple consecutive registers at once.
+read_holding_registers:
+  name: Read Holding Registers (Modbus Function Code 3)
+  description: Read values from consecutive registers at once. (Defaults to reading a single register)
   fields:
     device:
       name: Device
@@ -54,6 +30,16 @@ read_multiple_holding_registers:
         number:
           min: 1
           max: 65535 
+          mode: box
+    wait_for_attempts:
+      name: Wait for attempts
+      description: Wait for coordinator attempts
+      default: 5
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 30
           mode: box
 
 write_holding_register:

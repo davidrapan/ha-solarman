@@ -265,10 +265,10 @@ class Inverter(InverterApi):
 
         return self._is_reading == 1
 
-    async def service_read_holding_registers(self, register, quantity):
+    async def service_read_holding_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"service_read_holding_registers: [{register}], quantity: [{quantity}]")
 
-        if await self.wait_for_reading_done():
+        if await self.wait_for_reading_done(wait_for_attempts):
             _LOGGER.debug(f"service_read_holding_registers: Timeout.")
             raise TimeoutError("Coordinator is currently reading data from the device!")
 
