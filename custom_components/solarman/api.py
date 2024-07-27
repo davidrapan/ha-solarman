@@ -100,6 +100,7 @@ class InverterApi(PySolarmanV5Async):
 
         if self.reader_task:
             self.reader_task.cancel()
+            self.reader_task = None
 
         if self.writer:
             try:
@@ -108,15 +109,15 @@ class InverterApi(PySolarmanV5Async):
             except (AttributeError, ConnectionResetError) as e:
                 _LOGGER.debug(f"{e} can be during closing ignored.")
             finally:
-                self.writer.close()
                 try:
-                    await self.writer.wait_closed()
-                except OSError as e:  # Happens when host is unreachable.
-                    _LOGGER.debug(f"{e} can be during closing ignored.")
+                    self.writer.close()
+                    try:
+                        await self.writer.wait_closed()
+                    except OSError as e:  # Happens when host is unreachable.
+                        _LOGGER.debug(f"{e} can be during closing ignored.")
                 finally:
-                    self.reader_task = None
-                    self.reader = None
                     self.writer = None
+                    self.reader = None
 
     async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
@@ -186,9 +187,6 @@ class Inverter(InverterApi):
     def get_result(self, middleware = None):
         self._is_reading = 0
 
-        if middleware:
-            self.status = 1
-
         result = middleware.get_result() if middleware else {}
 
         if len(result) > 0:
@@ -196,6 +194,7 @@ class Inverter(InverterApi):
             now = datetime.now()
             self.status_interval = now - self.status_updated
             self.status_updated = now
+            self.status = 1
 
         return result
 
