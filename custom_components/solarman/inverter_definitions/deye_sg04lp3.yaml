@@ -113,7 +113,6 @@ parameters:
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
         icon: "mdi:information"
-        isstr: true
 
       # Device - Rated Power
       - name: "Device Rated Power"
@@ -598,8 +597,6 @@ parameters:
           max: 2359
         icon: mdi:sun-clock
 
-      # Program x power is the max discharge power during the time slot
-      #
       - name: Program 1 Power
         update_interval: 300
         class: "power"
@@ -684,7 +681,6 @@ parameters:
           max: 12000
         icon: mdi:sun-clock
 
-      # Program x voltage is the voltage at/until the program operation is valid.
       - name: Program 1 Voltage
         update_interval: 300
         class: "voltage"
