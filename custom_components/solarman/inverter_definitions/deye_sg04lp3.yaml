@@ -1092,8 +1092,8 @@ parameters:
       - name: Today Losses
         alt: Daily Losses
         friendly_name: Today's Losses
-        update_interval: 30
         description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1117,9 +1117,9 @@ parameters:
             scale: 0.1
             registers: [0x0202]
 
-      - name: "Total Losses"
-        update_interval: 30
+      - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"

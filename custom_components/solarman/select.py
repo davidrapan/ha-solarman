@@ -60,12 +60,23 @@ class SolarmanSelectEntity(SolarmanSensor, SelectEntity):
         if self.sensor_entity_id:
             self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
 
+        if "lookup" in sensor:
+            self.dictionary = sensor["lookup"]
+
         registers = sensor["registers"]
         registers_length = len(registers)
         if registers_length > 0:
             self.register = sensor["registers"][0]
         if registers_length > 1:
             _LOGGER.warning(f"SolarmanSelectEntity.__init__: Contains more than 1 register!")
+
+    def get_key(self, value: str):
+        if self.dictionary:
+            for o in self.dictionary:
+                if o["value"] == value:
+                    return o["key"]
+
+        return self.options.index(value)
 
     @property
     def current_option(self):
@@ -74,6 +85,6 @@ class SolarmanSelectEntity(SolarmanSensor, SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self.options.index(option),], ACTION_ATTEMPTS_MAX)
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self.get_key(option),], ACTION_ATTEMPTS_MAX)
         self._attr_state = option
         self.async_write_ha_state()

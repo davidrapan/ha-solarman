@@ -99,6 +99,7 @@ class ParameterParser:
                 registers = item.get("registers")
                 if registers is None:
                     continue
+
                 firstRegister = registers[0]
                 if start <= firstRegister < start + length:
                     self.try_parse(rawData, item, start, length)

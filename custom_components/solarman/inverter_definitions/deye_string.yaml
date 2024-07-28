@@ -192,4 +192,3 @@ parameters:
         scale: 1
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
-        isstr: true
