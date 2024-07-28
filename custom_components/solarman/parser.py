@@ -89,10 +89,19 @@ class ParameterParser:
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code } for r in groups]
 
     def parse(self, rawData, start, length):
-        for i in self.parameters():
-            for j in i["items"]:
-                if self.is_valid(j) and self.is_enabled(j):
-                    self.try_parse(rawData, j, start, length)
+        for param in self.parameters():
+            for item in param["items"]:
+                if not (self.is_valid(item) and self.is_enabled(item)):
+                    continue
+
+                # Check that the first register in the definition is within the register set in the raw data.
+                # Try parsing if the register is present.
+                registers = item.get("registers")
+                if registers is None:
+                    continue
+                firstRegister = registers[0]
+                if start <= firstRegister < start + length:
+                    self.try_parse(rawData, item, start, length)
 
         return
 
