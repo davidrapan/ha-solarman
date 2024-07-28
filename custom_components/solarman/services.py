@@ -154,8 +154,7 @@ def register_services(hass: HomeAssistant) -> None:
 def remove_services(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"remove_services")
 
-    hass.services.async_remove(DOMAIN, SERVICE_READ_HOLDING_REGISTER)
-    hass.services.async_remove(DOMAIN, SERVICE_READ_MULTIPLE_HOLDING_REGISTERS)
+    hass.services.async_remove(DOMAIN, SERVICE_READ_HOLDING_REGISTERS)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_HOLDING_REGISTER)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS)
 
