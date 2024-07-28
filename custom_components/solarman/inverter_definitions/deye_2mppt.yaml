@@ -508,8 +508,8 @@ parameters:
 
   - group: Control
     items:
-      # Soft Start Enable - On/Off Switch 
-      - name: "Soft Start Enable"
+      # Soft Start - On/Off Switch 
+      - name: "Soft Start"
         update_interval: 300
         class: "switch"
         state_class: ""
