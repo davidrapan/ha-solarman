@@ -557,3 +557,14 @@ parameters:
         lookup:
           - key: 0
             value: "None"
+  - group: Control
+    items:
+      # Soft Start Enable - On/Off Switch 
+      - name: "Soft Start Enable"
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002F]
