@@ -211,18 +211,18 @@ class Inverter(InverterApi):
         params = ParameterParser(self.parameter_definition)
         requests = params.get_requests(runtime)
         requests_count = len(requests)
-        result = 1
+        results = [0] * requests_count
 
         _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
 
         self._is_reading = 1
 
         try:
-            for request in requests:
+            for i, request in enumerate(requests):
                 code = get_request_code(request)
                 start = get_request_start(request)
                 end = get_request_end(request)
-                result = 0
+                results[i] = 0
 
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
@@ -232,24 +232,24 @@ class Inverter(InverterApi):
 
                     try:
                         await self.async_read(params, code, start, end)
-                        result = 1
+                        results[i] = 1
                     except (V5FrameError, TimeoutError, Exception) as e:
-                        result = 0
+                        results[i] = 0
 
                         if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
                         await asyncio.sleep(TIMINGS_QUERY_EXCEPT_SLEEP)
 
-                    _LOGGER.debug(f"Querying {'succeeded.' if result == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+                    _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-                    if result == 1:
+                    if results[i] == 1:
                         break
 
-                if result == 0:
+                if not 1 in results and results[i] == 0:
                     break
 
-            if result == 1:
+            if 1 in results:
                 return self.get_result(params)
             else:
                 await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
