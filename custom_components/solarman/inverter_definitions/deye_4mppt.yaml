@@ -260,7 +260,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x002B]
-        isstr: true
         lookup:
           - key: 0
             value: "OFF"
@@ -275,7 +274,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x002E]
-        isstr: true
         lookup:
           - key: 0
             value: "Disabled"
@@ -290,7 +288,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0031]
-        isstr: true
         lookup:
           - key: 0
             value: "Disabled"
@@ -308,7 +305,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x003B]
-        isstr: true
         lookup:
           - key: 0
             value: "Stand-by"
@@ -359,7 +355,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
-        isstr: true
         
       - name: "Hardware Version"
         class: ""
@@ -378,7 +373,6 @@ parameters:
         rule: 7
         registers: [0x000D]
         icon: "mdi:map-marker"
-        isstr: true
 
       - name: "AC Version. Number"
         class: ""
@@ -388,7 +382,6 @@ parameters:
         rule: 7
         registers: [0x000E]
         icon: "mdi:map-marker"
-        isstr: true
 
       - name: "Rated Power"
         realtime:
@@ -408,7 +401,6 @@ parameters:
         rule: 7
         registers: [0x0012]
         icon: "mdi:wrench"
-        isstr: true
         
       - name: "Start-up Self-checking Time "
         class: ""
@@ -427,7 +419,6 @@ parameters:
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
         icon: "mdi:clock-time-three-outline"
-        isstr: true
 
       - name: "Device Rated Power"
         class: ""
@@ -436,7 +427,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0008]
-        isstr: true
         lookup:
           - key: 1
             value: "single-phase"
@@ -461,7 +451,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x002F]
-        isstr: true
         lookup:
           - key: 0
             value: "Disabled"
@@ -487,7 +476,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0036]
-        isstr: true
         lookup:
           - key: 0
             value: "Disabled"
@@ -495,7 +483,7 @@ parameters:
             value: "Enabled"
         icon: "mdi:factory"
         
- - group: Alert
+  - group: Alert
     items:
       - name: "Fault information"
         class: ""
@@ -505,7 +493,6 @@ parameters:
         rule: 3
         registers: [0x0067, 0x0068, 0x0069, 0x006a]
         icon: "mdi:alert-octagon-outline"
-        isstr: true
         lookup:
           - key: 0
             value: "None"
@@ -522,7 +509,6 @@ parameters:
         rule: 1
         registers: [0x0065, 0x0066]
         icon: "mdi:information-slab-circle-outline"
-        isstr: true
         lookup:
           - key: 0
             value: "None"
@@ -553,7 +539,6 @@ parameters:
         rule: 6
         registers: [0x0075, 0x0076]
         icon: "mdi:message-alert-outline"
-        isstr: true
         lookup:
           - key: 0
             value: "None"
