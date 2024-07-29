@@ -1406,6 +1406,7 @@ parameters:
         rule: 1
         digits: 1
         registers: [0x0208, 0x0211, 0x0203, 0x0209, 0x020E, 0x0202]
+        uint: enforce
         sensors:
           - scale: 0.1
             registers: [0x0208]
@@ -1446,6 +1447,7 @@ parameters:
             0x0204,
             0x0205,
           ]
+        uint: enforce
         sensors:
           - scale: 0.1
             registers: [0x020A, 0x020B]
