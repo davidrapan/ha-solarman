@@ -8,6 +8,7 @@ import threading
 import concurrent.futures
 
 from datetime import datetime
+from umodbus.client.serial import rtu
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError, NoSocketAvailableError
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -84,6 +85,20 @@ class InverterApi(PySolarmanV5Async):
 
         self.log.debug("[%s] RECD: %s", self.serial, v5_response.hex(" "))
         return v5_response
+
+    async def _get_modbus_response(self, mb_request_frame):
+        """
+        Overridden to catch the 00 00
+        """
+        mb_response_frame = await self._send_receive_modbus_frame(mb_request_frame)
+        try:
+            self.log.debug("[%s] MBRP: %s", self.serial, mb_response_frame.hex(" "))
+            modbus_values = rtu.parse_response_adu(mb_response_frame, mb_request_frame)
+        except struct.error as e:
+            if not 'requires a buffer of' in e.args[0] or (mb_response_frame[-2] != 0 and mb_response_frame[-1] != 0):
+                raise e
+            modbus_values = rtu.parse_response_adu(mb_response_frame[0:-2], mb_request_frame)
+        return modbus_values
 
     async def async_connect(self) -> None:
         if self.reader_task:
