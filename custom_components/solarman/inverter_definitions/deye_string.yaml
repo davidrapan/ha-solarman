@@ -58,7 +58,7 @@ parameters:
         registers: [0x003F, 0x0040]
         icon: "mdi:solar-power"
         validation:
-          min: 0.1
+          min: 0.0
           invalidate_all:
 
   - group: Grid

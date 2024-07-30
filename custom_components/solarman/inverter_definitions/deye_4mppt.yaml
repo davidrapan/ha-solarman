@@ -132,9 +132,9 @@ parameters:
         registers: [0x003F, 0x0040]
         icon: "mdi:solar-power"
         validation:
-          min: 0.1
+          min: 0.0
           invalidate_all:
- 
+
       - name: "Total Production 1"
         class: "energy"
         state_class: "total_increasing"
@@ -144,7 +144,7 @@ parameters:
         registers: [0x0045]
         icon: "mdi:solar-power"
         validation:
-          min: 0.1
+          min: 0.0
 
       - name: "Total Production 2"
         class: "energy"
@@ -155,7 +155,7 @@ parameters:
         registers: [0x0047]
         icon: "mdi:solar-power"
         validation:
-          min: 0.1
+          min: 0.0
 
       - name: "Active Power Regulations"
         realtime:
