@@ -28,10 +28,7 @@ class InverterApi(PySolarmanV5Async):
         self.status_interval = 0
         self.status = -1
 
-    def is_connecting(self):
-        return self.status == 0
-
-    def is_connected(self):
+    def available(self):
         return self.status > -1
 
     async def reconnect(self) -> None:
@@ -196,7 +193,7 @@ class Inverter(InverterApi):
         return []
 
     def get_connection_status(self):
-        if self.is_connected():
+        if self.status > 0:
             return "Connected"
         return "Disconnected"
 

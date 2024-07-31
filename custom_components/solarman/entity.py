@@ -65,7 +65,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._attr_available and self.coordinator.inverter.is_connected()
+        return self._attr_available and self.coordinator.inverter.available()
 
     @callback
     def _handle_coordinator_update(self) -> None:
