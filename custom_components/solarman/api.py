@@ -255,7 +255,7 @@ class Inverter(InverterApi):
                         if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
                             _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
-                        await asyncio.sleep(TIMINGS_WAIT_SLEEP)
+                        await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
                     _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
@@ -323,7 +323,7 @@ class Inverter(InverterApi):
                 if not attempts_left > 0:
                     raise
 
-                await asyncio.sleep(TIMINGS_WRITE_SLEEP)
+                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
 
     async def service_write_multiple_holding_registers(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
         _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
@@ -348,4 +348,4 @@ class Inverter(InverterApi):
                 if not attempts_left > 0:
                     raise
 
-                await asyncio.sleep(TIMINGS_WRITE_SLEEP)
+                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
