@@ -24,8 +24,8 @@
 > *I mean at least for my device as I'm not able to* 🧪 *test it for any other so any* 🧍 *volunteers?* 😊  
 
 > [!IMPORTANT]  
-> This integration builds on and is heavily inspired by [@StephanJoubert](https://github.com/StephanJoubert/home_assistant_solarman) (but W/ decent amount of changes):
-> - Using asynchronous part of [@jmccrohan](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself
+> This integration builds on and is heavily inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) (but W/ decent amount of changes):
+> - Using asynchronous part of [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself
 > - Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA
 > - Supports configuration of inverter parameters (Battery, Work Mode, ...)
 > - Improved stability (no more disconnects and missing values)
