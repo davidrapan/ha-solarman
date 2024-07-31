@@ -224,7 +224,7 @@ class Inverter(InverterApi):
         params = ParameterParser(self.parameter_definition)
         requests = params.get_requests(runtime)
         requests_count = len(requests)
-        results = [0] * requests_count
+        results = [1] * requests_count
 
         _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
 
@@ -240,7 +240,7 @@ class Inverter(InverterApi):
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
                 attempts_left = ACTION_ATTEMPTS
-                while attempts_left > 0:
+                while attempts_left > 0 and results[i] == 0:
                     attempts_left -= 1
 
                     try:
@@ -256,13 +256,10 @@ class Inverter(InverterApi):
 
                     _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-                    if results[i] == 1:
-                        break
-
-                if not 1 in results and results[i] == 0:
+                if results[i] == 0:
                     break
 
-            if 1 in results:
+            if not 0 in results:
                 return self.get_result(params)
             else:
                 await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
