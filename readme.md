@@ -11,31 +11,22 @@
 #### 🠶 Signpost
 - [Wiki](https://github.com/davidrapan/ha-solarman/wiki)
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
-- [Custom sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-sensors)
+- [Custom Sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-Sensors)
 - [Dashboards](https://github.com/davidrapan/ha-solarman/wiki/Dashboards)
-- [Sensor renaming](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme-%E2%80%90-sensor-renaming)
+- [Naming Scheme](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme)
+- [Supported Inverters](https://github.com/davidrapan/ha-solarman/wiki/Supported-Inverters)
 
 > [!NOTE]  
 > If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
 > Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A and 💡 Development Planning, etc. and leave [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting, 🎁 feature requests and such...  
-
-> [!NOTE]  
 > It's still 🚧 work in progress but currently very 🐎 stable 😉  
 > *I mean at least for my device as I'm not able to* 🧪 *test it for any other so any* 🧍 *volunteers?* 😊  
 
 > [!IMPORTANT]  
-> This integration builds on and is heavily inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) (but W/ decent amount of changes):
-> - Using asynchronous part of [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself
-> - Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA
-> - Supports configuration of inverter parameters (Battery, Work Mode, ...)
-> - Improved stability (no more disconnects and missing values)
-> - Discovery and not just for configuration but also as part of initialization (i.e. adapts to changed IP)
-> - New Inverter profiles features **See 'deye_sg04lp3.yaml' for examples*:
->   - Different registers can be requested in different intervals according to their 'update_interval' set in inverter definition file
->   - Registers which will be part of a request are decided dynamically (when missing from the inverter definition file)
->   - Added attribute type of a sensor which can be attached to any other sensor
->   - Added configuration for Battery Nominal Voltage and Battery Life Cycle Rating for calculating SOH and life cycles of the battery  
-> - And many more fixes and improvements (while trying to fully preserve backward compatibility)
+> Inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) but w/ a lot of [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
+> Using asynchronous part of [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself  
+> Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA  
+> And many more fixes and improvements (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  
 > It's note worthy that some names of the SG04LP3 sensors did change for different reasons (some were due to aestetics, etc.)  
@@ -95,10 +86,6 @@ template:
 ```
 Which provides informantion about how long it is since last update (with resolution of seconds).  
 Maybe it will be useful for some, but since the stability of the polling improved a lot it's not really needed.  
-
-## 💡 Tips and Tricks
-
-If you are not living in a place where is energy cost calculated as sum of all three phases (e.g. Germany) but living in a place where is energy cost calculated for each phase individualy (e.g. Czechia) in a three-phase systems then set the Zero Export value to at least 100 W. You will save some money! 😉
 
 ## 🔨 Installation
 
