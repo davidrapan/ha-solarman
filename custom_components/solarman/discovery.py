@@ -108,17 +108,26 @@ class InverterDiscovery:
             if self._ip is None:
                 _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-    async def get_ip(self):
+    async def discover_ip(self):
         if not self._ip:
             await self.discover()
         return self._ip
 
-    async def get_mac(self):
+    async def discover_mac(self):
         if not self._mac:
             await self.discover()
         return self._mac
 
-    async def get_serial(self):
+    async def discover_serial(self):
         if not self._serial:
             await self.discover()
+        return self._serial
+
+    def get_ip(self):
+        return self._ip
+
+    def get_mac(self):
+        return self._mac
+
+    def get_serial(self):
         return self._serial

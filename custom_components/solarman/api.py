@@ -146,21 +146,22 @@ class InverterApi(PySolarmanV5Async):
         params.parse(response, start, length)
 
 class Inverter(InverterApi):
-    def __init__(self, address, serial, port, mb_slave_id, name, mac, lookup_path, lookup_file):
+    def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port, mb_slave_id, AUTO_RECONNECT)
         self._is_reading = 0
+        self.auto_reconnect = AUTO_RECONNECT
+        self.manufacturer = "Solarman"
+        self.model = None
+        self.parameter_definition = None
+        self.device_info = {}
+
+    async def load(self, name, mac, path, file):
         self.name = name
         self.mac = mac
-        self.manufacturer = None
-        self.model = None
-        self.device_info = {}
-        self.lookup_path = lookup_path
-        self.lookup_file = lookup_file if lookup_file else "deye_hybrid.yaml"
-        self.auto_reconnect = AUTO_RECONNECT
-
-    async def load(self):
-        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
+        self.lookup_path = path
+        self.lookup_file = file if file else "deye_hybrid.yaml"
         self.model = self.lookup_file.replace(".yaml", "")
+        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
 
         if "info" in self.parameter_definition and "model" in self.parameter_definition["info"]:
             info = self.parameter_definition["info"]

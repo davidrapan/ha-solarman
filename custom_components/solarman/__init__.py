@@ -38,12 +38,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     if IPv4Address(inverter_host).is_private:
         inverter_discovery = InverterDiscovery(hass, inverter_host)
-        if discovery and (inverter_host_scanned := await inverter_discovery.get_ip()):
-            inverter_host = inverter_host_scanned
-        if inverter_serial == 0 and (inverter_serial_scanned := await inverter_discovery.get_serial()):
-            inverter_serial = inverter_serial_scanned
-        if (mac := await inverter_discovery.get_mac()) and inverter_serial == await inverter_discovery.get_serial():
-            inverter_mac = mac
+        if discovery:
+            await inverter_discovery.discover()
+        if (discovered_host := inverter_discovery.get_ip()):
+            inverter_host = discovered_host
+        if (discovered_mac := inverter_discovery.get_mac()) and (inverter_serial == 0 or inverter_serial == inverter_discovery.get_serial() or inverter_serial == await inverter_discovery.discover_serial()):
+            inverter_mac = discovered_mac
+        if inverter_serial == 0 and (discovered_serial := await inverter_discovery.discover_serial()):
+            inverter_serial = discovered_serial
 
     if inverter_host is None:
         raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
@@ -56,9 +58,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     if lookup_file is None:
         raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
 
-    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, name, inverter_mac, lookup_path, lookup_file)
+    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id)
 
-    await inverter.load()
+    await inverter.load(name, inverter_mac, lookup_path, lookup_file)
 
     coordinator = InverterCoordinator(hass, inverter)
 
