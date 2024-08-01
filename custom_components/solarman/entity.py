@@ -35,6 +35,31 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         self._attr_device_info = self.coordinator.inverter.device_info
         self._attr_extra_state_attributes = {}  # { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
 
+    def get_data_state(self, name):
+        return self.coordinator.data[name]["state"]
+
+    def get_data_value(self, name):
+        return self.coordinator.data[name]["value"]
+
+    def get_data(self, name, default):
+        if name in self.coordinator.data:
+                return self.get_data_state(name)
+
+        return default
+
+    def update(self):
+        c = len(self.coordinator.data)
+        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
+            if self.sensor_name in self.coordinator.data:
+                self._attr_state = self.get_data_state(self.sensor_name)
+                if "value" in self.coordinator.data[self.sensor_name]:
+                    self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
+                if self.attributes:
+                    for attr in self.attributes:
+                        if attr in self.coordinator.data:
+                            attr_name = attr.replace(f"{self.sensor_name} ", "")
+                            self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)
+
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator)
@@ -42,6 +67,9 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self.sensor_friendly_name = sensor[ATTR_FRIENDLY_NAME] if ATTR_FRIENDLY_NAME in sensor else self.sensor_name
         self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
         self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
+
+        # Set the enabled default value
+        self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
         # Set the category of the sensor.
         self._attr_entity_category = (None)
@@ -72,33 +100,3 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         """Handle updated data from the coordinator."""
         self.update()
         self.async_write_ha_state()
-
-class SolarmanBaseEntity(SolarmanEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
-        self._attr_entity_registry_enabled_default = not "disabled" in sensor
-
-    def get_data_state(self, name):
-        return self.coordinator.data[name]["state"]
-
-    def get_data_value(self, name):
-        return self.coordinator.data[name]["value"]
-
-    def get_data(self, name, default):
-        if name in self.coordinator.data:
-                return self.get_data_state(name)
-
-        return default
-
-    def update(self):
-        c = len(self.coordinator.data)
-        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
-            if self.sensor_name in self.coordinator.data:
-                self._attr_state = self.get_data_state(self.sensor_name)
-                if "value" in self.coordinator.data[self.sensor_name]:
-                    self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
-                if self.attributes:
-                    for attr in self.attributes:
-                        if attr in self.coordinator.data:
-                            attr_name = attr.replace(f"{self.sensor_name} ", "")
-                            self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)

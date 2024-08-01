@@ -24,7 +24,7 @@ from .common import *
 from .services import *
 from .api import Inverter
 from .coordinator import InverterCoordinator
-from .entity import SolarmanCoordinatorEntity, SolarmanBaseEntity, SolarmanEntity
+from .entity import SolarmanCoordinatorEntity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ class SolarmanInterval(SolarmanEntity):
     def update(self):
         self._attr_state = self.coordinator.inverter.status_interval.total_seconds()
 
-class SolarmanSensor(SolarmanBaseEntity):
+class SolarmanSensor(SolarmanEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, sensor)
 

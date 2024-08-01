@@ -29,10 +29,7 @@
 > And many more fixes and improvements (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  
-> It's note worthy that some names of the SG04LP3 sensors did change for different reasons (some were due to aestetics, etc.)  
-> So look through the file and change them as you see fit manually before I'll make it available from the HA configuration.  
 > One more thing.. It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.  
-> TODO: Rest of the info... 😃  
 
 ## 🔨 Installation
 
