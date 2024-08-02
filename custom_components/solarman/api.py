@@ -9,9 +9,7 @@ import concurrent.futures
 
 from datetime import datetime
 
-from umodbus.client.serial import rtu
-from umodbus.client.serial.redundancy_check import get_crc
-from pysolarmanv5 import PySolarmanV5Async, V5FrameError, NoSocketAvailableError
+from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
@@ -31,78 +29,12 @@ class InverterApi(PySolarmanV5Async):
     def available(self):
         return self.status > -1
 
-    async def reconnect(self) -> None:
-        """
-        Overridden to prevent the exception to be risen (only logged).
-        Because the method is called as a Task.
-
-        """
-        try:
-            if self.reader_task:
-                self.reader_task.cancel()
-            self.reader, self.writer = await asyncio.open_connection(self.address, self.port)
-            loop = asyncio.get_running_loop()
-            self.reader_task = loop.create_task(self._conn_keeper(), name = "ConnKeeper")
-            self.log.debug(f"[{self.serial}] Successful reconnect")
-            if self.data_wanted_ev.is_set():
-                self.log.debug(f"[{self.serial}] Data expected. Will retry the last request")
-                self.writer.write(self._last_frame)
-                await self.writer.drain()
-        except Exception as e:
-            self.log.exception(f"Cannot open connection to {self.address}. [{format_exception(e)}]")
-
-    async def _send_receive_v5_frame(self, data_logging_stick_frame):
-        """
-        Overridden cause of the noisy TimeoutError exception.
-        Which is in fact kinda expected cause of communication with Solarman servers to happen now and then.
-        
-        """
-        self.log.debug("[%s] SENT: %s", self.serial, data_logging_stick_frame.hex(" "))
-        self.data_wanted_ev.set()
-        self._last_frame = data_logging_stick_frame
-        try:
-            self.writer.write(data_logging_stick_frame)
-            await self.writer.drain()
-            v5_response = await asyncio.wait_for(self.data_queue.get(), self.socket_timeout)
-            if v5_response == b"":
-                raise NoSocketAvailableError("Connection closed on read. Retry if auto-reconnect is enabled")
-        except AttributeError as e:
-            raise NoSocketAvailableError("Connection already closed") from e
-        except NoSocketAvailableError:
-            raise
-        except TimeoutError:
-            raise
-        except OSError as e:
-            if e.errno == errno.EHOSTUNREACH:
-                raise TimeoutError from e
-            raise
-        except Exception as e:
-            self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
-            raise
-        finally:
-            self.data_wanted_ev.clear()
-
-        self.log.debug("[%s] RECD: %s", self.serial, v5_response.hex(" "))
-        return v5_response
-
-    async def _get_modbus_response(self, mb_request_frame):
-        """
-        Overridden to catch the trailing 00 00
-        """
-        mb_response_frame = await self._send_receive_modbus_frame(mb_request_frame)
-        try:
-            modbus_values = rtu.parse_response_adu(mb_response_frame, mb_request_frame)
-        except struct.error as e:
-            if not 'requires a buffer of' in e.args[0] or get_crc(mb_response_frame[:-4]) != mb_response_frame[-4:-2]:
-                raise e
-            modbus_values = rtu.parse_response_adu(mb_response_frame[:-2], mb_request_frame)
-        return modbus_values
-
-    async def async_connect(self) -> None:
+    async def async_connect(self, loud = True) -> None:
         if self.reader_task:
             _LOGGER.debug(f"Reader Task done: {self.reader_task.done()}, cancelled: {self.reader_task.cancelled()}.")
         if not self.reader_task: #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
-            _LOGGER.info(f"Connecting to {self.address}:{self.port}")
+            if loud:
+                _LOGGER.info(f"Connecting to {self.address}:{self.port}")
             await self.connect()
         elif not self.status > 0:
             await self.reconnect()
@@ -110,27 +42,12 @@ class InverterApi(PySolarmanV5Async):
     async def async_disconnect(self, loud = True) -> None:
         if loud:
             _LOGGER.info(f"Disconnecting from {self.address}:{self.port}")
-
-        if self.reader_task:
-            self.reader_task.cancel()
+        try:
+            await self.disconnect()
+        finally:
             self.reader_task = None
-
-        if self.writer:
-            try:
-                self.writer.write(b"")
-                await self.writer.drain()
-            except (AttributeError, ConnectionResetError) as e:
-                _LOGGER.debug(f"{e} can be during closing ignored.")
-            finally:
-                try:
-                    self.writer.close()
-                    try:
-                        await self.writer.wait_closed()
-                    except OSError as e:  # Happens when host is unreachable.
-                        _LOGGER.debug(f"{e} can be during closing ignored.")
-                finally:
-                    self.writer = None
-                    self.reader = None
+            self.reader = None
+            self.writer = None
 
     async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
