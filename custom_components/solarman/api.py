@@ -19,53 +19,13 @@ from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
 
-class InverterApi(PySolarmanV5Async):
-    def __init__(self, address, serial, port, mb_slave_id, auto_reconnect):
-        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = auto_reconnect, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+class Inverter(PySolarmanV5Async):
+    def __init__(self, address, serial, port, mb_slave_id):
+        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+        self._is_reading = 0
         self.status_updated = datetime.now()
         self.status_interval = 0
         self.status = -1
-
-    def available(self):
-        return self.status > -1
-
-    async def async_connect(self, loud = True) -> None:
-        if self.reader_task:
-            _LOGGER.debug(f"Reader Task done: {self.reader_task.done()}, cancelled: {self.reader_task.cancelled()}.")
-        if not self.reader_task: #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
-            if loud:
-                _LOGGER.info(f"Connecting to {self.address}:{self.port}")
-            await self.connect()
-        elif not self.status > 0:
-            await self.reconnect()
-
-    async def async_disconnect(self, loud = True) -> None:
-        if loud:
-            _LOGGER.info(f"Disconnecting from {self.address}:{self.port}")
-        try:
-            await self.disconnect()
-        finally:
-            self.reader_task = None
-            self.reader = None
-            self.writer = None
-
-    async def async_read(self, params, code, start, end) -> None:
-        length = end - start + 1
-
-        await self.async_connect()
-
-        match code:
-            case 3:
-                response = await self.read_holding_registers(register_addr = start, quantity = length)
-            case 4:
-                response = await self.read_input_registers(register_addr = start, quantity = length)
-
-        params.parse(response, start, length)
-
-class Inverter(InverterApi):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port, mb_slave_id, AUTO_RECONNECT)
-        self._is_reading = 0
         self.auto_reconnect = AUTO_RECONNECT
         self.manufacturer = "Solarman"
         self.model = None
@@ -103,6 +63,42 @@ class Inverter(InverterApi):
         }
 
         _LOGGER.debug(self.device_info)
+
+    def available(self):
+        return self.status > -1
+
+    async def async_connect(self, loud = True) -> None:
+        if self.reader_task:
+            _LOGGER.debug(f"Reader Task done: {self.reader_task.done()}, cancelled: {self.reader_task.cancelled()}.")
+        if not self.reader_task: #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
+            if loud:
+                _LOGGER.info(f"Connecting to {self.address}:{self.port}")
+            await self.connect()
+        elif not self.status > 0:
+            await self.reconnect()
+
+    async def async_disconnect(self, loud = True) -> None:
+        if loud:
+            _LOGGER.info(f"Disconnecting from {self.address}:{self.port}")
+        try:
+            await self.disconnect()
+        finally:
+            self.reader_task = None
+            self.reader = None
+            self.writer = None
+
+    async def async_read(self, params, code, start, end) -> None:
+        length = end - start + 1
+
+        await self.async_connect()
+
+        match code:
+            case 3:
+                response = await self.read_holding_registers(register_addr = start, quantity = length)
+            case 4:
+                response = await self.read_input_registers(register_addr = start, quantity = length)
+
+        params.parse(response, start, length)
 
     def get_sensors(self):
         if self.parameter_definition:
