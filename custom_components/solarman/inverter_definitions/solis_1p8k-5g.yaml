@@ -350,9 +350,9 @@ default:
             min: 0
             max: 8
 
-    - group: Generation
+    - group: Production
       items:
-        - name: "Total Generation"
+        - name: "Total Production"
           class: "energy"
           state_class: "total_increasing"
           uom: "kWh"
@@ -361,7 +361,8 @@ default:
           registers: [3009, 3008]
           icon: "mdi:solar-power"
 
-        - name: "Daily Generation"
+        - name: "Today Production"
+          friendly_name: Today's Production
           update_interval: 300
           class: "energy"
           state_class: "measurement"
@@ -371,7 +372,7 @@ default:
           registers: [3014]
           icon: "mdi:solar-power"
 
-        - name: "Monthly Generation"
+        - name: "Monthly Production"
           class: "energy"
           state_class: "total_increasing"
           uom: "kWh"
@@ -380,7 +381,7 @@ default:
           registers: [3011, 3010]
           icon: "mdi:solar-power"
 
-        - name: "Yearly Generation"
+        - name: "Yearly Production"
           class: "energy"
           state_class: "total_increasing"
           uom: "kWh"

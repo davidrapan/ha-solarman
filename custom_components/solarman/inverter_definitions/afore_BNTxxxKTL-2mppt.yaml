@@ -54,7 +54,8 @@ parameters:
         registers: [0x000A]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production Wh"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total"
         uom: "Wh"
@@ -63,7 +64,7 @@ parameters:
         registers: [0x000F]
         icon: "mdi:solar-power"
 
-      - name: "Total Production Wh"
+      - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "Wh"
@@ -72,7 +73,7 @@ parameters:
         registers: [0x0015, 0x0014]
         icon: "mdi:solar-power"
 
-      - name: "Today generation time "
+      - name: "Today Production time"
         class: ""
         state_class: "measurement"
         uom: "s"

@@ -92,7 +92,8 @@ parameters:
         registers: [0x07DE]
         icon: 'mdi:battery-minus'
 
-      - name: "Daily Battery Charge"
+      - name: "Today Battery Charge"
+        friendly_name: "Today's Battery Charge"
         class: "energy"
         state_class: "total_increasing"      
         uom: "kWh"
@@ -101,7 +102,8 @@ parameters:
         registers: [0x07D9]
         icon: 'mdi:battery-plus'
 
-      - name: "Daily Battery Discharge"
+      - name: "Today Battery Discharge"
+        friendly_name: "Today's Battery Discharge"
         class: "energy"
         state_class: "total_increasing"      
         uom: "kWh"
@@ -248,7 +250,7 @@ parameters:
             value: "On grid"         
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Inverter radiator temperature"
+      - name: "Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -257,7 +259,7 @@ parameters:
         registers: [0x09D3]
         icon: "mdi:thermometer"
 
-      - name: "Inverter inner temperature"
+      - name: "DC Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -268,74 +270,76 @@ parameters:
   
   - group: Total
     items:
-      - name: "PV Etoday"
+      - name: "Today Production"
+        friendly_name: "Today's Production"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03EF]
-        icon: 'mdi:solar-power'
+        icon: mdi:solar-power
 
-      - name: "Etoday feed into grid"
+      - name: "Today Energy Export"
+        friendly_name: "Today's Energy Export"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03EA]
-        icon: 'mdi:transmission-tower'  
+        icon: mdi:transmission-tower
 
-      - name: "Etoday received from grid"
+      - name: "Today Energy Import"
+        friendly_name: "Today's Energy Import"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03EB]
-        icon: 'mdi:transmission-tower'  
+        icon: mdi:transmission-tower
 
-      - name: "Etoday to load"
+      - name: "Today Load Consumption"
+        friendly_name: "Today's Load Consumption"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03EC]
-        icon: 'mdi:home-lightning-bolt'
 
-      - name: "Etotal inverter"
+      - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03F7]
-        icon: 'mdi:solar-power'     
+        icon: mdi:solar-power
 
-      - name: "Etotal feed into grid"
+      - name: "Total Energy Export"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03FB]
-        icon: 'mdi:transmission-tower'
+        icon: mdi:transmission-tower
 
-      - name: "Etotal received from grid"
+      - name: "Total Energy Import"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03FD]
-        icon: 'mdi:transmission-tower' 
+        icon: mdi:transmission-tower
 
-      - name: "Etotal to load"
+      - name: "Total Load Consumption"
         class: "power"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03FF]
-        icon: 'mdi:home-lightning-bolt'

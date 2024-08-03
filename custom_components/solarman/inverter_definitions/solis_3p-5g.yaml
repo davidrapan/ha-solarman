@@ -506,9 +506,10 @@ parameters:
       registers: [33094]
       icon: 'mdi:sine-wave'
 
- - group: Generation
+ - group: Production
    items:
-    - name: "Daily Generation"
+    - name: "Today Production"
+      friendly_name: "Today's Production"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -517,7 +518,7 @@ parameters:
       registers: [33035]
       icon: 'mdi:solar-power'
 
-    - name: "Monthly Generation"
+    - name: "Monthly Production"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -526,7 +527,7 @@ parameters:
       registers: [33032,33031]
       icon: 'mdi:solar-power'
 
-    - name: "Yearly Generation"
+    - name: "Yearly Production"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -535,7 +536,7 @@ parameters:
       registers: [33038,33037]
       icon: 'mdi:solar-power'
 
-    - name: "Total Generation"
+    - name: "Total Production"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -636,7 +637,8 @@ parameters:
       registers: [33274,33273]
       icon: 'mdi:transmission-tower'
 
-    - name: "Daily Energy Imported"
+    - name: "Today Energy Import"
+      friendly_name: "Today's Energy Import"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -645,7 +647,7 @@ parameters:
       registers: [33171]
       icon: 'mdi:home-import-outline'
 
-    - name: "Total Energy Imported"
+    - name: "Total Energy Import"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -654,7 +656,8 @@ parameters:
       registers: [33170,33169]
       icon: 'mdi:home-import-outline'
 
-    - name: "Daily Energy Exported"
+    - name: "Today Energy Export"
+      friendly_name: "Today's Energy Export"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -663,7 +666,7 @@ parameters:
       registers: [33175]
       icon: 'mdi:home-export-outline'
 
-    - name: "Total Energy Exported"
+    - name: "Total Energy Export"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -692,7 +695,8 @@ parameters:
       registers: [33148]
       icon: 'mdi:home-battery'
 
-    - name: "Daily House+Backup Load Consumption"
+    - name: "Today Load Consumption"
+      friendly_name: "Today's Load Consumption"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -701,7 +705,7 @@ parameters:
       registers: [33179]
       icon: 'mdi:lightning-bolt-outline'
 
-    - name: "Total House+Backup Load Consumption"
+    - name: "Total Load Consumption"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -773,6 +777,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Today Battery Charge"
+      friendly_name: "Today's Battery Charge"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -782,6 +787,7 @@ parameters:
       icon: 'mdi:battery-plus'
 
     - name: "Today Battery Discharge"
+      friendly_name: "Today's Battery Discharge"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
