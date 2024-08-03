@@ -24,12 +24,10 @@
 
 > [!IMPORTANT]  
 > Inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) but w/ a lot of [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> Using asynchronous part of [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) + small adjustments to the inner workings of the library itself  
-> Fetching is implemented through DataUpdateCoordinator + incorporates many more up to date features of HA  
-> And many more fixes and improvements (while trying to fully preserve backward compatibility)
+> Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and fetching through DataUpdateCoordinator + incorporates many more fixes and improvements and also up to date features of HA (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  
-> One more thing.. It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.  
+> It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.  
 
 ## 🔨 Installation
 
