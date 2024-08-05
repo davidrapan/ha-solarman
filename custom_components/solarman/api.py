@@ -68,9 +68,7 @@ class Inverter(PySolarmanV5Async):
         return self.status > -1
 
     async def async_connect(self, loud = True) -> None:
-        if self.reader_task:
-            _LOGGER.debug(f"Reader Task done: {self.reader_task.done()}, cancelled: {self.reader_task.cancelled()}.")
-        if not self.reader_task: #if not self.reader_task or self.reader_task.done() or self.reader_task.cancelled():
+        if not self.reader_task:
             if loud:
                 _LOGGER.info(f"Connecting to {self.address}:{self.port}")
             await self.connect()
@@ -138,7 +136,7 @@ class Inverter(PySolarmanV5Async):
         params = ParameterParser(self.parameter_definition)
         requests = params.get_requests(runtime)
         requests_count = len(requests)
-        results = [1] * requests_count
+        results = [0] * requests_count
 
         _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
 
@@ -149,7 +147,6 @@ class Inverter(PySolarmanV5Async):
                 code = get_request_code(request)
                 start = get_request_start(request)
                 end = get_request_end(request)
-                results[i] = 0
 
                 _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
