@@ -1,0 +1,405 @@
+# Pylontech Force H2/H3
+# Modbus information retrieved from:
+# https://gist.github.com/nagisa/435bdf783e4b13b8e810106b0852081e
+# Tested Firmware Version: 0.1.0.1
+# cryptocake August 2024
+
+default:
+  update_interval: 10
+  code: 0x03
+  digits: 6
+
+parameters:
+  - group: Basic information
+    items:
+      - name: "Device SN"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 5
+        registers: [ 5200,5201,5202,5203,5204,5205,5206,5207 ]
+        isstr: true
+
+      - name: "Brand"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 5
+        registers: [ 4096,4097,4098 ]
+        isstr: true
+
+      - name: "Device Name"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 5
+        registers: [ 4101,4102,4103,4104,4105 ]
+        isstr: true
+
+      - name: "FW Version"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [ 4106 ] # 00000001	00000110 = V1.6
+        isstr: true
+
+      - name: "Battery Module (series)"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5174 ]
+
+      - name: "Battery Cell (series)"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5175 ]
+
+  - group: Battery
+    items:
+      - name: "Total Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 1
+        rule: 1
+        registers: [ 5164 ]
+        icon: 'mdi:battery-plus'
+
+      - name: "Total Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 1
+        rule: 1
+        registers: [ 5166 ]
+        icon: 'mdi:battery-minus'
+
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 5123 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [ 5125 ]
+        icon: 'mdi:current-dc'
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5126 ]
+        icon: 'mdi:thermometer'
+
+      - name: "Battery Charge"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [ 5127 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Cycle Times"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5128 ]
+        icon: 'mdi:battery-heart'
+
+      - name: "Max Charging Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 5129 ]
+
+      - name: "Max Charging Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [ 5131 ]
+        icon: 'mdi:current-dc'
+
+      - name: "Min Discharging Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 5132 ]
+
+      - name: "Max Discharging Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [ 5134 ]
+        icon: 'mdi:current-dc'
+
+      - name: "Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [ 5136 ]
+        icon: 'mdi:battery'
+
+      - name: "Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [ 5137 ]
+        icon: 'mdi:battery'
+
+      - name: "Max Cell Voltage ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5138 ]
+
+      - name: "Min Cell Voltage ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5139 ]
+
+      - name: "Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5140 ]
+        icon: 'mdi:thermometer'
+
+      - name: "Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5141 ]
+        icon: 'mdi:thermometer'
+
+      - name: "Max Cell Temperature ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5142 ]
+
+      - name: "Min Cell Temperature ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5143 ]
+
+      - name: "Max Module Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5144 ]
+        icon: 'mdi:battery'
+
+      - name: "Min Module Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5145 ]
+        icon: 'mdi:battery'
+
+      - name: "Max Module Voltage ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5146 ]
+
+      - name: "Min Module Voltage ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5147 ]
+
+      - name: "Max Module Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5148 ]
+        icon: 'mdi:thermometer'
+
+      - name: "Min Module Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5149 ]
+        icon: 'mdi:thermometer'
+
+      - name: "Max Module Temperature ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5150 ]
+
+      - name: "Min Module Temperature ID"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [ 5151 ]
+
+      - name: "Battery Pack SOH"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [ 5152 ]
+        icon: 'mdi:battery'
+
+      - name: "Today Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 1
+        registers: [ 5160 ]
+
+      - name: "Today Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 1
+        registers: [ 5162 ]
+
+  - group: Battery Module 0
+    items:
+      - name: "Battery Module 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5216 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Module 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5296 ]
+        icon: 'mdi:thermometer'
+
+  - group: Battery Module 1
+    items:
+      - name: "Battery Module 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5217 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Module 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5297 ]
+        icon: 'mdi:thermometer'
+
+  - group: Battery Module 2
+    items:
+      - name: "Battery Module 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5218 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Module 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5298 ]
+        icon: 'mdi:thermometer'
+
+  - group: Battery Module 3
+    items:
+      - name: "Battery Module 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [ 5219 ]
+        icon: 'mdi:battery'
+
+      - name: "Battery Module 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [ 5299 ]
+        icon: 'mdi:thermometer'
