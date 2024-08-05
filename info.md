@@ -28,19 +28,6 @@
 > [!WARNING]  
 > It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.  
 
-## 🔨 Installation
-
-[![🔌 Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=davidrapan&repository=ha-solarman&category=integration)
-
-### 🪛 HACS (Manually)
-- Follow the link [here](https://hacs.xyz/docs/faq/custom_repositories/)
-- Add custom repository: https://github.com/davidrapan/ha-solarman
-- Select type of the category: integration
-- Find newly added Solarman, open it and then click on the DOWNLOAD button
-
-### 🔧 Manually
-- Copy the contents of 'custom_components/solarman' directory into the Home Assistant with exactly the same hirearchy within the '/config' directory
-
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=davidrapan/ha-solarman" />
