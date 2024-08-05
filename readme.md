@@ -13,7 +13,7 @@
 - [Custom Sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-Sensors)
 - [Dashboards](https://github.com/davidrapan/ha-solarman/wiki/Dashboards)
 - [Naming Scheme](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme)
-- [Supported Inverters](https://github.com/davidrapan/ha-solarman/wiki/Supported-Inverters)
+- [Supported Devices](https://github.com/davidrapan/ha-solarman/wiki/Supported-Devices)
 
 > [!NOTE]  
 > If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
