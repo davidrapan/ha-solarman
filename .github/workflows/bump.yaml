@@ -2,13 +2,31 @@ name: Bump version
 
 on:
   schedule:
-  - cron: "00 00 * * *"
+  - cron: "23 00 * * *"
   workflow_dispatch:
 
 jobs:
+  check_commits:
+    name: Check for new commits
+    runs-on: ubuntu-latest
+    outputs:
+      new_commits: ${{ steps.check_new_commits.outputs.new_commits }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            custom_components/solarman/
+          sparse-checkout-cone-mode: false
+      - name: Check for new commits
+        id: check_new_commits
+        run: |
+          git_log=$(git log --since=$(date -d "yesterday" +'%Y.%m.%d') -- custom_components/solarman/)
+          echo "new_commits=$([[ -n "$git_log" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
   bump:
     name: Do
     runs-on: ubuntu-latest
+    needs: check_commits
+    if: needs.check_commits.outputs.new_commits == 'true' || github.event_name == 'workflow_dispatch'
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
