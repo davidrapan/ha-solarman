@@ -39,4 +39,4 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_shutdown(self) -> None:
         _LOGGER.debug("async_shutdown")
         await super().async_shutdown()
-        await self.inverter.async_disconnect()
+        await self.inverter.async_shutdown()

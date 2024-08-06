@@ -85,6 +85,11 @@ class Inverter(PySolarmanV5Async):
             self.reader = None
             self.writer = None
 
+    async def async_shutdown(self, loud = True) -> None:
+        self._is_reading = 0
+        self.status = -1
+        await self.async_disconnect(loud)
+
     async def async_read(self, params, code, start, end) -> None:
         length = end - start + 1
 
@@ -115,7 +120,7 @@ class Inverter(PySolarmanV5Async):
         result = middleware.get_result() if middleware else {}
 
         if len(result) > 0:
-            _LOGGER.debug(f"Querying succeeded, exposing updated values. [Previous Status: {self.get_connection_status()}]")
+            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous Status: {self.get_connection_status()}]")
             now = datetime.now()
             self.status_interval = now - self.status_updated
             self.status_updated = now
@@ -138,7 +143,7 @@ class Inverter(PySolarmanV5Async):
         requests_count = len(requests)
         results = [0] * requests_count
 
-        _LOGGER.debug(f"Scheduling {requests_count} query requests. #{runtime}")
+        _LOGGER.debug(f"Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
         self._is_reading = 1
 
