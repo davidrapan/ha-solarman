@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import socket
 import logging
 
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, AddressValueError
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
@@ -36,7 +37,12 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = options.get(CONF_LOOKUP_FILE)
 
-    if IPv4Address(inverter_host).is_private:
+    try:
+        ipaddr = IPv4Address(inverter_host)
+    except AddressValueError:
+        ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
+
+    if ipaddr.is_private:
         inverter_discovery = InverterDiscovery(hass, inverter_host)
         if discovery:
             await inverter_discovery.discover()
