@@ -191,7 +191,7 @@ class Inverter(PySolarmanV5Async):
         while self._is_reading == 1 and attempts_left > 0:
             attempts_left -= 1
 
-            await asyncio.sleep(TIMINGS_WAIT_SLEEP)
+            await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
 
         return self._is_reading == 1
 
