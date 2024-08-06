@@ -20,7 +20,7 @@ jobs:
       - name: Check for new commits
         id: check_new_commits
         run: |
-          git_log=$(git log --since=$(date -d "yesterday" +'%Y.%m.%d') -- custom_components/solarman/)
+          git_log=$(git log --since=midnight -- custom_components/solarman/)
           echo "new_commits=$([[ -n "$git_log" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
   bump:
     name: Do
