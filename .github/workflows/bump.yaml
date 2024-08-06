@@ -2,7 +2,7 @@ name: Bump version
 
 on:
   schedule:
-  - cron: "23 00 * * *"
+  - cron: "00 23 * * *"
   workflow_dispatch:
 
 jobs:
