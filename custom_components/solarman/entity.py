@@ -35,6 +35,15 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         self._attr_device_info = self.coordinator.inverter.device_info
         self._attr_extra_state_attributes = {}  # { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
 
+    @property
+    def available(self) -> bool:
+        return self._attr_available and self.coordinator.inverter.available()
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self.update()
+        self.async_write_ha_state()
+
     def get_data_state(self, name):
         return self.coordinator.data[name]["state"]
 
@@ -90,13 +99,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         """Return the friendly name of the device."""
         return self._attr_friendly_name
 
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self._attr_available and self.coordinator.inverter.available()
-
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        self.update()
-        self.async_write_ha_state()
+class SolarmanDiagnosticEntity(SolarmanEntity):
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
+        self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
