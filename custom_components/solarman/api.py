@@ -19,9 +19,28 @@ from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
 
-class Inverter(PySolarmanV5Async):
-    def __init__(self, address, serial, port, mb_slave_id):
+class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
+    def __init__(self, address, serial, port, mb_slave_id, passthrough):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+        self._passthrough = passthrough
+
+    def _received_frame_is_valid(self, frame):
+        return super()._received_frame_is_valid(frame) if not self._passthrough else True
+
+    def _v5_frame_decoder(self, v5_frame):
+        if not self._passthrough:
+            return super()._v5_frame_decoder(v5_frame)
+
+        modbus_frame = v5_frame[10:]
+
+        if len(modbus_frame) < 5:
+            raise V5FrameError("V5 frame does not contain a valid Modbus RTU frame")
+
+        return modbus_frame
+
+class Inverter(PySolarmanV5AsyncWrapper):
+    def __init__(self, address, serial, port, mb_slave_id, passthrough):
+        super().__init__(address, serial, port, mb_slave_id, passthrough)
         self._is_reading = 0
         self.status_updated = datetime.now()
         self.status_interval = 0

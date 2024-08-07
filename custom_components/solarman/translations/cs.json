@@ -18,6 +18,7 @@
           "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
           "inverter_port": "Port",
           "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
+          "inverter_passthrough": "Solarman protokol passthrough mód",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
           "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
           "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"
@@ -46,6 +47,7 @@
           "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
           "inverter_port": "Port",
           "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
+          "inverter_passthrough": "Solarman protokol passthrough mód",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
           "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
           "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"

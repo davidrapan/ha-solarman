@@ -18,6 +18,7 @@
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
           "inverter_port": "Porta (solitamente 8899)",
           "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
+          "inverter_passthrough": "Modalità passthrough del protocollo Solarman",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
           "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio"
@@ -46,6 +47,7 @@
           "inverter_serial": "Numero seriale del logger (da interfaccia web)",
           "inverter_port": "Porta (solitamente 8899)",
           "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
+          "inverter_passthrough": "Modalità passthrough del protocollo Solarman",
           "lookup_file": "File YAML contenente la definizione Inverter",
           "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
           "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio"

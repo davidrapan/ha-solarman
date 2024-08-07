@@ -18,6 +18,7 @@
           "inverter_serial": "Número de série do dispositivo (recuperar da interface da web)",
           "inverter_port": "Porta (geralmente 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (geralmente 1)",
+          "inverter_passthrough": "Modo de passagem do protocolo Solarman",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro",
           "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
           "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio"
@@ -46,6 +47,7 @@
           "inverter_serial": "Número de série do dispositivo (recuperar da interface da web)",
           "inverter_port": "Porta (geralmente 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (geralmente 1)",
+          "inverter_passthrough": "Modo de passagem do protocolo Solarman",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro",
           "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
           "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio"

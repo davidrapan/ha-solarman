@@ -18,6 +18,7 @@
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
           "inverter_port": "Port",
           "inverter_mb_slave_id": "Modbus Slave ID (usually 1)",
+          "inverter_passthrough": "Solarman protocol passthrough mode",
           "lookup_file": "The yaml file containing inverter parameter definitions",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
@@ -46,6 +47,7 @@
           "inverter_serial": "Device Serial Number (retrieve from the web interface)",
           "inverter_port": "Port",
           "inverter_mb_slave_id": "Modbus Slave ID (usually 1)",
+          "inverter_passthrough": "Solarman protocol passthrough mode",
           "lookup_file": "The yaml file containing inverter parameter definitions",
           "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
           "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"

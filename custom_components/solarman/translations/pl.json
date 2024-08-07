@@ -18,6 +18,7 @@
           "inverter_serial": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "inverter_port": "Port (zwykle 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (zwykle 1)",
+          "inverter_passthrough": "Tryb przekazywania protokołu Solarman",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w",
           "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
           "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego"
@@ -46,6 +47,7 @@
           "inverter_serial": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "inverter_port": "Port (zwykle 8899)",
           "inverter_mb_slave_id": "Modbus Slave ID (zwykle 1)",
+          "inverter_passthrough": "Tryb przekazywania protokołu Solarman",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w",
           "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
           "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego"
