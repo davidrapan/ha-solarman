@@ -406,6 +406,9 @@ parameters:
         configurable:
         range:
           min: 0
+          max: 1000
+        validation:
+          min: 0
           max: 100
 
       - name: Battery Shutdown SOC
