@@ -139,7 +139,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         result = middleware.get_result() if middleware else {}
 
         if len(result) > 0:
-            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous Status: {self.get_connection_status()}]")
+            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous State: {self.get_connection_status()} ({self.status})]")
             now = datetime.now()
             self.status_interval = now - self.status_updated
             self.status_updated = now
@@ -147,13 +147,13 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return result
 
-    async def async_get_failed(self, message):
-        _LOGGER.debug(f"Request failed. [Previous Status: {self.get_connection_status()}]")
+    async def async_get_failed(self, message = None):
+        _LOGGER.debug(f"Request failed. [Previous State: {self.get_connection_status()} ({self.status})]")
         self.status = 0 if self.status == 1 else -1
 
         await self.async_disconnect()
 
-        if self.status == -1:
+        if message and self.status == -1:
             raise UpdateFailed(message)
 
     async def async_get(self, runtime = 0):
@@ -200,6 +200,13 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 else:
                     await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
 
+        except TimeoutError:
+            last_state = self.status
+            await self.async_get_failed()
+            if last_state < 1:
+                raise
+            else:
+                _LOGGER.debug(f"Timeout fetching {self.name} data")
         except UpdateFailed:
             raise
         except Exception as e:
