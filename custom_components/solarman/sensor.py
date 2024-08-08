@@ -83,8 +83,8 @@ class SolarmanConnectionState(SolarmanDiagnosticEntity):
         return True
 
     def update(self):
-        self._attr_state = self.coordinator.inverter.get_connection_status()
-        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.status_updated.strftime("%m/%d/%Y, %H:%M:%S")
+        self._attr_state = self.coordinator.inverter.get_connection_state()
+        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state_updated.strftime("%m/%d/%Y, %H:%M:%S")
 
 class SolarmanInterval(SolarmanDiagnosticEntity):
     def __init__(self, coordinator, sensor):
@@ -96,7 +96,7 @@ class SolarmanInterval(SolarmanDiagnosticEntity):
         return self._attr_state > 0
 
     def update(self):
-        self._attr_state = self.coordinator.inverter.status_interval.total_seconds()
+        self._attr_state = self.coordinator.inverter.state_interval.total_seconds()
 
 class SolarmanSensor(SolarmanEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
@@ -165,7 +165,7 @@ class SolarmanBatterySensor(SolarmanSensor):
                 case "Battery State":
                     battery_power = self.get_data("Battery Power", None)
                     if battery_power:
-                        self._attr_state = "discharging" if battery_power > 50 else "charging" if battery_power < -50 else "standby"
+                        self._attr_state = "discharging" if battery_power > 50 else "charging" if battery_power < -50 else "idle"
                 case "Today Battery Life Cycles":
                     today_battery_charge = self.get_data("Today Battery Charge", None)
                     if today_battery_charge == 0:

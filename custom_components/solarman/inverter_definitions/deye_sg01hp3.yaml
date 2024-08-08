@@ -1699,7 +1699,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 0
-        options: ["charging", "standby", "discharging"]
+        options: ["charging", "idle", "discharging"]
         icon: "mdi:battery"
 
       # Battery - The current of battery 1 is S16bit (low 16 bits)

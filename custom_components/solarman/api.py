@@ -42,9 +42,9 @@ class Inverter(PySolarmanV5AsyncWrapper):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
         super().__init__(address, serial, port, mb_slave_id, passthrough)
         self._is_reading = 0
-        self.status_updated = datetime.now()
-        self.status_interval = 0
-        self.status = -1
+        self.state_updated = datetime.now()
+        self.state_interval = 0
+        self.state = -1
         self.auto_reconnect = AUTO_RECONNECT
         self.manufacturer = "Solarman"
         self.model = None
@@ -84,14 +84,14 @@ class Inverter(PySolarmanV5AsyncWrapper):
         _LOGGER.debug(self.device_info)
 
     def available(self):
-        return self.status > -1
+        return self.state > -1
 
     async def async_connect(self, loud = True) -> None:
         if not self.reader_task:
             if loud:
                 _LOGGER.info(f"Connecting to {self.address}:{self.port}")
             await self.connect()
-        elif not self.status > 0:
+        elif not self.state > 0:
             await self.reconnect()
 
     async def async_disconnect(self, loud = True) -> None:
@@ -106,7 +106,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
     async def async_shutdown(self, loud = True) -> None:
         self._is_reading = 0
-        self.status = -1
+        self.state = -1
         await self.async_disconnect(loud)
 
     async def async_read(self, params, code, start, end) -> None:
@@ -128,8 +128,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
             return params.get_sensors()
         return []
 
-    def get_connection_status(self):
-        if self.status > 0:
+    def get_connection_state(self):
+        if self.state > 0:
             return "Connected"
         return "Disconnected"
 
@@ -139,21 +139,21 @@ class Inverter(PySolarmanV5AsyncWrapper):
         result = middleware.get_result() if middleware else {}
 
         if len(result) > 0:
-            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous State: {self.get_connection_status()} ({self.status})]")
+            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
             now = datetime.now()
-            self.status_interval = now - self.status_updated
-            self.status_updated = now
-            self.status = 1
+            self.state_interval = now - self.state_updated
+            self.state_updated = now
+            self.state = 1
 
         return result
 
     async def async_get_failed(self, message = None):
-        _LOGGER.debug(f"Request failed. [Previous State: {self.get_connection_status()} ({self.status})]")
-        self.status = 0 if self.status == 1 else -1
+        _LOGGER.debug(f"Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
+        self.state = 0 if self.state == 1 else -1
 
         await self.async_disconnect()
 
-        if message and self.status == -1:
+        if message and self.state == -1:
             raise UpdateFailed(message)
 
     async def async_get(self, runtime = 0):
@@ -201,7 +201,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
 
         except TimeoutError:
-            last_state = self.status
+            last_state = self.state
             await self.async_get_failed()
             if last_state < 1:
                 raise
