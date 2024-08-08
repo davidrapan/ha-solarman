@@ -26,8 +26,7 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                return await self.inverter.async_get(self._accounting())
+            return await self.inverter.async_get(self._accounting())
         except Exception:  # Temporary fix to retrieve all data after reconnect
             self._counter = 0
             raise

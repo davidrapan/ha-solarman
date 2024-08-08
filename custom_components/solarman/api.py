@@ -167,37 +167,38 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self._is_reading = 1
 
         try:
-            for i, request in enumerate(requests):
-                code = get_request_code(request)
-                start = get_request_start(request)
-                end = get_request_end(request)
+            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+                for i, request in enumerate(requests):
+                    code = get_request_code(request)
+                    start = get_request_start(request)
+                    end = get_request_end(request)
 
-                _LOGGER.debug(f"Querying ({start} - {end}) ...")
+                    _LOGGER.debug(f"Querying ({start} - {end}) ...")
 
-                attempts_left = ACTION_ATTEMPTS
-                while attempts_left > 0 and results[i] == 0:
-                    attempts_left -= 1
+                    attempts_left = ACTION_ATTEMPTS
+                    while attempts_left > 0 and results[i] == 0:
+                        attempts_left -= 1
 
-                    try:
-                        await self.async_read(params, code, start, end)
-                        results[i] = 1
-                    except (V5FrameError, TimeoutError, Exception) as e:
-                        results[i] = 0
+                        try:
+                            await self.async_read(params, code, start, end)
+                            results[i] = 1
+                        except (V5FrameError, TimeoutError, Exception) as e:
+                            results[i] = 0
 
-                        if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
-                            _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
+                            if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
+                                _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
-                        await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
+                            await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                    _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+                        _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-                if results[i] == 0:
-                    break
+                    if results[i] == 0:
+                        break
 
-            if not 0 in results:
-                return self.get_result(params)
-            else:
-                await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
+                if not 0 in results:
+                    return self.get_result(params)
+                else:
+                    await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
 
         except UpdateFailed:
             raise
