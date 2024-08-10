@@ -4,16 +4,8 @@
 
 default:
   update_interval: 60
+  code: 0x04
   digits: 6
-
-requests:
-  - start: 0x0000
-    end: 0x001A
-    mb_functioncode: 0x04
-
-  - start: 0x0000
-    end: 0x000F
-    mb_functioncode: 0x03
 
 parameters:
   - group: solar
