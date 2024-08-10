@@ -1,10 +1,8 @@
 # ⚡ Solarman Stick Logger
 
-[![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman)](https://github.com/davidrapan/ha-solarman/releases/latest)
-[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
 [![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](LICENSE)
-[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green)](https://github.com/custom-components/hacs)
-[![Community Forum](https://img.shields.io/badge/community-forum-brightgreen)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
+[![Community Forum](https://img.shields.io/badge/community-forum-03a9f4)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
 [![Discussions](https://img.shields.io/badge/discussions-orange)](https://github.com/davidrapan/ha-solarman/discussions)
 [![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
 
