@@ -3,7 +3,7 @@
 #
 
 default:
-  update_interval: 60
+  update_interval: 10
   code: 0x04
   digits: 6
 
