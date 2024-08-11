@@ -186,7 +186,7 @@ parameters:
 
   - group: Grid
     items:
-      - name: "Total Grid Power"
+      - name: "Grid Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -267,7 +267,8 @@ parameters:
         registers: [0x00AB]
         icon: "mdi:transmission-tower"
 
-      - name: "Today Energy Bought"
+      - name: Today Energy Import
+        alt: Today Energy Bought
         friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
@@ -277,7 +278,8 @@ parameters:
         registers: [0x004C]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Total Energy Bought"
+      - name: Total Energy Import
+        alt: Total Energy Bought
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -286,7 +288,8 @@ parameters:
         registers: [0x004E, 0x0050]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Today Energy Sold"
+      - name: Today Energy Export
+        alt: Today Energy Sold
         friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
@@ -296,7 +299,8 @@ parameters:
         registers: [0x004D]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Total Energy Sold"
+      - name: Total Energy Export
+        alt: Total Energy Sold
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -316,7 +320,7 @@ parameters:
 
   - group: Upload
     items:
-      - name: "Total Load Power"
+      - name: "Load Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -406,7 +410,7 @@ parameters:
             value: "Fault"
         icon: "mdi:information"
 
-      - name: "Total Power"
+      - name: "Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
