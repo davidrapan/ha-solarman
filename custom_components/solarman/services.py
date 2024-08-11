@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 # Apart from this, it also need to be defined in the file 
 # services.yaml for the Home Assistant UI in "Developer Tools"
 
-SERVICE_READ_HOLDING_REGISTERS_SCHEMA = vol.Schema(
+SERVICE_READ_REGISTERS_SCHEMA = vol.Schema(
     {
         vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
         vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
@@ -89,6 +89,36 @@ def register_services(hass: HomeAssistant) -> None:
 
         return result
 
+    async def read_input_registers(call: ServiceCall) -> int:
+        _LOGGER.debug(f"read_input_registers: {call}")
+
+        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+            raise ServiceValidationError(
+                "No communication interface for device found",
+                translation_domain = DOMAIN,
+                translation_key = "no_interface_found"
+            )
+
+        register = call.data.get(SERVICES_PARAM_REGISTER)
+        quantity = call.data.get(SERVICES_PARAM_QUANTITY)
+
+        try:
+            response = await inverter.service_read_input_registers(register, quantity,
+            wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+        except Exception as e:
+            raise ServiceValidationError(
+                e,
+                translation_domain = DOMAIN,
+                translation_key = "call_failed"
+            )
+
+        result = {}
+
+        for i in range(0, quantity):
+            result[register + i] = response[i]
+
+        return result
+
     async def write_holding_register(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_holding_register: {call}")
 
@@ -138,7 +168,11 @@ def register_services(hass: HomeAssistant) -> None:
         return
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = SERVICE_READ_HOLDING_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+    )
+
+    hass.services.async_register(
+        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_holding_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
@@ -155,6 +189,7 @@ def remove_services(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"remove_services")
 
     hass.services.async_remove(DOMAIN, SERVICE_READ_HOLDING_REGISTERS)
+    hass.services.async_remove(DOMAIN, SERVICE_READ_INPUT_REGISTERS)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_HOLDING_REGISTER)
     hass.services.async_remove(DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS)
 

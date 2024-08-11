@@ -42,6 +42,50 @@ read_holding_registers:
           max: 30
           mode: box
 
+read_input_registers:
+  name: Read Input Registers (Modbus Function Code 4)
+  description: Read values from consecutive registers at once. (Defaults to reading a single register)
+  fields:
+    device:
+      name: Device
+      description: The Device
+      example: "Inverter"
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: solarman
+    register:
+      name: Register
+      description: Modbus register address
+      example: 16384
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535 
+          mode: box
+    quantity:
+      name: Quantity
+      description: Quantity of registers to read
+      default: 1
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 65535 
+          mode: box
+    wait_for_attempts:
+      name: Wait for attempts
+      description: Wait for coordinator attempts
+      default: 5
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 30
+          mode: box
+
 write_holding_register:
   name: Write Holding Register (Modbus Function Code 6)
   description: USE WITH CARE! (Some devices might not accept Code 6 in this case try to use 'Write Multiple Holding Registers')

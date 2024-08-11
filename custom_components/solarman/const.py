@@ -71,5 +71,6 @@ SERVICES_PARAM_VALUES = "values"
 SERVICES_PARAM_WAIT_FOR_ATTEMPTS = "wait_for_attempts"
 
 SERVICE_READ_HOLDING_REGISTERS = "read_holding_registers"
+SERVICE_READ_INPUT_REGISTERS = "read_input_registers"
 SERVICE_WRITE_HOLDING_REGISTER = "write_holding_register"
 SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS = "write_multiple_holding_registers"
