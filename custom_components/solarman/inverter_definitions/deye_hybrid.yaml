@@ -58,7 +58,8 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "measurement"
         uom: "kWh"
@@ -105,7 +106,8 @@ parameters:
         registers: [0x004A, 0x004B]
         icon: "mdi:battery-minus"
 
-      - name: "Daily Battery Charge"
+      - name: "Today Battery Charge"
+        friendly_name: Today's Battery Charge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -114,7 +116,8 @@ parameters:
         registers: [0x0046]
         icon: "mdi:battery-plus"
 
-      - name: "Daily Battery Discharge"
+      - name: "Today Battery Discharge"
+        friendly_name: Today's Battery Discharge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -264,7 +267,8 @@ parameters:
         registers: [0x00AB]
         icon: "mdi:transmission-tower"
 
-      - name: "Daily Energy Bought"
+      - name: "Today Energy Bought"
+        friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -282,7 +286,8 @@ parameters:
         registers: [0x004E, 0x0050]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Daily Energy Sold"
+      - name: "Today Energy Sold"
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -343,7 +348,8 @@ parameters:
         rule: 1
         registers: [0x009D]
 
-      - name: "Daily Load Consumption"
+      - name: "Today Load Consumption"
+        friendly_name: Today's Load Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"

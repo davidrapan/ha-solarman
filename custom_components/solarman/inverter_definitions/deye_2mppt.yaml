@@ -55,7 +55,8 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -64,7 +65,8 @@ parameters:
         registers: [0x003C]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production 1"
+      - name: "Today Production 1"
+        friendly_name: Today's Production 1
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -73,7 +75,8 @@ parameters:
         registers: [0x0041]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production 2"
+      - name: "Today Production 2"
+        friendly_name: Today's Production 2
         class: "energy"
         state_class: "total"
         uom: "kWh"
