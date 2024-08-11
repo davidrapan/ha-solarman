@@ -13,6 +13,7 @@
 
 default:
   update_interval: 10
+  min_span: 6
   code: 0x04
   digits: 6
 
