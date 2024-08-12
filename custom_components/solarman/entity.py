@@ -33,7 +33,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.inverter.device_info
-        self._attr_extra_state_attributes = {}  # { "id": self.coordinator.inverter.serial, "integration": DOMAIN }
+        self._attr_extra_state_attributes = {}
 
     @property
     def available(self) -> bool:
@@ -70,12 +70,15 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
                             self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, sensor):
+    def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator)
         self.sensor_name = sensor["name"]
         self.sensor_friendly_name = sensor[ATTR_FRIENDLY_NAME] if ATTR_FRIENDLY_NAME in sensor else self.sensor_name
         self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
         self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
+
+        if self.sensor_entity_id:
+            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.sensor_entity_id)
 
         # Set the enabled default value
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
@@ -93,13 +96,35 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id)
 
         # Set the icon of the sensor.
-        self._attr_icon = "mdi:information"
+        self._attr_icon = sensor["icon"] if "icon" in sensor else None
+
+        if "class" in sensor and (device_class := sensor["class"]):
+            self._attr_device_class = device_class
+        if "device_class" in sensor and (device_class := sensor["device_class"]):
+            self._attr_device_class = device_class
+        if "state_class" in sensor and (state_class := sensor["state_class"]):
+            self._attr_extra_state_attributes = { "state_class": state_class }
+        if "uom" in sensor and (unit_of_measurement := sensor["uom"]):
+            self._attr_unit_of_measurement = unit_of_measurement
+        if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
+            self._attr_unit_of_measurement = unit_of_measurement
+        if "suggested_display_precision" in sensor and (display_precision := sensor["suggested_display_precision"]):
+            self._attr_suggested_display_precision = display_precision
+        if "options" in sensor and (options := sensor["options"]):
+            self._attr_options = options
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
+        if "alt" in sensor and (alt := sensor["alt"]):
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Alt Name": alt }
+        if "description" in sensor and (description := sensor["description"]):
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
+
+        self.attributes = sensor["attributes"] if "attributes" in sensor else None
 
     def _friendly_name_internal(self) -> str | None:
         """Return the friendly name of the device."""
         return self._attr_friendly_name
 
 class SolarmanDiagnosticEntity(SolarmanEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+    def __init__(self, coordinator, platform, sensor):
+        super().__init__(coordinator, platform, sensor)
         self._attr_entity_category = (EntityCategory.DIAGNOSTIC)
