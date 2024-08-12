@@ -58,7 +58,8 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "measurement"
         uom: "kWh"
@@ -105,7 +106,8 @@ parameters:
         registers: [0x004A, 0x004B]
         icon: "mdi:battery-minus"
 
-      - name: "Daily Battery Charge"
+      - name: "Today Battery Charge"
+        friendly_name: Today's Battery Charge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -114,7 +116,8 @@ parameters:
         registers: [0x0046]
         icon: "mdi:battery-plus"
 
-      - name: "Daily Battery Discharge"
+      - name: "Today Battery Discharge"
+        friendly_name: Today's Battery Discharge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -183,7 +186,7 @@ parameters:
 
   - group: Grid
     items:
-      - name: "Total Grid Power"
+      - name: "Grid Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -264,7 +267,9 @@ parameters:
         registers: [0x00AB]
         icon: "mdi:transmission-tower"
 
-      - name: "Daily Energy Bought"
+      - name: Today Energy Import
+        alt: Today Energy Bought
+        friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -273,7 +278,8 @@ parameters:
         registers: [0x004C]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Total Energy Bought"
+      - name: Total Energy Import
+        alt: Total Energy Bought
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -282,7 +288,9 @@ parameters:
         registers: [0x004E, 0x0050]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Daily Energy Sold"
+      - name: Today Energy Export
+        alt: Today Energy Sold
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -291,7 +299,8 @@ parameters:
         registers: [0x004D]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Total Energy Sold"
+      - name: Total Energy Export
+        alt: Total Energy Sold
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -311,7 +320,7 @@ parameters:
 
   - group: Upload
     items:
-      - name: "Total Load Power"
+      - name: "Load Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -343,7 +352,8 @@ parameters:
         rule: 1
         registers: [0x009D]
 
-      - name: "Daily Load Consumption"
+      - name: "Today Load Consumption"
+        friendly_name: Today's Load Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -400,7 +410,7 @@ parameters:
             value: "Fault"
         icon: "mdi:information"
 
-      - name: "Total Power"
+      - name: "Power"
         class: "power"
         state_class: "measurement"
         uom: "W"

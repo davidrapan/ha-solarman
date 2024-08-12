@@ -1328,7 +1328,7 @@ parameters:
         digits: 2
         icon: "mdi:battery-sync"
 
-      - name: Today Energy Bought
+      - name: Today Energy Import
         alt: Daily Energy Bought
         friendly_name: Today's Energy Import
         description: Today's energy imported from the grid
@@ -1341,7 +1341,7 @@ parameters:
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
 
-      - name: Today Energy Sold
+      - name: Today Energy Export
         alt: Daily Energy Sold
         friendly_name: Today's Energy Export
         description: Today's energy exported/returned to the grid
@@ -1354,8 +1354,8 @@ parameters:
         registers: [0x0209]
         icon: "mdi:transmission-tower-import"
 
-      - name: "Total Energy Bought"
-        friendly_name: Total Energy Import
+      - name: Total Energy Import
+        alt: Total Energy Bought
         description: Total energy imported from the grid
         update_interval: 30
         class: "energy"
@@ -1366,8 +1366,8 @@ parameters:
         registers: [0x020A, 0x020B]
         icon: "mdi:transmission-tower-export"
 
-      - name: "Total Energy Sold"
-        friendly_name: Total Energy Export
+      - name: Total Energy Export
+        alt: Total Energy Sold
         description: Total energy exported/returned to the grid
         update_interval: 30
         class: "energy"

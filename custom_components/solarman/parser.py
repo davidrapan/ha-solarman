@@ -65,9 +65,17 @@ class ParameterParser:
 
         return result
 
-    def get_requests(self, runtime = 0):
+    def get_request_code(self, start, end):
         if "requests" in self._profile:
-            _LOGGER.debug("Dynamic requests and many more features are disabled cause of an old profile format!")
+            for r in self._profile["requests"]:
+                if r[REQUEST_START] <= start <= end <= r[REQUEST_END]:
+                    return get_request_code(r)
+
+        return self._code
+
+    def get_requests(self, runtime = 0):
+        if "requests" in self._profile and "requests_fine_control" in self._profile:
+            _LOGGER.debug("Fine control of request sets is enabled!")
             return self._profile["requests"]
 
         registers = []
@@ -85,8 +93,8 @@ class ParameterParser:
         registers.sort()
 
         groups = group_when(registers, lambda x, y: y - x > self._min_span)
-        
-        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code } for r in groups]
+
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self.get_request_code(r[0], r[-1]) } for r in groups]
 
     def parse(self, rawData, start, length):
         for param in self.parameters():

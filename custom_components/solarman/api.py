@@ -24,6 +24,25 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self._passthrough = passthrough
 
+    async def reconnect(self) -> None:
+        """
+        Overridden to silence [ConnectionRefusedError: [Errno 111] Connect call failed] during reconnects
+
+        """
+        try:
+            if self.reader_task:
+                self.reader_task.cancel()
+            self.reader, self.writer = await asyncio.open_connection(self.address, self.port)
+            loop = asyncio.get_running_loop()
+            self.reader_task = loop.create_task(self._conn_keeper(), name = "ConnKeeper")
+            self.log.debug("[%s] Successful reconnect", self.serial)
+            if self.data_wanted_ev.is_set():
+                self.log.debug("[%s] Data expected. Will retry the last request", self.serial)
+                self.writer.write(self._last_frame)
+                await self.writer.drain()
+        except Exception as e:
+            self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
+
     def _received_frame_is_valid(self, frame):
         return super()._received_frame_is_valid(frame) if not self._passthrough else True
 
@@ -110,17 +129,17 @@ class Inverter(PySolarmanV5AsyncWrapper):
         await self.async_disconnect(loud)
 
     async def async_read(self, params, code, start, end) -> None:
-        length = end - start + 1
+        quantity = end - start + 1
 
         await self.async_connect()
 
         match code:
             case 3:
-                response = await self.read_holding_registers(register_addr = start, quantity = length)
+                response = await self.read_holding_registers(start, quantity)
             case 4:
-                response = await self.read_input_registers(register_addr = start, quantity = length)
+                response = await self.read_input_registers(start, quantity)
 
-        params.parse(response, start, length)
+        params.parse(response, start, quantity)
 
     def get_sensors(self):
         if self.parameter_definition:
@@ -234,6 +253,21 @@ class Inverter(PySolarmanV5AsyncWrapper):
             return await self.read_holding_registers(register, quantity)
         except Exception as e:
             _LOGGER.warning(f"service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
+            if not self.auto_reconnect:
+                await self.async_disconnect()
+
+    async def service_read_input_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
+        _LOGGER.debug(f"service_read_input_registers: [{register}], quantity: [{quantity}]")
+
+        if await self.wait_for_reading_done(wait_for_attempts):
+            _LOGGER.debug(f"service_read_input_registers: Timeout.")
+            raise TimeoutError("Coordinator is currently reading data from the device!")
+
+        try:
+            await self.async_connect()
+            return await self.read_input_registers(register, quantity)
+        except Exception as e:
+            _LOGGER.warning(f"service_read_input_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
 

@@ -1,10 +1,8 @@
 # ⚡ Solarman Stick Logger
 
-[![Stable](https://img.shields.io/github/release/davidrapan/ha-solarman)](https://github.com/davidrapan/ha-solarman/releases/latest)
-[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
 [![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](LICENSE)
-[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green)](https://github.com/custom-components/hacs)
-[![Community Forum](https://img.shields.io/badge/community-forum-brightgreen)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
+[![Community Forum](https://img.shields.io/badge/community-forum-03a9f4)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
 [![Discussions](https://img.shields.io/badge/discussions-orange)](https://github.com/davidrapan/ha-solarman/discussions)
 [![Wiki](https://img.shields.io/badge/wiki-8A2BE2)](https://github.com/davidrapan/ha-solarman/wiki)
 
@@ -22,7 +20,7 @@
 
 > [!IMPORTANT]  
 > Inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) but w/ a lot of [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and fetching through DataUpdateCoordinator + incorporates many more fixes and improvements and also up to date features of HA (while trying to fully preserve backward compatibility)
+> Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/) + incorporates many more fixes and improvements and also up to date features of HA (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  
 > It's not possible to use this integration side by side (with the same device) with the implementation from Stephan! It will override it.  

@@ -4,14 +4,21 @@ import logging
 import asyncio
 import voluptuous as vol
 
-from datetime import datetime, time
 from functools import cached_property, partial
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.components.template.sensor import SensorTemplate
+from homeassistant.components.template.sensor import TriggerSensorEntity
+from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
+from homeassistant.helpers.template import Template
+
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.const import CONF_NAME, STATE_OFF, STATE_ON, EntityCategory
-from homeassistant.components.time import TimeEntity, TimeEntityDescription
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory, STATE_OFF, STATE_ON
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
+from homeassistant.helpers.entity import Entity, ToggleEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorDeviceClass
 
 from .const import *
 from .common import *
@@ -24,7 +31,7 @@ _PLATFORM = get_current_file_name(__name__)
 
 def _create_sensor(coordinator, sensor):
     try:
-        entity = SolarmanTimeEntity(coordinator, sensor)
+        entity = SolarmanBinarySensorEntity(coordinator, sensor)
 
         entity.update()
 
@@ -52,29 +59,10 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
+class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        # Set The Device Class of the entity.
-        self._attr_device_class = None
-        # Set The Category of the entity.
-        self._attr_entity_category = EntityCategory.CONFIG
 
-        registers = sensor["registers"]
-        registers_length = len(registers)
-        if registers_length > 0:
-            self.register = sensor["registers"][0]
-        if registers_length > 1:
-            _LOGGER.warning(f"SolarmanTimeEntity.__init__: Contains more than 1 register!")
-
-    @cached_property
-    def native_value(self) -> float:
-        """Return the state of the setting entity."""
-        return datetime.strptime(self._attr_state, "%H:%M").time()
-
-    async def async_set_value(self, value: time) -> None:
-        """Change the time."""
-        value_int = int(value.strftime("%H%M"))
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [value_int,], ACTION_ATTEMPTS_MAX)
-        self._attr_state = value_int
-        self.async_write_ha_state()
+    @property
+    def is_on(self) -> bool | None:
+        return self._attr_state != 0

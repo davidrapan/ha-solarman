@@ -76,7 +76,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanConnectionState(SolarmanDiagnosticEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+        super().__init__(coordinator, _PLATFORM, sensor)
 
     @property
     def available(self) -> bool:
@@ -88,7 +88,7 @@ class SolarmanConnectionState(SolarmanDiagnosticEntity):
 
 class SolarmanInterval(SolarmanDiagnosticEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+        super().__init__(coordinator, _PLATFORM, sensor)
         self._attr_extra_state_attributes = { "state_class": "measurement" }
 
     @property
@@ -100,46 +100,7 @@ class SolarmanInterval(SolarmanDiagnosticEntity):
 
 class SolarmanSensor(SolarmanEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
-        super().__init__(coordinator, sensor)
-
-        if self.sensor_entity_id:
-            self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
-
-        if "suggested_display_precision" in sensor:
-            self._attr_suggested_display_precision = sensor["suggested_display_precision"]
-
-        if "state_class" in sensor and sensor["state_class"]:
-            self._attr_extra_state_attributes = { "state_class": sensor["state_class"] }
-
-        self._digits = sensor["digits"] if "digits" in sensor else DEFAULT_DIGITS
-
-        self._attr_entity_category = (None)
-
-        self._attr_icon = sensor["icon"] if "icon" in sensor else None
-
-        self.attributes = sensor["attributes"] if "attributes" in sensor else None
-
-        if "class" in sensor and (device_class := sensor["class"]):
-            self._attr_device_class = device_class
-
-        if "device_class" in sensor and (device_class := sensor["device_class"]):
-            self._attr_device_class = device_class
-
-        if "uom" in sensor and (unit_of_measurement := sensor["uom"]):
-            self._attr_unit_of_measurement = unit_of_measurement
-
-        if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
-            self._attr_unit_of_measurement = unit_of_measurement
-
-        if "alt" in sensor and (alt := sensor["alt"]):
-            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Alt Name": alt }
-
-        if "description" in sensor and (description := sensor["description"]):
-            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
-
-        if "options" in sensor and (options := sensor["options"]):
-            self._attr_options = options
-            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
+        super().__init__(coordinator, _PLATFORM, sensor)
 
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
@@ -149,6 +110,7 @@ class SolarmanBatterySensor(SolarmanSensor):
         SolarmanSensor.__init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
+        self._digits = sensor["digits"] if "digits" in sensor else DEFAULT_DIGITS
 
     def update(self):
         #super().update()

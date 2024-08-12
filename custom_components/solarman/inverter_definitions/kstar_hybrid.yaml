@@ -13,33 +13,14 @@
 
 default:
   update_interval: 10
+  min_span: 6
+  code: 0x04
   digits: 6
 
 requests:
-  # Start requesting from the first needed register (3000)
-  - start: 3000
-    end: 3124
-    mb_functioncode: 0x04
-
-  # Input registers 3200 - 3227 can't be read as they would clash with holding registers of same number
-  - start: 3125
-    end: 3199
-    mb_functioncode: 0x04
-
-  # Change to holding registers 3200 - 3237 (mb_functioncode 3) for the inverter system information.
   - start: 3200
     end: 3217
-    mb_functioncode: 0x03
-
-  # Continue with the needed input registers
-  - start: 3228
-    end: 3249
-    mb_functioncode: 0x04
-
-  # Last input register currently used by this definition file is 3301, so we can skip the rest for now.
-  - start: 3250
-    end: 3301
-    mb_functioncode: 0x04
+    code: 0x03
 
 parameters:
   - group: solar
@@ -98,7 +79,8 @@ parameters:
         registers: [ 3025 ]
         icon: 'mdi:solar-power'
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -146,77 +128,87 @@ parameters:
         registers: [ 3100 ]
         icon: 'mdi:transmission-tower'
 
-      - name: "Daily Energy Purchased"
+      - name: Today Energy Import
+        alt: Daily Energy Purchased
+        friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [ 3109 ]
-        icon: 'mdi:transmission-tower-import'
+        icon: 'mdi:transmission-tower-export'
 
-      - name: "Monthly Energy Purchased"
+      - name: Monthly Energy Import
+        alt: Monthly Energy Purchased
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [ 3111, 3110 ]
-        icon: 'mdi:transmission-tower-import'
+        icon: 'mdi:transmission-tower-export'
 
-      - name: "Yearly Energy Purchased"
+      - name: Yearly Energy Import
+        alt: Yearly Energy Purchased
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [ 3113, 3112 ]
-        icon: 'mdi:transmission-tower-import'
+        icon: 'mdi:transmission-tower-export'
 
-      - name: "Cumulative Energy Purchased"
+      - name: Total Energy Import
+        alt: Cumulative Energy Purchased
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [ 3115, 3114 ]
-        icon: 'mdi:transmission-tower-import'
+        icon: 'mdi:transmission-tower-export'
 
-      - name: "Daily Energy Feed-In"
+      - name: Today Energy Export
+        alt: Daily Energy Feed-In
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [ 3116 ]
-        icon: 'mdi:transmission-tower-export'
+        icon: 'mdi:transmission-tower-import'
 
-      - name: "Monthly Energy Feed-In"
+      - name: Monthly Energy Export
+        alt: Monthly Energy Feed-In
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [ 3118, 3117 ]
-        icon: 'mdi:transmission-tower-export'
+        icon: 'mdi:transmission-tower-import'
 
-      - name: "Yearly Energy Feed-In"
+      - name: Yearly Energy Export
+        alt: Yearly Energy Feed-In
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [ 3120, 3119 ]
-        icon: 'mdi:transmission-tower-export'
+        icon: 'mdi:transmission-tower-import'
 
-      - name: "Cumulative Grid Feed-In"
+      - name: Total Energy Export
+        alt: Cumulative Grid Feed-In
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [ 3122, 3121 ]
-        icon: 'mdi:transmission-tower-export'
+        icon: 'mdi:transmission-tower-import'
 
   - group: Electricity Consumption
     items:
@@ -230,7 +222,9 @@ parameters:
         registers: [ 3144 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Daily Consumption"
+      - name: Today Load Consumption
+        alt: Daily Consumption
+        friendly_name: Today's Load Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -348,7 +342,8 @@ parameters:
         registers: [ 3056 ]
         icon: 'mdi:battery-heart-outline'
 
-      - name: "Battery Total Discharge"
+      - name: Total Battery Discharge
+        alt: Battery Total Discharge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -357,7 +352,9 @@ parameters:
         registers: [ 3293, 3292 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Daily Discharge"
+      - name: "Today Battery Discharge"
+        alt: Battery Daily Discharge
+        friendly_name: Today's Battery Discharge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -366,7 +363,8 @@ parameters:
         registers: [ 3294 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Total Charge"
+      - name: "Total Battery Charge"
+        alt: "Battery Total Charge"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -375,7 +373,9 @@ parameters:
         registers: [ 3300, 3299 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Daily Charge"
+      - name: "Today Battery Charge"
+        alt: Battery Daily Charge
+        friendly_name: Today's Battery Charge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"

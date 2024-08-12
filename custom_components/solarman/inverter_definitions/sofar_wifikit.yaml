@@ -5,36 +5,31 @@
 
 # The ME3000-SP is basically a glorified battery
 # charger - it is not directly connected to any
-# generation infrastructure, but can calculate
+# production infrastructure, but can calculate
 # generated energy based on any CT clamps it is
 # connected to. For most people this entity will
 # be a generally accurate representation of their
-# PV panel output, but since this tracks generation
+# PV panel output, but since this tracks production
 # from _any_ source, it is named generically.
 #
 
 default:
   update_interval: 5
+  code: 0x03
   digits: 6
 
 requests:
-  # Inverter State
-  - start: 0x0200
-    end: 0x0245
-    mb_functioncode: 0x03
-  # Inverter Settings
   - start: 0x10B0
     end: 0x10BC
-    mb_functioncode: 0x04
-  # Inverter Information
+    code: 0x04
   - start: 0x2000
     end: 0x200B
-    mb_functioncode: 0x04
+    code: 0x04
 
 parameters:
-  - group: Generation
+  - group: Production
     items:
-      - name: "Generation Power"
+      - name: "PV Power"
         class: "power"
         state_class: "measurement"
         uom: "kW"
@@ -43,7 +38,8 @@ parameters:
         registers: [0x0215]
         icon: "mdi:solar-power"
 
-      - name: "Daily Generation"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -52,7 +48,7 @@ parameters:
         registers: [0x0218]
         icon: "mdi:solar-power"
 
-      - name: "Total Generation"
+      - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -61,7 +57,7 @@ parameters:
         registers: [0x021D, 0x021C]
         icon: "mdi:solar-power"
 
-      - name: "Daily Generation Time"
+      - name: "Today Production Time"
         class: "duration"
         state_class: "total_increasing"
         uom: "min"
@@ -70,7 +66,7 @@ parameters:
         registers: [0x0243]
         icon: "mdi:sun-clock-outline"
 
-      - name: "Total Generation Time"
+      - name: "Total Production Time"
         class: "duration"
         state_class: "total_increasing"
         uom: "h"
@@ -90,7 +86,9 @@ parameters:
         registers: [0x0213]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Daily Consumption"
+      - name: Today Load Consumption
+        alt: Daily Consumption
+        friendly_name: Today's Load Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -99,7 +97,8 @@ parameters:
         registers: [0x021B]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Total Consumption"
+      - name: "Total Load Consumption"
+        alt: Total Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -173,23 +172,27 @@ parameters:
         registers: [0x20C]
         icon: "mdi:sine-wave"
 
-      - name: "Daily Power Sold"
+      - name: Today Energy Export
+        alt: Daily Power Sold
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
         registers: [0x0219]
-        icon: "mdi:transmission-tower-export"
+        icon: "mdi:transmission-tower-import"
 
-      - name: "Daily Power Bought"
+      - name: "Today Energy Import"
+        alt: Daily Power Bought
+        friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
         registers: [0x021A]
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower-export"
 
   - group: Battery
     items:

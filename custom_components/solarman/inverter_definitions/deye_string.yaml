@@ -40,7 +40,8 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -58,8 +59,7 @@ parameters:
         registers: [0x003F, 0x0040]
         icon: "mdi:solar-power"
         validation:
-          min: 0.0
-          invalidate_all:
+          min: 0.1
 
   - group: Grid
     items:

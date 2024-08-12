@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .sensor import SolarmanSensor
+from .entity import SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,16 +52,13 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanSwitchEntity(SolarmanSensor, SwitchEntity):
+class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanSensor.__init__(self, coordinator, sensor, 0, 0)
+        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
         # Set The Device Class of the entity.
         self._attr_device_class = SwitchDeviceClass.SWITCH
         # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
-
-        if self.sensor_entity_id:
-            self.entity_id = "{}.{}_{}".format(_PLATFORM, self.coordinator.inverter.name, self.sensor_entity_id)
 
         self._value_on = 1
         self._value_off = 0

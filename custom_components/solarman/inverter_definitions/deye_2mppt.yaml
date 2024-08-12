@@ -83,7 +83,8 @@ parameters:
             scale: 0.1
             registers: [0x0070]
 
-      - name: "Daily Production"
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -92,7 +93,8 @@ parameters:
         registers: [0x003C]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production 1"
+      - name: "Today Production 1"
+        friendly_name: Today's Production 1
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -101,7 +103,8 @@ parameters:
         registers: [0x0041]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production 2"
+      - name: "Today Production 2"
+        friendly_name: Today's Production 2
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -119,8 +122,7 @@ parameters:
         registers: [0x003F, 0x0040]
         icon: "mdi:solar-power"
         validation:
-          min: 0.0
-          invalidate_all:
+          min: 0.1
 
       - name: "Total Production 1"
         class: "energy"
@@ -131,7 +133,7 @@ parameters:
         registers: [0x0045]
         icon: "mdi:solar-power"
         validation:
-          min: 0.0
+          min: 0.1
 
       - name: "Total Production 2"
         class: "energy"
@@ -142,15 +144,22 @@ parameters:
         registers: [0x0047]
         icon: "mdi:solar-power"
         validation:
-          min: 0.0
+          min: 0.1
 
-      - name: "Active Power Regulations"
+      - name: "Active Power Regulation"
         class: ""
         state_class: ""
         uom: "%"
-        scale: 1
+        scale: 0.1
         rule: 1
         registers: [0x0028]
+        configurable:
+          min: 0
+          max: 120
+          step: 1
+        range:
+          min: 0
+          max: 1200
         icon: "mdi:solar-power"
 
   - group: Grid
@@ -218,7 +227,7 @@ parameters:
         registers: [0x001E]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Overfrequency And Load Reduction Starting Point"
+      - name: "Over-frequency Load Reduction Starting Point"
         class: "frequency"
         state_class: ""
         uom: "Hz"
@@ -227,7 +236,7 @@ parameters:
         registers: [0x0022]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Overfrequency And Load Reduction Percentage"
+      - name: "Over-frequency Load Reduction Percentage"
         class: ""
         state_class: ""
         uom: "%"
@@ -263,20 +272,6 @@ parameters:
           - key: 1
             value: "Enabled"
         icon: "mdi:island"
-
-      - name: "Overfrequency&Load-shedding Enable"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0031]
-        lookup:
-          - key: 0
-            value: "Disabled"
-          - key: 1
-            value: "Enabled"
-        icon: "mdi:toggle-switch"
 
   - group: Inverter
     items:
@@ -664,7 +659,17 @@ parameters:
 
   - group: Control
     items:
-      # Soft Start Enable - On/Off Switch 
+      # Device - On/Off Switch 
+      - name: ""
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002b]
+
+      # Soft Start - On/Off Switch 
       - name: "Soft Start"
         update_interval: 300
         class: "switch"
@@ -674,17 +679,7 @@ parameters:
         rule: 1
         registers: [0x002F]
 
-      # Device Enable - On/Off Switch 
-      - name: "Device On/Off"
-        update_interval: 300
-        class: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002b]
-
-      # Island Protectionable - On/Off Switch 
+      # Island Protection - On/Off Switch 
       - name: "Island Protection"
         update_interval: 300
         class: "switch"
@@ -694,8 +689,8 @@ parameters:
         rule: 1
         registers: [0x002e]
 
-      # Overfrequency&Load-shedding - On/Off Switch 
-      - name: "Overfrequency&Load-shedding"
+      # Over-frequency Load-shedding - On/Off Switch 
+      - name: "Over-frequency Load Reduction"
         update_interval: 300
         class: "switch"
         state_class: ""
@@ -703,21 +698,4 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0031]
-
-      # Device - Rated Power
-      - name: "Device Power"
-        update_interval: 300
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 1
-        rule: 1
-        registers: [0x0028]
-        configurable:
-          min: 0
-          max: 120
-          step: 1
-        range:
-          min: 0
-          max: 1200
 
