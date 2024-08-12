@@ -123,8 +123,3 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
     def _friendly_name_internal(self) -> str | None:
         """Return the friendly name of the device."""
         return self._attr_friendly_name
-
-class SolarmanDiagnosticEntity(SolarmanEntity):
-    def __init__(self, coordinator, platform, sensor):
-        super().__init__(coordinator, platform, sensor)
-        self._attr_entity_category = (EntityCategory.DIAGNOSTIC)

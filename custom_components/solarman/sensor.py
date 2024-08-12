@@ -24,7 +24,7 @@ from .common import *
 from .services import *
 from .api import Inverter
 from .coordinator import InverterCoordinator
-from .entity import SolarmanCoordinatorEntity, SolarmanEntity, SolarmanDiagnosticEntity
+from .entity import SolarmanCoordinatorEntity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,10 +34,8 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
     try:
         if "artificial" in sensor:
             match sensor["artificial"]:
-                case "state":
-                    entity = SolarmanConnectionState(coordinator, sensor)
                 case "interval":
-                    entity = SolarmanInterval(coordinator, sensor)
+                    entity = SolarmanIntervalSensor(coordinator, sensor)
         elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
             entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
         else:
@@ -74,21 +72,10 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanConnectionState(SolarmanDiagnosticEntity):
+class SolarmanIntervalSensor(SolarmanEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, _PLATFORM, sensor)
-
-    @property
-    def available(self) -> bool:
-        return True
-
-    def update(self):
-        self._attr_state = self.coordinator.inverter.get_connection_state()
-        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state_updated.strftime("%m/%d/%Y, %H:%M:%S")
-
-class SolarmanInterval(SolarmanDiagnosticEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, _PLATFORM, sensor)
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_extra_state_attributes = { "state_class": "measurement" }
 
     @property

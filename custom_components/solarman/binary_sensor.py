@@ -31,7 +31,12 @@ _PLATFORM = get_current_file_name(__name__)
 
 def _create_sensor(coordinator, sensor):
     try:
-        entity = SolarmanBinarySensorEntity(coordinator, sensor)
+        if "artificial" in sensor:
+            match sensor["artificial"]:
+                case "state":
+                    entity = SolarmanConnectionSensor(coordinator, sensor)
+        else:
+            entity = SolarmanBinarySensorEntity(coordinator, sensor)
 
         entity.update()
 
@@ -66,3 +71,21 @@ class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool | None:
         return self._attr_state != 0
+
+class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY 
+
+    @property
+    def available(self) -> bool:
+        return True
+
+    @property
+    def is_on(self) -> bool | None:
+        return self._attr_state > -1
+
+    def update(self):
+        self._attr_state = self.coordinator.inverter.state
+        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state_updated.strftime("%m/%d/%Y, %H:%M:%S")

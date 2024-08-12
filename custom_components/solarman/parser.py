@@ -57,7 +57,7 @@ class ParameterParser:
         self._result[key]["state"] = value
 
     def get_sensors(self):
-        result = [{"name": "Connection Status", "artificial": "state", "friendly_name": "Connection State"}, {"name": "Update Interval", "artificial": "interval"}]
+        result = [{"name": "Connection", "artificial": "state", "class": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
         for i in self.parameters():
             for j in i["items"]:
                 if self.is_sensor(j):
