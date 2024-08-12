@@ -1,23 +1,25 @@
+#
 # First version: 22.02.2023
-# Latest update: 08.08.2024 
-# Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers  :) )
+# Latest update: 12.08.2024
+# Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers :) )
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 2x MPPT, 2x inverter
-# 1x Logger, 2x Module,
+# 1x Logger, 2x Module
+#
+
 ## Tested with:
 ### SUN-M80-G3-EU-Q0     FW: 2.06
 ### SUN-M80-G3-EU-230    FW: 2.32-D1
 ########## May work with:
 ### SUN-M80G3-EU-230  FW: ?.??
 ### SUN-M60G3-EU-Q0   FW: ?.??
-###
-###
+
 default:
   update_interval: 5
   digits: 6
 
 parameters:
-  - group: solar
+  - group: PV
     items:
       - name: "PV1 Voltage"
         class: "voltage"
@@ -191,7 +193,7 @@ parameters:
         registers: [0x004F]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Grid Voltage Upp Limit"
+      - name: "Grid Voltage Upper Limit"
         class: "voltage"
         state_class: ""
         uom: "V"
@@ -245,43 +247,18 @@ parameters:
         registers: [0x0023]
         icon: ""
 
-      - name: "ON-OFF Enable"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002B]
-        lookup:
-          - key: 0
-            value: "OFF"
-          - key: 1
-            value: "ON"
-        icon: "mdi:toggle-switch"
-
-      - name: "Island Protection Enable"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002E]
-        lookup:
-          - key: 0
-            value: "Disabled"
-          - key: 1
-            value: "Enabled"
-        icon: "mdi:island"
-
   - group: Inverter
     items:
-      - name: "Running Status"
-        class: "enum"
+      # Device - Operating (Running) state
+      - name: "Device State"
+        update_interval: 30
+        class: ""
         state_class: ""
         uom: ""
         scale: 1
-        rule: 3
+        rule: 1
         registers: [0x003B]
+        icon: "mdi:information"
         range:
           min: 0
           max: 5
@@ -289,24 +266,14 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Standby"
-          - key: 0x1
-            value: "Selbsttest"
-          - key: 0x2
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
             value: "Normal"
-          - key: 0x3
+          - key: 0x0003
             value: "Alarm"
-          - key: 0x4
+          - key: 0x0004
             value: "Fault"
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "Running Status Code"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 10
-        registers: [0x003B]
-        icon: "mdi:numeric"
 
       - name: "Total AC Output Power (Active)"
         class: "power"
@@ -455,7 +422,6 @@ parameters:
         registers: [0x0010]
         icon: "mdi:solar-power"
 
-        #Return Unbekannt...
       - name: "Communication Protocol Version"
         class: ""
         state_class: ""
@@ -505,20 +471,6 @@ parameters:
         rule: 6
         registers: [0x0009]
         icon: "mdi:map-marker"
-
-      - name: "Soft Start Enable"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002F]
-        lookup:
-          - key: 0
-            value: "Disabled"
-          - key: 1
-            value: "Enabled"
-        icon: "mdi:toggle-switch"
 
       - name: "Power Factor Regulation"
         class: ""
@@ -625,7 +577,6 @@ parameters:
           - key: 0x4
             value: "W04 meter_Comm_Fail"
 
-        # Added according to the collector requirements (word 1 & 2) [0, 65535
       - name: "Alert"
         class: ""
         state_class: ""
@@ -669,16 +620,6 @@ parameters:
         rule: 1
         registers: [0x002b]
 
-      # Soft Start - On/Off Switch 
-      - name: "Soft Start"
-        update_interval: 300
-        class: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002F]
-
       # Island Protection - On/Off Switch 
       - name: "Island Protection"
         update_interval: 300
@@ -689,6 +630,16 @@ parameters:
         rule: 1
         registers: [0x002e]
 
+      # Soft Start - On/Off Switch 
+      - name: "Soft Start"
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002F]
+
       # Over-frequency Load-shedding - On/Off Switch 
       - name: "Over-frequency Load Reduction"
         update_interval: 300
@@ -698,4 +649,3 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0031]
-
