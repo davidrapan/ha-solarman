@@ -14,8 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: |
-            custom_components/solarman/
+          sparse-checkout: custom_components/solarman/
           sparse-checkout-cone-mode: false
       - name: Check for new commits
         id: check_new_commits
@@ -23,7 +22,7 @@ jobs:
           git_log=$(git log --since=midnight -- custom_components/solarman/)
           echo "new_commits=$([[ -n "$git_log" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
   bump:
-    name: Do
+    name: Bump
     runs-on: ubuntu-latest
     needs: check_commits
     if: needs.check_commits.outputs.new_commits == 'true' || github.event_name == 'workflow_dispatch'
@@ -31,12 +30,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: |
-            custom_components/solarman/manifest.json
+          sparse-checkout: custom_components/solarman/manifest.json
           sparse-checkout-cone-mode: false
-      - run: 'sed -i "s/.*version.*/  \"version\": \"$(date +''%y.%m.%d'')\"/" custom_components/solarman/manifest.json'
       - run: |
+          version=$(date +"%y.%m.%d")
+          sed -i "s/.*version.*/  \"version\": \"$version\"/" custom_components/solarman/manifest.json
           git config --global user.name "Continuous Integration"
           git config --global user.email "david@rapan.cz"
-          git commit -m "chore: bump version" custom_components/solarman/manifest.json
-          git push
+          git commit -m "chore: Bump version" custom_components/solarman/manifest.json
+          git tag -a "v$version" -m "Scheduled $([[ $version == *4 ]] || echo 'pre-')release"
+          git push --follow-tags
