@@ -1,5 +1,5 @@
 # First version: 22.02.2023
-# Latest update: 25.07.2024 
+# Latest update: 08.08.2024 
 # Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers  :) )
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 2x MPPT, 2x inverter
@@ -54,6 +54,34 @@ parameters:
         rule: 1
         registers: [0x0070]
         icon: "mdi:solar-power"
+
+      - name: PV1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        registers: [0x006D, 0x006E]
+        sensors:
+          - registers: [0x006D]
+            scale: 0.1
+          - operator: multiply
+            scale: 0.1
+            registers: [0x006E]
+
+      - name: PV2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        registers: [0x006F, 0x0070]
+        sensors:
+          - registers: [0x006F]
+            scale: 0.1
+          - operator: multiply
+            scale: 0.1
+            registers: [0x0070]
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -118,13 +146,20 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "Active Power Regulations"
+      - name: "Active Power Regulation"
         class: ""
         state_class: ""
         uom: "%"
-        scale: 1
+        scale: 0.1
         rule: 1
         registers: [0x0028]
+        configurable:
+          min: 0
+          max: 120
+          step: 1
+        range:
+          min: 0
+          max: 1200
         icon: "mdi:solar-power"
 
   - group: Grid
@@ -192,7 +227,7 @@ parameters:
         registers: [0x001E]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Overfrequency And Load Reduction Starting Point"
+      - name: "Over-frequency Load Reduction Starting Point"
         class: "frequency"
         state_class: ""
         uom: "Hz"
@@ -201,7 +236,7 @@ parameters:
         registers: [0x0022]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Overfrequency And Load Reduction Percentage"
+      - name: "Over-frequency Load Reduction Percentage"
         class: ""
         state_class: ""
         uom: "%"
@@ -238,39 +273,29 @@ parameters:
             value: "Enabled"
         icon: "mdi:island"
 
-      - name: "Overfrequency&Load-shedding Enable"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0031]
-        lookup:
-          - key: 0
-            value: "Disabled"
-          - key: 1
-            value: "Enabled"
-        icon: "mdi:toggle-switch"
-
   - group: Inverter
     items:
       - name: "Running Status"
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
-        rule: 1
+        rule: 3
         registers: [0x003B]
+        range:
+          min: 0
+          max: 5
+        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
-          - key: 0
+          - key: 0x0000
             value: "Standby"
-          - key: 1
+          - key: 0x1
             value: "Selbsttest"
-          - key: 2
+          - key: 0x2
             value: "Normal"
-          - key: 3
+          - key: 0x3
             value: "Alarm"
-          - key: 4
+          - key: 0x4
             value: "Fault"
         icon: "mdi:home-lightning-bolt"
 
@@ -279,7 +304,7 @@ parameters:
         state_class: ""
         uom: ""
         scale: 1
-        rule: 1
+        rule: 10
         registers: [0x003B]
         icon: "mdi:numeric"
 
@@ -301,7 +326,92 @@ parameters:
         offset: 1000
         registers: [0x005a]
 
-      - name: "Inverter ID"
+      # Device - Type
+      - name: "Device"
+        update_interval: 300
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0000]
+        icon: "mdi:information"
+        options:
+          [
+            "String Inverter",
+            "Single-Phase Hybrid Inverter",
+            "Microinverter",
+            "LV 3-Phase Hybrid Inverter",
+            "HV 3-Phase Hybrid Inverter",
+            "HV 3-Phase Inverter 6-15kw",
+            "HV 3-Phase Inverter 20-50kw"
+          ]
+        lookup:
+          - key: 2
+            value: "String Inverter"
+          - key: 3
+            value: "Single-Phase Hybrid Inverter"
+          - key: 4
+            value: "Microinverter"
+          - key: 5
+            value: "LV 3-Phase Hybrid Inverter"
+          - key: 6
+            value: "HV 3-Phase Hybrid Inverter"
+          - key: 7
+            value: "HV 3-Phase Inverter 6-15kw"
+          - key: 8
+            value: "HV 3-Phase Inverter 20-50kw"
+        attributes:
+          [
+            "Device Modbus Address",
+            "Device Protocol Version",
+            "Device Serial Number",
+            "Device Rated Power",
+            "Device MPPTs",
+            "Device Phases"
+          ]
+
+      # Device - Modbus Address
+      - name: "Device Modbus Address"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0001]
+        icon: "mdi:information"
+
+      # Device - Communication Protocol Version
+      - name: "Device Protocol Version"
+        attribute:
+        update_interval: 300
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0002]
+        icon: "mdi:information"
+        options: ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "5.13"]
+        lookup:
+          - key: 100
+            value: "1.0"
+          - key: 101
+            value: "1.1"
+          - key: 102
+            value: "1.2"
+          - key: 103
+            value: "1.3"
+          - key: 104
+            value: "1.4"
+          - key: 105
+            value: "1.5"
+          - key: 513
+            value: "5.13"
+      
+      - name: "Device Serial Number"
         class: ""
         state_class: ""
         uom: ""
@@ -435,66 +545,130 @@ parameters:
 
   - group: Alert
     items:
-      - name: "Fault information"
+      - name: "Fault information Word 1"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 3
-        registers: [0x0067, 0x0068, 0x0069, 0x006a]
+        registers: [0x0067]
         icon: "mdi:alert-octagon-outline"
         lookup:
-          - key: 0
-            value: "None"
-          - key: F07
-            value: "F07 - DC/DC_Softsart_Fault"
-          - key: 128
-            value: "DC DC too low"
+          - key: 0x0000
+            value: "OK"
+          - key: 0x1
+            value: "DC OverVoltage"
+          - key: 0x2
+            value: "DC Bus OverVoltage"
+          - key: 0x4
+            value: "DC Bus Uneven Voltage"
+          - key: 0x8
+            value: "DC Bus UnderVoltage"
+          - key: 0x10
+            value: "DC Bus2 Uneven Voltage"
+          - key: 0x20
+            value: "DC A path OverCurrent"
+          - key: 0x40
+            value: "DC B path OverCurrent"
+          - key: 0x80
+            value: "DC Input Disturbance"
+          - key: 0x100
+            value: "Grid OverCurrent"
+          - key: 0x200
+            value: "IGBT OverCurrent"
+          - key: 0x400
+            value: "Grid Disturbance 2"
+          - key: 0x800
+            value: "Arc Self-Test Protection"
+          - key: 0x1000
+            value: "Arc Fault Reservation"
+          - key: 0x2000
+            value: "Grid Current Sample Abnormality"
+
+      - name: "Fault information Word 2"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 10
+        registers: [0x0068]
+        icon: "mdi:alert-octagon-outline"
+        lookup:
+          - key: 0x0000
+            value: "OK"
 
       - name: "Warning Code"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
-        rule: 1
+        rule: 6
         registers: [0x0065, 0x0066]
         icon: "mdi:information-slab-circle-outline"
         lookup:
-          - key: 0
+          - key: 0x0000
             value: "None"
           - key: W01
             value: "W01 reserve"
-          - key: 1
+          - key: 0x1
             value: "W01 reserve"
           - key: W02
             value: "W02 FAN_WARN"
-          - key: 2
+          - key: 0x2
             value: "W02 FAN_WARN"
           - key: W03
             value: "W03 Grid phase wrong"
-          - key: 3
+          - key: 0x3
             value: "W03 Grid phase wrong"
           - key: W04
             value: "W04 meter_Comm_Fail"
-          - key: 4
+          - key: 0x4
             value: "W04 meter_Comm_Fail"
-          - key: 128
-            value: "DC DC too low"
 
+        # Added according to the collector requirements (word 1 & 2) [0, 65535
       - name: "Alert"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
-        rule: 6
+        rule: 3
         registers: [0x0075, 0x0076]
         icon: "mdi:message-alert-outline"
+        options:
+          [
+            "Ok",
+            "Fan failure",
+            "Grid error",
+            "Battery loss",
+            "Parallel communication quality",
+            "Error"
+          ]
         lookup:
-          - key: 0
-            value: "None"
+          - key: 0x0000
+            value: "Ok"
+          - key: 0x0001
+            value: "Fan failure"
+          - key: 0x0002
+            value: "Grid error"
+          - key: 0x4000
+            value: "Battery loss"
+          - key: 0x8000
+            value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
 
   - group: Control
     items:
+      # Device - On/Off Switch 
+      - name: ""
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002b]
+
       # Soft Start - On/Off Switch 
       - name: "Soft Start"
         update_interval: 300
@@ -504,3 +678,24 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x002F]
+
+      # Island Protection - On/Off Switch 
+      - name: "Island Protection"
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x002e]
+
+      # Over-frequency Load-shedding - On/Off Switch 
+      - name: "Over-frequency Load Reduction"
+        update_interval: 300
+        class: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0031]
+
