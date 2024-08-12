@@ -368,7 +368,7 @@ parameters:
             "LV 3-Phase Hybrid Inverter",
             "HV 3-Phase Hybrid Inverter",
             "HV 3-Phase Inverter 6-15kw",
-            "HV 3-Phase Inverter 20-50kw"
+            "HV 3-Phase Inverter 20-50kw",
           ]
         lookup:
           - key: 2
@@ -392,7 +392,7 @@ parameters:
             "Device Serial Number",
             "Device Rated Power",
             "Device MPPTs",
-            "Device Phases"
+            "Device Phases",
           ]
 
       # Device - Modbus Address
@@ -434,7 +434,7 @@ parameters:
             value: "1.5"
           - key: 513
             value: "5.13"
-      
+
       - name: "Device Serial Number"
         class: ""
         state_class: ""
@@ -649,7 +649,7 @@ parameters:
             "Grid error",
             "Battery loss",
             "Parallel communication quality",
-            "Error"
+            "Error",
           ]
         lookup:
           - key: 0x0000
@@ -667,7 +667,7 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch 
+      # Device - On/Off Switch
       - name: ""
         update_interval: 300
         class: "switch"
@@ -677,7 +677,7 @@ parameters:
         rule: 1
         registers: [0x002b]
 
-      # Island Protection - On/Off Switch 
+      # Island Protection - On/Off Switch
       - name: "Island Protection"
         update_interval: 300
         class: "switch"
@@ -687,7 +687,7 @@ parameters:
         rule: 1
         registers: [0x002e]
 
-      # Soft Start - On/Off Switch 
+      # Soft Start - On/Off Switch
       - name: "Soft Start"
         update_interval: 300
         class: "switch"
@@ -697,7 +697,7 @@ parameters:
         rule: 1
         registers: [0x002F]
 
-      # Over-frequency Load-shedding - On/Off Switch 
+      # Over-frequency Load-shedding - On/Off Switch
       - name: "Over-frequency Load Reduction"
         update_interval: 300
         class: "switch"
