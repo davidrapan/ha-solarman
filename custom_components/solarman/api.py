@@ -178,7 +178,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def async_get(self, runtime = 0):
         params = ParameterParser(self.parameter_definition)
         requests = params.get_requests(runtime)
-        requests_count = len(requests)
+        requests_count = len(requests) if requests else 0
         results = [0] * requests_count
 
         _LOGGER.debug(f"Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
