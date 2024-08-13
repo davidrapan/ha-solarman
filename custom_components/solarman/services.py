@@ -172,7 +172,7 @@ def register_services(hass: HomeAssistant) -> None:
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_holding_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
