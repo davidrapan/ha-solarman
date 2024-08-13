@@ -65,36 +65,42 @@ class ParameterParser:
 
         return result
 
-    def get_request_code(self, start, end):
-        if "requests" in self._profile:
-            for r in self._profile["requests"]:
-                if r[REQUEST_START] <= start <= end <= r[REQUEST_END]:
-                    return get_request_code(r)
-
-        return self._code
-
     def get_requests(self, runtime = 0):
-        if "requests" in self._profile and "requests_fine_control" in self._profile:
-            _LOGGER.debug("Fine control of request sets is enabled!")
-            return self._profile["requests"]
+        requests_table = {}
+
+        if "requests" in self._profile:
+            if not "requests_fine_control" in self._profile:
+                for pr in parameter_definition["requests"]:
+                    for r in range(pr[REQUEST_START], pr[REQUEST_END]):
+                        requests_table[r] = get_request_code(pr)
+            else:
+                _LOGGER.debug("Fine control of request sets is enabled!")
+                return self._profile["requests"]
 
         registers = []
+        registers_table = {}
 
         for p in self.parameters():
             for i in p["items"]:
                 if self.is_requestable(i) and self.is_scheduled(i, runtime):
                     self.set_state(i["name"], self.default_from_unit_of_measurement(i))
-                    for r in i["registers"]:
-                        registers.append(r)
+                    if "registers" in i:
+                        for r in i["registers"]:
+                            registers.append(r)
+                            registers_table[r] = i["code"] if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
 
         if len(registers) == 0:
-            return {} 
+            return {}
 
         registers.sort()
 
-        groups = group_when(registers, lambda x, y: y - x > self._min_span)
+        registers_table_values = list(registers_table.values())
 
-        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self.get_request_code(r[0], r[-1]) } for r in groups]
+        predicate = (lambda x, y: y - x > self._min_span) if all(i == registers_table_values[0] for i in registers_table_values) else (lambda x, y: registers_table[x] != registers_table[y] or y - x > self._min_span)
+
+        groups = group_when(registers, predicate)
+
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: registers_table[r[0]] } for r in groups]
 
     def parse(self, rawData, start, length):
         for param in self.parameters():

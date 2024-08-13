@@ -6,6 +6,7 @@
 #
 #  - INPUT_REGISTERS   3000 - 3660 decimal, 0x0BB8 - 0x0E4C hexadecimal
 #  - HOLDING_REGISTERS 3200 - 3237 decimal. 0x0C80 - 0x0C9B  hexadecimal
+#  - INPUT_REGISTERS   3292 - xxxx decimal. Not even sure about the start, could be even lower
 #
 # Each request can get a maximum of 125 registers as per modbus protocol (start and end included), so we need to
 # split up the list of used registers into multiple requests of maximum 125 registers each.
@@ -13,7 +14,6 @@
 
 default:
   update_interval: 10
-  min_span: 6
   code: 0x04
   digits: 6
 
