@@ -10,6 +10,7 @@
 - [Automations](https://github.com/davidrapan/ha-solarman/wiki/Automations)
 - [Custom Sensors](https://github.com/davidrapan/ha-solarman/wiki/Custom-Sensors)
 - [Dashboards](https://github.com/davidrapan/ha-solarman/wiki/Dashboards)
+- [Documentation](https://github.com/davidrapan/ha-solarman/wiki/Documentation)
 - [Naming Scheme](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme)
 - [Supported Devices](https://github.com/davidrapan/ha-solarman/wiki/Supported-Devices)
 
