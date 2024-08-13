@@ -84,8 +84,9 @@ def register_services(hass: HomeAssistant) -> None:
 
         result = {}
 
-        for i in range(0, quantity):
-            result[register + i] = response[i]
+        if response:
+            for i in range(0, quantity):
+                result[register + i] = response[i]
 
         return result
 
@@ -114,8 +115,9 @@ def register_services(hass: HomeAssistant) -> None:
 
         result = {}
 
-        for i in range(0, quantity):
-            result[register + i] = response[i]
+        if response:
+            for i in range(0, quantity):
+                result[register + i] = response[i]
 
         return result
 
