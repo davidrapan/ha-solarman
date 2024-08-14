@@ -45,6 +45,11 @@ class ParameterParser:
                     for r in i["registers"]:
                         self._registers_table[r] = (i["code"] if isinstance(i["code"], int) else i["code"]["read"]) if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
 
+        self._is_single_code = all_same(list(self._registers_table.values()))
+
+        if self._is_single_code:
+            self._code = self._registers_table[0]
+
         self._lambda = lambda x, y: y - x > self._min_span
         self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
 
@@ -107,9 +112,9 @@ class ParameterParser:
 
         registers.sort()
 
-        groups = group_when(registers, self._lambda if all_same([self._registers_table[r] for r in registers]) else self._lambda_code_aware)
+        groups = group_when(registers, self._lambda if self._is_single_code or all_same([self._registers_table[r] for r in registers]) else self._lambda_code_aware)
 
-        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._registers_table[r[0]] } for r in groups]
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code if self._is_single_code else self._registers_table[r[0]] } for r in groups]
 
     def parse(self, rawData, start, length):
         for param in self.parameters():
