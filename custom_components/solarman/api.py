@@ -109,14 +109,14 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def async_connect(self, loud = True) -> None:
         if not self.reader_task:
             if loud:
-                _LOGGER.info(f"Connecting to {self.address}:{self.port}")
+                _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
             await self.connect()
         elif not self.state > 0:
             await self.reconnect()
 
     async def async_disconnect(self, loud = True) -> None:
         if loud:
-            _LOGGER.info(f"Disconnecting from {self.address}:{self.port}")
+            _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
         try:
             await self.disconnect()
         finally:
@@ -154,9 +154,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self._is_reading = 0
 
         result = middleware.get_result() if middleware else {}
+        result_count = len(result) if result else 0
 
-        if len(result) > 0:
-            _LOGGER.debug(f"Returning new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
+        if result_count > 0:
+            _LOGGER.debug(f"[{self.serial}] Returning {result_count} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
             now = datetime.now()
             self.state_interval = now - self.state_updated
             self.state_updated = now
@@ -165,7 +166,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return result
 
     async def async_get_failed(self, message = None):
-        _LOGGER.debug(f"Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
+        _LOGGER.debug(f"[{self.serial}] Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
 
         await self.async_disconnect()
@@ -178,7 +179,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         requests_count = len(requests) if requests else 0
         results = [0] * requests_count
 
-        _LOGGER.debug(f"Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
+        _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
         self._is_reading = 1
 
@@ -189,7 +190,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     start = get_request_start(request)
                     end = get_request_end(request)
 
-                    _LOGGER.debug(f"Querying ({start} - {end}) ...")
+                    _LOGGER.debug(f"[{self.serial}] Querying ({start} - {end}) ...")
 
                     attempts_left = ACTION_ATTEMPTS
                     while attempts_left > 0 and results[i] == 0:
@@ -202,11 +203,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
                             results[i] = 0
 
                             if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
-                                _LOGGER.warning(f"Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
+                                _LOGGER.warning(f"[{self.serial}] Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                        _LOGGER.debug(f"Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+                        _LOGGER.debug(f"[{self.serial}] Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
                     if results[i] == 0:
                         break
@@ -214,7 +215,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 if not 0 in results:
                     return self.get_result(self.profile)
                 else:
-                    await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
+                    await self.async_get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed.")
 
         except TimeoutError:
             last_state = self.state
@@ -222,11 +223,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
             if last_state < 1:
                 raise
             else:
-                _LOGGER.debug(f"Timeout fetching {self.name} data")
+                _LOGGER.debug(f"[{self.serial}] Timeout fetching {self.name} data")
         except UpdateFailed:
             raise
         except Exception as e:
-            await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed. [{format_exception(e)}]")
+            await self.async_get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed. [{format_exception(e)}]")
 
         return self.get_result()
 
@@ -239,41 +240,41 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return self._is_reading == 1
 
     async def service_read_holding_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
-        _LOGGER.debug(f"service_read_holding_registers: [{register}], quantity: [{quantity}]")
+        _LOGGER.debug(f"[{self.serial}] service_read_holding_registers: [{register}], quantity: [{quantity}]")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"service_read_holding_registers: Timeout.")
-            raise TimeoutError("Coordinator is currently reading data from the device!")
+            _LOGGER.debug(f"[{self.serial}] service_read_holding_registers: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         try:
             await self.async_connect()
             return await self.read_holding_registers(register, quantity)
         except Exception as e:
-            _LOGGER.warning(f"service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
+            _LOGGER.warning(f"[{self.serial}] service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
 
     async def service_read_input_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
-        _LOGGER.debug(f"service_read_input_registers: [{register}], quantity: [{quantity}]")
+        _LOGGER.debug(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}]")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"service_read_input_registers: Timeout.")
-            raise TimeoutError("Coordinator is currently reading data from the device!")
+            _LOGGER.debug(f"[{self.serial}] service_read_input_registers: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         try:
             await self.async_connect()
             return await self.read_input_registers(register, quantity)
         except Exception as e:
-            _LOGGER.warning(f"service_read_input_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
+            _LOGGER.warning(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
 
     async def service_write_holding_register(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"service_write_holding_register: {register}, value: {value}")
+        _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, value: {value}")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"service_write_holding_register: Timeout.")
-            raise TimeoutError("Coordinator is currently reading data from the device!")
+            _LOGGER.debug(f"[{self.serial}] service_write_holding_register: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         attempts_left = ACTION_ATTEMPTS
         while attempts_left > 0:
@@ -282,10 +283,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
             try:
                 await self.async_connect()
                 response = await self.write_holding_register(register, value)
-                _LOGGER.debug(f"service_write_holding_register: {register}, response: {response}")
+                _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, response: {response}")
                 return True
             except Exception as e:
-                _LOGGER.warning(f"service_write_holding_register: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                _LOGGER.warning(f"[{self.serial}] service_write_holding_register: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
                     await self.async_disconnect()
                 if not attempts_left > 0:
@@ -294,11 +295,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 await asyncio.sleep(TIMINGS_WAIT_SLEEP)
 
     async def service_write_multiple_holding_registers(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, values: {values}")
+        _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: {register}, values: {values}")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"service_write_multiple_holding_registers: Timeout.")
-            raise TimeoutError("Coordinator is currently reading data from the device!")
+            _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         attempts_left = ACTION_ATTEMPTS
         while attempts_left > 0:
@@ -307,10 +308,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
             try:
                 await self.async_connect()
                 response = await self.write_multiple_holding_registers(register, values)
-                _LOGGER.debug(f"service_write_multiple_holding_registers: {register}, response: {response}")
+                _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: {register}, response: {response}")
                 return True
             except Exception as e:
-                _LOGGER.warning(f"service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                _LOGGER.warning(f"[{self.serial}] service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
                     await self.async_disconnect()
                 if not attempts_left > 0:
