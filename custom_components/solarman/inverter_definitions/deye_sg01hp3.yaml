@@ -31,7 +31,7 @@ parameters:
             "LV 3-Phase Hybrid Inverter",
             "HV 3-Phase Hybrid Inverter",
             "HV 3-Phase Inverter 6-15kw",
-            "HV 3-Phase Inverter 20-50kw"
+            "HV 3-Phase Inverter 20-50kw",
           ]
         lookup:
           - key: 0x0200
@@ -55,7 +55,7 @@ parameters:
             "Device Serial Number",
             "Device Rated Power",
             "Device MPPTs",
-            "Device Phases"
+            "Device Phases",
           ]
 
       # Device - Modbus Address
@@ -153,7 +153,7 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch 
+      # Device - On/Off Switch
       - name: ""
         update_interval: 300
         class: "switch"
@@ -1512,7 +1512,7 @@ parameters:
 
   - group: State
     items:
-      # Device - Power state On/Off 
+      # Device - Power state On/Off
       - name: "Device Power State"
         update_interval: 30
         class: "enum"
@@ -1548,7 +1548,7 @@ parameters:
             "Inverter-Gen",
             "Grid-Generator",
             "Inv-Grid-Gen",
-            "Power Supply"
+            "Power Supply",
           ]
         lookup:
           - key: 0x0001
@@ -1586,7 +1586,7 @@ parameters:
             "Meter communication failure",
             "Battery loss",
             "Parallel communication quality",
-            "Error"
+            "Error",
           ]
         lookup:
           - key: 0x0000
@@ -1704,7 +1704,7 @@ parameters:
             "BMS Charging Current Limit",
             "BMS Discharging Current Limit",
             "BMS Max Charging Current",
-            "BMS Max Discharging Current"
+            "BMS Max Discharging Current",
           ]
 
       # Battery - The power of battery is S16bit

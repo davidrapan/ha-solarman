@@ -513,7 +513,7 @@ parameters:
             "Meter communication failure",
             "Battery loss",
             "Parallel communication quality",
-            "Error"
+            "Error",
           ]
         lookup:
           - key: 0x0000
