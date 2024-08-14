@@ -248,7 +248,7 @@ parameters:
 
   - group: Battery
     items:
-      - name: "Battery 1 Voltage"
+      - name: "Battery Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -256,7 +256,7 @@ parameters:
         rule: 1
         registers: [0x0604]
         icon: "mdi:battery"
-      - name: "Battery 1 Current"
+      - name: "Battery Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -264,7 +264,7 @@ parameters:
         rule: 2
         registers: [0x0605]
         icon: "mdi:current-dc"
-      - name: "Battery 1 Power"
+      - name: "Battery Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -272,7 +272,7 @@ parameters:
         rule: 2
         registers: [0x0606]
         icon: "mdi:battery-charging"
-      - name: "Battery 1 Temperature"
+      - name: "Battery Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -280,7 +280,7 @@ parameters:
         rule: 2
         registers: [0x0607]
         icon: "mdi:battery"
-      - name: "Battery 1 SOC"
+      - name: "Battery"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -288,15 +288,15 @@ parameters:
         rule: 1
         registers: [0x0608]
         icon: "mdi:battery"
-      - name: "Battery 1 SOH"
-        class: "battery"
+      - name: "Battery SOH"
+        class: ""
         state_class: "measurement"
         uom: "%"
         scale: 1
         rule: 1
         registers: [0x0609]
         icon: "mdi:battery"
-      - name: "Battery 1 Number of Cycles"
+      - name: "Battery Number of Cycles"
         class: ""
         state_class: "measurement"
         uom: "cycle"
@@ -1360,7 +1360,7 @@ parameters:
           - key: 32
             value: "ID150 Communication board FLASH error"
           - key: 64
-            value: "ID151 "
+            value: "ID151"
           - key: 128
             value: "ID152 Safety regulation version error"
           - key: 256

@@ -119,9 +119,11 @@ parameters:
         rule: 1
         registers: [0x004F]
 
-  - group: Inverter
+  - group: Device
     items:
-      - name: "Running Status"
+      # Device - Operating (Running) state
+      - name: "Device State"
+        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""

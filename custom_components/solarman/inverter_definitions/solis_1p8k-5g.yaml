@@ -80,7 +80,7 @@ default:
 
         # Working Status Bit decode
         - name: "WStatus Normal"
-          class: "running"
+          class: ""
           state_class: ""
           uom: ""
           mask: 0x01
@@ -225,7 +225,7 @@ default:
           registers: [3001]
           isstr: true
 
-    - group: InverterDC
+    - group: PV
       items:
         - name: "PV1 Voltage"
           class: "voltage"

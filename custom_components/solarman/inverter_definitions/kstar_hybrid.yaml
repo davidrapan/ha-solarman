@@ -23,7 +23,7 @@ requests:
     code: 0x03
 
 parameters:
-  - group: solar
+  - group: PV
     items:
       - name: "PV1 Voltage"
         class: "voltage"
@@ -263,7 +263,7 @@ parameters:
   - group: Battery
     items:
       - name: "Battery Type"
-        class: "battery"
+        class: ""
         state_class: "measurement"
         uom: ""
         scale: 1
@@ -303,7 +303,7 @@ parameters:
         registers: [3065]
         icon: "mdi:battery-charging-high"
 
-      - name: "Battery SoC"
+      - name: "Battery"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -322,7 +322,7 @@ parameters:
         icon: "mdi:battery-heart-outline"
 
       - name: "Battery Discharge Capacity Depth"
-        class: "battery"
+        class: ""
         state_class: "measurement"
         uom: "%"
         scale: 1
@@ -463,7 +463,7 @@ parameters:
           - key: 0
             value: "Initialize"
           - key: 1
-            value: "Stand-by"
+            value: "Standby"
           - key: 2
             value: "Hybrid Grid"
           - key: 3
@@ -490,7 +490,7 @@ parameters:
             value: "Permanent Error"
         icon: "mdi:wrench"
 
-      - name: "Inverter status"
+      - name: "Inverter Status"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -499,7 +499,7 @@ parameters:
         registers: [3047]
         lookup:
           - key: 0
-            value: "Stand-by"
+            value: "Standby"
           - key: 1
             value: "Off-Grid"
           - key: 2
@@ -510,7 +510,7 @@ parameters:
             value: "On-Grid to Off-Grid"
         icon: "mdi:wrench"
 
-      - name: "DCDC status"
+      - name: "DCDC Status"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -519,7 +519,7 @@ parameters:
         registers: [3048]
         lookup:
           - key: 0
-            value: "Stand-by"
+            value: "Standby"
           - key: 1
             value: "Soft Boot"
           - key: 2
@@ -639,7 +639,7 @@ parameters:
         registers: [3217]
         icon: "mdi:wrench"
 
-      - name: "Inverter SN Number"
+      - name: "Device Serial Number"
         class: ""
         state_class: "measurement"
         uom: ""

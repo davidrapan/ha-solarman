@@ -253,6 +253,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
             _LOGGER.warning(f"[{self.serial}] service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
+            raise
 
     async def service_read_input_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}]")
@@ -268,6 +269,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
             _LOGGER.warning(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
             if not self.auto_reconnect:
                 await self.async_disconnect()
+            raise
 
     async def service_write_holding_register(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
         _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, value: {value}")

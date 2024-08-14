@@ -126,21 +126,21 @@ parameters:
         registers: [0x0047]
         icon: "mdi:battery-minus"
 
-      - name: "Battery Status"
+      - name: "Battery State"
         class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00BD]
-        options: ["Charge", "Stand-by", "Discharge"]
+        options: ["charging", "idle", "discharging"]
         lookup:
           - key: 0
-            value: "Charge"
+            value: "charging"
           - key: 1
-            value: "Stand-by"
+            value: "idle"
           - key: 2
-            value: "Discharge"
+            value: "discharging"
         icon: "mdi:battery"
 
       - name: "Battery Power"
@@ -159,7 +159,7 @@ parameters:
         rule: 1
         registers: [0x00B7]
 
-      - name: "Battery SOC"
+      - name: "Battery"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -231,7 +231,7 @@ parameters:
         registers: [0x00A1]
         icon: "mdi:transmission-tower"
 
-      - name: "Internal CT L1 Power"
+      - name: "Internal CT1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -240,7 +240,7 @@ parameters:
         registers: [0x00A7]
         icon: "mdi:transmission-tower"
 
-      - name: "Internal CT L2 Power"
+      - name: "Internal CT2 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -249,7 +249,7 @@ parameters:
         registers: [0x00A8]
         icon: "mdi:transmission-tower"
 
-      - name: "External CT L1 Power"
+      - name: "External CT1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -258,7 +258,7 @@ parameters:
         registers: [0x00AA]
         icon: "mdi:transmission-tower"
 
-      - name: "External CT L2 Power"
+      - name: "External CT2 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -384,15 +384,18 @@ parameters:
             value: "ON"
         icon: "mdi:lightning-bolt-circle"
 
-  - group: Inverter
+  - group: Device
     items:
-      - name: "Running Status"
+      # Device - Operating (Running) state
+      - name: "Device State"
+        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x003B]
+        icon: "mdi:information"
         range:
           min: 0
           max: 5
@@ -408,7 +411,6 @@ parameters:
             value: "Alarm"
           - key: 0x0004
             value: "Fault"
-        icon: "mdi:information"
 
       - name: "Power"
         class: "power"

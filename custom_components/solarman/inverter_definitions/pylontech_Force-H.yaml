@@ -12,7 +12,7 @@ default:
 parameters:
   - group: Basic information
     items:
-      - name: "Device SN"
+      - name: "Device Serial Number"
         class: ""
         state_class: ""
         uom: ""
@@ -111,7 +111,7 @@ parameters:
         registers: [5126]
         icon: "mdi:thermometer"
 
-      - name: "Battery Charge"
+      - name: "Battery"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -300,7 +300,7 @@ parameters:
         registers: [5151]
 
       - name: "Battery Pack SOH"
-        class: "battery"
+        class: ""
         state_class: "measurement"
         uom: "%"
         scale: 1
