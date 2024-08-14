@@ -107,7 +107,7 @@ class ParameterParser:
 
         registers.sort()
 
-        groups = group_when(registers, self._lambda if all_same(list(self._registers_table.values())) else self._lambda_code_aware)
+        groups = group_when(registers, self._lambda if all_same([self._registers_table[r] for r in registers]) else self._lambda_code_aware)
 
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._registers_table[r[0]] } for r in groups]
 
