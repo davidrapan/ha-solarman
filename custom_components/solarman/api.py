@@ -77,6 +77,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.lookup_file = file if file else "deye_hybrid.yaml"
         self.model = self.lookup_file.replace(".yaml", "")
         self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
+        self.profile = ParameterParser(self.parameter_definition)
 
         if "info" in self.parameter_definition and "model" in self.parameter_definition["info"]:
             info = self.parameter_definition["info"]
@@ -142,10 +143,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         params.parse(response, start, quantity)
 
     def get_sensors(self):
-        if self.parameter_definition:
-            params = ParameterParser(self.parameter_definition)
-            return params.get_sensors()
-        return []
+        return self.profile.get_sensors() if self.parameter_definition else []
 
     def get_connection_state(self):
         if self.state > 0:
@@ -176,8 +174,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
             raise UpdateFailed(message)
 
     async def async_get(self, runtime = 0):
-        params = ParameterParser(self.parameter_definition)
-        requests = params.get_requests(runtime)
+        requests = self.profile.get_requests(runtime)
         requests_count = len(requests) if requests else 0
         results = [0] * requests_count
 
@@ -199,7 +196,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            await self.async_read(params, code, start, end)
+                            await self.async_read(self.profile, code, start, end)
                             results[i] = 1
                         except (V5FrameError, TimeoutError, Exception) as e:
                             results[i] = 0
@@ -215,7 +212,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         break
 
                 if not 0 in results:
-                    return self.get_result(params)
+                    return self.get_result(self.profile)
                 else:
                     await self.async_get_failed(f"Querying {self.serial} at {self.address}:{self.port} failed.")
 

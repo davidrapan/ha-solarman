@@ -26,6 +26,9 @@ async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())
 
+def all_same(values):
+    return all(i == values[0] for i in values)
+
 def group_when(iterable, predicate):
     i, x, size = 0, 0, len(iterable)
     while i < size - 1:

@@ -45,6 +45,12 @@ class ParameterParser:
                     for r in i["registers"]:
                         self._registers_table[r] = (i["code"] if isinstance(i["code"], int) else i["code"]["read"]) if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
 
+        self._lambda = lambda x, y: y - x > self._min_span
+        self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
+
+    def flush_states(self):
+        self._result = {}
+
     def parameters(self):
         return self._profile["parameters"]
 
@@ -80,6 +86,8 @@ class ParameterParser:
         return result
 
     def get_requests(self, runtime = 0):
+        self.flush_states()
+
         if "requests" in self._profile and "requests_fine_control" in self._profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
             return self._profile["requests"]
@@ -99,11 +107,7 @@ class ParameterParser:
 
         registers.sort()
 
-        registers_table_values = list(self._registers_table.values())
-
-        predicate = (lambda x, y: y - x > self._min_span) if all(i == registers_table_values[0] for i in registers_table_values) else (lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span)
-
-        groups = group_when(registers, predicate)
+        groups = group_when(registers, self._lambda if all_same(list(self._registers_table.values())) else self._lambda_code_aware)
 
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._registers_table[r[0]] } for r in groups]
 
