@@ -247,12 +247,12 @@ parameters:
         registers: [0x0023]
         icon: ""
 
-  - group: Inverter
+  - group: Device
     items:
       # Device - Operating (Running) state
       - name: "Device State"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
@@ -497,6 +497,40 @@ parameters:
 
   - group: Alert
     items:
+      - name: "Device Alarm"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 3
+        registers: [0x0065, 0x0066]
+        icon: "mdi:message-alert-outline"
+        options:
+          [
+            "Ok",
+            "Fan failure",
+            "Grid phase failure",
+            "Meter communication failure",
+            "Battery loss",
+            "Parallel communication quality",
+            "Error"
+          ]
+        lookup:
+          - key: 0x0000
+            value: "Ok"
+          - key: 0x0002
+            value: "Fan failure"
+          - key: 0x0004
+            value: "Grid phase failure"
+          - key: 0x0008
+            value: "Meter communication failure"
+          - key: 0x40000000
+            value: "Battery loss"
+          - key: 0x80000000
+            value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
+
       - name: "Fault information Word 1"
         class: ""
         state_class: ""
@@ -548,65 +582,6 @@ parameters:
         lookup:
           - key: 0x0000
             value: "OK"
-
-      - name: "Warning Code"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 6
-        registers: [0x0065, 0x0066]
-        icon: "mdi:information-slab-circle-outline"
-        lookup:
-          - key: 0x0000
-            value: "None"
-          - key: W01
-            value: "W01 reserve"
-          - key: 0x1
-            value: "W01 reserve"
-          - key: W02
-            value: "W02 FAN_WARN"
-          - key: 0x2
-            value: "W02 FAN_WARN"
-          - key: W03
-            value: "W03 Grid phase wrong"
-          - key: 0x3
-            value: "W03 Grid phase wrong"
-          - key: W04
-            value: "W04 meter_Comm_Fail"
-          - key: 0x4
-            value: "W04 meter_Comm_Fail"
-
-      - name: "Alert"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 3
-        registers: [0x0075, 0x0076]
-        icon: "mdi:message-alert-outline"
-        options:
-          [
-            "Ok",
-            "Fan failure",
-            "Grid error",
-            "Battery loss",
-            "Parallel communication quality",
-            "Error",
-          ]
-        lookup:
-          - key: 0x0000
-            value: "Ok"
-          - key: 0x0001
-            value: "Fan failure"
-          - key: 0x0002
-            value: "Grid error"
-          - key: 0x4000
-            value: "Battery loss"
-          - key: 0x8000
-            value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
 
   - group: Control
     items:

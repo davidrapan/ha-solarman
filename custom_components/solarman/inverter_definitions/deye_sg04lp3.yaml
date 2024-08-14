@@ -1577,7 +1577,7 @@ parameters:
             value: "Power Supply"
 
       # Device - Alarm message (word 1 & 2) [0, 65535]
-      - name: "Device Alert"
+      - name: "Device Alarm"
         update_interval: 30
         class: "enum"
         state_class: ""
@@ -1585,12 +1585,13 @@ parameters:
         scale: 1
         rule: 3
         registers: [0x0229, 0x022A]
-        icon: "mdi:alert-circle"
+        icon: "mdi:message-alert-outline"
         options:
           [
             "Ok",
             "Fan failure",
-            "Grid error",
+            "Grid phase failure",
+            "Meter communication failure",
             "Battery loss",
             "Parallel communication quality",
             "Error"
@@ -1598,13 +1599,15 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Ok"
-          - key: 0x0001
-            value: "Fan failure"
           - key: 0x0002
-            value: "Grid error"
-          - key: 0x4000
+            value: "Fan failure"
+          - key: 0x0004
+            value: "Grid phase failure"
+          - key: 0x0008
+            value: "Meter communication failure"
+          - key: 0x40000000
             value: "Battery loss"
-          - key: 0x8000
+          - key: 0x80000000
             value: "Parallel communication quality"
           - key: "default"
             value: "Error"
@@ -1612,13 +1615,47 @@ parameters:
       # Device - Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
         update_interval: 30
-        class: ""
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
-        rule: 6
+        rule: 3
         registers: [0x22B, 0x022C, 0x022D, 0x022E]
-        icon: "mdi:alert"
+        icon: "mdi:alert-outline"
+        options:
+          [
+            "Ok",
+            "DC/DC Soft Start failure",
+            "Auxiliary power supply failure",
+            "Working mode changed",
+            "AC Over-current failure",
+            "Tz_Integ_Fault failure",
+            "DC Over-current failure",
+            "AC current leakage failure",
+            "Temperature is too high",
+            "Error",
+          ]
+        lookup:
+          - key: 0x0000
+            value: "Ok"
+          - key: 0x0040
+            value: "DC/DC Soft Start failure"
+          - key: 0x0200
+            value: "Auxiliary power supply failure"
+          - key: 0x1000
+            value: "Working mode changed"
+          - key: 0x00020000
+            value: "AC Over-current failure"
+          - key: 0x00040000
+            value: "Tz_Integ_Fault failure"
+          - key: 0x00080000
+            value: "DC Over-current failure"
+          - key: 0x00400000
+            value: "AC current leakage failure"
+          - key: 0x8000000000000000
+            value: "Temperature is too high"
+          - key: "default"
+            value: "Error"
 
   - group: Battery
     items:
@@ -1638,7 +1675,6 @@ parameters:
         validation:
           min: 1
           max: 99
-          invalidate_all:
 
       # Battery - The voltage of battery 1 (L:0.01V, H:0.1V)
       - name: "Battery Voltage"
