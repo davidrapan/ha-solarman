@@ -1,5 +1,4 @@
 {
     "name": "Solarman",
-    "render_readme": false,
     "persistent_directory": "inverter_definitions/custom"
 }
