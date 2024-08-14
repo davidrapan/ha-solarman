@@ -16,6 +16,7 @@ class ParameterParser:
         self._code = DEFAULT_REGISTERS_CODE
         self._min_span = DEFAULT_REGISTERS_MIN_SPAN
         self._digits = DEFAULT_DIGITS
+        self._registers_table = {}
         self._result = {}
 
         if "default" in self._profile:
@@ -30,6 +31,19 @@ class ParameterParser:
                 self._digits = default["digits"]
 
         _LOGGER.debug(f"{'Defaults' if 'default' in self._profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, digits: {self._digits}")
+
+        requests_table = {}
+
+        if "requests" in self._profile and not "requests_fine_control" in self._profile:
+            for pr in self._profile["requests"]:
+                for r in range(pr[REQUEST_START], pr[REQUEST_END]):
+                    requests_table[r] = get_request_code(pr)
+
+        for p in self.parameters():
+            for i in p["items"]:
+                if "registers" in i:
+                    for r in i["registers"]:
+                        self._registers_table[r] = (i["code"] if isinstance(i["code"], int) else i["code"]["read"]) if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
 
     def parameters(self):
         return self._profile["parameters"]
@@ -66,19 +80,11 @@ class ParameterParser:
         return result
 
     def get_requests(self, runtime = 0):
-        requests_table = {}
-
-        if "requests" in self._profile:
-            if not "requests_fine_control" in self._profile:
-                for pr in parameter_definition["requests"]:
-                    for r in range(pr[REQUEST_START], pr[REQUEST_END]):
-                        requests_table[r] = get_request_code(pr)
-            else:
-                _LOGGER.debug("Fine control of request sets is enabled!")
-                return self._profile["requests"]
+        if "requests" in self._profile and "requests_fine_control" in self._profile:
+            _LOGGER.debug("Fine control of request sets is enabled!")
+            return self._profile["requests"]
 
         registers = []
-        registers_table = {}
 
         for p in self.parameters():
             for i in p["items"]:
@@ -87,20 +93,19 @@ class ParameterParser:
                     if "registers" in i:
                         for r in i["registers"]:
                             registers.append(r)
-                            registers_table[r] = i["code"] if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
 
         if len(registers) == 0:
             return {}
 
         registers.sort()
 
-        registers_table_values = list(registers_table.values())
+        registers_table_values = list(self._registers_table.values())
 
-        predicate = (lambda x, y: y - x > self._min_span) if all(i == registers_table_values[0] for i in registers_table_values) else (lambda x, y: registers_table[x] != registers_table[y] or y - x > self._min_span)
+        predicate = (lambda x, y: y - x > self._min_span) if all(i == registers_table_values[0] for i in registers_table_values) else (lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span)
 
         groups = group_when(registers, predicate)
 
-        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: registers_table[r[0]] } for r in groups]
+        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._registers_table[r[0]] } for r in groups]
 
     def parse(self, rawData, start, length):
         for param in self.parameters():
