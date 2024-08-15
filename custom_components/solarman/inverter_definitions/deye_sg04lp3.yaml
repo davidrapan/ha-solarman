@@ -1772,32 +1772,16 @@ parameters:
 
   - group: Grid
     items:
-      # Device - Grid state
-      - name: "Grid State"
+      # Device - Grid On/Off
+      - name: "Grid"
         update_interval: 30
-        class: "enum"
+        class: "binary_sensor"
         state_class: ""
         uom: ""
-        scale: 1
         rule: 1
         registers: [0x0228]
+        bitmask: 0x4
         icon: "mdi:transmission-tower"
-        options: ["Off", "On"]
-        lookup:
-          - key: 0x0001
-            value: "Off"
-          - key: 0x0004
-            value: "On"
-          - key: 0x0005
-            value: "On"
-          - key: 0x0008
-            value: "Off"
-          - key: 0x0009
-            value: "Off"
-          - key: 0x000C
-            value: "On"
-          - key: 0x000D
-            value: "On"
 
       # Grid side - The voltage of phase A
       - name: "Grid L1 Voltage"

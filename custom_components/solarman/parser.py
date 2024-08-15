@@ -223,6 +223,9 @@ class ParameterParser:
             if "mask" in definition:
                 value &= definition["mask"]
 
+            if "bitmask" in definition and (bitmask := definition["bitmask"]):
+                value = int((value & bitmask) / bitmask)
+
             if "lookup" not in definition:
                 if "offset" in definition:
                     value = value - definition["offset"]
