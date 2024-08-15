@@ -1,6 +1,6 @@
 #
 # First version: 22.02.2023
-# Latest update: 12.08.2024
+# Latest update: 13.08.2024
 # Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers :) )
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 2x MPPT, 2x inverter
@@ -152,7 +152,7 @@ parameters:
         class: ""
         state_class: ""
         uom: "%"
-        scale: 0.1
+        scale: 1
         rule: 1
         registers: [0x0028]
         configurable:
