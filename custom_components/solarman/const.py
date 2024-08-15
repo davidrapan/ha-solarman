@@ -57,6 +57,7 @@ TIMINGS_WAIT_FOR_SLEEP = 1
 ATTR_FRIENDLY_NAME = "friendly_name"
 
 REQUEST_UPDATE_INTERVAL = "update_interval"
+REQUEST_MAX_SIZE = 125
 REQUEST_MIN_SPAN = "min_span"
 REQUEST_CODE = "code"
 REQUEST_CODE_ALT = "mb_functioncode"
