@@ -24,7 +24,7 @@
 > Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/) + incorporates many more fixes and improvements and also up to date features of HA (while trying to fully preserve backward compatibility)
 
 > [!WARNING]  
-> It's not possible to install this integration side by side (with the same device) with the implementation from Stephan! It will be overwritten.  
+> It's not possible to install this integration side by side using HACS with the version from Stephan! It will be overwritten when not done manually  
 
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
