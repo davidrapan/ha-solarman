@@ -588,7 +588,7 @@ parameters:
       # Device - On/Off Switch
       - name: ""
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -598,7 +598,7 @@ parameters:
       # Island Protection - On/Off Switch
       - name: "Island Protection"
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -608,7 +608,7 @@ parameters:
       # Soft Start - On/Off Switch
       - name: "Soft Start"
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -618,7 +618,7 @@ parameters:
       # Over-frequency Load-shedding - On/Off Switch
       - name: "Over-frequency Load Reduction"
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1

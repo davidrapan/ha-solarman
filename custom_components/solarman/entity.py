@@ -29,6 +29,17 @@ from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
+def create_entity(creator, sensor):
+    try:
+        entity = creator(sensor)
+
+        entity.update()
+
+        return entity
+    except BaseException as e:
+        _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
+        raise
+
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)

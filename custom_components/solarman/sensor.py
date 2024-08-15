@@ -22,31 +22,21 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import *
 from .common import *
 from .services import *
-from .api import Inverter
-from .coordinator import InverterCoordinator
-from .entity import SolarmanCoordinatorEntity, SolarmanEntity
+from .entity import create_entity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
 def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
-    try:
-        if "artificial" in sensor:
-            match sensor["artificial"]:
-                case "interval":
-                    entity = SolarmanIntervalSensor(coordinator, sensor)
-        elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
-            entity = SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
-        else:
-            entity = SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+    if "artificial" in sensor:
+        match sensor["artificial"]:
+            case "interval":
+                return SolarmanIntervalSensor(coordinator, sensor)
+    elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
+        return SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
-        entity.update()
-
-        return entity
-    except BaseException as e:
-        _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
-        raise
+    return SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
@@ -59,11 +49,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     sensors = coordinator.inverter.get_sensors()
 
-    # Add entities.
-    #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating) for sensor in sensors if ((not "class" in sensor or not sensor["class"] in PLATFORMS) and not "configurable" in sensor))
+    async_add_entities(create_entity(lambda s: _create_sensor(coordinator, s, battery_nominal_voltage, battery_life_cycle_rating), sensor) for sensor in sensors if (is_platform(sensor, _PLATFORM) and not "configurable" in sensor))
 
     return True
 

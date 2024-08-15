@@ -23,27 +23,19 @@ from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySen
 from .const import *
 from .common import *
 from .services import *
-from .entity import SolarmanEntity
+from .entity import create_entity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
 def _create_sensor(coordinator, sensor):
-    try:
-        if "artificial" in sensor:
-            match sensor["artificial"]:
-                case "state":
-                    entity = SolarmanConnectionSensor(coordinator, sensor)
-        else:
-            entity = SolarmanBinarySensorEntity(coordinator, sensor)
+    if "artificial" in sensor:
+        match sensor["artificial"]:
+            case "state":
+                return SolarmanConnectionSensor(coordinator, sensor)
 
-        entity.update()
-
-        return entity
-    except BaseException as e:
-        _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
-        raise
+    return SolarmanBinarySensorEntity(coordinator, sensor)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
@@ -51,11 +43,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     sensors = coordinator.inverter.get_sensors()
 
-    # Add entities.
-    #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if ("class" in sensor and sensor["class"] == _PLATFORM))
+    async_add_entities(create_entity(lambda s: _create_sensor(coordinator, s), sensor) for sensor in sensors if is_platform(sensor, _PLATFORM))
 
     return True
 

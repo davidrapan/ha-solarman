@@ -162,7 +162,7 @@ parameters:
       # Device - On/Off Switch
       - name: ""
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -173,7 +173,7 @@ parameters:
     items:
       - name: "Battery Control Mode"
         update_interval: 300
-        class: "select"
+        platform: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -364,7 +364,7 @@ parameters:
 
       - name: "Battery Operation Mode"
         update_interval: 300
-        class: "select"
+        platform: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -522,7 +522,7 @@ parameters:
 
       - name: "Battery Grid Charging"
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -532,7 +532,7 @@ parameters:
 
       - name: "SmartLoad Mode"
         update_interval: 300
-        class: "select"
+        platform: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -578,7 +578,7 @@ parameters:
 
       - name: "SmartLoad"
         update_interval: 30
-        class: "binary_sensor"
+        platform: "binary_sensor"
         state_class: ""
         uom: ""
         rule: 1
@@ -590,7 +590,7 @@ parameters:
     items:
       - name: Energy Pattern
         update_interval: 300
-        class: "select"
+        platform: "select"
         state_class: ""
         uom: ""
         scale: 1
@@ -606,7 +606,7 @@ parameters:
       - name: Export Surplus
         alt: Solar Sell
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -615,7 +615,7 @@ parameters:
 
       - name: Time of Use
         update_interval: 300
-        class: "switch"
+        platform: "switch"
         state_class: ""
         uom: ""
         scale: 1
@@ -627,7 +627,7 @@ parameters:
 
       - name: Program 1 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -640,7 +640,7 @@ parameters:
 
       - name: Program 2 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -653,7 +653,7 @@ parameters:
 
       - name: Program 3 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -666,7 +666,7 @@ parameters:
 
       - name: Program 4 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -679,7 +679,7 @@ parameters:
 
       - name: Program 5 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -692,7 +692,7 @@ parameters:
 
       - name: Program 6 Time
         update_interval: 300
-        class: "time"
+        platform: "time"
         state_class: measurement
         uom: ""
         scale: 1
@@ -974,7 +974,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 1 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -983,7 +983,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 2 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -992,7 +992,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 3 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -1001,7 +1001,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 4 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -1010,7 +1010,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 5 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -1019,7 +1019,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 6 Grid Charging
-        class: switch
+        platform: switch
         state_class: ""
         uom: ""
         scale: 1
@@ -1505,7 +1505,7 @@ parameters:
       # Device - Power On/Off
       - name: "Device Power"
         update_interval: 30
-        class: "binary_sensor"
+        platform: "binary_sensor"
         state_class: ""
         uom: ""
         rule: 1
@@ -1750,7 +1750,7 @@ parameters:
       # Device - Grid On/Off
       - name: "Grid"
         update_interval: 30
-        class: "binary_sensor"
+        platform: "binary_sensor"
         state_class: ""
         uom: ""
         rule: 1

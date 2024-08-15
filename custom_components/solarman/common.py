@@ -26,6 +26,9 @@ async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())
 
+def is_platform(description, value):
+    return (description["platform"] if "platform" in description else "sensor") == value
+
 def all_same(values):
     return all(i == values[0] for i in values)
 

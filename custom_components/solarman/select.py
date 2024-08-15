@@ -15,22 +15,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import SolarmanEntity
+from .entity import create_entity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
-
-def _create_sensor(coordinator, sensor):
-    try:
-        entity = SolarmanSelectEntity(coordinator, sensor)
-
-        entity.update()
-
-        return entity
-    except BaseException as e:
-        _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
-        raise
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
@@ -38,11 +27,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     sensors = coordinator.inverter.get_sensors()
 
-    # Add entities.
-    #
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(_create_sensor(coordinator, sensor) for sensor in sensors if ("class" in sensor and sensor["class"] == _PLATFORM))
+    async_add_entities(create_entity(lambda s: SolarmanSelectEntity(coordinator, s), sensor) for sensor in sensors if is_platform(sensor, _PLATFORM))
 
     return True
 
@@ -54,7 +41,6 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanSelectEntity(SolarmanEntity, SelectEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        # Set The Category of the entity.
         self._attr_entity_category = EntityCategory.CONFIG
 
         if "lookup" in sensor:
