@@ -106,9 +106,12 @@ class SolarmanBatterySensor(SolarmanSensor):
             match self.sensor_name:
                 case "Battery SOH":
                     total_battery_charge = self.get_data("Total Battery Charge", None)
-                    battery_capacity = self.get_data("Battery Corrected Capacity", None)
-                    if battery_capacity <= 0:
-                        battery_capacity = self.get_data("Battery Capacity", None)
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    if battery_capacity and battery_corrected_capacity:
+                        battery_capacity_5 = battery_capacity / 100 * 5
+                        if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
+                            battery_capacity = battery_corrected_capacity
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage and self._battery_life_cycle_rating:
                         self._attr_state = get_number(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits)
                 case "Battery State":
