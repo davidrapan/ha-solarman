@@ -583,7 +583,7 @@ parameters:
         uom: ""
         rule: 1
         registers: [0x0228]
-        bitmask: 0x8
+        bit: 3
         icon: "mdi:lightning-bolt-circle"
 
   - group: Work Mode
@@ -1755,7 +1755,7 @@ parameters:
         uom: ""
         rule: 1
         registers: [0x0228]
-        bitmask: 0x4
+        bit: 2
         icon: "mdi:transmission-tower"
 
       # Grid side - The voltage of phase A

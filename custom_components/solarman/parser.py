@@ -223,6 +223,9 @@ class ParameterParser:
             if "mask" in definition:
                 value &= definition["mask"]
 
+            if "bit" in definition:
+                value = (value >> definition["bit"]) & 1
+
             if "bitmask" in definition and (bitmask := definition["bitmask"]):
                 value = int((value & bitmask) / bitmask)
 
