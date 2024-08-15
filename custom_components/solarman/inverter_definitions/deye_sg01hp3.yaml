@@ -570,33 +570,15 @@ parameters:
           min: 0
           max: 100
 
-      - name: "SmartLoad State"
+      - name: "SmartLoad"
         update_interval: 30
-        class: "enum"
+        class: "binary_sensor"
         state_class: ""
         uom: ""
-        scale: 1
         rule: 1
         registers: [0x0228]
+        bitmask: 0x8
         icon: "mdi:lightning-bolt-circle"
-        options: ["Off", "On"]
-        lookup:
-          - key: 0x0001
-            value: "Off"
-          - key: 0x0004
-            value: "Off"
-          - key: 0x0005
-            value: "Off"
-          - key: 0x0008
-            value: "On"
-          - key: 0x0009
-            value: "On"
-          - key: 0x000C
-            value: "Off"
-          - key: 0x000D
-            value: "On"
-          - key: "default"
-            value: "On"
 
   - group: Work Mode
     items:
@@ -1512,22 +1494,15 @@ parameters:
 
   - group: State
     items:
-      # Device - Power state On/Off
-      - name: "Device Power State"
+      # Device - Power On/Off
+      - name: "Device Power"
         update_interval: 30
-        class: "enum"
+        class: "binary_sensor"
         state_class: ""
         uom: ""
-        scale: 1
         rule: 1
         registers: [0x0227]
         icon: "mdi:lightning-bolt-circle"
-        options: ["Off", "On"]
-        lookup:
-          - key: 0x0000
-            value: "Off"
-          - key: 0x0001
-            value: "On"
 
       # Device - AC Relay state
       - name: "Device Relay State"
