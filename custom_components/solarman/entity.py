@@ -1,30 +1,17 @@
 from __future__ import annotations
 
 import logging
-import asyncio
-import voluptuous as vol
 
+from typing import Any
 from functools import cached_property, partial
 
-from homeassistant.components.template.sensor import SensorTemplate
-from homeassistant.components.template.sensor import TriggerSensorEntity
-from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
-from homeassistant.helpers.template import Template
-
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME, EntityCategory, STATE_OFF, STATE_ON
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
-from homeassistant.helpers.entity import Entity, ToggleEntity
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
 from .const import *
 from .common import *
 from .services import *
-from .api import Inverter
-from .discovery import InverterDiscovery
 from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)

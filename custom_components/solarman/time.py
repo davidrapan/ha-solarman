@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import logging
-import asyncio
-import voluptuous as vol
 
 from datetime import datetime, time
 from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.const import CONF_NAME, STATE_OFF, STATE_ON, EntityCategory
+from homeassistant.core import HomeAssistant
+from homeassistant.const import EntityCategory
 from homeassistant.components.time import TimeEntity, TimeEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
