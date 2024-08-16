@@ -88,13 +88,13 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_entity_category = (None)
 
         # Set the name of the sensor.
-        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name)
+        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
 
         # Set the friendly name of the sensor.
-        self._attr_friendly_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_friendly_name)
+        self._attr_friendly_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_friendly_name) if self.sensor_friendly_name else self.coordinator.inverter.name
 
         # Set a unique_id based on the serial number
-        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id)
+        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id) if self.sensor_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
 
         # Set the icon of the sensor.
         self._attr_icon = sensor["icon"] if "icon" in sensor else None
