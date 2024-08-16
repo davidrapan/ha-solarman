@@ -78,27 +78,20 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
         self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
 
-        if self.sensor_entity_id:
-            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.sensor_entity_id)
-
-        # Set the enabled default value
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
-        # Set the category of the sensor.
-        self._attr_entity_category = (None)
-
-        # Set the name of the sensor.
         self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
 
-        # Set the friendly name of the sensor.
         self._attr_friendly_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_friendly_name) if self.sensor_friendly_name else self.coordinator.inverter.name
 
-        # Set a unique_id based on the serial number
         self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id) if self.sensor_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
 
-        # Set the icon of the sensor.
-        self._attr_icon = sensor["icon"] if "icon" in sensor else None
-
+        if self.sensor_entity_id:
+            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.sensor_entity_id)
+        if "icon" in sensor and (icon := sensor["icon"]):
+            self._attr_icon = icon
+        if "category" in sensor and (entity_category := sensor["category"]):
+            self._attr_entity_category = entity_category
         if "class" in sensor and (device_class := sensor["class"]):
             self._attr_device_class = device_class
         if "device_class" in sensor and (device_class := sensor["device_class"]):
