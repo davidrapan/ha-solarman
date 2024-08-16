@@ -414,7 +414,7 @@ parameters:
         icon: "mdi:map-marker"
 
       - name: "Rated Power"
-        class: "energy"
+        class: "power"
         state_class: ""
         uom: "W"
         scale: 0.1
