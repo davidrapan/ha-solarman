@@ -54,11 +54,14 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
         return default
 
+    def set_state(self, state):
+        self._attr_state = state
+
     def update(self):
         c = len(self.coordinator.data)
         if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
             if self.sensor_name in self.coordinator.data:
-                self._attr_state = self.get_data_state(self.sensor_name)
+                self.set_state(self.get_data_state(self.sensor_name))
                 if "value" in self.coordinator.data[self.sensor_name]:
                     self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
                 if self.attributes:
@@ -101,11 +104,11 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if "device_class" in sensor and (device_class := sensor["device_class"]):
             self._attr_device_class = device_class
         if "state_class" in sensor and (state_class := sensor["state_class"]):
-            self._attr_extra_state_attributes = { "state_class": state_class }
+            self._attr_state_class = state_class
         if "uom" in sensor and (unit_of_measurement := sensor["uom"]):
-            self._attr_unit_of_measurement = unit_of_measurement
+            self._attr_native_unit_of_measurement = unit_of_measurement
         if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
-            self._attr_unit_of_measurement = unit_of_measurement
+            self._attr_native_unit_of_measurement = unit_of_measurement
         if "suggested_display_precision" in sensor and (display_precision := sensor["suggested_display_precision"]):
             self._attr_suggested_display_precision = display_precision
         if "options" in sensor and (options := sensor["options"]):

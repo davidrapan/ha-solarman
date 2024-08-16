@@ -159,7 +159,7 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch
+      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         update_interval: 300
         platform: "switch"
@@ -579,6 +579,7 @@ parameters:
       - name: "SmartLoad"
         update_interval: 30
         platform: "binary_sensor"
+        device_class: power
         state_class: ""
         uom: ""
         rule: 1
@@ -1502,15 +1503,15 @@ parameters:
 
   - group: State
     items:
-      # Device - Power On/Off
-      - name: "Device Power"
+      # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+      - name: ""
         update_interval: 30
         platform: "binary_sensor"
+        device_class: power
         state_class: ""
         uom: ""
         rule: 1
         registers: [0x0227]
-        icon: "mdi:lightning-bolt-circle"
 
       # Device - AC Relay state
       - name: "Device Relay State"
@@ -1751,6 +1752,7 @@ parameters:
       - name: "Grid"
         update_interval: 30
         platform: "binary_sensor"
+        device_class: power
         state_class: ""
         uom: ""
         rule: 1

@@ -50,14 +50,17 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
         if registers_length > 1:
             _LOGGER.warning(f"SolarmanTimeEntity.__init__: Contains more than 1 register!")
 
+    def set_state(self, state):
+        self._attr_native_value = state
+
     @cached_property
     def native_value(self) -> float:
         """Return the state of the setting entity."""
-        return datetime.strptime(self._attr_state, "%H:%M").time()
+        return datetime.strptime(self._attr_native_value, "%H:%M").time()
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
         value_int = int(value.strftime("%H%M"))
         await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [value_int,], ACTION_ATTEMPTS_MAX)
-        self._attr_state = value_int
+        self.set_state(value_int)
         self.async_write_ha_state()

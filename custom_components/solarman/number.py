@@ -66,15 +66,13 @@ class SolarmanNumberEntity(SolarmanEntity, NumberEntity):
             self._attr_native_min_value = range["min"]
             self._attr_native_max_value = range["max"]
 
-    @property
-    def native_value(self) -> float:
-        """Return the state of the setting entity."""
-        return self._attr_state
+    def set_state(self, state):
+        self._attr_native_value = state
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the setting."""
         await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [int(value / self.scale),], ACTION_ATTEMPTS_MAX)
-        self._attr_state = get_number(value)
+        self.set_state(get_number(value))
         self.async_write_ha_state()
         #await self.entity_description.update_fn(self.coordinator., int(value))
         #await self.coordinator.async_request_refresh()

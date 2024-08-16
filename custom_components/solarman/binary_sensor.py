@@ -68,5 +68,5 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
         return self._attr_state > -1
 
     def update(self):
-        self._attr_state = self.coordinator.inverter.state
+        self.set_state(self.coordinator.inverter.state)
         self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state_updated.strftime("%m/%d/%Y, %H:%M:%S")

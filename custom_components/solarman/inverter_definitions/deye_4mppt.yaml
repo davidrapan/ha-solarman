@@ -642,7 +642,7 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch
+      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         update_interval: 300
         platform: "switch"
