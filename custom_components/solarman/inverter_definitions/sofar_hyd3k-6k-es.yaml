@@ -15,7 +15,7 @@ requests:
 parameters:
   - group: PV
     items:
-      - name: "PV Instant Generated PW"
+      - name: "PV Power"
         class: "power"
         state_class: "measurement"
         uom: "kW"
@@ -115,25 +115,31 @@ parameters:
         registers: [0x0243]
         icon: "mdi:clock-outline"
 
-      - name: "Today Grid Return"
+      - name: "Today Energy Export"
+        alt: "Today Grid Return"
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
         registers: [0x0219]
-        icon: "mdi:transmission-tower-export"
+        icon: "mdi:transmission-tower-import"
 
-      - name: "Today Grid Consumption"
+      - name: "Today Energy Import"
+        alt: "Today Grid Consumption"
+        friendly_name: Today's Energy Import
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
         registers: [0x021A]
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower-export"
 
-      - name: "Today Power Consumption"
+      - name: "Today Load Consumption"
+        alt: "Today Power Consumption"
+        friendly_name: Today's Load Consumption
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -142,25 +148,28 @@ parameters:
         registers: [0x021B]
         icon: "mdi:lightning-bolt"
 
-      - name: "Total Grid Return"
+      - name: "Total Energy Export"
+        alt: "Total Grid Return"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [0x021F, 0x021E]
-        icon: "mdi:transmission-tower-export"
+        icon: "mdi:transmission-tower-import"
 
-      - name: "Total Grid Consumption"
+      - name: "Total Energy Import"
+        alt: "Total Grid Consumption"
         class: "energy"
         state_class: "total"
         uom: "kWh"
         scale: 1
         rule: 3
         registers: [0x0221, 0x0220]
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower-export"
 
-      - name: "Total Power Consumption"
+      - name: "Total Load Consumption"
+        alt: "Total Power Consumption"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -171,7 +180,7 @@ parameters:
 
   - group: Output
     items:
-      - name: "Power Consumption"
+      - name: "Load Power"
         class: ""
         state_class: ""
         uom: "kW"
@@ -198,7 +207,7 @@ parameters:
       #      registers: [0x000D]
       #      icon: 'mdi:home-lightning-bolt'
 
-      - name: "Grid frequency"
+      - name: "Grid Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -225,7 +234,7 @@ parameters:
         registers: [0x0207]
         icon: "mdi:home-lightning-bolt"
 
-  - group: batteries
+  - group: Battery
     items:
       - name: "Battery Voltage"
         class: "voltage"
@@ -236,7 +245,7 @@ parameters:
         registers: [0x020E]
         icon: "mdi:battery-charging"
 
-      - name: "Battery Charge / Discharge current"
+      - name: "Battery Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -264,36 +273,7 @@ parameters:
         registers: [0x0211]
         icon: "mdi:battery-heart-outline"
 
-      - name: Today Battery Charge
-        alt: Battery Daily Charge
-        friendly_name: Today's Battery Charge
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.01
-        rule: 1
-        registers: [0x0224]
-        icon: "mdi:battery-clock"
-
-      - name: "Battery Total Energy Charged"
-        class: "energy"
-        state_class: "total"
-        uom: "kWh"
-        scale: 1
-        rule: 1
-        registers: [0x0227]
-        icon: "mdi:battery-clock"
-
-      - name: "Battery Total Energy Dischaged"
-        class: "energy"
-        state_class: "total"
-        uom: "kWh"
-        scale: 1
-        rule: 1
-        registers: [0x0229]
-        icon: "mdi:battery-clock-outline"
-
-      - name: "Battery Cicles"
+      - name: "Battery Cycles"
         class: ""
         state_class: ""
         uom: "Charges"
@@ -329,6 +309,17 @@ parameters:
         registers: [0x10B1]
         icon: "mdi:battery"
 
+      - name: Today Battery Charge
+        alt: Battery Daily Charge
+        friendly_name: Today's Battery Charge
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x0224]
+        icon: "mdi:battery-clock"
+
       - name: Today Battery Discharge
         alt: Battery Daily Discharge
         friendly_name: Today's Battery Discharge
@@ -340,7 +331,8 @@ parameters:
         registers: [0x0225]
         icon: "mdi:battery"
 
-      - name: "Battery Total Charge"
+      - name: "Total Battery Charge"
+        alt: "Battery Total Charge"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -349,7 +341,8 @@ parameters:
         registers: [0x0227, 0x0226]
         icon: "mdi:battery"
 
-      - name: "Battery Total Discharge"
+      - name: "Total Battery Discharge"
+        alt: "Battery Total Discharge"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -486,7 +479,7 @@ parameters:
           - key: 7
             value: "Fault"
 
-      - name: "Inverter module temperature"
+      - name: "Temperature"
         class: "temperature"
         uom: "°C"
         scale: 1
@@ -494,7 +487,7 @@ parameters:
         registers: [0x0239]
         icon: "mdi:thermometer"
 
-      - name: "Inverter inner temperature"
+      - name: "Inverter Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -503,7 +496,7 @@ parameters:
         registers: [0x0238]
         icon: "mdi:thermometer"
 
-      - name: "Inverter bus voltage"
+      - name: "Inverter Bus voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1074,7 +1067,7 @@ parameters:
         registers: [0x0236]
         icon: "mdi:lightning-bolt"
 
-      - name: "Charge / Discharge Power"
+      - name: "Charge/Discharge Power"
         class: ""
         state_class: ""
         uom: "kW"
@@ -1083,7 +1076,7 @@ parameters:
         registers: [0x020D]
         icon: ""
 
-      - name: "Feed in / out power"
+      - name: "Feed In/Out power"
         class: ""
         state_class: ""
         uom: "kW"
@@ -1110,7 +1103,7 @@ parameters:
         registers: [0x10B2]
         icon: ""
 
-      - name: "DCI Current"
+      - name: "DC Current"
         class: "current"
         state_class: "measurement"
         uom: "mA"
@@ -1119,7 +1112,7 @@ parameters:
         registers: [0x023B]
         icon: "mdi:lightning-bolt"
 
-      - name: "DCI Voltage"
+      - name: "DC Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1146,7 +1139,7 @@ parameters:
         registers: [0x0233]
         icon: "mdi:lightning-bolt"
 
-      - name: "Grid T voltage"
+      - name: "Grid T Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1155,7 +1148,7 @@ parameters:
         registers: [0x0234]
         icon: "mdi:lightning-bolt"
 
-      - name: "Grid T current"
+      - name: "Grid T Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
