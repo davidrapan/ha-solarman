@@ -85,7 +85,7 @@ parameters:
 
   - group: batteries
     items:
-      - name: "Battery 1 Voltage"
+      - name: "Battery Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"

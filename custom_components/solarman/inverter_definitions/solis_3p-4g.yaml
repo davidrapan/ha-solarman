@@ -142,27 +142,17 @@ parameters:
         registers: [3007, 3006]
         icon: "mdi:solar-power"
 
-  - group: InverterAC
+  - group: Load
     items:
-      - name: "Active power"
+      - name: "Load Power"
         class: "power"
         state_class: "measurement"
         uom: "kW"
         scale: 0.001
         rule: 3
         registers: [3005, 3004]
-        icon: "mdi:solar-power"
 
-      - name: "Inverter AC Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        scale: 0.001
-        rule: 3
-        registers: [3005, 3004]
-        icon: "mdi:solar-power"
-
-      - name: "A phase voltage"
+      - name: "Load L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -171,7 +161,7 @@ parameters:
         registers: [3033]
         icon: "mdi:transmission-tower"
 
-      - name: "B phase voltage"
+      - name: "Load L2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -180,7 +170,7 @@ parameters:
         registers: [3034]
         icon: "mdi:transmission-tower"
 
-      - name: "C phase voltage"
+      - name: "Load L3 voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -189,7 +179,7 @@ parameters:
         registers: [3035]
         icon: "mdi:transmission-tower"
 
-      - name: "A phase current"
+      - name: "Load L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -198,7 +188,7 @@ parameters:
         registers: [3036]
         icon: "mdi:current-ac"
 
-      - name: "B phase current"
+      - name: "Load L2 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -207,7 +197,7 @@ parameters:
         registers: [3037]
         icon: "mdi:current-ac"
 
-      - name: "C phase current"
+      - name: "Load L3 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -216,7 +206,7 @@ parameters:
         registers: [3038]
         icon: "mdi:current-ac"
 
-      - name: "Inverter Frequency"
+      - name: "Load Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"

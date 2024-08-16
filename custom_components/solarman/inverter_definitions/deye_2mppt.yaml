@@ -379,6 +379,7 @@ parameters:
             value: "5.13"
 
       - name: "Device Serial Number"
+        attribute:
         class: ""
         state_class: ""
         uom: ""
@@ -413,23 +414,44 @@ parameters:
         registers: [0x000E]
         icon: "mdi:map-marker"
 
-      - name: "Rated Power"
+      - name: "Device Rated Power"
+        attribute:
         class: "power"
         state_class: ""
         uom: "W"
         scale: 0.1
-        rule: 1
-        registers: [0x0010]
+        rule: 4
+        registers: [0x0010, 0x0011]
         icon: "mdi:solar-power"
 
-      - name: "Communication Protocol Version"
+      # Device - MPPTs
+      - name: "Device MPPTs"
+        attribute:
+        update_interval: 300
         class: ""
-        state_class: ""
+        state_class: "measurement"
         uom: ""
-        scale: 1
-        rule: 7
+        rule: 1
+        mask: 0x0F00
+        divide: 256
         registers: [0x0012]
-        icon: "mdi:wrench"
+        range:
+          min: 257
+          max: 2051
+
+      # Device - Phases
+      - name: "Device Phases"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x000F
+        registers: [0x0012]
+        range:
+          min: 257
+          max: 2051
 
       - name: "Start-up Self-checking Time "
         class: ""
@@ -448,20 +470,6 @@ parameters:
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
         icon: "mdi:clock-time-three-outline"
-
-      - name: "Device Rated Power"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0008]
-        lookup:
-          - key: 1
-            value: "single-phase"
-          - key: 2
-            value: "three-phase"
-        icon: "mdi:map-marker"
 
       - name: "Device Chip-Typ"
         class: ""

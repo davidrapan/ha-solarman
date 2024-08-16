@@ -238,7 +238,7 @@ parameters:
 
   - group: InverterAC
     items:
-      - name: "Inverter AC Power"
+      - name: "Load Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -247,7 +247,7 @@ parameters:
         registers: [3005, 3004]
         icon: "mdi:solar-power"
 
-      - name: "Inverter Voltage"
+      - name: "Load Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -256,7 +256,7 @@ parameters:
         registers: [3035]
         icon: "mdi:transmission-tower"
 
-      - name: "Inverter Current"
+      - name: "Load Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -265,7 +265,7 @@ parameters:
         registers: [3038]
         icon: "mdi:current-ac"
 
-      - name: "Inverter Frequency"
+      - name: "Load Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
