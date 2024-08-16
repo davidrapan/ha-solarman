@@ -43,6 +43,8 @@ DEFAULT_REGISTERS_CODE = 0x03
 DEFAULT_REGISTERS_MIN_SPAN = 25
 DEFAULT_DIGITS = 6
 
+PROFILE_REDIRECT_TABLE = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml" }
+
 AUTO_RECONNECT = True
 
 # Data are requsted in most cases in different invervals:

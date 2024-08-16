@@ -26,6 +26,9 @@ async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())
 
+def process_profile(filename):
+    return filename if not filename in PROFILE_REDIRECT_TABLE else PROFILE_REDIRECT_TABLE[filename]
+
 def is_platform(description, value):
     return (description["platform"] if "platform" in description else "sensor") == value
 

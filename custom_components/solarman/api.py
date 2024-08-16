@@ -74,7 +74,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.name = name
         self.mac = mac
         self.lookup_path = path
-        self.lookup_file = file if file else "deye_hybrid.yaml"
+        self.lookup_file = process_profile(file if file else "deye_hybrid.yaml")
         self.model = self.lookup_file.replace(".yaml", "")
         self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
         self.profile = ParameterParser(self.parameter_definition)
