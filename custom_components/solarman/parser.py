@@ -36,7 +36,7 @@ class ParameterParser:
 
         if "requests" in self._profile and not "requests_fine_control" in self._profile:
             for pr in self._profile["requests"]:
-                for r in range(pr[REQUEST_START], pr[REQUEST_END]):
+                for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1):
                     requests_table[r] = get_request_code(pr)
 
         for p in self.parameters():
