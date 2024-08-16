@@ -1507,7 +1507,7 @@ parameters:
       - name: ""
         update_interval: 30
         platform: "binary_sensor"
-        device_class: power
+        device_class: running
         state_class: ""
         uom: ""
         rule: 1
