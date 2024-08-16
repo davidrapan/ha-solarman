@@ -29,7 +29,7 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
         match sensor["artificial"]:
             case "interval":
                 return SolarmanIntervalSensor(coordinator, sensor)
-    elif sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
+    elif not "registers" in sensor and sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
         return SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
     return SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
