@@ -18,7 +18,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0404]
-        isstr: true
         lookup:
           - key: 0
             value: "waiting"

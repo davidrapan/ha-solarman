@@ -317,6 +317,9 @@ class ParameterParser:
 
                 self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
+                if "attributes" in definition and "value" in definition["attributes"]:
+                    self._result[key]["value"] = int(value)
+
         return
 
     def try_parse_signed(self, rawData, definition, start, length):

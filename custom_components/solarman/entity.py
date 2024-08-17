@@ -58,17 +58,13 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         self._attr_state = state
 
     def update(self):
-        c = len(self.coordinator.data)
-        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
-            if self.sensor_name in self.coordinator.data:
-                self.set_state(self.get_data_state(self.sensor_name))
-                if "value" in self.coordinator.data[self.sensor_name]:
-                    self._attr_extra_state_attributes["value"] = self.get_data_value(self.sensor_name)
-                if self.attributes:
-                    for attr in self.attributes:
-                        if attr in self.coordinator.data:
-                            attr_name = attr.replace(f"{self.sensor_name} ", "")
-                            self._attr_extra_state_attributes[attr_name] = self.get_data_state(attr)
+        if self.sensor_name in self.coordinator.data and (data := self.coordinator.data[self.sensor_name]):
+            self.set_state(data["state"])
+            if "value" in data:
+                self._attr_extra_state_attributes["value"] = data["value"]
+            if self.attributes:
+                for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
+                    self._attr_extra_state_attributes[attr.replace(f"{self.sensor_name} ", "")] = self.get_data_state(attr)
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
@@ -105,6 +101,10 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if "suggested_display_precision" in sensor and (display_precision := sensor["suggested_display_precision"]):
             self._attr_suggested_display_precision = display_precision
         if "options" in sensor and (options := sensor["options"]):
+            self._attr_options = options
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
+        elif "lookup" in sensor and (options := [s["value"] for s in sensor["lookup"]]):
+            self._attr_device_class = "enum"
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
         if "alt" in sensor and (alt := sensor["alt"]):

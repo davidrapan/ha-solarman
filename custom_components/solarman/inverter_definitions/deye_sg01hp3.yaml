@@ -16,23 +16,12 @@ parameters:
       # Device - Type
       - name: "Device"
         update_interval: 300
-        class: "enum"
-        state_class: ""
+        state_class: "measurement"
         uom: ""
         scale: 1
         rule: 1
         registers: [0x0000]
         icon: "mdi:information"
-        options:
-          [
-            "String Inverter",
-            "Single-Phase Hybrid Inverter",
-            "Microinverter",
-            "LV 3-Phase Hybrid Inverter",
-            "HV 3-Phase Hybrid Inverter",
-            "HV 3-Phase Inverter 6-15kw",
-            "HV 3-Phase Inverter 20-50kw",
-          ]
         lookup:
           - key: 0x0200
             value: "String Inverter"
@@ -81,7 +70,6 @@ parameters:
         rule: 1
         registers: [0x0002]
         icon: "mdi:information"
-        options: ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5"]
         lookup:
           - key: 0x0100
             value: "1.0"
@@ -1115,23 +1103,16 @@ parameters:
         registers: [0x00DB]
         icon: "mdi:battery"
 
-      - name: "Battery BMS Alarm"
-        class: "enum"
+      - name: "Battery Alarm"
+        platform: binary_sensor
+        class: "problem"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
-        options: ["Inactive", "Active"]
-        lookup:
-          - key: 0
-            value: "Inactive"
-          - key: 1
-            value: "Active"
-          - key: "default"
-            value: "Active"
-        attributes: ["BMS Fault Location"]
+        attributes: ["value", "BMS Fault Location"]
 
       - name: "BMS Fault Location"
         attribute:
@@ -1147,7 +1128,6 @@ parameters:
           max: 65535
 
       - name: "BMS Other Symbol"
-        disabled:
         attribute:
         class: ""
         state_class: ""
@@ -1222,7 +1202,6 @@ parameters:
         range:
           min: 0
           max: 5
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
             value: "Standby"
@@ -1515,17 +1494,6 @@ parameters:
         rule: 1
         registers: [0x0228]
         icon: "mdi:information"
-        options:
-          [
-            "Inverter",
-            "Grid",
-            "Inverter-Grid",
-            "Generator",
-            "Inverter-Gen",
-            "Grid-Generator",
-            "Inv-Grid-Gen",
-            "Power Supply",
-          ]
         lookup:
           - key: 0x0001
             value: "Inverter"
@@ -1554,16 +1522,6 @@ parameters:
         rule: 3
         registers: [0x0229, 0x022A]
         icon: "mdi:message-alert-outline"
-        options:
-          [
-            "Ok",
-            "Fan failure",
-            "Grid phase failure",
-            "Meter communication failure",
-            "Battery loss",
-            "Parallel communication quality",
-            "Error",
-          ]
         lookup:
           - key: 0x0000
             value: "Ok"
@@ -1590,19 +1548,6 @@ parameters:
         rule: 3
         registers: [0x22B, 0x022C, 0x022D, 0x022E]
         icon: "mdi:alert-outline"
-        options:
-          [
-            "Ok",
-            "DC/DC Soft Start failure",
-            "Auxiliary power supply failure",
-            "Working mode changed",
-            "AC Over-current failure",
-            "Tz_Integ_Fault failure",
-            "DC Over-current failure",
-            "AC current leakage failure",
-            "Temperature is too high",
-            "Error",
-          ]
         lookup:
           - key: 0x0000
             value: "Ok"
