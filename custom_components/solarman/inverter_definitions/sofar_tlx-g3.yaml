@@ -3,25 +3,11 @@
 
 info:
   manufacturer: Sofar
-  model: KTLX-G3
+  model: TLX-G3
 
 default:
   update_interval: 5
   digits: 6
-
-requests:
-  - start: 0x0404
-    end:  0x042E
-    mb_functioncode: 0x03
-  - start: 0x0484
-    end: 0x04BC
-    mb_functioncode: 0x03
-  - start: 0x0584
-    end: 0x0589
-    mb_functioncode: 0x03
-  - start: 0x0684
-    end: 0x069B
-    mb_functioncode: 0x03
 
 parameters:
   - group: PV
@@ -33,7 +19,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x0586]
-        icon: 'mdi:solar-power-variant'
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Power"
         class: "power"
@@ -42,7 +28,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x0589]
-        icon: 'mdi:solar-power-variant'
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
         class: "voltage"
@@ -51,7 +37,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0584]
-        icon: 'mdi:alpha-v-circle-outline'
+        icon: "mdi:alpha-v-circle-outline"
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -60,7 +46,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0587]
-        icon: 'mdi:alpha-v-circle-outline'
+        icon: "mdi:alpha-v-circle-outline"
 
       - name: "PV1 Current"
         class: "current"
@@ -69,7 +55,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0585]
-        icon: 'mdi:alpha-a-circle-outline'
+        icon: "mdi:alpha-a-circle-outline"
 
       - name: "PV2 Current"
         class: "current"
@@ -78,7 +64,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0588]
-        icon: 'mdi:alpha-a-circle-outline'
+        icon: "mdi:alpha-a-circle-outline"
 
   - group: Device
     items:
@@ -90,28 +76,38 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0404]
-        icon: 'mdi:information'
+        icon: "mdi:information"
         range:
           min: 0
           max: 7
-        options: ["Waiting", "Detection", "Grid-Connected", "Emergency Power Supply", "Recoverable Fault", "Permanent Fault", "Upgrade", "Self-charging"]
+        options:
+          [
+            "Waiting",
+            "Detection",
+            "Grid-Connected",
+            "Emergency Power Supply",
+            "Recoverable Fault",
+            "Permanent Fault",
+            "Upgrade",
+            "Self-charging",
+          ]
         lookup:
-          -  key: 0
-             value: "Waiting"
-          -  key: 1
-             value: "Detection"
-          -  key: 2
-             value: "Grid-Connected"
-          -  key: 3
-             value: "Emergency Power Supply"
-          -  key: 4
-             value: "Recoverable Fault"
-          -  key: 5
-             value: "Permanent Fault"
-          -  key: 6
-             value: "Upgrade"
-          -  key: 7
-             value: "Self-charging"
+          - key: 0
+            value: "Waiting"
+          - key: 1
+            value: "Detection"
+          - key: 2
+            value: "Grid-Connected"
+          - key: 3
+            value: "Emergency Power Supply"
+          - key: 4
+            value: "Recoverable Fault"
+          - key: 5
+            value: "Permanent Fault"
+          - key: 6
+            value: "Upgrade"
+          - key: 7
+            value: "Self-charging"
 
   - group: Meter
     items:
@@ -122,7 +118,8 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x0418]
-        icon: 'mdi:thermometer'
+        icon: "mdi:thermometer"
+
       - name: "Module Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -130,7 +127,8 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x0420]
-        icon: 'mdi:thermometer'
+        icon: "mdi:thermometer"
+
       - name: "Radiator Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -138,7 +136,8 @@ parameters:
         scale: 1
         rule: 2
         registers: [0x041A]
-        icon: 'mdi:thermometer'
+        icon: "mdi:thermometer"
+
       - name: "Insulation Resistance"
         class: "none"
         uom: "kohm"
@@ -155,12 +154,12 @@ parameters:
         uom: "Hz"
         scale: 0.01
         rule: 1
-        icon: 'mdi:sine-wave'
+        icon: "mdi:sine-wave"
         registers: [0x0484]
 
-  - group: Grid
+  - group: Load
     items:
-      - name: "Total Active Power Output"
+      - name: "Load Power"
         class: "energy"
         uom: "kW"
         scale: 0.01
@@ -168,14 +167,15 @@ parameters:
         registers: [0x0485]
         icon: "mdi:solar-power"
 
-      - name: "Grid L1 Voltage"
+      - name: "Load L1 Voltage"
         class: "voltage"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [0x048D]
         icon: "mdi:alpha-v-circle-outline"
-      - name: "Grid L1 Current"
+
+      - name: "Load L1 Current"
         class: "current"
         uom: "A"
         scale: 0.01
@@ -183,14 +183,15 @@ parameters:
         registers: [0x048E]
         icon: "mdi:alpha-a-circle-outline"
 
-      - name: "Grid L2 Voltage"
+      - name: "Load L2 Voltage"
         class: "voltage"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [0x0498]
         icon: "mdi:alpha-v-circle-outline"
-      - name: "Grid L2 Current"
+
+      - name: "Load L2 Current"
         class: "current"
         uom: "A"
         scale: 0.01
@@ -198,14 +199,15 @@ parameters:
         registers: [0x0499]
         icon: "mdi:alpha-a-circle-outline"
 
-      - name: "Grid L3 Voltage"
+      - name: "Load L3 Voltage"
         class: "voltage"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [0x04A3]
         icon: "mdi:alpha-v-circle-outline"
-      - name: "Grid L3 Current"
+
+      - name: "Load L3 Current"
         class: "current"
         uom: "A"
         scale: 0.01
@@ -222,16 +224,18 @@ parameters:
         uom: "kWh"
         scale: 0.01
         rule: 3
-        registers: [0x0685,0x0684]
-        icon: 'mdi:solar-power'
+        registers: [0x0685, 0x0684]
+        icon: "mdi:solar-power"
+
       - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
-        registers: [0x0687,0x0686]
-        icon: 'mdi:solar-power'
+        registers: [0x0687, 0x0686]
+        icon: "mdi:solar-power"
+
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
         class: "energy"
@@ -239,16 +243,17 @@ parameters:
         uom: "kWh"
         scale: 0.01
         rule: 3
-        registers: [0x0689,0x0688]
-        icon: 'mdi:lightning-bolt-outline'
+        registers: [0x0689, 0x0688]
+        icon: "mdi:lightning-bolt-outline"
+
       - name: "Total Load Consumption"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
-        registers: [0x068B,0x068A]
-        icon: 'mdi:solar-power'
+        registers: [0x068B, 0x068A]
+        icon: "mdi:solar-power"
 
   - group: Alert
     items:
@@ -281,89 +286,89 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0405]
-        icon: 'mdi:wrench'
+        icon: "mdi:wrench"
         isstr: true
 
         lookup:
-          -  key: 0
-             value: "No error"
-          -  key: 1
-             value: "ID01 Grid Over Voltage Protection"
-          -  key: 2
-             value: "ID02 Grid Under Voltage Protection"
-          -  key: 4
-             value: "ID03 Grid Over Frequency Protection"
-          -  key: 8
-             value: "ID04 Grid Under Frequency Protection"
-          -  key: 16
-             value: "ID05 Leakage current fault"
-          -  key: 32
-             value: "ID06 High penetration error"
-          -  key: 64
-             value: "ID07 Low penetration error"
-          -  key: 128
-             value: "ID08 Islanding error"
-          -  key: 256
-             value: "ID09 Grid voltage transient value overvoltage 1"
-          -  key: 512
-             value: "ID10 Grid voltage transient value overvoltage 2"
-          -  key: 1024
-             value: "ID11 Grid line voltage error"
-          -  key: 2048
-             value: "ID12 Inverter voltage error"
-          -  key: 4096
-             value: "ID13 Anti-backflow overload"
-          -  key: 8192
-             value: "ID14"
-          -  key: 16384
-             value: "ID15"
-          -  key: 32768
-             value: "ID16"
+          - key: 0
+            value: "No error"
+          - key: 1
+            value: "ID01 Grid Over Voltage Protection"
+          - key: 2
+            value: "ID02 Grid Under Voltage Protection"
+          - key: 4
+            value: "ID03 Grid Over Frequency Protection"
+          - key: 8
+            value: "ID04 Grid Under Frequency Protection"
+          - key: 16
+            value: "ID05 Leakage current fault"
+          - key: 32
+            value: "ID06 High penetration error"
+          - key: 64
+            value: "ID07 Low penetration error"
+          - key: 128
+            value: "ID08 Islanding error"
+          - key: 256
+            value: "ID09 Grid voltage transient value overvoltage 1"
+          - key: 512
+            value: "ID10 Grid voltage transient value overvoltage 2"
+          - key: 1024
+            value: "ID11 Grid line voltage error"
+          - key: 2048
+            value: "ID12 Inverter voltage error"
+          - key: 4096
+            value: "ID13 Anti-backflow overload"
+          - key: 8192
+            value: "ID14"
+          - key: 16384
+            value: "ID15"
+          - key: 32768
+            value: "ID16"
       - name: "Fault 2"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
-        icon: 'mdi:wrench'
+        icon: "mdi:wrench"
         isstr: true
 
         registers: [0x0406]
         lookup:
-          -  key: 0
-             value: "No error"
-          -  key: 1
-             value: "ID17 Grid current sampling error"
-          -  key: 2
-             value: "ID18 Grid current DC component sampling error (AC side)"
-          -  key: 4
-             value: "ID19 Grid voltage sampling error (DC side)"
-          -  key: 8
-             value: "ID20 Grid voltage sampling error (AC side)"
-          -  key: 16
-             value: "ID21 Leakage current sampling error (DC side)"
-          -  key: 32
-             value: "ID22 Leakage current sampling error (AC side)"
-          -  key: 64
-             value: "ID23 Load voltage DC component sampling error"
-          -  key: 128
-             value: "ID24 DC input current sampling error"
-          -  key: 256
-             value: "ID25 DC component sampling error of grid current (DC side)"
-          -  key: 512
-             value: "ID26 DC input branch current sampling error"
-          -  key: 1024
-             value: "ID27"
-          -  key: 2048
-             value: "ID28"
-          -  key: 4096
-             value: "ID29 Leakage current consistency error"
-          -  key: 8192
-             value: "ID30 Grid voltage consistency error"
-          -  key: 16384
-             value: "ID31 DCI consistency error"
-          -  key: 32768
-             value: "ID32"
+          - key: 0
+            value: "No error"
+          - key: 1
+            value: "ID17 Grid current sampling error"
+          - key: 2
+            value: "ID18 Grid current DC component sampling error (AC side)"
+          - key: 4
+            value: "ID19 Grid voltage sampling error (DC side)"
+          - key: 8
+            value: "ID20 Grid voltage sampling error (AC side)"
+          - key: 16
+            value: "ID21 Leakage current sampling error (DC side)"
+          - key: 32
+            value: "ID22 Leakage current sampling error (AC side)"
+          - key: 64
+            value: "ID23 Load voltage DC component sampling error"
+          - key: 128
+            value: "ID24 DC input current sampling error"
+          - key: 256
+            value: "ID25 DC component sampling error of grid current (DC side)"
+          - key: 512
+            value: "ID26 DC input branch current sampling error"
+          - key: 1024
+            value: "ID27"
+          - key: 2048
+            value: "ID28"
+          - key: 4096
+            value: "ID29 Leakage current consistency error"
+          - key: 8192
+            value: "ID30 Grid voltage consistency error"
+          - key: 16384
+            value: "ID31 DCI consistency error"
+          - key: 32768
+            value: "ID32"
       - name: "Fault 3"
         class: ""
         state_class: ""

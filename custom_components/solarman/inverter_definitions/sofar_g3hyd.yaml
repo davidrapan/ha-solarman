@@ -329,7 +329,7 @@ parameters:
         registers: [0x1052]
         icon: "mdi:battery-low"
 
-  - group: GridAC
+  - group: Grid
     items:
       - name: "Grid Frequency"
         class: "current"

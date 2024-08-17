@@ -126,7 +126,8 @@ parameters:
         registers: [3040, 3039]
         icon: "mdi:solar-power"
 
-      - name: "Cumulative Production"
+      - name: "Total Production"
+        alt: "Cumulative Production"
         update_interval: 30
         class: "energy"
         state_class: "total"
@@ -139,7 +140,8 @@ parameters:
   - group: Power Grid
     items:
       # Should this be the sum of the 3 phases "Meter Power"?
-      - name: "Total Grid Power"
+      - name: "Grid Power"
+        alt: "Total Grid Power"
         realtime:
         class: "power"
         state_class: "measurement"
@@ -242,7 +244,8 @@ parameters:
   - group: Electricity Consumption
     items:
       # Should this be the sum of the 3 phases "Load Power"?
-      - name: "Total Consumption Power"
+      - name: "Load Power"
+        alt: "Total Consumption Power"
         update_interval: 30
         class: "power"
         state_class: "measurement"
@@ -264,7 +267,7 @@ parameters:
         registers: [3147]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Monthly Consumption"
+      - name: "Monthly Load Consumption"
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -274,7 +277,7 @@ parameters:
         registers: [3149, 3148]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Yearly Consumption"
+      - name: "Yearly Load Consumption"
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
@@ -284,7 +287,7 @@ parameters:
         registers: [3151, 3150]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Cumulative Consumption"
+      - name: "Total Load Consumption"
         update_interval: 30
         class: "energy"
         state_class: "total"
@@ -296,7 +299,7 @@ parameters:
 
   - group: Battery
     items:
-      - name: "Battery Type"
+      - name: "Battery Control Mode"
         update_interval: 300
         class: ""
         state_class: "measurement"
@@ -374,7 +377,7 @@ parameters:
           min: 10
           max: 95
 
-      - name: "Battery Radiator Temperature"
+      - name: "Battery Temperature"
         update_interval: 30
         class: "temperature"
         state_class: "measurement"
@@ -708,7 +711,8 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        registers: [3228, 3229, 3230, 3231, 3232, 3233, 3234, 3235, 3236, 3237, 3238]
+        registers:
+          [3228, 3229, 3230, 3231, 3232, 3233, 3234, 3235, 3236, 3237, 3238]
         icon: "mdi:wrench"
 
   - group: Inverter

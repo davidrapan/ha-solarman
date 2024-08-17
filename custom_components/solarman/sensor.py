@@ -65,6 +65,7 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_extra_state_attributes = { "state_class": "measurement" }
+        self._attr_icon = "mdi:update"
 
     @property
     def available(self) -> bool:

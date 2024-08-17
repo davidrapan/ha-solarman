@@ -178,7 +178,7 @@ parameters:
         registers: [0x0223, 0x0222]
         icon: "mdi:lightning-bolt"
 
-  - group: Output
+  - group: Load
     items:
       - name: "Load Power"
         class: ""
