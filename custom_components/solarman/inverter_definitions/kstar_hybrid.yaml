@@ -377,7 +377,7 @@ parameters:
           min: 10
           max: 95
 
-      - name: "Battery Temperature"
+      - name: "Battery Heatsink Temperature"
         update_interval: 30
         class: "temperature"
         state_class: "measurement"
