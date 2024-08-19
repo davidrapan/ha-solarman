@@ -4,6 +4,8 @@ import re
 import struct
 import logging
 
+from datetime import datetime
+
 from .const import *
 from .common import *
 
@@ -397,26 +399,39 @@ class ParameterParser:
         found = True
         value = ""
 
-        print("start: ", start)
+        registers_count = len(definition["registers"])
 
-        for i,r in enumerate(definition["registers"]):
+        for i, r in enumerate(definition["registers"]):
             index = r - start
-            print ("index: ",index)
-            if (index >= 0) and (index < length):
-                temp = rawData[index]
-                if(i==0):
-                    value = value + str(temp >> 8)  + "/" + str(temp & 0xFF) + "/"
-                elif (i==1):
-                    value = value + str(temp >> 8)  + " " + str(temp & 0xFF) + ":"
-                elif(i==2):
-                    value = value + str(temp >> 8)  + ":" + str(temp & 0xFF)
-                else:
-                    value = value + str(temp >> 8)  + str(temp & 0xFF)
+            if index >= 0 and index < length:
+                if registers_count == 3:
+                    temp = rawData[index]
+                    if i == 0:
+                        value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
+                    elif i == 1:
+                        value = value + str(temp >> 8) + " " + str(temp & 0xFF) + ":"
+                    elif i == 2:
+                        value = value + str(temp >> 8) + ":" + str(temp & 0xFF)
+                    else:
+                        value = value + str(temp >> 8) + str(temp & 0xFF)
+                elif registers_count == 6:
+                    temp = rawData[index]
+                    if i == 0 or i == 1:
+                        value = value + str(temp) + "/"
+                    elif i == 2:
+                        value = value + str(temp) + " "
+                    elif i == 3 or i == 4:
+                        value = value + str(temp) + ":"
+                    else:
+                        value = value + str(temp)
             else:
                 found = False
 
         if found:
-            self.set_state(key, value)
+            if value.endswith(":"):
+                value = value[:-1]
+
+            self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
 
         return
 
@@ -426,7 +441,7 @@ class ParameterParser:
         temp = 0
         value = ""
 
-        for r in definition["registers"]:
+        for i, r in enumerate(definition["registers"]):
             index = r - start
             if (index >= 0) and (index < length):
                 temp = rawData[index] if temp == 0 else (temp * 100) + rawData[index]

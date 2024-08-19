@@ -38,6 +38,7 @@ parameters:
             value: "HV 3-Phase Inverter 20-50kw"
         attributes:
           [
+            "Device DateTime",
             "Device Modbus Address",
             "Device Protocol Version",
             "Device Serial Number",
@@ -137,6 +138,13 @@ parameters:
         range:
           min: 257
           max: 2051
+
+      - name: "Device DateTime"
+        attribute:
+        update_interval: 30
+        device_class: "date"
+        rule: 8
+        registers: [0x003E, 0x003F, 0x0040]
 
   - group: Control
     items:
