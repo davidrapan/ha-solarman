@@ -423,13 +423,15 @@ class ParameterParser:
     def try_parse_time(self, rawData, definition, start, length):
         key = definition["name"]         
         found = True
+        temp = 0
         value = ""
 
         for r in definition["registers"]:
             index = r - start
             if (index >= 0) and (index < length):
-                temp = rawData[index]
-                value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
+                temp = rawData[index] if temp == 0 else (temp * 100) + rawData[index]
+                if temp > 99:
+                    value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
             else:
                 found = False
 

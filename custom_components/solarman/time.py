@@ -43,24 +43,28 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
         self._attr_device_class = None
         self._attr_entity_category = EntityCategory.CONFIG
 
+        self._multiple_registers = False
+
         registers = sensor["registers"]
         registers_length = len(registers)
         if registers_length > 0:
-            self.register = sensor["registers"][0]
-        if registers_length > 1:
-            _LOGGER.warning(f"SolarmanTimeEntity.__init__: Contains more than 1 register!")
+            self.register = registers[0]
+        if registers_length > 1 and registers[1] == registers[0] + 1:
+            self._multiple_registers = True
 
     def set_state(self, state):
         self._attr_native_value = state
 
     @cached_property
-    def native_value(self) -> float:
+    def native_value(self) -> time | None:
         """Return the state of the setting entity."""
+        if isinstance(self._attr_native_value, list):
+            return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", "%H:%M").time()
         return datetime.strptime(self._attr_native_value, "%H:%M").time()
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
-        value_int = int(value.strftime("%H%M"))
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [value_int,], ACTION_ATTEMPTS_MAX)
-        self.set_state(value_int)
+        list_int = [int(value.strftime("%H%M")),] if not self._multiple_registers else [int(value.strftime("%H")), int(value.strftime("%M"))]
+        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, list_int, ACTION_ATTEMPTS_MAX)
+        self.set_state(value.strftime("%H:%M"))
         self.async_write_ha_state()
