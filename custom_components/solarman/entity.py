@@ -103,7 +103,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if "options" in sensor and (options := sensor["options"]):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
-        elif "lookup" in sensor and (options := [s["value"] for s in sensor["lookup"]]):
+        elif "lookup" in sensor and "rule" in sensor and 0 < sensor["rule"] < 5 and (options := [s["value"] for s in sensor["lookup"]]):
             self._attr_device_class = "enum"
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
