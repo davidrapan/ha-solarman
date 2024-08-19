@@ -25,7 +25,7 @@ requests:
     end: 43025
     mb_functioncode: 0x03
   - start: 43141
-    end: 43150 
+    end: 43150
     mb_functioncode: 0x03
 
 parameters:

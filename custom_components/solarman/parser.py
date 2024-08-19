@@ -347,7 +347,7 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 temp = rawData[index]
                 value = value + chr(temp >> 8) + chr(temp & 0xFF)
             else:
@@ -365,9 +365,8 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index]
-                value.append(hex(temp))
+            if index >= 0 and index < length:
+                value.append(hex(rawData[index]))
             else:
                 found = False
 
@@ -383,7 +382,7 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 temp = rawData[index]
                 value = value + str(temp >> 12) + "." +  str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
             else:
@@ -404,8 +403,8 @@ class ParameterParser:
         for i, r in enumerate(definition["registers"]):
             index = r - start
             if index >= 0 and index < length:
+                temp = rawData[index]
                 if registers_count == 3:
-                    temp = rawData[index]
                     if i == 0:
                         value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
                     elif i == 1:
@@ -415,7 +414,6 @@ class ParameterParser:
                     else:
                         value = value + str(temp >> 8) + str(temp & 0xFF)
                 elif registers_count == 6:
-                    temp = rawData[index]
                     if i == 0 or i == 1:
                         value = value + str(temp) + "/"
                     elif i == 2:
@@ -436,17 +434,22 @@ class ParameterParser:
         return
 
     def try_parse_time(self, rawData, definition, start, length):
-        key = definition["name"]         
+        key = definition["name"]
         found = True
-        temp = 0
         value = ""
+
+        registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index] if temp == 0 else (temp * 100) + rawData[index]
-                if temp > 99:
+            if index >= 0 and index < length:
+                temp = rawData[index]
+                if registers_count == 1:
                     value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
+                else:
+                    value = value + str("{:02d}".format(int(temp)))
+                    if i == 0 or (i == 1 and registers_count > 2):
+                        value = value + ":"
             else:
                 found = False
 
@@ -462,9 +465,8 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index]
-                value.append((temp))
+            if index >= 0 and index < length:
+                value.append(rawData[index])
             else:
                 found = False
 
