@@ -10,6 +10,8 @@ import concurrent.futures
 from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
+from umodbus.client.serial.redundancy_check import get_crc
+
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
@@ -18,40 +20,6 @@ from .common import *
 from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
-
-def generate_look_up_table():
-    poly = 0xA001
-    table = []
-
-    for index in range(256):
-
-        data = index << 1
-        crc = 0
-        for _ in range(8, 0, -1):
-            data >>= 1
-            if (data ^ crc) & 0x0001:
-                crc = (crc >> 1) ^ poly
-            else:
-                crc >>= 1
-        table.append(crc)
-
-    return table
-
-look_up_table = generate_look_up_table()
-
-def get_crc(msg):
-    register = 0xFFFF
-
-    for byte_ in msg:
-        try:
-            val = struct.unpack('<B', byte_)[0]
-        except TypeError:
-            val = byte_
-
-        register = \
-            (register >> 8) ^ look_up_table[(register ^ val) & 0xFF]
-
-    return struct.pack('<H', register)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
@@ -78,13 +46,27 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
     def _received_frame_is_valid(self, frame):
-        return super()._received_frame_is_valid(frame) if not self._passthrough else True
+        if not self._passthrough:
+            return super()._received_frame_is_valid(frame)
+        if not frame.startswith(self.v5_start):
+            self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
+            return False
+        if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
+            self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
+            return False
+        return True
 
     def _v5_frame_decoder(self, v5_frame):
         if not self._passthrough:
             return super()._v5_frame_decoder(v5_frame)
+        if v5_frame[3:5] != struct.pack("<H", 0x4510): # a5 17 00 10 45, fourth byte is length of modbus rtu frame
+            raise V5FrameError("V5 frame contains incorrect control code")
 
         modbus_frame = v5_frame[6:]
+
+        if v5_frame[5] != len(modbus_frame):
+            raise V5FrameError("V5 frame modbus rtu frame length does not match")
+
         modbus_frame = modbus_frame + get_crc(modbus_frame)
 
         if len(modbus_frame) < 5:
