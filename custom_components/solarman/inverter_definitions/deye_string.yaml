@@ -63,7 +63,7 @@ parameters:
 
   - group: Grid
     items:
-      - name: "Grid Voltage L-L(A)"
+      - name: "Grid L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -71,7 +71,7 @@ parameters:
         rule: 1
         registers: [0x0049]
 
-      - name: "Grid Voltage L-L(B))"
+      - name: "Grid L2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -79,7 +79,7 @@ parameters:
         rule: 1
         registers: [0x004A]
 
-      - name: "Grid Voltage L-L(C)"
+      - name: "Grid L3 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -87,7 +87,7 @@ parameters:
         rule: 1
         registers: [0x004B]
 
-      - name: "Grid Current A"
+      - name: "Grid L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -95,7 +95,7 @@ parameters:
         rule: 2
         registers: [0x004C]
 
-      - name: "Grid Current B"
+      - name: "Grid L2 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -103,7 +103,7 @@ parameters:
         rule: 2
         registers: [0x004D]
 
-      - name: "Grid Current C"
+      - name: "Grid L3 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -134,7 +134,6 @@ parameters:
         range:
           min: 0
           max: 5
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
             value: "Standby"
@@ -187,7 +186,7 @@ parameters:
         scale: 0.1
         registers: [0x0058, 0x0059]
 
-      - name: "Inverter ID"
+      - name: "Device Serial Number"
         class: ""
         state_class: ""
         uom: ""

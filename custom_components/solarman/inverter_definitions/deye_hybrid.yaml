@@ -133,7 +133,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00BD]
-        options: ["charging", "idle", "discharging"]
         lookup:
           - key: 0
             value: "charging"
@@ -395,7 +394,6 @@ parameters:
         range:
           min: 0
           max: 5
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
             value: "Standby"
@@ -508,35 +506,26 @@ parameters:
         registers: [0x000D]
         isstr: true
 
-      - name: "Grid-connected Status"
-        class: "enum"
+      - name: "Grid"
+        update_interval: 30
+        platform: "binary_sensor"
+        device_class: power
         state_class: ""
         uom: ""
-        scale: 1
         rule: 1
         registers: [0x00C2]
-        options: ["Off-Grid", "On-Grid"]
-        lookup:
-          - key: 0
-            value: "Off-Grid"
-          - key: 1
-            value: "On-Grid"
+        icon: "mdi:transmission-tower"
 
-      - name: "Gen-connected Status"
-        class: "enum"
+      - name: "Generator"
+        update_interval: 30
+        platform: "binary_sensor"
+        device_class: power
         state_class: ""
         uom: ""
-        scale: 1
         rule: 1
         registers: [0x00A6]
-        options: ["none", "On"]
-        lookup:
-          - key: 0
-            value: "none"
-          - key: 1
-            value: "On"
 
-      - name: "Gen Power"
+      - name: "Generator Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -551,14 +540,6 @@ parameters:
         scale: 1
         rule: 3
         registers: [0x00F4, 0x00F7]
-        options:
-          [
-            "Selling First",
-            "Zero-Export to Load&Solar Sell",
-            "Zero-Export to Home&Solar Sell",
-            "Zero-Export to Load",
-            "Zero-Export to Home",
-          ]
         lookup:
           - key: 0
             value: "Selling First"
