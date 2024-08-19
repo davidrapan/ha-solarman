@@ -19,6 +19,40 @@ from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
 
+def generate_look_up_table():
+    poly = 0xA001
+    table = []
+
+    for index in range(256):
+
+        data = index << 1
+        crc = 0
+        for _ in range(8, 0, -1):
+            data >>= 1
+            if (data ^ crc) & 0x0001:
+                crc = (crc >> 1) ^ poly
+            else:
+                crc >>= 1
+        table.append(crc)
+
+    return table
+
+look_up_table = generate_look_up_table()
+
+def get_crc(msg):
+    register = 0xFFFF
+
+    for byte_ in msg:
+        try:
+            val = struct.unpack('<B', byte_)[0]
+        except TypeError:
+            val = byte_
+
+        register = \
+            (register >> 8) ^ look_up_table[(register ^ val) & 0xFF]
+
+    return struct.pack('<H', register)
+
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
@@ -50,7 +84,8 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         if not self._passthrough:
             return super()._v5_frame_decoder(v5_frame)
 
-        modbus_frame = v5_frame[10:]
+        modbus_frame = v5_frame[7:]
+        modbus_frame = modbus_frame + get_crc(modbus_frame)
 
         if len(modbus_frame) < 5:
             raise V5FrameError("V5 frame does not contain a valid Modbus RTU frame")
