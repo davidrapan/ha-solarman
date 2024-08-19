@@ -73,8 +73,8 @@ class ParameterParser:
     def is_requestable(self, parameters):
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
-    def is_scheduled(self, parameters, runtime):
-        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else self._update_interval) == 0)
+    def is_scheduled(self, parameters, runtime, default):
+        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else default) == 0)
 
     def default_from_unit_of_measurement(self, parameters):
         return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
@@ -103,7 +103,7 @@ class ParameterParser:
 
         for p in self.parameters():
             for i in p["items"]:
-                if self.is_requestable(i) and self.is_scheduled(i, runtime):
+                if self.is_requestable(i) and self.is_scheduled(i, runtime, self._update_interval if not REQUEST_UPDATE_INTERVAL in p else p[REQUEST_UPDATE_INTERVAL]):
                     self.set_state(i["name"], self.default_from_unit_of_measurement(i))
                     if "registers" in i:
                         for r in i["registers"]:
