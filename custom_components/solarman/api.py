@@ -84,7 +84,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         if not self._passthrough:
             return super()._v5_frame_decoder(v5_frame)
 
-        modbus_frame = v5_frame[7:]
+        modbus_frame = v5_frame[6:]
         modbus_frame = modbus_frame + get_crc(modbus_frame)
 
         if len(modbus_frame) < 5:
