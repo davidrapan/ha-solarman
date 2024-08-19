@@ -384,11 +384,14 @@ class ParameterParser:
             index = r - start
             if index >= 0 and index < length:
                 temp = rawData[index]
-                value = value + str(temp >> 12) + "." +  str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
+                value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
             else:
                 found = False
 
         if found:
+            if "remove" in definition:
+                value = value.replace(definition["remove"], "")
+
             self.set_state(key, value)
 
         return
