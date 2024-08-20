@@ -146,9 +146,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.state = -1
         await self.async_disconnect(loud)
 
-    async def async_read(self, params, code, start, end) -> None:
-        quantity = end - start + 1
-
+    async def async_read(self, params, code, start, quantity) -> None:
         await self.async_connect()
 
         match code:
@@ -206,25 +204,28 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     code = get_request_code(request)
                     start = get_request_start(request)
                     end = get_request_end(request)
+                    quantity = end - start + 1
 
-                    _LOGGER.debug(f"[{self.serial}] Querying ({start} - {end}) ...")
+                    start_end = f"{start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
+                    _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) ...")
 
                     attempts_left = ACTION_ATTEMPTS
                     while attempts_left > 0 and results[i] == 0:
                         attempts_left -= 1
 
                         try:
-                            await self.async_read(self.profile, code, start, end)
+                            await self.async_read(self.profile, code, start, quantity)
                             results[i] = 1
                         except (V5FrameError, TimeoutError, Exception) as e:
                             results[i] = 0
 
-                            if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
-                                _LOGGER.warning(f"[{self.serial}] Querying ({start} - {end}) failed. #{runtime} [{format_exception(e)}]")
+                            #if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
+                            #    _LOGGER.warning(f"[{self.serial}] Querying ({start_end}) failed. #{runtime} [{format_exception(e)}]")
+                            _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) failed. [{format_exception(e)}]")
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                        _LOGGER.debug(f"[{self.serial}] Querying {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+                        _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
                     if results[i] == 0:
                         break
