@@ -10,7 +10,8 @@ import concurrent.futures
 from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
-from umodbus.client.serial.redundancy_check import get_crc
+#from umodbus.client.serial.redundancy_check import get_crc
+from umodbus.client.tcp import read_holding_registers, read_input_registers, parse_response_adu
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -45,34 +46,52 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         except Exception as e:
             self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
-    def _received_frame_is_valid(self, frame):
+    async def _get_modbus_response(self, mb_request_frame):
         if not self._passthrough:
-            return super()._received_frame_is_valid(frame)
-        if not frame.startswith(self.v5_start):
-            self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
-            return False
-        if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
-            self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
-            return False
-        return True
+            return await super()._get_modbus_response(mb_request_frame)
 
-    def _v5_frame_decoder(self, v5_frame):
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+
+    async def read_input_registers(self, register_addr, quantity):
         if not self._passthrough:
-            return super()._v5_frame_decoder(v5_frame)
-        if v5_frame[3:5] != struct.pack("<H", 0x4510): # a5 17 00 10 45, fourth byte is length of modbus rtu frame
-            raise V5FrameError("V5 frame contains incorrect control code")
+            return await super().read_input_registers(register_addr, quantity)
 
-        modbus_frame = v5_frame[6:]
+        return await self._get_modbus_response(read_input_registers(self.mb_slave_id, register_addr, quantity))
 
-        if v5_frame[5] != len(modbus_frame):
-            raise V5FrameError("V5 frame modbus rtu frame length does not match")
+    async def read_holding_registers(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_holding_registers(register_addr, quantity)
 
-        modbus_frame = modbus_frame + get_crc(modbus_frame)
+        return await self._get_modbus_response(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
-        if len(modbus_frame) < 5:
-            raise V5FrameError("V5 frame does not contain a valid Modbus RTU frame")
+    #def _received_frame_is_valid(self, frame):
+    #    if not self._passthrough:
+    #        return super()._received_frame_is_valid(frame)
+    #    if not frame.startswith(self.v5_start):
+    #        self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
+    #        return False
+    #    if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
+    #        self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
+    #        return False
+    #    return True
 
-        return modbus_frame
+    #def _v5_frame_decoder(self, v5_frame):
+    #    if not self._passthrough:
+    #        return super()._v5_frame_decoder(v5_frame)
+    #    if v5_frame[3:5] != struct.pack("<H", 0x4510): # a5 17 00 10 45, fourth byte is length of modbus rtu frame
+    #        raise V5FrameError("V5 frame contains incorrect control code")
+
+    #    modbus_frame = v5_frame[6:]
+
+    #    if v5_frame[5] != len(modbus_frame):
+    #        raise V5FrameError("V5 frame modbus rtu frame length does not match")
+
+    #    modbus_frame = modbus_frame + get_crc(modbus_frame)
+
+    #    if len(modbus_frame) < 5:
+    #        raise V5FrameError("V5 frame does not contain a valid Modbus RTU frame")
+
+    #    return modbus_frame
 
 class Inverter(PySolarmanV5AsyncWrapper):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
