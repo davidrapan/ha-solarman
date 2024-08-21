@@ -10,7 +10,6 @@ import concurrent.futures
 from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
-#from umodbus.client.serial.redundancy_check import get_crc
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
@@ -49,61 +48,13 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         except Exception as e:
             self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
-    async def read_coils(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_coils(register_addr, quantity)
-
-        return await self.tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
-
-    async def read_discrete_inputs(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_discrete_inputs(register_addr, quantity)
-
-        return await self.tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
-
-    async def read_input_registers(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_input_registers(register_addr, quantity)
-
-        return await self.tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
-
-    async def read_holding_registers(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_holding_registers(register_addr, quantity)
-
-        return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
-
-    async def write_single_coil(self, register_addr, value):
-        if not self._passthrough:
-            return await super().write_single_coil(register_addr, value)
-
-        return await self.tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
-
-    async def write_multiple_coils(self, register_addr, values):
-        if not self._passthrough:
-            return await super().write_multiple_coils(register_addr, values)
-
-        return await self.tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
-
-    async def write_holding_register(self, register_addr, value):
-        if not self._passthrough:
-            return await super().write_holding_register(register_addr, value)
-
-        return await self.tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
-
-    async def write_multiple_holding_registers(self, register_addr, values):
-        if not self._passthrough:
-            return await super().write_multiple_holding_registers(register_addr, values)
-
-        return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
-
     def _received_frame_is_valid(self, frame):
         if self._passthrough:
             return True
         if not frame.startswith(self.v5_start):
             self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
-        if frame[5] != self.sequence_number and frame[3:5] == struct.pack("<H", 0x4510):
+        if frame[5] != self.sequence_number and is_ethernet_frame(frame):
             self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
             self._passthrough = True
             return False
@@ -115,34 +66,45 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             return False
         return True
 
-    #def _received_frame_is_valid(self, frame):
-    #    if not self._passthrough:
-    #        return super()._received_frame_is_valid(frame)
-    #    if not frame.startswith(self.v5_start):
-    #        self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
-    #        return False
-    #    if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
-    #        self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
-    #        return False
-    #    return True
+    async def read_coils(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_coils(register_addr, quantity)
+        return await self.tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
 
-    #def _v5_frame_decoder(self, v5_frame):
-    #    if not self._passthrough:
-    #        return super()._v5_frame_decoder(v5_frame)
-    #    if v5_frame[3:5] != struct.pack("<H", 0x4510): # a5 17 00 10 45, fourth byte is length of modbus rtu frame
-    #        raise V5FrameError("V5 frame contains incorrect control code")
+    async def read_discrete_inputs(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_discrete_inputs(register_addr, quantity)
+        return await self.tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
 
-    #    modbus_frame = v5_frame[6:]
+    async def read_input_registers(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_input_registers(register_addr, quantity)
+        return await self.tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
 
-    #    if v5_frame[5] != len(modbus_frame):
-    #        raise V5FrameError("V5 frame modbus rtu frame length does not match")
+    async def read_holding_registers(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_holding_registers(register_addr, quantity)
+        return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
-    #    modbus_frame = modbus_frame + get_crc(modbus_frame)
+    async def write_single_coil(self, register_addr, value):
+        if not self._passthrough:
+            return await super().write_single_coil(register_addr, value)
+        return await self.tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
 
-    #    if len(modbus_frame) < 5:
-    #        raise V5FrameError("V5 frame does not contain a valid Modbus RTU frame")
+    async def write_multiple_coils(self, register_addr, values):
+        if not self._passthrough:
+            return await super().write_multiple_coils(register_addr, values)
+        return await self.tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
 
-    #    return modbus_frame
+    async def write_holding_register(self, register_addr, value):
+        if not self._passthrough:
+            return await super().write_holding_register(register_addr, value)
+        return await self.tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
+
+    async def write_multiple_holding_registers(self, register_addr, values):
+        if not self._passthrough:
+            return await super().write_multiple_holding_registers(register_addr, values)
+        return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
@@ -198,8 +160,9 @@ class Inverter(PySolarmanV5AsyncWrapper):
             if loud:
                 _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
             await self.connect()
-        elif not self.state > 0:
-            await self.reconnect()
+        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
+        #elif not self.state > 0:
+        #    await self.reconnect()
 
     async def async_disconnect(self, loud = True) -> None:
         if loud:
@@ -283,7 +246,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     quantity = end - start + 1
 
                     start_end = f"{start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
-                    _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) ...")
+                    _LOGGER.debug(f"[{self.serial}] Querying {start_end} ...")
 
                     attempts_left = ACTION_ATTEMPTS
                     while attempts_left > 0 and results[i] == 0:
@@ -296,15 +259,16 @@ class Inverter(PySolarmanV5AsyncWrapper):
                             results[i] = 0
 
                             #if ((not isinstance(e, TimeoutError) or not attempts_left >= 1) and not (not isinstance(e, TimeoutError) or (e.__cause__ and isinstance(e.__cause__, OSError) and e.__cause__.errno == errno.EHOSTUNREACH))) or _LOGGER.isEnabledFor(logging.DEBUG):
-                            #    _LOGGER.warning(f"[{self.serial}] Querying ({start_end}) failed. #{runtime} [{format_exception(e)}]")
-                            _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) failed. [{format_exception(e)}]")
+                            #    _LOGGER.warning(f"[{self.serial}] Querying {start_end} failed. #{runtime} [{format_exception(e)}]")
+                            _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed. [{format_exception(e)}]")
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                        _LOGGER.debug(f"[{self.serial}] Querying ({start_end}) {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+                        _LOGGER.debug(f"[{self.serial}] Querying {start_end} {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
                     if results[i] == 0:
                         break
+
 
                 if not 0 in results:
                     return self.get_result(self.profile)

@@ -1,5 +1,6 @@
 import os
 import yaml
+import struct
 import asyncio
 import aiofiles
 
@@ -43,6 +44,9 @@ def group_when(iterable, predicate, max_size = REQUEST_MAX_SIZE):
             x = i + 1
         i += 1
     yield iterable[x:size]
+
+def is_ethernet_frame(frame):
+    return frame[3:5] == struct.pack("<H", 0x4510) and len(frame) > 9 and int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:]) and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])
 
 def format_exception(e):
     return f"{type(e).__name__}{f': {e}' if f'{e}' else ''}"
