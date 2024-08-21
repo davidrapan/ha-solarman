@@ -11,7 +11,7 @@ from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 #from umodbus.client.serial.redundancy_check import get_crc
-from umodbus.client.tcp import read_holding_registers, read_input_registers, write_single_register, write_multiple_registers, parse_response_adu
+from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -26,6 +26,9 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self._passthrough = passthrough
+
+    async def tcp_parse_response_adu(self, mb_request_frame):
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
 
     async def reconnect(self) -> None:
         """
@@ -46,33 +49,58 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         except Exception as e:
             self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
+    async def read_coils(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_coils(register_addr, quantity)
+
+        return await self.tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
+
+    async def read_discrete_inputs(self, register_addr, quantity):
+        if not self._passthrough:
+            return await super().read_discrete_inputs(register_addr, quantity)
+
+        return await self.tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
+
     async def read_input_registers(self, register_addr, quantity):
         if not self._passthrough:
             return await super().read_input_registers(register_addr, quantity)
 
-        mb_request_frame = read_input_registers(self.mb_slave_id, register_addr, quantity)
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+        return await self.tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
 
     async def read_holding_registers(self, register_addr, quantity):
         if not self._passthrough:
             return await super().read_holding_registers(register_addr, quantity)
 
-        mb_request_frame = read_holding_registers(self.mb_slave_id, register_addr, quantity)
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+        return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
     async def write_holding_register(self, register_addr, value):
         if not self._passthrough:
             return await super().write_holding_register(register_addr, value)
 
-        mb_request_frame = write_single_register(self.mb_slave_id, register_addr, value)
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+        return await self.tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
 
     async def write_multiple_holding_registers(self, register_addr, values):
         if not self._passthrough:
             return await super().write_multiple_holding_registers(register_addr, values)
 
-        mb_request_frame = write_multiple_registers(self.mb_slave_id, register_addr, values)
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+        return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
+
+    def _received_frame_is_valid(self, frame):
+        if not self._passthrough:
+            return super()._received_frame_is_valid(frame)
+        return True
+
+    #def _received_frame_is_valid(self, frame):
+    #    if not frame.startswith(self.v5_start):
+    #        self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
+    #        return False
+    #    if frame[5] != self.sequence_number and v5_frame[3:5] != struct.pack("<H", 0x4510):
+    #        self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
+    #        return False
+    #    if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
+    #        self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
+    #        return False
+    #    return True
 
     #def _received_frame_is_valid(self, frame):
     #    if not self._passthrough:
@@ -178,11 +206,17 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def async_read(self, params, code, start, quantity) -> None:
         await self.async_connect()
 
-        match code:
+        match code: 
+            case 1:
+                response = await self.read_coils(start, quantity)
+            case 2:
+                response = await self.read_discrete_inputs(start, quantity)
             case 3:
                 response = await self.read_holding_registers(start, quantity)
             case 4:
                 response = await self.read_input_registers(start, quantity)
+            case _:
+                raise Exception(f"[{self.serial}] Used incorrect modbus function code {code} for reading")
 
         params.parse(response, start, quantity)
 
@@ -317,6 +351,56 @@ class Inverter(PySolarmanV5AsyncWrapper):
             if not self.auto_reconnect:
                 await self.async_disconnect()
             raise
+
+    async def service_write_single_coil(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+        _LOGGER.debug(f"[{self.serial}] service_write_single_coil: {register}, value: {value}")
+
+        if await self.wait_for_reading_done(wait_for_attempts):
+            _LOGGER.debug(f"[{self.serial}] service_write_single_coil: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
+
+        attempts_left = ACTION_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_single_coil(register, value)
+                _LOGGER.debug(f"[{self.serial}] service_write_single_coil: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"[{self.serial}] service_write_single_coil: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
+
+    async def service_write_multiple_coils(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+        _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: {register}, values: {values}")
+
+        if await self.wait_for_reading_done(wait_for_attempts):
+            _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
+
+        attempts_left = ACTION_ATTEMPTS
+        while attempts_left > 0:
+            attempts_left -= 1
+
+            try:
+                await self.async_connect()
+                response = await self.write_multiple_coils(register, values)
+                _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: {register}, response: {response}")
+                return True
+            except Exception as e:
+                _LOGGER.warning(f"[{self.serial}] service_wwrite_multiple_coils: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                if not self.auto_reconnect:
+                    await self.async_disconnect()
+                if not attempts_left > 0:
+                    raise
+
+                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
 
     async def service_write_holding_register(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
         _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, value: {value}")
