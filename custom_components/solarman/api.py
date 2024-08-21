@@ -11,7 +11,7 @@ from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 #from umodbus.client.serial.redundancy_check import get_crc
-from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_register, write_multiple_registers, parse_response_adu
+from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -73,6 +73,18 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
 
         return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
+    async def write_single_coil(self, register_addr, value):
+        if not self._passthrough:
+            return await super().write_single_coil(register_addr, value)
+
+        return await self.tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
+
+    async def write_multiple_coils(self, register_addr, values):
+        if not self._passthrough:
+            return await super().write_multiple_coils(register_addr, values)
+
+        return await self.tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
+
     async def write_holding_register(self, register_addr, value):
         if not self._passthrough:
             return await super().write_holding_register(register_addr, value)
@@ -86,21 +98,22 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
     def _received_frame_is_valid(self, frame):
-        if not self._passthrough:
-            return super()._received_frame_is_valid(frame)
+        if self._passthrough:
+            return True
+        if not frame.startswith(self.v5_start):
+            self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
+            return False
+        if frame[5] != self.sequence_number and frame[3:5] == struct.pack("<H", 0x4510):
+            self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
+            self._passthrough = True
+            return False
+        if frame[5] != self.sequence_number:
+            self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
+            return False
+        if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
+            self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
+            return False
         return True
-
-    #def _received_frame_is_valid(self, frame):
-    #    if not frame.startswith(self.v5_start):
-    #        self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
-    #        return False
-    #    if frame[5] != self.sequence_number and v5_frame[3:5] != struct.pack("<H", 0x4510):
-    #        self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
-    #        return False
-    #    if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
-    #        self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
-    #        return False
-    #    return True
 
     #def _received_frame_is_valid(self, frame):
     #    if not self._passthrough:
