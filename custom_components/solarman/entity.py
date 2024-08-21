@@ -55,7 +55,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         return default
 
     def set_state(self, state):
-        self._attr_state = state
+        self._attr_state = self._attr_native_value = state
 
     def update(self):
         if self.sensor_name in self.coordinator.data and (data := self.coordinator.data[self.sensor_name]):
@@ -92,8 +92,6 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
             self._attr_device_class = device_class
         if "device_class" in sensor and (device_class := sensor["device_class"]):
             self._attr_device_class = device_class
-        if "state_class" in sensor and (state_class := sensor["state_class"]):
-            self._attr_state_class = state_class
         if "uom" in sensor and (unit_of_measurement := sensor["uom"]):
             self._attr_native_unit_of_measurement = unit_of_measurement
         if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
