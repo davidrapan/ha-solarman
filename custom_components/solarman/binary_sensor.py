@@ -49,7 +49,6 @@ class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
         self._sensor_inverted = False
-
         if "inverted" in sensor and (inverted := sensor["inverted"]):
             self._sensor_inverted = inverted
 
@@ -69,6 +68,8 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
 
     @property
     def is_on(self) -> bool | None:
+        if not self._attr_state:
+            return None
         return self._attr_state > -1
 
     def update(self):

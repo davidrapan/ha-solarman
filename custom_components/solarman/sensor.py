@@ -57,14 +57,15 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     return True
 
 class SolarmanSensorEntity(SolarmanEntity, SensorEntity):
-    def set_state(self, state):
-        self._attr_native_value = state
+    def __init__(self, coordinator, platform, sensor):
+        super().__init__(coordinator, platform, sensor)
+        if "state_class" in sensor and (state_class := sensor["state_class"]):
+            self._attr_state_class = state_class
 
 class SolarmanIntervalSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_extra_state_attributes = { "state_class": "measurement" }
         self._attr_icon = "mdi:update"
 
     @property
@@ -77,7 +78,6 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, _PLATFORM, sensor)
-
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
