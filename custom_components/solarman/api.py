@@ -11,7 +11,7 @@ from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 #from umodbus.client.serial.redundancy_check import get_crc
-from umodbus.client.tcp import read_holding_registers, read_input_registers, parse_response_adu
+from umodbus.client.tcp import read_holding_registers, read_input_registers, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -46,23 +46,33 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         except Exception as e:
             self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
-    async def _get_modbus_response(self, mb_request_frame):
-        if not self._passthrough:
-            return await super()._get_modbus_response(mb_request_frame)
-
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
-
     async def read_input_registers(self, register_addr, quantity):
         if not self._passthrough:
             return await super().read_input_registers(register_addr, quantity)
 
-        return await self._get_modbus_response(read_input_registers(self.mb_slave_id, register_addr, quantity))
+        mb_request_frame = read_input_registers(self.mb_slave_id, register_addr, quantity)
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
 
     async def read_holding_registers(self, register_addr, quantity):
         if not self._passthrough:
             return await super().read_holding_registers(register_addr, quantity)
 
-        return await self._get_modbus_response(read_holding_registers(self.mb_slave_id, register_addr, quantity))
+        mb_request_frame = read_holding_registers(self.mb_slave_id, register_addr, quantity)
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+
+    async def write_holding_register(self, register_addr, value):
+        if not self._passthrough:
+            return await super().write_holding_register(register_addr, value)
+
+        mb_request_frame = write_single_register(self.mb_slave_id, register_addr, value)
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+
+    async def write_multiple_holding_registers(self, register_addr, values):
+        if not self._passthrough:
+            return await super().write_multiple_holding_registers(register_addr, values)
+
+        mb_request_frame = write_multiple_registers(self.mb_slave_id, register_addr, values)
+        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
 
     #def _received_frame_is_valid(self, frame):
     #    if not self._passthrough:
