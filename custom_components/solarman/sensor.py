@@ -66,6 +66,8 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_native_unit_of_measurement = "s"
+        self._attr_state_class = "duration"
         self._attr_icon = "mdi:update"
 
     @property
