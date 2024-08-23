@@ -22,31 +22,14 @@ from .parser import ParameterParser
 _LOGGER = logging.getLogger(__name__)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
+    sm_start = bytes.fromhex("AA")
+
     def __init__(self, address, serial, port, mb_slave_id, passthrough):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self._passthrough = passthrough
 
     async def tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
-
-    async def reconnect(self) -> None:
-        """
-        Overridden to silence [ConnectionRefusedError: [Errno 111] Connect call failed] during reconnects
-
-        """
-        try:
-            if self.reader_task:
-                self.reader_task.cancel()
-            self.reader, self.writer = await asyncio.open_connection(self.address, self.port)
-            loop = asyncio.get_running_loop()
-            self.reader_task = loop.create_task(self._conn_keeper(), name = "ConnKeeper")
-            self.log.debug("[%s] Successful reconnect", self.serial)
-            if self.data_wanted_ev.is_set():
-                self.log.debug("[%s] Data expected. Will retry the last request", self.serial)
-                self.writer.write(self._last_frame)
-                await self.writer.drain()
-        except Exception as e:
-            self.log.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
 
     def _received_frame_is_valid(self, frame):
         if self._passthrough:
