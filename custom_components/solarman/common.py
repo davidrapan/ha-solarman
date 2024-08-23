@@ -66,6 +66,9 @@ def get_request_start(request):
 def get_request_end(request):
     return request[REQUEST_END]
 
+def get_attr(dict, key, default = None):
+    return value if key in dict and (value := dict[key]) else default
+
 def get_battery_power_capacity(capacity, voltage):
     return capacity * voltage / 1000
 
