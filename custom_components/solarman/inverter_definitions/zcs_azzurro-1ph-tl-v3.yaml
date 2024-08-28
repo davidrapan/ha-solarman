@@ -1,51 +1,50 @@
-#
-# Tested with Solarman ME3000-SP with an embedded
-# "wifikit" logger. Might work for other devices
-# too.
-
-# The ME3000-SP is basically a glorified battery
-# charger - it is not directly connected to any
-# production infrastructure, but can calculate
-# generated energy based on any CT clamps it is
-# connected to. For most people this entity will
-# be a generally accurate representation of their
-# PV panel output, but since this tracks production
-# from _any_ source, it is named generically.
-#
+# Tested for ZCS Azzurro 1PH2200TL-V3
+# Note: no modbus energy meter connected
+# Based on the Sofar LSW3 model but has fewer metrics
+# From: https://github.com/81ondo
 
 default:
   update_interval: 5
-  code: 0x03
   digits: 6
 
-requests:
-  - start: 0x10B0
-    end: 0x10BC
-    code: 0x04
-  - start: 0x2000
-    end: 0x200B
-    code: 0x04
-
 parameters:
-  - group: Production
+  - group: PV
     items:
-      - name: "PV Power"
+      - name: "PV1 Power"
         class: "power"
         state_class: "measurement"
-        uom: "kW"
-        scale: 0.01
+        uom: "W"
+        scale: 10
         rule: 1
-        registers: [0x0215]
+        registers: [0x000A]
         icon: "mdi:solar-power"
 
-      - name: "Today Production"
+      - name: "PV1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0006]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0007]
+        icon: "mdi:solar-power"
+
+      - name: Today Production
         friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
-        registers: [0x0218]
+        registers: [0x0019]
         icon: "mdi:solar-power"
 
       - name: "Total Production"
@@ -54,391 +53,183 @@ parameters:
         uom: "kWh"
         scale: 1
         rule: 3
-        registers: [0x021D, 0x021C]
+        registers: [0x0016, 0x0015]
         icon: "mdi:solar-power"
 
-      - name: "Today Production Time"
-        class: "duration"
-        state_class: "total_increasing"
-        uom: "min"
-        scale: 1
-        rule: 1
-        registers: [0x0243]
-        icon: "mdi:sun-clock-outline"
-
-      - name: "Total Production Time"
-        class: "duration"
-        state_class: "total_increasing"
+      - name: "Total Production time"
+        class: ""
+        state_class: "measurement"
         uom: "h"
         scale: 1
         rule: 3
-        registers: [0x0245, 0x244]
-        icon: "mdi:sun-clock-outline"
+        registers: [0x0018, 0x0017]
+        icon: "mdi:clock-outline"
 
-  - group: Load
+      - name: "Today Production time"
+        class: ""
+        state_class: "measurement"
+        uom: "min"
+        scale: 1
+        rule: 1
+        registers: [0x001A]
+        icon: "mdi:clock-outline"
+
+  - group: Output
     items:
-      - name: "Consumption Power"
+      - name: "Output active power"
         class: "power"
         state_class: "measurement"
-        uom: "kW"
-        scale: 0.01
+        uom: "W"
+        scale: 10
         rule: 1
-        registers: [0x0213]
+        registers: [0x000C]
         icon: "mdi:home-lightning-bolt"
 
-      - name: Today Load Consumption
-        alt: Daily Consumption
-        friendly_name: Today's Load Consumption
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
+      - name: "Output reactive power"
+        class: ""
+        state_class: "measurement"
+        uom: "kVar"
         scale: 0.01
         rule: 1
-        registers: [0x021B]
+        registers: [0x000D]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Total Load Consumption"
-        alt: Total Consumption
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 1
-        rule: 3
-        registers: [0x0223, 0x0222]
-        icon: "mdi:home-lightning-bolt-outline"
-
-  - group: Grid
-    items:
-      - name: "Grid A Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0206]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid A Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x0207]
-        icon: "mdi:current-ac"
-
-      - name: "Grid B Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0208]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid B Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x0209]
-        icon: "mdi:current-ac"
-
-      - name: "Grid C Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x020A]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid C Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x020B]
-        icon: "mdi:current-ac"
-
-      - name: "Grid Frequency"
+      - name: "Grid frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
-        registers: [0x20C]
-        icon: "mdi:sine-wave"
+        registers: [0x000E]
+        icon: "mdi:home-lightning-bolt"
 
-      - name: Today Energy Export
-        alt: Daily Power Sold
-        friendly_name: Today's Energy Export
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.01
-        rule: 1
-        registers: [0x0219]
-        icon: "mdi:transmission-tower-import"
-
-      - name: "Today Energy Import"
-        alt: Daily Power Bought
-        friendly_name: Today's Energy Import
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.01
-        rule: 1
-        registers: [0x021A]
-        icon: "mdi:transmission-tower-export"
-
-  - group: Battery
-    items:
-      - name: "Battery Voltage"
+      - name: "L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
-        registers: [0x020E]
-        icon: "mdi:home-battery"
+        registers: [0x000F]
+        icon: "mdi:home-lightning-bolt"
 
-      - name: "Battery Current"
+      - name: "L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.01
-        rule: 2
-        registers: [0x020F]
-        icon: "mdi:current-dc"
-
-      - name: "Battery Charge / Discharge Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "kW"
-        scale: 0.01
-        rule: 2
-        registers: [0x020D]
-        icon: "mdi:home-battery"
-
-      - name: "Battery"
-        class: "battery"
-        state_class: "measurement"
-        uom: "%"
-        scale: 1
         rule: 1
-        registers: [0x210]
-        icon: "mdi:battery"
+        registers: [0x0010]
+        icon: "mdi:home-lightning-bolt"
 
-      - name: "Battery Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 1
-        rule: 1
-        registers: [0x0211]
-        icon: "mdi:thermometer"
-
-      - name: "Battery Capacity"
-        class: ""
+  - group: Device
+    items:
+      - name: "Device State"
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x10B1]
-        icon: "mdi:battery-high"
-
-      - name: "Battery Max Charge Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x10B3]
-        icon: "mdi:battery"
-
-      - name: "Battery Max Charge Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x10B4]
-        icon: "mdi:current-dc"
-
-      - name: "Battery Min Discharge Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x10B6]
-        icon: "mdi:battery"
-
-      - name: "Battery Max Discharge Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x10B7]
-        icon: "mdi:current-dc"
-
-      - name: "Battery Discharge Depth"
-        class: ""
-        state_class: "measurement"
-        uom: "%"
-        scale: 1
-        rule: 1
-        registers: [0x10B9]
-        icon: "mdi:battery-high"
-
-      - name: "Battery Empty Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.01
-        rule: 1
-        registers: [0x10BB]
-        icon: "mdi:battery"
-
-      - name: "Battery Full Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.01
-        rule: 1
-        registers: [0x10BC]
-        icon: "mdi:battery"
-
-      - name: "Battery Type"
-        class: "enum"
-        rule: 1
-        registers: [0x10B0]
+        registers: [0x0000]
+        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
-            value: "DARFON"
+            value: "Standby"
           - key: 0x0001
-            value: "PYLON"
+            value: "Self-test"
           - key: 0x0002
-            value: "SOLTARO"
+            value: "Normal"
           - key: 0x0003
-            value: "SOLTARO"
-            # or "ALPHA.ESS" ?
+            value: "Alarm"
           - key: 0x0004
-            value: "GENERAL"
-          - key: 0x0080
-            value: "TELE"
-          - key: 0x0100
-            value: "DEFAULT"
-          - key: "default"
-            value: "DEFAULT"
-
-      - name: Working Mode
-        update_interval: 300
-        platform: select
-        rule: 1
-        registers: [0x1200]
-        options: ["Auto", "Time of Use", "Timing", "Passive"]
-        lookup:
-          - key: 0x0000
-            value: "Auto"
-          - key: 0x0001
-            value: "Time of Use"
-          - key: 0x0002
-            value: "Timing"
-          - key: 0x0003
-            value: "Passive"
-
-  - group: InverterStatus
-    items:
-      - name: "Inverter Status"
-        class: "enum"
-        scale: 1
-        rule: 1
-        registers: [0x200]
-        lookup:
-          - key: 0
-            value: "Wait"
-          - key: 1
-            value: "Self Check"
-          - key: 2
-            value: "Charging"
-          - key: 3
-            value: "Check Discharge"
-          - key: 4
-            value: "Discharging"
-          - key: 5
-            value: "EPS"
-          - key: 6
             value: "Fault"
-          - key: 7
-            value: "Permanent Fault"
-        icon: "mdi:wrench"
 
-      - name: "Inverter Temperature"
+      - name: "Inverter module temperature"
+        class: "temperature"
+        uom: "°C"
+        scale: 1
+        rule: 1
+        registers: [0x001B]
+        icon: "mdi:thermometer"
+
+      - name: "Inverter inner temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         scale: 1
         rule: 1
-        registers: [0x0238]
+        registers: [0x001C]
         icon: "mdi:thermometer"
 
-      - name: "Inverter Heat-Sink Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 1
-        rule: 1
-        registers: [0x0239]
-        icon: "mdi:thermometer"
-
-      - name: "Inverter Bus Voltage"
+      - name: "Inverter bus voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
-        registers: [0x022D]
+        registers: [0x001D]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "LLC Bus Voltage"
+      - name: "PV1 voltage sample by slave CPU"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
-        registers: [0x022E]
+        registers: [0x001E]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Countdown Time"
+      - name: "Countdown time"
         class: ""
         state_class: "measurement"
         uom: "s"
         scale: 1
         rule: 1
-        registers: [0x022A]
+        registers: [0x0020]
         icon: ""
 
-      - name: "Inverter Alert Message"
+      - name: "Inverter alert message"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x022B]
+        registers: [0x0021]
         icon: ""
 
-      - name: "Communication Board Inner Message"
+      - name: "Input mode"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0242]
+        registers: [0x0022]
+        icon: ""
+
+      - name: "Communication Board inner message"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0023]
+        icon: ""
+
+      - name: "Insulation of PV1+ to ground"
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0024]
+        icon: ""
+
+      - name: "Insulation of PV- to ground"
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0026]
         icon: ""
 
       - name: "Country"
@@ -447,7 +238,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x023A]
+        registers: [0x0027]
         lookup:
           - key: 0
             value: "Germany"
@@ -519,7 +310,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0201]
+        registers: [0x0001]
         lookup:
           - key: 0
             value: "No error"
@@ -563,7 +354,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0202]
+        registers: [0x0002]
         lookup:
           - key: 0
             value: "No error"
@@ -607,7 +398,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0203]
+        registers: [0x0003]
         lookup:
           - key: 0
             value: "No error"
@@ -651,7 +442,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0204]
+        registers: [0x0004]
         lookup:
           - key: 0
             value: "No error"
@@ -695,7 +486,7 @@ parameters:
         uom: ""
         scale: 1
         rule: 1
-        registers: [0x0205]
+        registers: [0x0005]
         lookup:
           - key: 0
             value: "No error"
@@ -732,40 +523,3 @@ parameters:
           - key: 32768
             value: "ID80 Reserved"
         icon: "mdi:wrench"
-
-  - group: InverterInformation
-    items:
-      - name: "Production Code"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x2000]
-
-      - name: "Serial Number"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 5
-        registers: [0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007]
-        isstr: true
-
-      - name: "Software Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 5
-        registers: [0x2008, 0x2009]
-        isstr: true
-
-      - name: "Hardware Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 5
-        registers: [0x200A, 0x200B]
-        isstr: true

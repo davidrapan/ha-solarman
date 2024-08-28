@@ -1506,8 +1506,8 @@ parameters:
         rule: 1
         registers: [0x0227]
 
-      # Device - AC Relay state
-      - name: "Device Relay State"
+      # Device - AC Relay
+      - name: "Device Relay"
         update_interval: 30
         class: "enum"
         state_class: ""
