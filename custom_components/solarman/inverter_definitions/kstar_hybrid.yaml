@@ -299,7 +299,7 @@ parameters:
 
   - group: Battery
     items:
-      - name: "Battery Control Mode"
+      - name: "Battery Type"
         update_interval: 300
         class: "enum"
         state_class: ""
