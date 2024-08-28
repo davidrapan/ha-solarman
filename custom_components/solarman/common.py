@@ -39,7 +39,7 @@ def all_same(values):
 def group_when(iterable, predicate, max_size = REQUEST_MAX_SIZE):
     i, x, size = 0, 0, len(iterable)
     while i < size - 1:
-        if predicate(iterable[i], iterable[i + 1]) or iterable[i + 1] - iterable[x] > max_size:
+        if predicate(iterable[i], iterable[i + 1]) or iterable[i + 1] - iterable[x] >= max_size:
             yield iterable[x:i + 1]
             x = i + 1
         i += 1
