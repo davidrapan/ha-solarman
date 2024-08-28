@@ -387,6 +387,16 @@ parameters:
         registers: [3056]
         icon: "mdi:battery-heart-outline"
 
+      - name: "Battery SOH"
+        class: ""
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        digits: 2
+        registers: [3075]
+        icon: "mdi:battery-heart"
+
       - name: Total Battery Discharge
         alt: Battery Total Discharge
         update_interval: 30
