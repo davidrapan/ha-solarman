@@ -432,7 +432,10 @@ class ParameterParser:
             if value.endswith(":"):
                 value = value[:-1]
 
-            self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
+            try:
+                self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
+            except Exception as e:
+                _LOGGER.debug(f"ParameterParser.try_parse_datetime: start: {start}, length: {length}, rawData: {rawData}, definition: {definition} [{format_exception(e)}]")
 
         return
 
