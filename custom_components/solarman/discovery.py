@@ -3,6 +3,7 @@ from __future__ import annotations
 import socket
 import logging
 import asyncio
+import threading
 
 from ipaddress import IPv4Network
 
@@ -23,7 +24,7 @@ class InverterDiscovery:
         self._serial = serial
         self._devices = {}
 
-    async def _discover(self, ip = IP_BROADCAST, wait = False, source = IP_ANY) -> dict:
+    async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY) -> dict:
         loop = asyncio.get_running_loop()
 
         try:
@@ -36,12 +37,18 @@ class InverterDiscovery:
                 if source != IP_ANY:
                     sock.bind((source, PORT_ANY))
 
-                await loop.sock_sendto(sock, self._message, (ip, DISCOVERY_PORT))
+                def send():
+                    nonlocal sock, ips
+                    ips = [ips] if not isinstance(ips, list) else ips
+                    for ip in ips:
+                        sock.sendto(self._message, (ip, DISCOVERY_PORT))
+
+                sender = threading.Thread(target = send, daemon = False)
+                sender.start()
 
                 while True:
                     try:
-                        recv = await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)
-                        data = recv.decode().split(',')
+                        data = (await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)).decode().split(',')
                         if len(data) == 3:
                             serial = int(data[2])
                             yield serial, {"ip": data[0], "mac": data[1]}
@@ -57,17 +64,11 @@ class InverterDiscovery:
         _LOGGER.debug(f"_discover_all")
 
         adapters = await network.async_get_adapters(self._hass)
+        nets = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in adapters if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
-        for adapter in adapters:
-            for ipv4 in adapter["ipv4"]:
-                net = IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False)
-                if net.is_loopback:
-                    continue
-
-                _LOGGER.debug(f"_discover_all: Broadcasting on {net.with_prefixlen}")
-
-                async for item in self._discover(str(IPv4Network(net, False).broadcast_address), True):
-                    yield item
+        _LOGGER.debug(f"_discover_all: Broadcasting on {nets}")
+        async for item in self._discover([str(net.broadcast_address) for net in nets], True):
+            yield item
 
     async def discover(self):
         _LOGGER.debug(f"discover")
@@ -84,6 +85,8 @@ class InverterDiscovery:
             attempts_left -= 1
 
             devices = {item[0]: item[1] async for item in self._discover_all()}
+            if self._serial:
+                devices = {self._serial: devices[self._serial]} if self._serial in devices else {}
 
             if len(devices) == 0:
                 _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
