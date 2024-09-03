@@ -44,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
 
     if ipaddr.is_private:
-        inverter_discovery = InverterDiscovery(hass, inverter_host)
+        inverter_discovery = InverterDiscovery(hass, inverter_host, inverter_serial)
         if discovery:
             await inverter_discovery.discover()
         if (discovered_host := inverter_discovery.get_ip()):
