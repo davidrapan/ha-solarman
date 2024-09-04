@@ -3,7 +3,6 @@ from __future__ import annotations
 import socket
 import logging
 import asyncio
-import threading
 
 from ipaddress import IPv4Network
 
@@ -37,14 +36,8 @@ class InverterDiscovery:
                 if source != IP_ANY:
                     sock.bind((source, PORT_ANY))
 
-                def send():
-                    nonlocal sock, ips
-                    ips = [ips] if not isinstance(ips, list) else ips
-                    for ip in ips:
-                        sock.sendto(self._message, (ip, DISCOVERY_PORT))
-
-                sender = threading.Thread(target = send, daemon = False)
-                sender.start()
+                for ip in ips if isinstance(ips, list) else [ips]:
+                    await loop.sock_sendto(sock, self._message, (ip, DISCOVERY_PORT))
 
                 while True:
                     try:
@@ -77,7 +70,7 @@ class InverterDiscovery:
 
         if self._ip:
             devices = {item[0]: item[1] async for item in self._discover(self._ip)}
-            if self._serial and self._serial != next(iter(devices)):
+            if len(devices) > 0 and self._serial and self._serial != next(iter(devices)):
                 devices = {}
 
         attempts_left = ACTION_ATTEMPTS
@@ -85,7 +78,7 @@ class InverterDiscovery:
             attempts_left -= 1
 
             devices = {item[0]: item[1] async for item in self._discover_all()}
-            if self._serial:
+            if len(devices) > 0 and self._serial:
                 devices = {self._serial: devices[self._serial]} if self._serial in devices else {}
 
             if len(devices) == 0:
