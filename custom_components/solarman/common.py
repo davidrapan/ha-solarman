@@ -23,6 +23,9 @@ def execute_async(x):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(x)
 
+def ensure_list(value):
+    return value if isinstance(value, list) else [value]
+
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())

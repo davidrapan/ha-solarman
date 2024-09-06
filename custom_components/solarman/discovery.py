@@ -15,8 +15,6 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class InverterDiscovery:
-    _message = DISCOVERY_MESSAGE.encode()
-
     def __init__(self, hass: HomeAssistant, ip = None, serial = None):
         self._hass = hass
         self._ip = ip
@@ -36,8 +34,8 @@ class InverterDiscovery:
                 if source != IP_ANY:
                     sock.bind((source, PORT_ANY))
 
-                for ip in ips if isinstance(ips, list) else [ips]:
-                    await loop.sock_sendto(sock, self._message, (ip, DISCOVERY_PORT))
+                for ip in ensure_list(ips):
+                    await loop.sock_sendto(sock, DISCOVERY_MESSAGE, (ip, DISCOVERY_PORT))
 
                 while True:
                     try:
@@ -86,6 +84,8 @@ class InverterDiscovery:
 
         self._devices = devices
 
+        return self._devices
+
     async def discover_ip(self):
         if len(self._devices) == 0:
             await self.discover()
@@ -107,23 +107,5 @@ class InverterDiscovery:
             await self.discover()
             if len(self._devices) == 0:
                 return None
-        item = next(iter(self._devices))
-        return item
-
-    def get_ip(self):
-        if len(self._devices) == 0:
-            return None
-        item = next(iter(self._devices))
-        return self._devices[item]["ip"]
-
-    def get_mac(self):
-        if len(self._devices) == 0:
-            return None
-        item = next(iter(self._devices))
-        return self._devices[item]["mac"]
-
-    def get_serial(self):
-        if len(self._devices) == 0:
-            return None
         item = next(iter(self._devices))
         return item
