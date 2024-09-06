@@ -12,7 +12,7 @@ from homeassistant.helpers.template import Template
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
-from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
+from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -31,6 +31,9 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
                 return SolarmanIntervalSensor(coordinator, sensor)
     elif not "registers" in sensor and sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
         return SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+
+    if "restore" in sensor or "ensure_increasing" in sensor:
+        return SolarmanRestoreSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
     return SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
@@ -81,10 +84,17 @@ class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._sensor_ensure_increasing = "ensure_increasing" in sensor
-        self._sensor_restore = "restore" in sensor
-
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
+
+class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
+    async def async_added_to_hass(self) -> None:
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+
+        if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
+            self._attr_native_value = last_sensor_data.native_value
+            self._unit_of_measurement = last_sensor_data.native_unit_of_measurement
 
     def set_state(self, state):
         if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
