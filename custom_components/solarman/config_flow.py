@@ -98,14 +98,12 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         if user_input is None:
             ip = None
             serial = None
-            discovered = await InverterDiscovery(self.hass).discover()
-            if discovered:
+            if (discovered := await InverterDiscovery(self.hass).discover()):
                 for s in discovered:
                     try:
-                        await self.async_set_unique_id(f"solarman_{s}") #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
+                        await self.async_set_unique_id(f"solarman_{s}")
                         self._abort_if_unique_id_configured()
-                        ip = discovered[s]["ip"]
-                        serial = s
+                        ip = discovered[(serial := s)]["ip"]
                         break
                     except:
                         continue
@@ -124,7 +122,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             errors["base"] = "unknown"
         else:
             _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation passed: {user_input}")
-            await self.async_set_unique_id(f"solarman_{user_input[CONF_INVERTER_SERIAL]}")
+            await self.async_set_unique_id(f"solarman_{user_input[CONF_INVERTER_SERIAL]}") #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
             self._abort_if_unique_id_configured()
             return self.async_create_entry(title = user_input[CONF_NAME], data = user_input, options = user_input)
 

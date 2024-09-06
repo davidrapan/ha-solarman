@@ -26,6 +26,9 @@ def execute_async(x):
 def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
+def get_or_default(dict, key, default = None):
+    return dict[key] if dict and key in dict else default
+
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())

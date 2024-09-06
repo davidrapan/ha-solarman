@@ -22,6 +22,8 @@ class InverterDiscovery:
         self._devices = {}
 
     async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY) -> dict:
+        _LOGGER.debug(f"_discover")
+
         loop = asyncio.get_running_loop()
 
         try:
@@ -54,6 +56,9 @@ class InverterDiscovery:
     async def _discover_all(self) -> dict:
         _LOGGER.debug(f"_discover_all")
 
+        if not self._hass:
+            return
+
         adapters = await network.async_get_adapters(self._hass)
         nets = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in adapters if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
@@ -64,48 +69,21 @@ class InverterDiscovery:
     async def discover(self):
         _LOGGER.debug(f"discover")
 
-        devices = {}
+        self._devices = {}
 
         if self._ip:
-            devices = {item[0]: item[1] async for item in self._discover(self._ip)}
-            if len(devices) > 0 and self._serial and self._serial != next(iter(devices)):
-                devices = {}
+            _LOGGER.debug(f"_discover_all: Broadcasting on {self._ip}")
+            self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
+            if len(self._devices) > 0 and not self._serial in self._devices:
+                self._devices = {}
 
         attempts_left = ACTION_ATTEMPTS
-        while len(devices) == 0 and attempts_left > 0:
+        while len(self._devices) == 0 and attempts_left > 0:
             attempts_left -= 1
 
-            devices = {item[0]: item[1] async for item in self._discover_all()}
-            if len(devices) > 0 and self._serial:
-                devices = {self._serial: devices[self._serial]} if self._serial in devices else {}
+            self._devices = {item[0]: item[1] async for item in self._discover_all()}
 
-            if len(devices) == 0:
+            if len(self._devices) == 0:
                 _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-        self._devices = devices
-
         return self._devices
-
-    async def discover_ip(self):
-        if len(self._devices) == 0:
-            await self.discover()
-            if len(self._devices) == 0:
-                return None
-        item = next(iter(self._devices))
-        return self._devices[item]["ip"]
-
-    async def discover_mac(self):
-        if len(self._devices) == 0:
-            await self.discover()
-            if len(self._devices) == 0:
-                return None
-        item = next(iter(self._devices))
-        return self._devices[item]["mac"]
-
-    async def discover_serial(self):
-        if len(self._devices) == 0:
-            await self.discover()
-            if len(self._devices) == 0:
-                return None
-        item = next(iter(self._devices))
-        return item
