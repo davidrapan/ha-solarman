@@ -27,31 +27,28 @@ async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None
     #entry.title = entry.options[CONF_NAME]
     await hass.config_entries.async_reload(entry.entry_id)
 
-def step_user_data_prefill():
-    _LOGGER.debug(f"step_user_data_process")
-    return { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: "", CONF_INVERTER_SERIAL: 0, CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
+def step_user_data_prefill(ip, serial):
+    _LOGGER.debug(f"step_user_data_prefill: IP: {ip}, serial: {serial}")
+    return { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: ip, CONF_INVERTER_SERIAL: serial, CONF_INVERTER_PORT: DEFAULT_INVERTER_PORT, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
 
-async def step_user_data_process(discovery):
-    _LOGGER.debug(f"step_user_data_process: discovery: {discovery}")
-    return { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_HOST: await discovery.discover_ip(), CONF_INVERTER_SERIAL: await discovery.discover_serial(), CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }
-
-async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }, wname: bool = True) -> vol.Schema:
+async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_INVERTER_PORT, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }, wname: bool = True) -> vol.Schema:
     lookup_files = await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
     _LOGGER.debug(f"step_user_data_schema: data: {data}, {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
     #STEP_USER_DATA_SCHEMA = vol.Schema({ vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str }, extra = vol.PREVENT_EXTRA) if wname else vol.Schema({}, extra = vol.PREVENT_EXTRA)
     #STEP_USER_DATA_SCHEMA = STEP_USER_DATA_SCHEMA.extend(
     STEP_USER_DATA_SCHEMA = vol.Schema(
         {
+            #vol.Optional("Example of"): "some text to display in the config flow..."
             vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str,
             vol.Required(CONF_DISCOVERY, default = data.get(CONF_DISCOVERY)): bool,
             vol.Required(CONF_INVERTER_HOST, default = data.get(CONF_INVERTER_HOST)): str,
-            vol.Required(CONF_INVERTER_SERIAL, default = data.get(CONF_INVERTER_SERIAL)): int,
-            vol.Optional(CONF_INVERTER_PORT, default = data.get(CONF_INVERTER_PORT)): int,
-            vol.Optional(CONF_INVERTER_MB_SLAVE_ID, default = data.get(CONF_INVERTER_MB_SLAVE_ID)): int,
+            vol.Required(CONF_INVERTER_SERIAL, default = data.get(CONF_INVERTER_SERIAL)): cv.positive_int,
+            vol.Optional(CONF_INVERTER_PORT, default = data.get(CONF_INVERTER_PORT)): cv.port,
+            vol.Optional(CONF_INVERTER_MB_SLAVE_ID, default = data.get(CONF_INVERTER_MB_SLAVE_ID)): cv.positive_int,
             vol.Optional(CONF_PASSTHROUGH, default = data.get(CONF_PASSTHROUGH)): bool,
             vol.Optional(CONF_LOOKUP_FILE, default = data.get(CONF_LOOKUP_FILE)): vol.In(lookup_files),
-            vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = data.get(CONF_BATTERY_NOMINAL_VOLTAGE)): int,
-            vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = data.get(CONF_BATTERY_LIFE_CYCLE_RATING)): int,
+            vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = data.get(CONF_BATTERY_NOMINAL_VOLTAGE)): cv.positive_int,
+            vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = data.get(CONF_BATTERY_LIFE_CYCLE_RATING)): cv.positive_int,
         },
         extra = vol.PREVENT_EXTRA
     )
@@ -91,7 +88,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         #await self.async_set_unique_id(format_mac(discovery_info.macaddress))
         discovery_input = { CONF_NAME: DEFAULT_NAME,
             CONF_INVERTER_HOST: discovery_info.ip,
-            CONF_INVERTER_PORT: DEFAULT_PORT_INVERTER }
+            CONF_INVERTER_PORT: DEFAULT_INVERTER_PORT }
         self._async_abort_entries_match(discovery_input)
         return await self.async_step_user(user_input = discovery_input)
 
@@ -99,13 +96,20 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         """Handle the initial step."""
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None:
-            #inverter_discovery = InverterDiscovery(self.hass)
-            #await self._async_try_and_abort_if_unique_id("27XXXXXXXX")
-            #await self._async_try_and_abort_if_unique_id("27XXXXXXXX")
-            #await inverter_discovery.discover_until_ok(self._async_try_and_abort_if_unique_id)
-            #discovery_options = (await step_user_data_process(InverterDiscovery(self.hass))) if inverter_discovery._ip else step_user_data_prefill()
-            discovery_options = await step_user_data_process(InverterDiscovery(self.hass))
-            return self.async_show_form(step_id = "user", data_schema = await step_user_data_schema(self.hass, discovery_options))
+            ip = None
+            serial = None
+            discovered = await InverterDiscovery(self.hass).discover()
+            if discovered:
+                for s in discovered:
+                    try:
+                        await self.async_set_unique_id(f"solarman_{s}") #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
+                        self._abort_if_unique_id_configured()
+                        ip = discovered[s]["ip"]
+                        serial = s
+                        break
+                    except:
+                        continue
+            return self.async_show_form(step_id = "user", data_schema = await step_user_data_schema(self.hass, step_user_data_prefill(ip, serial)))
 
         errors = {}
 
@@ -120,7 +124,8 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             errors["base"] = "unknown"
         else:
             _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation passed: {user_input}")
-            #await self._async_try_and_abort_if_unique_id(user_input[CONF_INVERTER_SERIAL])
+            await self.async_set_unique_id(f"solarman_{user_input[CONF_INVERTER_SERIAL]}")
+            self._abort_if_unique_id_configured()
             return self.async_create_entry(title = user_input[CONF_NAME], data = user_input, options = user_input)
 
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation failed: {user_input}")
@@ -144,7 +149,7 @@ class OptionsFlowHandler(OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Handle options flow."""
-        _LOGGER.debug(f"OptionsFlowHandler.async_step_init: {user_input}")
+        _LOGGER.debug(f"OptionsFlowHandler.async_step_init: user_input: {user_input}, current: {self.entry.options}")
         if user_input is None:
             return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, self.entry.options, False))
 
@@ -156,10 +161,11 @@ class OptionsFlowHandler(OptionsFlow):
             errors["base"] = "invalid_host"
         except CannotConnect:
             errors["base"] = "cannot_connect"
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
+            _LOGGER.debug(f"OptionsFlowHandler.async_step_init: validation passed: {user_input}")
             return self.async_create_entry(title = user_input[CONF_NAME], data = user_input)
 
         return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, user_input, False), errors = errors)
