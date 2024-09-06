@@ -64,6 +64,6 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
         list_int = [int(value.strftime("%H%M")),] if not self._multiple_registers else [int(value.strftime("%H")), int(value.strftime("%M"))]
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, list_int, ACTION_ATTEMPTS_MAX)
+        await self.coordinator.inverter.service_call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, list_int, ACTION_ATTEMPTS_MAX)
         self.set_state(value.strftime("%H:%M"))
         self.async_write_ha_state()

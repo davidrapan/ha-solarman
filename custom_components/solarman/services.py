@@ -73,8 +73,9 @@ def register_services(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.service_read_holding_registers(register, quantity,
-            wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            response = await inverter.service_call(
+                CODE.READ_HOLDING_REGISTERS, register, quantity,
+                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -104,8 +105,9 @@ def register_services(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.service_read_input_registers(register, quantity,
-            wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            response = await inverter.service_call(
+                CODE.READ_INPUT, register, quantity,
+                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -132,10 +134,11 @@ def register_services(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.service_write_holding_register(
-                register = call.data.get(SERVICES_PARAM_REGISTER), 
-                value = call.data.get(SERVICES_PARAM_VALUE),
-                wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            await inverter.service_call(
+                CODE.WRITE_HOLDING_REGISTER,
+                call.data.get(SERVICES_PARAM_REGISTER), 
+                call.data.get(SERVICES_PARAM_VALUE),
+                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,
@@ -156,10 +159,11 @@ def register_services(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.service_write_multiple_holding_registers(
-                register = call.data.get(SERVICES_PARAM_REGISTER),
-                values = call.data.get(SERVICES_PARAM_VALUES),
-                wait_for_attempts = call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            await inverter.service_call(
+                CODE.WRITE_MULTIPLE_HOLDING_REGISTERS,
+                call.data.get(SERVICES_PARAM_REGISTER),
+                call.data.get(SERVICES_PARAM_VALUES),
+                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
             raise ServiceValidationError(
                 e,

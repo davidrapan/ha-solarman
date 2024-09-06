@@ -135,8 +135,16 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         _LOGGER.debug(self.device_info)
 
+    def get_sensors(self):
+        return self.profile.get_sensors() if self.parameter_definition else []
+
     def available(self):
         return self.state > -1
+
+    def get_connection_state(self):
+        if self.state > 0:
+            return "Connected"
+        return "Disconnected"
 
     async def async_connect(self, loud = True) -> None:
         if not self.reader_task:
@@ -162,30 +170,35 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.state = -1
         await self.async_disconnect(loud)
 
-    async def async_read(self, params, code, start, quantity) -> None:
+    async def async_read(self, code, start, quantity) -> None:
         await self.async_connect()
 
         match code: 
-            case 1:
-                response = await self.read_coils(start, quantity)
-            case 2:
-                response = await self.read_discrete_inputs(start, quantity)
-            case 3:
-                response = await self.read_holding_registers(start, quantity)
-            case 4:
-                response = await self.read_input_registers(start, quantity)
+            case CODE.READ_COILS:
+                return await self.read_coils(start, quantity)
+            case CODE.READ_DISCRETE_INPUTS:
+                return await self.read_discrete_inputs(start, quantity)
+            case CODE.READ_HOLDING_REGISTERS:
+                return await self.read_holding_registers(start, quantity)
+            case CODE.READ_INPUT:
+                return await self.read_input_registers(start, quantity)
             case _:
-                raise Exception(f"[{self.serial}] Used incorrect modbus function code {code} for reading")
+                raise Exception(f"[{self.serial}] Used incorrect modbus reading function code {code}")
 
-        params.parse(response, start, quantity)
+    async def async_write(self, code, start, arg):
+        await self.async_connect()
 
-    def get_sensors(self):
-        return self.profile.get_sensors() if self.parameter_definition else []
-
-    def get_connection_state(self):
-        if self.state > 0:
-            return "Connected"
-        return "Disconnected"
+        match code:
+            case CODE.WRITE_SINGLE_COIL:
+                return await self.write_single_coil(start, arg)
+            case CODE.WRITE_HOLDING_REGISTER:
+                return await self.write_holding_register(start, arg)
+            case CODE.WRITE_MULTIPLE_COILS:
+                return await self.write_multiple_coils(start, arg)
+            case CODE.WRITE_MULTIPLE_HOLDING_REGISTERS:
+                return await self.write_multiple_holding_registers(start, arg)
+            case _:
+                raise Exception(f"[{self.serial}] Used incorrect modbus writing function code {code}")
 
     def get_result(self, middleware = None):
         self._is_reading = 0
@@ -236,7 +249,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            await self.async_read(self.profile, code, start, quantity)
+                            self.profile.parse(await self.async_read(code, start, quantity), start, quantity)
                             results[i] = 1
                         except (V5FrameError, TimeoutError, Exception) as e:
                             results[i] = 0
@@ -280,43 +293,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return self._is_reading == 1
 
-    async def service_read_holding_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
-        _LOGGER.debug(f"[{self.serial}] service_read_holding_registers: [{register}], quantity: [{quantity}]")
+    async def service_call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+        _LOGGER.debug(f"[{self.serial}] service_call code {code}: {start}, arg: {arg}")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_read_holding_registers: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        try:
-            await self.async_connect()
-            return await self.read_holding_registers(register, quantity)
-        except Exception as e:
-            _LOGGER.warning(f"[{self.serial}] service_read_holding_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
-            if not self.auto_reconnect:
-                await self.async_disconnect()
-            raise
-
-    async def service_read_input_registers(self, register, quantity, wait_for_attempts = ACTION_ATTEMPTS):
-        _LOGGER.debug(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}]")
-
-        if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_read_input_registers: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        try:
-            await self.async_connect()
-            return await self.read_input_registers(register, quantity)
-        except Exception as e:
-            _LOGGER.warning(f"[{self.serial}] service_read_input_registers: [{register}], quantity: [{quantity}] failed. [{format_exception(e)}]")
-            if not self.auto_reconnect:
-                await self.async_disconnect()
-            raise
-
-    async def service_write_single_coil(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] service_write_single_coil: {register}, value: {value}")
-
-        if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_write_single_coil: Timeout.")
+            _LOGGER.debug(f"[{self.serial}] service_call code {code}: Timeout.")
             raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         attempts_left = ACTION_ATTEMPTS
@@ -324,87 +305,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
             attempts_left -= 1
 
             try:
-                await self.async_connect()
-                response = await self.write_single_coil(register, value)
-                _LOGGER.debug(f"[{self.serial}] service_write_single_coil: {register}, response: {response}")
-                return True
+                response = await self.async_write(code, start, arg) if code > 4 else await self.async_read(code, start, arg)
+                _LOGGER.debug(f"[{self.serial}] service_call code {code}: {start}, response: {response}")
+                return response
             except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] service_write_single_coil: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
-                if not self.auto_reconnect:
-                    await self.async_disconnect()
-                if not attempts_left > 0:
-                    raise
-
-                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
-
-    async def service_write_multiple_coils(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: {register}, values: {values}")
-
-        if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        attempts_left = ACTION_ATTEMPTS
-        while attempts_left > 0:
-            attempts_left -= 1
-
-            try:
-                await self.async_connect()
-                response = await self.write_multiple_coils(register, values)
-                _LOGGER.debug(f"[{self.serial}] service_write_multiple_coils: {register}, response: {response}")
-                return True
-            except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] service_wwrite_multiple_coils: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
-                if not self.auto_reconnect:
-                    await self.async_disconnect()
-                if not attempts_left > 0:
-                    raise
-
-                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
-
-    async def service_write_holding_register(self, register, value, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, value: {value}")
-
-        if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_write_holding_register: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        attempts_left = ACTION_ATTEMPTS
-        while attempts_left > 0:
-            attempts_left -= 1
-
-            try:
-                await self.async_connect()
-                response = await self.write_holding_register(register, value)
-                _LOGGER.debug(f"[{self.serial}] service_write_holding_register: {register}, response: {response}")
-                return True
-            except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] service_write_holding_register: {register}, value: {value} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
-                if not self.auto_reconnect:
-                    await self.async_disconnect()
-                if not attempts_left > 0:
-                    raise
-
-                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
-
-    async def service_write_multiple_holding_registers(self, register, values, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: {register}, values: {values}")
-
-        if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        attempts_left = ACTION_ATTEMPTS
-        while attempts_left > 0:
-            attempts_left -= 1
-
-            try:
-                await self.async_connect()
-                response = await self.write_multiple_holding_registers(register, values)
-                _LOGGER.debug(f"[{self.serial}] service_write_multiple_holding_registers: {register}, response: {response}")
-                return True
-            except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] service_write_multiple_holding_registers: {register}, values: {values} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                _LOGGER.warning(f"[{self.serial}] service_call code {code}: {start}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
                     await self.async_disconnect()
                 if not attempts_left > 0:
