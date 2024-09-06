@@ -200,6 +200,14 @@ class Inverter(PySolarmanV5AsyncWrapper):
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus writing function code {code}")
 
+    async def wait_for_reading_done(self, attempts_left = ACTION_ATTEMPTS):
+        while self._is_reading == 1 and attempts_left > 0:
+            attempts_left -= 1
+
+            await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
+
+        return self._is_reading == 1
+
     def get_result(self, middleware = None):
         self._is_reading = 0
 
@@ -215,7 +223,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return result
 
-    async def async_get_failed(self, message = None):
+    async def get_failed(self, message = None):
         _LOGGER.debug(f"[{self.serial}] Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
 
@@ -224,7 +232,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         if message and self.state == -1:
             raise UpdateFailed(message)
 
-    async def async_get(self, runtime = 0):
+    async def get(self, runtime = 0):
         requests = self.profile.get_requests(runtime)
         requests_count = len(requests) if requests else 0
         results = [0] * requests_count
@@ -269,11 +277,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 if not 0 in results:
                     return self.get_result(self.profile)
                 else:
-                    await self.async_get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed.")
+                    await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed.")
 
         except TimeoutError:
             last_state = self.state
-            await self.async_get_failed()
+            await self.get_failed()
             if last_state < 1:
                 raise
             else:
@@ -281,23 +289,15 @@ class Inverter(PySolarmanV5AsyncWrapper):
         except UpdateFailed:
             raise
         except Exception as e:
-            await self.async_get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed. [{format_exception(e)}]")
+            await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed. [{format_exception(e)}]")
 
         return self.get_result()
 
-    async def wait_for_reading_done(self, attempts_left = ACTION_ATTEMPTS):
-        while self._is_reading == 1 and attempts_left > 0:
-            attempts_left -= 1
-
-            await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
-
-        return self._is_reading == 1
-
-    async def service_call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] service_call code {code}: {start}, arg: {arg}")
+    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+        _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
 
         if await self.wait_for_reading_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] service_call code {code}: Timeout.")
+            _LOGGER.debug(f"[{self.serial}] call code {code}: Timeout.")
             raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
         attempts_left = ACTION_ATTEMPTS
@@ -306,10 +306,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
             try:
                 response = await self.async_write(code, start, arg) if code > 4 else await self.async_read(code, start, arg)
-                _LOGGER.debug(f"[{self.serial}] service_call code {code}: {start}, response: {response}")
+                _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, response: {response}")
                 return response
             except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] service_call code {code}: {start}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                _LOGGER.warning(f"[{self.serial}] call code {code}: {start}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
                     await self.async_disconnect()
                 if not attempts_left > 0:

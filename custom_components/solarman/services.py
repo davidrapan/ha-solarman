@@ -73,7 +73,7 @@ def register_services(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.service_call(
+            response = await inverter.call(
                 CODE.READ_HOLDING_REGISTERS, register, quantity,
                 call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
@@ -105,7 +105,7 @@ def register_services(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.service_call(
+            response = await inverter.call(
                 CODE.READ_INPUT, register, quantity,
                 call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
         except Exception as e:
@@ -134,7 +134,7 @@ def register_services(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.service_call(
+            await inverter.call(
                 CODE.WRITE_HOLDING_REGISTER,
                 call.data.get(SERVICES_PARAM_REGISTER), 
                 call.data.get(SERVICES_PARAM_VALUE),
@@ -159,7 +159,7 @@ def register_services(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.service_call(
+            await inverter.call(
                 CODE.WRITE_MULTIPLE_HOLDING_REGISTERS,
                 call.data.get(SERVICES_PARAM_REGISTER),
                 call.data.get(SERVICES_PARAM_VALUES),
