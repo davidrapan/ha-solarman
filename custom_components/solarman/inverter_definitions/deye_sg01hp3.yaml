@@ -1381,6 +1381,7 @@ parameters:
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
+        ensure_increasing:
         uom: "kWh"
         rule: 1
         digits: 1
@@ -1408,6 +1409,7 @@ parameters:
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
+        ensure_increasing:
         uom: "kWh"
         rule: 3
         digits: 1

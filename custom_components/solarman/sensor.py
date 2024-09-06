@@ -80,8 +80,17 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, _PLATFORM, sensor)
+        self._sensor_ensure_increasing = "ensure_increasing" in sensor
+        self._sensor_restore = "restore" in sensor
+
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
+
+    def set_state(self, state):
+        if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
+            return
+
+        self._attr_state = self._attr_native_value = state
 
 class SolarmanBatterySensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
