@@ -313,8 +313,10 @@ class ParameterParser:
                 self.set_state(key, self.lookup_value(value, definition["lookup"]))
                 self._result[key]["value"] = int(value)
             else:
-                if "validation" in definition:
-                    if not self.do_validate(key, value, definition["validation"]):
+                if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+                    if "default" in validation:
+                        value = validation["default"]
+                    else:
                         return
 
                 self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
@@ -332,8 +334,10 @@ class ParameterParser:
             if "inverted" in definition and definition["inverted"]:
                 value = -value
 
-            if "validation" in definition:
-                if not self.do_validate(key, value, definition["validation"]):
+            if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+                if "default" in validation:
+                    value = validation["default"]
+                else:
                     return
 
             self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
