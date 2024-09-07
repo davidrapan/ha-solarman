@@ -1,6 +1,6 @@
 #
 # First version: 22.02.2023
-# Latest update: 06.09.2024
+# Latest update: 19.08.2024
 # Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers :) )
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 2x MPPT, 2x inverter
@@ -330,7 +330,6 @@ parameters:
       # Device - Modbus Address
       - name: "Device Modbus Address"
         attribute:
-        update_interval: 300
         class: ""
         state_class: ""
         uom: ""
@@ -342,7 +341,6 @@ parameters:
       # Device - Communication Protocol Version
       - name: "Device Protocol Version"
         attribute:
-        update_interval: 300
         rule: 7
         remove: "0."
         registers: [0x0002]
@@ -587,7 +585,6 @@ parameters:
       # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         platform: "switch"
-        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -597,7 +594,6 @@ parameters:
       # Island Protection - On/Off Switch
       - name: "Island Protection"
         platform: "switch"
-        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -607,7 +603,6 @@ parameters:
       # Soft Start - On/Off Switch
       - name: "Soft Start"
         platform: "switch"
-        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -617,7 +612,6 @@ parameters:
       # GFDI enable - On/Off Switch
       - name: "GFDI enable"
         platform: "switch"
-        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -627,7 +621,6 @@ parameters:
       # Over-frequency Load-shedding - On/Off Switch
       - name: "Over-frequency Load Reduction"
         platform: "switch"
-        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
