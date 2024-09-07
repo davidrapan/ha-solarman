@@ -1,6 +1,6 @@
 #
 # First version: 22.02.2023
-# Latest update: 19.08.2024
+# Latest update: 06.09.2024
 # Microinverter SUNX (DEYE/VESDAS ??? - X because i have no dang clue what shares those registers :) )
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 2x MPPT, 2x inverter
@@ -252,7 +252,6 @@ parameters:
     items:
       # Device - Operating (Running) state
       - name: "Device State"
-        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
@@ -295,7 +294,6 @@ parameters:
 
       # Device - Type
       - name: "Device"
-        update_interval: 300
         class: "enum"
         state_class: ""
         uom: ""
@@ -345,28 +343,10 @@ parameters:
       - name: "Device Protocol Version"
         attribute:
         update_interval: 300
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
+        rule: 7
+        remove: "0."
         registers: [0x0002]
         icon: "mdi:information"
-        lookup:
-          - key: 100
-            value: "1.0"
-          - key: 101
-            value: "1.1"
-          - key: 102
-            value: "1.2"
-          - key: 103
-            value: "1.3"
-          - key: 104
-            value: "1.4"
-          - key: 105
-            value: "1.5"
-          - key: 513
-            value: "5.13"
 
       - name: "Device Serial Number"
         attribute:
@@ -417,7 +397,6 @@ parameters:
       # Device - MPPTs
       - name: "Device MPPTs"
         attribute:
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: ""
@@ -432,7 +411,6 @@ parameters:
       # Device - Phases
       - name: "Device Phases"
         attribute:
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: ""
@@ -606,10 +584,10 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch
-      - name: "Device On/Off"
-        update_interval: 300
+      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+      - name: ""
         platform: "switch"
+        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -618,8 +596,8 @@ parameters:
 
       # Island Protection - On/Off Switch
       - name: "Island Protection"
-        update_interval: 300
         platform: "switch"
+        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -628,8 +606,8 @@ parameters:
 
       # Soft Start - On/Off Switch
       - name: "Soft Start"
-        update_interval: 300
         platform: "switch"
+        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -638,8 +616,8 @@ parameters:
 
       # GFDI enable - On/Off Switch
       - name: "GFDI enable"
-        update_interval: 300
         platform: "switch"
+        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
@@ -648,8 +626,8 @@ parameters:
 
       # Over-frequency Load-shedding - On/Off Switch
       - name: "Over-frequency Load Reduction"
-        update_interval: 300
         platform: "switch"
+        update_interval: 300
         state_class: ""
         uom: ""
         scale: 1
