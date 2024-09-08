@@ -67,12 +67,12 @@ class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_on,], ACTION_ATTEMPTS_MAX)
-        self.set_state(1)
-        self.async_write_ha_state()
+        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_on,], ACTION_ATTEMPTS_MAX) > 0:
+            self.set_state(1)
+            self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
-        await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_off,], ACTION_ATTEMPTS_MAX)
-        self.set_state(0)
-        self.async_write_ha_state()
+        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_off,], ACTION_ATTEMPTS_MAX) > 0:
+            self.set_state(0)
+            self.async_write_ha_state()

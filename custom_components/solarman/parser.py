@@ -146,6 +146,7 @@ class ParameterParser:
             range = definition["range"]
             if "min" in range and "max" in range:
                 if value < range["min"] or value > range["max"]:
+                    _LOGGER.debug(f"Value: {value} of {definition["registers"]} is out of range: {range}")
                     return False
 
         return True
@@ -313,7 +314,7 @@ class ParameterParser:
                 self.set_state(key, self.lookup_value(value, definition["lookup"]))
                 self._result[key]["value"] = int(value)
             else:
-                if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+                if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
                     if "default" in validation:
                         value = validation["default"]
                     else:
@@ -334,7 +335,7 @@ class ParameterParser:
             if "inverted" in definition and definition["inverted"]:
                 value = -value
 
-            if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+            if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
                 if "default" in validation:
                     value = validation["default"]
                 else:

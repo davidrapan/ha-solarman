@@ -26,8 +26,6 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     name = options.get(CONF_NAME)
 
-    discovery = options.get(CONF_DISCOVERY)
-
     inverter_host = options.get(CONF_INVERTER_HOST)
     inverter_serial = options.get(CONF_INVERTER_SERIAL)
     inverter_port = options.get(CONF_INVERTER_PORT)
@@ -38,7 +36,6 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = options.get(CONF_LOOKUP_FILE)
 
-    #if discovery:
     try:
         ipaddr = IPv4Address(inverter_host)
     except AddressValueError:
