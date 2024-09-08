@@ -38,21 +38,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = options.get(CONF_LOOKUP_FILE)
 
+    #if discovery:
     try:
         ipaddr = IPv4Address(inverter_host)
     except AddressValueError:
         ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
-
-    if ipaddr.is_private:
-        inverter_discovery = InverterDiscovery(hass, inverter_host)
-        if discovery:
-            await inverter_discovery.discover()
-        if (discovered_host := inverter_discovery.get_ip()):
-            inverter_host = discovered_host
-        if (discovered_mac := inverter_discovery.get_mac()) and (inverter_serial == 0 or inverter_serial == inverter_discovery.get_serial() or inverter_serial == await inverter_discovery.discover_serial()):
-            inverter_mac = discovered_mac
-        if inverter_serial == 0 and (discovered_serial := await inverter_discovery.discover_serial()):
-            inverter_serial = discovered_serial
+    if ipaddr.is_private and (device := get_or_default(await InverterDiscovery(hass, inverter_host, inverter_serial).discover(), inverter_serial)):
+        inverter_host = device["ip"]
+        inverter_mac = device["mac"]
 
     if inverter_host is None:
         raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
@@ -60,9 +53,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         raise vol.Invalid("Configuration parameter [inverter_serial] does not have a value")
     if inverter_port is None:
         raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
-    if not inverter_mb_slave_id:
+    if inverter_mb_slave_id is None:
         inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
-    if not inverter_passthrough:
+    if inverter_passthrough is None:
         inverter_passthrough = False
     if lookup_file is None:
         raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")

@@ -6,6 +6,7 @@ from typing import Any
 from functools import cached_property, partial
 
 from homeassistant.core import callback
+from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
@@ -55,7 +56,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         return default
 
     def set_state(self, state):
-        self._attr_state = state
+        self._attr_state = self._attr_native_value = state
 
     def update(self):
         if self.sensor_name in self.coordinator.data and (data := self.coordinator.data[self.sensor_name]):
@@ -70,50 +71,47 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator)
         self.sensor_name = sensor["name"]
-        self.sensor_friendly_name = sensor[ATTR_FRIENDLY_NAME] if ATTR_FRIENDLY_NAME in sensor else self.sensor_name
         self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
         self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
+
+        #self._attr_has_entity_name = True
 
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
 
         self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
-
-        self._attr_friendly_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_friendly_name) if self.sensor_friendly_name else self.coordinator.inverter.name
+        #elf._attr_name = "{}".format(self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
 
         self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id) if self.sensor_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
 
         if self.sensor_entity_id:
             self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.sensor_entity_id)
-        if "icon" in sensor and (icon := sensor["icon"]):
-            self._attr_icon = icon
-        if "category" in sensor and (entity_category := sensor["category"]):
+        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.sensor_name.lower().replace(" ", "_")):
+            self._attr_translation_key = translation_key
+        if entity_category := get_attr(sensor, "category") or (entity_category := get_attr(sensor, "entity_category")):
             self._attr_entity_category = entity_category
-        if "class" in sensor and (device_class := sensor["class"]):
+        if device_class := get_attr(sensor, "class") or (device_class := get_attr(sensor, "device_class")):
             self._attr_device_class = device_class
-        if "device_class" in sensor and (device_class := sensor["device_class"]):
-            self._attr_device_class = device_class
-        if "state_class" in sensor and (state_class := sensor["state_class"]):
-            self._attr_state_class = state_class
-        if "uom" in sensor and (unit_of_measurement := sensor["uom"]):
+        if unit_of_measurement := get_attr(sensor, "uom") or (unit_of_measurement := get_attr(sensor, "unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
-        if "unit_of_measurement" in sensor and (unit_of_measurement := sensor["unit_of_measurement"]):
-            self._attr_native_unit_of_measurement = unit_of_measurement
-        if "suggested_display_precision" in sensor and (display_precision := sensor["suggested_display_precision"]):
-            self._attr_suggested_display_precision = display_precision
-        if "options" in sensor and (options := sensor["options"]):
+        if options := get_attr(sensor, "options"):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
         elif "lookup" in sensor and "rule" in sensor and 0 < sensor["rule"] < 5 and (options := [s["value"] for s in sensor["lookup"]]):
             self._attr_device_class = "enum"
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
-        if "alt" in sensor and (alt := sensor["alt"]):
+        if alt := get_attr(sensor, "alt"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Alt Name": alt }
-        if "description" in sensor and (description := sensor["description"]):
+        if description := get_attr(sensor, "description"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
+        if friendly_name := get_attr(sensor, ATTR_FRIENDLY_NAME):
+            self._attr_friendly_name = friendly_name
+        if icon := get_attr(sensor, "icon"):
+            self._attr_icon = icon
 
         self.attributes = sensor["attributes"] if "attributes" in sensor else None
 
     def _friendly_name_internal(self) -> str | None:
-        """Return the friendly name of the device."""
-        return self._attr_friendly_name
+        if self.platform and (name_translation_key := self._name_translation_key) and (name := self.platform.platform_translations.get(name_translation_key)):
+            return f"{self.coordinator.inverter.name} {self._substitute_name_placeholders(name)}"
+        return super()._friendly_name_internal() if not hasattr(self, "_attr_friendly_name") else f"{self.coordinator.inverter.name} {self._attr_friendly_name}"

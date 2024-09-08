@@ -25,7 +25,7 @@ requests:
     end: 43025
     mb_functioncode: 0x03
   - start: 43141
-    end: 43150 
+    end: 43150
     mb_functioncode: 0x03
 
 parameters:
@@ -755,6 +755,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Today Battery Charge"
+        friendly_name: Today's Battery Charge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -764,6 +765,7 @@ parameters:
         icon: "mdi:battery-plus"
 
       - name: "Today Battery Discharge"
+        friendly_name: Today's Battery Discharge
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -907,7 +909,7 @@ parameters:
         icon: "mdi:wrench-clock"
 
       - name: "Timed Charge End"
-        class: time
+        platform: time
         state_class: "measurement"
         scale: 1
         rule: 9
@@ -915,7 +917,7 @@ parameters:
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge Start"
-        class: time
+        platform: time
         state_class: "measurement"
         scale: 1
         rule: 9
@@ -923,7 +925,7 @@ parameters:
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge End"
-        class: time
+        platform: time
         state_class: "measurement"
         scale: 1
         rule: 9

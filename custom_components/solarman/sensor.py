@@ -12,7 +12,7 @@ from homeassistant.helpers.template import Template
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
-from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
+from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -31,6 +31,9 @@ def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cy
                 return SolarmanIntervalSensor(coordinator, sensor)
     elif not "registers" in sensor and sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
         return SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+
+    if "restore" in sensor or "ensure_increasing" in sensor:
+        return SolarmanRestoreSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
     return SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
 
@@ -57,14 +60,17 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     return True
 
 class SolarmanSensorEntity(SolarmanEntity, SensorEntity):
-    def set_state(self, state):
-        self._attr_native_value = state
+    def __init__(self, coordinator, platform, sensor):
+        super().__init__(coordinator, platform, sensor)
+        if "state_class" in sensor and (state_class := sensor["state_class"]):
+            self._attr_state_class = state_class
 
 class SolarmanIntervalSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_extra_state_attributes = { "state_class": "measurement" }
+        self._attr_native_unit_of_measurement = "s"
+        self._attr_state_class = "duration"
         self._attr_icon = "mdi:update"
 
     @property
@@ -77,9 +83,24 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, _PLATFORM, sensor)
-
+        self._sensor_ensure_increasing = "ensure_increasing" in sensor
         if "name" in sensor and sensor["name"] == "Battery":
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
+
+class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
+    async def async_added_to_hass(self) -> None:
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+
+        if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
+            self._attr_native_value = last_sensor_data.native_value
+            self._attr_native_unit_of_measurement = last_sensor_data.native_unit_of_measurement
+
+    def set_state(self, state):
+        if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
+            return
+
+        self._attr_state = self._attr_native_value = state
 
 class SolarmanBatterySensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
@@ -95,6 +116,9 @@ class SolarmanBatterySensor(SolarmanSensor):
             match self.sensor_name:
                 case "Battery SOH":
                     total_battery_charge = self.get_data("Total Battery Charge", None)
+                    if total_battery_charge == 0:
+                        self.set_state(100)
+                        return
                     battery_capacity = self.get_data("Battery Capacity", None)
                     battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
                     if battery_capacity and battery_corrected_capacity:
@@ -110,17 +134,26 @@ class SolarmanBatterySensor(SolarmanSensor):
                 case "Today Battery Life Cycles":
                     today_battery_charge = self.get_data("Today Battery Charge", None)
                     if today_battery_charge == 0:
-                        self.set_state(get_number(0, self._digits))
+                        self.set_state(0)
                         return
-                    battery_capacity = self.get_data("Battery Corrected Capacity", None)
-                    if battery_capacity <= 0:
-                        battery_capacity = self.get_data("Battery Capacity", None)
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    if battery_capacity and battery_corrected_capacity:
+                        battery_capacity_5 = battery_capacity / 100 * 5
+                        if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
+                            battery_capacity = battery_corrected_capacity
                     if today_battery_charge and battery_capacity and self._battery_nominal_voltage:
                         self.set_state(get_number(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits))
                 case "Total Battery Life Cycles":
                     total_battery_charge = self.get_data("Total Battery Charge", None)
-                    battery_capacity = self.get_data("Battery Corrected Capacity", None)
-                    if battery_capacity <= 0:
-                        battery_capacity = self.get_data("Battery Capacity", None)
+                    if total_battery_charge == 0:
+                        self.set_state(0)
+                        return
+                    battery_capacity = self.get_data("Battery Capacity", None)
+                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    if battery_capacity and battery_corrected_capacity:
+                        battery_capacity_5 = battery_capacity / 100 * 5
+                        if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
+                            battery_capacity = battery_corrected_capacity
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage:
                         self.set_state(get_number(get_battery_cycles(total_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits))

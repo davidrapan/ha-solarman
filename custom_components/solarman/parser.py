@@ -313,8 +313,10 @@ class ParameterParser:
                 self.set_state(key, self.lookup_value(value, definition["lookup"]))
                 self._result[key]["value"] = int(value)
             else:
-                if "validation" in definition:
-                    if not self.do_validate(key, value, definition["validation"]):
+                if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+                    if "default" in validation:
+                        value = validation["default"]
+                    else:
                         return
 
                 self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
@@ -332,8 +334,10 @@ class ParameterParser:
             if "inverted" in definition and definition["inverted"]:
                 value = -value
 
-            if "validation" in definition:
-                if not self.do_validate(key, value, definition["validation"]):
+            if "validation" in definition and (validation := definition["validation"]) and not self.do_validate(key, value, validation):
+                if "default" in validation:
+                    value = validation["default"]
+                else:
                     return
 
             self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
@@ -347,7 +351,7 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 temp = rawData[index]
                 value = value + chr(temp >> 8) + chr(temp & 0xFF)
             else:
@@ -365,9 +369,8 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index]
-                value.append(hex(temp))
+            if index >= 0 and index < length:
+                value.append(hex(rawData[index]))
             else:
                 found = False
 
@@ -383,13 +386,16 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
+            if index >= 0 and index < length:
                 temp = rawData[index]
-                value = value + str(temp >> 12) + "." +  str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
+                value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
             else:
                 found = False
 
         if found:
+            if "remove" in definition:
+                value = value.replace(definition["remove"], "")
+
             self.set_state(key, value)
 
         return
@@ -404,8 +410,8 @@ class ParameterParser:
         for i, r in enumerate(definition["registers"]):
             index = r - start
             if index >= 0 and index < length:
+                temp = rawData[index]
                 if registers_count == 3:
-                    temp = rawData[index]
                     if i == 0:
                         value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
                     elif i == 1:
@@ -415,7 +421,6 @@ class ParameterParser:
                     else:
                         value = value + str(temp >> 8) + str(temp & 0xFF)
                 elif registers_count == 6:
-                    temp = rawData[index]
                     if i == 0 or i == 1:
                         value = value + str(temp) + "/"
                     elif i == 2:
@@ -431,22 +436,30 @@ class ParameterParser:
             if value.endswith(":"):
                 value = value[:-1]
 
-            self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
+            try:
+                self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
+            except Exception as e:
+                _LOGGER.debug(f"ParameterParser.try_parse_datetime: start: {start}, length: {length}, rawData: {rawData}, definition: {definition} [{format_exception(e)}]")
 
         return
 
     def try_parse_time(self, rawData, definition, start, length):
-        key = definition["name"]         
+        key = definition["name"]
         found = True
-        temp = 0
         value = ""
+
+        registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index] if temp == 0 else (temp * 100) + rawData[index]
-                if temp > 99:
+            if index >= 0 and index < length:
+                temp = rawData[index]
+                if registers_count == 1:
                     value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
+                else:
+                    value = value + str("{:02d}".format(int(temp)))
+                    if i == 0 or (i == 1 and registers_count > 2):
+                        value = value + ":"
             else:
                 found = False
 
@@ -462,9 +475,8 @@ class ParameterParser:
 
         for r in definition["registers"]:
             index = r - start
-            if (index >= 0) and (index < length):
-                temp = rawData[index]
-                value.append((temp))
+            if index >= 0 and index < length:
+                value.append(rawData[index])
             else:
                 found = False
 

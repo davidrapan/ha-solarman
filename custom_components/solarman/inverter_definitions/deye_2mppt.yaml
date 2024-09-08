@@ -470,7 +470,7 @@ parameters:
         registers: [0x0032]
         icon: "mdi:exclamation"
 
-      - name: "EEPROM initial enable"
+      - name: "EEPROM"
         class: ""
         state_class: ""
         uom: ""
@@ -609,8 +609,8 @@ parameters:
         rule: 1
         registers: [0x002F]
 
-      # GFDI enable - On/Off Switch
-      - name: "GFDI enable"
+      # GFDI - On/Off Switch
+      - name: "GFDI"
         platform: "switch"
         state_class: ""
         uom: ""

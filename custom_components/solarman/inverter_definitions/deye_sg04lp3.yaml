@@ -69,26 +69,11 @@ parameters:
       - name: "Device Protocol Version"
         attribute:
         update_interval: 300
-        class: "enum"
-        state_class: ""
-        uom: ""
         scale: 1
-        rule: 1
+        rule: 7
+        remove: "0."
         registers: [0x0002]
         icon: "mdi:information"
-        lookup:
-          - key: 0x0100
-            value: "1.0"
-          - key: 0x0101
-            value: "1.1"
-          - key: 0x0102
-            value: "1.2"
-          - key: 0x0103
-            value: "1.3"
-          - key: 0x0104
-            value: "1.4"
-          - key: 0x0105
-            value: "1.5"
 
       # Device - Serial Number
       - name: "Device Serial Number"
@@ -1404,6 +1389,7 @@ parameters:
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
+        ensure_increasing:
         uom: "kWh"
         rule: 1
         digits: 1
@@ -1425,12 +1411,16 @@ parameters:
           - operator: subtract
             scale: 0.1
             registers: [0x0202]
+        validation:
+          default: 0
+          min: 0.2
 
       - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
         update_interval: 30
         class: "energy"
         state_class: "total_increasing"
+        ensure_increasing:
         uom: "kWh"
         rule: 3
         digits: 1
@@ -1466,6 +1456,9 @@ parameters:
           - operator: subtract
             scale: 0.1
             registers: [0x0204, 0x0205]
+        validation:
+          default: 0
+          min: 0.2
 
       - name: Today Production
         alt: Daily Production
@@ -1529,8 +1522,8 @@ parameters:
         rule: 1
         registers: [0x0227]
 
-      # Device - AC Relay state
-      - name: "Device Relay State"
+      # Device - AC Relay
+      - name: "Device Relay"
         update_interval: 30
         class: "enum"
         state_class: ""
@@ -1719,7 +1712,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "Ah"
-        display_precision: 2
         scale: 1
         rule: 1
         registers: [0x0250]

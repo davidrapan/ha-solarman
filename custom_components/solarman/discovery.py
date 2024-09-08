@@ -15,17 +15,15 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class InverterDiscovery:
-    _port = DISCOVERY_PORT
-    _message = DISCOVERY_MESSAGE.encode()
-
-    def __init__(self, hass: HomeAssistant, address = None):
+    def __init__(self, hass: HomeAssistant, ip = None, serial = None):
         self._hass = hass
-        self._address = address
-        self._ip = None
-        self._mac = None
-        self._serial = None
+        self._ip = ip
+        self._serial = serial
+        self._devices = {}
 
-    async def _discover(self, address = IP_BROADCAST, source = IP_ANY):
+    async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY) -> dict:
+        _LOGGER.debug(f"_discover")
+
         loop = asyncio.get_running_loop()
 
         try:
@@ -38,96 +36,54 @@ class InverterDiscovery:
                 if source != IP_ANY:
                     sock.bind((source, PORT_ANY))
 
-                await loop.sock_sendto(sock, self._message, (address, self._port))
+                for ip in ensure_list(ips):
+                    await loop.sock_sendto(sock, DISCOVERY_MESSAGE, (ip, DISCOVERY_PORT))
 
                 while True:
                     try:
-                        recv = await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)
-                        data = recv.decode().split(',')
+                        data = (await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)).decode().split(',')
                         if len(data) == 3:
-                            self._ip = data[0]
-                            self._mac = data[1]
-                            self._serial = int(data[2])
-                            _LOGGER.debug(f"_discover: [{self._ip}, {self._mac}, {self._serial}]")
+                            serial = int(data[2])
+                            yield serial, {"ip": data[0], "mac": data[1]}
+                            _LOGGER.debug(f"_discover: [{data[0]}, {data[1]}, {serial}]")
+                            if not wait:
+                                return
                     except (TimeoutError, socket.timeout):
                         break
         except Exception as e:
             _LOGGER.exception(f"_discover: {format_exception(e)}")
 
-    async def _discover_all(self):
+    async def _discover_all(self) -> dict:
         _LOGGER.debug(f"_discover_all")
 
+        if not self._hass:
+            return
+
         adapters = await network.async_get_adapters(self._hass)
+        nets = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in adapters if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
-        for adapter in adapters:
-            for ipv4 in adapter["ipv4"]:
-                net = IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False)
-                if net.is_loopback:
-                    continue
-
-                _LOGGER.debug(f"_discover_all: Broadcasting on {net.with_prefixlen}")
-
-                await self._discover(str(IPv4Network(net, False).broadcast_address))
-                #await self._discover(IP_BROADCAST, ipv4["address"])
-
-                if self._ip is not None:
-                    return None
+        _LOGGER.debug(f"_discover_all: Broadcasting on {nets}")
+        async for item in self._discover([str(net.broadcast_address) for net in nets], True):
+            yield item
 
     async def discover(self):
         _LOGGER.debug(f"discover")
 
-        if self._address:
-            await self._discover(self._address)
+        self._devices = {}
+
+        if self._ip:
+            _LOGGER.debug(f"_discover_all: Broadcasting on {self._ip}")
+            self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
+            if len(self._devices) > 0 and not self._serial in self._devices:
+                self._devices = {}
 
         attempts_left = ACTION_ATTEMPTS
-        while self._ip is None and attempts_left > 0:
+        while len(self._devices) == 0 and attempts_left > 0:
             attempts_left -= 1
 
-            await self._discover_all()
+            self._devices = {item[0]: item[1] async for item in self._discover_all()}
 
-            if self._ip is None:
+            if len(self._devices) == 0:
                 _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
 
-    async def discover_until_ok(self, x):
-        _LOGGER.debug(f"discover_until_ok")
-
-        if self._address:
-            await self._discover(self._address)
-
-        attempts_left = ACTION_ATTEMPTS
-        while not self._ip and attempts_left > 0:
-            attempts_left -= 1
-
-            await self._discover_all()
-
-            try:
-                await x(self._serial)
-            except:
-                self._ip = None
-
-            if self._ip is None:
-                _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
-
-    async def discover_ip(self):
-        if not self._ip:
-            await self.discover()
-        return self._ip
-
-    async def discover_mac(self):
-        if not self._mac:
-            await self.discover()
-        return self._mac
-
-    async def discover_serial(self):
-        if not self._serial:
-            await self.discover()
-        return self._serial
-
-    def get_ip(self):
-        return self._ip
-
-    def get_mac(self):
-        return self._mac
-
-    def get_serial(self):
-        return self._serial
+        return self._devices

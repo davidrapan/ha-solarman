@@ -63,10 +63,12 @@ class SolarmanSelectEntity(SolarmanEntity, SelectEntity):
     @property
     def current_option(self):
         """Return the current option of this select."""
+        if not self._attr_state:
+            return None
         return self._attr_state
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        await self.coordinator.inverter.service_write_multiple_holding_registers(self.register, [self.get_key(option),], ACTION_ATTEMPTS_MAX)
+        await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self.get_key(option),], ACTION_ATTEMPTS_MAX)
         self.set_state(option)
         self.async_write_ha_state()

@@ -59,5 +59,33 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Today's Battery Charge"
+      },
+      "today_battery_discharge": {
+        "name": "Today's Battery Discharge"
+      },
+      "today_battery_life_cycles": {
+        "name": "Today's Battery Life Cycles"
+      },
+      "today_energy_export": {
+        "name": "Today's Energy Export"
+      },
+      "today_energy_import": {
+        "name": "Today's Energy Import"
+      },
+      "today_load_consumption": {
+        "name": "Today's Load Consumption"
+      },
+      "today_losses": {
+        "name": "Today's Losses"
+      },
+      "today_production": {
+        "name": "Today's Production"
+      }
+    }
   }
 }
