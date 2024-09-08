@@ -174,7 +174,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x060A]
-        icon: "mdi:battery-check-outline"
+        icon: "mdi:battery-sync-outline"
 
       - name: "Battery Power"
         realtime:
