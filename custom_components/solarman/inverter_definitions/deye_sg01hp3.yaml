@@ -1405,7 +1405,7 @@ parameters:
             registers: [0x0202]
         validation:
           default: 0
-          min: 0.2
+          min: 0.3
 
       - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
@@ -1450,7 +1450,7 @@ parameters:
             registers: [0x0204, 0x0205]
         validation:
           default: 0
-          min: 0.2
+          min: 0.3
 
       - name: Today Production
         alt: Daily Production

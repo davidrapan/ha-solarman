@@ -171,7 +171,7 @@ parameters:
         registers: [0x0054, 0x0055]
 
       - name: "Output Active Power"
-        class: "energy"
+        class: "power"
         state_class: "measurement"
         uom: "W"
         scale: 0.1

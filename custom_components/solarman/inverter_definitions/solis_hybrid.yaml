@@ -876,11 +876,11 @@ parameters:
         registers: [43141]
         configurable:
           min: 0
-          max: 70
+          max: 180
           step: 0.1
         range:
           min: 0
-          max: 700
+          max: 1800
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge Current"
@@ -893,11 +893,11 @@ parameters:
         registers: [43142]
         configurable:
           min: 0
-          max: 70
+          max: 180
           step: 0.1
         range:
           min: 0
-          max: 700
+          max: 1800
         icon: "mdi:wrench-clock"
 
       - name: "Timed Charge Start"
