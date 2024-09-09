@@ -130,7 +130,7 @@ parameters:
         alt: "Cumulative Production"
         update_interval: 30
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
@@ -189,7 +189,7 @@ parameters:
         alt: Cumulative Energy Purchased
         update_interval: 30
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
@@ -234,7 +234,7 @@ parameters:
         alt: Cumulative Grid Feed-In
         update_interval: 30
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
@@ -290,7 +290,7 @@ parameters:
       - name: "Total Load Consumption"
         update_interval: 30
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
