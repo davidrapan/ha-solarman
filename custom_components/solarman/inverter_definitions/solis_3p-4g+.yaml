@@ -171,6 +171,38 @@ parameters:
               scale: 0.0001
               registers: [3024]
 
+        - name: "PV3 Voltage"
+          class: "voltage"
+          state_class: "measurement"
+          uom: "V"
+          scale: 0.1
+          rule: 1
+          registers: [3025]
+          icon: "mdi:solar-power"
+
+        - name: "PV3 Current"
+          class: "current"
+          state_class: "measurement"
+          uom: "A"
+          scale: 0.1
+          rule: 1
+          registers: [3026]
+          icon: "mdi:current-dc"
+
+        - name: "PV3 Power"
+          class: "power"
+          state_class: "measurement"
+          uom: "kW"
+          rule: 1
+          digits: 3
+          registers: [3025, 3026]
+          sensors:
+            - registers: [3025]
+              scale: 0.1
+            - operator: multiply
+              scale: 0.0001
+              registers: [3026]
+
   - group: Load
     items:
       - name: "Load Power"
