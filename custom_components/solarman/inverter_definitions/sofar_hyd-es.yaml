@@ -90,7 +90,7 @@ parameters:
 
       - name: "Total Production"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
@@ -151,7 +151,7 @@ parameters:
       - name: "Total Energy Export"
         alt: "Total Grid Return"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
@@ -161,7 +161,7 @@ parameters:
       - name: "Total Energy Import"
         alt: "Total Grid Consumption"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
@@ -171,7 +171,7 @@ parameters:
       - name: "Total Load Consumption"
         alt: "Total Power Consumption"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
@@ -334,7 +334,7 @@ parameters:
       - name: "Total Battery Charge"
         alt: "Battery Total Charge"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3
@@ -344,7 +344,7 @@ parameters:
       - name: "Total Battery Discharge"
         alt: "Battery Total Discharge"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 1
         rule: 3

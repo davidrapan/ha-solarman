@@ -145,7 +145,7 @@ parameters:
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
@@ -155,7 +155,7 @@ parameters:
       - name: "Today Production 1"
         friendly_name: Today's Production 1
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
@@ -165,7 +165,7 @@ parameters:
       - name: "Today Production 2"
         friendly_name: Today's Production 2
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1

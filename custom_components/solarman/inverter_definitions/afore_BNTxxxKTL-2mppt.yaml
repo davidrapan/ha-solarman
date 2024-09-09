@@ -49,7 +49,7 @@ parameters:
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "Wh"
         scale: 1
         rule: 1
