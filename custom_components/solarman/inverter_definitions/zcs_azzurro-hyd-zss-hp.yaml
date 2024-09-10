@@ -143,7 +143,7 @@ parameters:
         #se non funziona cambia questo in 2
         rule: 1
         registers: [0x0607]
-        icon: "mdi:battery-heart-outline"
+        icon: "mdi:thermometer"
 
       - name: "Total Battery Charge"
         alt: "Battery Charge Total"
