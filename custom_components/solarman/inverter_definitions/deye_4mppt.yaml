@@ -171,7 +171,7 @@ parameters:
         rule: 1
         registers: [0x0042]
         icon: "mdi:solar-power"
-		
+
       - name: "Today Production 3"
         friendly_name: Today's Production 3
         class: "energy"
@@ -181,7 +181,7 @@ parameters:
         rule: 1
         registers: [0x0043]
         icon: "mdi:solar-power"
-		
+
       - name: "Today Production 4"
         friendly_name: Today's Production 4
         class: "energy"
@@ -224,7 +224,7 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
-		  
+
       - name: "Total Production 3"
         class: "energy"
         state_class: "total_increasing"
@@ -235,7 +235,7 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
-		  
+
       - name: "Total Production 4"
         class: "energy"
         state_class: "total_increasing"
