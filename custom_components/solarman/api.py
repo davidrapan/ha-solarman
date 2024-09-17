@@ -266,11 +266,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     if results[i] == 0:
                         break
 
-
                 if not 0 in results:
                     return self.get_result(self.profile)
                 else:
-                    await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed.")
+                    await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results}.")
 
         except TimeoutError:
             last_state = self.state
@@ -282,7 +281,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         except UpdateFailed:
             raise
         except Exception as e:
-            await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed. [{format_exception(e)}]")
+            await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results} with exception: {format_exception(e)}.")
 
         return self.get_result()
 

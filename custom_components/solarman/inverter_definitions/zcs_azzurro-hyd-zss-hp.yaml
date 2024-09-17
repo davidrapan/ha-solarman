@@ -328,7 +328,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0404]
-        options: ["Waiting", "Checking grid", "Grid connected", "Grid UFP", "Emergency power supply", "Recoverable fault", "Permanent fault", "Self-charging"]
         lookup:
           - key: 0x0000
             value: "Waiting"
