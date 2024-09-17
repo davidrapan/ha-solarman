@@ -4,6 +4,7 @@
 ## 1x Logger, 2x Module
 ## First version: 10.09.2024
 ## Tested with TSUN TSOL-MS800 (Serial: Y47E...) FW: LSW5BLE_17_02B0_1.08-D1
+
 default:
   update_interval: 5
   digits: 6
@@ -67,7 +68,7 @@ parameters:
         friendly_name: Today's Production
         alt: Daily Production
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
@@ -78,7 +79,7 @@ parameters:
         friendly_name: Today's Production 1
         alt: Daily Production 1
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
@@ -89,7 +90,7 @@ parameters:
         friendly_name: Today's Production 2
         alt: "Daily Production 2"
         class: "energy"
-        state_class: "total"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.01
         rule: 1
@@ -170,7 +171,7 @@ parameters:
         rule: 1
         registers: [0x2007]
 
-      - name: "Rated power"
+      - name: "Rated Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
