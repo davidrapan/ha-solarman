@@ -40,7 +40,6 @@ async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CO
         {
             #vol.Optional("Example of"): "some text to display in the config flow..."
             vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str,
-            vol.Required(CONF_DISCOVERY, default = data.get(CONF_DISCOVERY)): bool,
             vol.Required(CONF_INVERTER_HOST, default = data.get(CONF_INVERTER_HOST)): str,
             vol.Required(CONF_INVERTER_SERIAL, default = data.get(CONF_INVERTER_SERIAL)): cv.positive_int,
             vol.Optional(CONF_INVERTER_PORT, default = data.get(CONF_INVERTER_PORT)): cv.port,
