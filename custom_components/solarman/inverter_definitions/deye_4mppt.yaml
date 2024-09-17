@@ -1,6 +1,6 @@
 #
 # First version: 08.05.2022
-# Latest update: 12.08.2024
+# Latest update: 17.09.2024
 # Microinverter SUN2000G3 (DEYE/VESDAS)
 # v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
 # 4x MPPT, 4x inverter
@@ -172,6 +172,26 @@ parameters:
         registers: [0x0042]
         icon: "mdi:solar-power"
 
+      - name: "Today Production 3"
+        friendly_name: Today's Production 3
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x0043]
+        icon: "mdi:solar-power"
+
+      - name: "Today Production 4"
+        friendly_name: Today's Production 4
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x0044]
+        
+        icon: "mdi:solar-power"
       - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
@@ -201,6 +221,28 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x0047]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: "Total Production 3"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x004A]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: "Total Production 4"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x004D]
         icon: "mdi:solar-power"
         validation:
           min: 0.1
