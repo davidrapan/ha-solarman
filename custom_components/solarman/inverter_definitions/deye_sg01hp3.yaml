@@ -1585,6 +1585,8 @@ parameters:
         registers: [0x0228]
         icon: "mdi:information"
         lookup:
+          - key: 0x0000
+            value: "Off"
           - key: 0x0001
             value: "Inverter"
           - key: 0x0004
