@@ -328,18 +328,24 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0404]
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
+        options: ["Waiting", "Checking grid", "Grid connected", "Grid UFP", "Emergency power supply", "Recoverable fault", "Permanent fault", "Self-charging"]
         lookup:
           - key: 0x0000
-            value: "Standby"
+            value: "Waiting"
           - key: 0x0001
-            value: "Self-test"
+            value: "Checking grid"
           - key: 0x0002
-            value: "Normal"
+            value: "Grid connected"
           - key: 0x0003
-            value: "Alarm"
+            value: "Grid UFP"
           - key: 0x0004
-            value: "Fault"
+            value: "Emergency power supply"
+          - key: 0x0005
+            value: "Recoverable fault"
+          - key: 0x0006
+            value: "Permanent fault"
+          - key: 0x0007
+            value: "Self-charging"
 
       - name: "Temperature"
         realtime:
