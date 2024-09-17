@@ -28,7 +28,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
 
-    async def tcp_parse_response_adu(self, mb_request_frame):
+    async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
 
     def _received_frame_is_valid(self, frame):
@@ -49,45 +49,63 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             return False
         return True
 
+    async def connect(self) -> None:
+        if not self.reader_task:
+            _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
+            await super().connect()
+        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
+        #elif not self.state > 0:
+        #    await super().reconnect()
+
+    async def disconnect(self) -> None:
+        _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
+
+        try:
+            await super().disconnect()
+        finally:
+            self.reader_task = None
+            self.reader = None
+            self.writer = None
+
     async def read_coils(self, register_addr, quantity):
         if not self.sm_passthrough:
             return await super().read_coils(register_addr, quantity)
-        return await self.tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
+        return await self._tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
 
     async def read_discrete_inputs(self, register_addr, quantity):
         if not self.sm_passthrough:
             return await super().read_discrete_inputs(register_addr, quantity)
-        return await self.tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
+        return await self._tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
 
     async def read_input_registers(self, register_addr, quantity):
         if not self.sm_passthrough:
             return await super().read_input_registers(register_addr, quantity)
-        return await self.tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
+        return await self._tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
 
     async def read_holding_registers(self, register_addr, quantity):
         if not self.sm_passthrough:
             return await super().read_holding_registers(register_addr, quantity)
-        return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
+        return await self._tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
     async def write_single_coil(self, register_addr, value):
         if not self.sm_passthrough:
             return await super().write_single_coil(register_addr, value)
-        return await self.tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
+        return await self._tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
 
     async def write_multiple_coils(self, register_addr, values):
         if not self.sm_passthrough:
             return await super().write_multiple_coils(register_addr, values)
-        return await self.tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
+        return await self._tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
 
     async def write_holding_register(self, register_addr, value):
         if not self.sm_passthrough:
             return await super().write_holding_register(register_addr, value)
-        return await self.tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
+        return await self._tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
 
     async def write_multiple_holding_registers(self, register_addr, values):
         if not self.sm_passthrough:
             return await super().write_multiple_holding_registers(register_addr, values)
-        return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
+        return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
     def __init__(self, address, serial, port, mb_slave_id):
@@ -146,32 +164,13 @@ class Inverter(PySolarmanV5AsyncWrapper):
             return "Connected"
         return "Disconnected"
 
-    async def async_connect(self, loud = True) -> None:
-        if not self.reader_task:
-            if loud:
-                _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
-            await self.connect()
-        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
-        #elif not self.state > 0:
-        #    await self.reconnect()
-
-    async def async_disconnect(self, loud = True) -> None:
-        if loud:
-            _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
-        try:
-            await self.disconnect()
-        finally:
-            self.reader_task = None
-            self.reader = None
-            self.writer = None
-
-    async def async_shutdown(self, loud = True) -> None:
+    async def shutdown(self) -> None:
         self._is_reading = 0
         self.state = -1
-        await self.async_disconnect(loud)
+        await self.disconnect()
 
-    async def async_read_write(self, code, start, arg):
-        await self.async_connect()
+    async def read_write(self, code, start, arg):
+        await self.connect()
 
         match code:
             case CODE.READ_COILS:
@@ -220,7 +219,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         _LOGGER.debug(f"[{self.serial}] Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
 
-        await self.async_disconnect()
+        await self.disconnect()
 
         if message and self.state == -1:
             raise UpdateFailed(message)
@@ -250,7 +249,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            self.profile.parse(await self.async_read_write(code, start, quantity), start, quantity)
+                            self.profile.parse(await self.read_write(code, start, quantity), start, quantity)
                             results[i] = 1
                         except (V5FrameError, TimeoutError, Exception) as e:
                             results[i] = 0
@@ -297,13 +296,13 @@ class Inverter(PySolarmanV5AsyncWrapper):
             attempts_left -= 1
 
             try:
-                response = await self.async_read_write(code, start, arg)
+                response = await self.read_write(code, start, arg)
                 _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, response: {response}")
                 return response
             except Exception as e:
                 _LOGGER.warning(f"[{self.serial}] call code {code}: {start}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
-                    await self.async_disconnect()
+                    await self.disconnect()
                 if not attempts_left > 0:
                     raise
 
