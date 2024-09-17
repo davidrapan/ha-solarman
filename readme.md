@@ -38,7 +38,7 @@
 - Find newly added Solarman, open it and then click on the DOWNLOAD button
 
 ### 🔧 Manually
-- Copy the contents of 'custom_components/solarman' directory into the Home Assistant with exactly the same hirearchy within the '/config' directory
+- Copy the contents of `custom_components/solarman` directory into the Home Assistant with exactly the same hirearchy within the `/config` directory
 
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
