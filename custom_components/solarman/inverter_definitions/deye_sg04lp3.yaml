@@ -1320,6 +1320,8 @@ parameters:
         rule: 3
         registers: [0x0204, 0x0205]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         update_interval: 30
@@ -1330,6 +1332,8 @@ parameters:
         rule: 3
         registers: [0x0206, 0x0207]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
       - name: Today Battery Life Cycles
         alt: Daily Battery Life Cycles
@@ -1354,6 +1358,8 @@ parameters:
         rule: 0
         digits: 2
         icon: "mdi:battery-sync"
+        validation:
+          min: 0.1
 
       - name: Today Energy Import
         alt: Daily Energy Bought
@@ -1392,6 +1398,8 @@ parameters:
         rule: 3
         registers: [0x020A, 0x020B]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
 
       - name: Total Energy Export
         alt: Total Energy Sold
@@ -1404,6 +1412,8 @@ parameters:
         rule: 3
         registers: [0x020C, 0x020D]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
 
       - name: Today Load Consumption
         alt: Daily Load Consumption
@@ -1424,6 +1434,8 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x020F, 0x0210]
+        validation:
+          min: 0.1
 
       - name: Today Losses
         alt: Daily Losses
@@ -1500,7 +1512,6 @@ parameters:
             scale: 0.1
             registers: [0x0204, 0x0205]
         validation:
-          default: 0
           min: 0.5
 
       - name: Today Production
@@ -1524,6 +1535,8 @@ parameters:
         rule: 3
         registers: [0x0216, 0x0217]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "DC Temperature"
         update_interval: 30
