@@ -143,7 +143,7 @@ parameters:
         #se non funziona cambia questo in 2
         rule: 1
         registers: [0x0607]
-        icon: "mdi:battery-heart-outline"
+        icon: "mdi:thermometer"
 
       - name: "Total Battery Charge"
         alt: "Battery Charge Total"
@@ -154,7 +154,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0697, 0x0696]
-        icon: "mdi:battery-clock"
+        icon: "mdi:battery-high"
 
       - name: "Total Battery Discharge"
         alt: "Battery Discharge Total"
@@ -165,7 +165,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x069B, 0x069A]
-        icon: "mdi:battery-clock-outline"
+        icon: "mdi:battery-medium"
 
       - name: "Battery Cycles"
         class: ""
@@ -174,7 +174,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x060A]
-        icon: "mdi:battery-check-outline"
+        icon: "mdi:battery-sync-outline"
 
       - name: "Battery Power"
         realtime:
@@ -196,7 +196,7 @@ parameters:
         scale: 0.01
         rule: 3
         registers: [0x0695, 0x0694]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:battery-high"
 
       - name: "Today Battery Discharge"
         alt: Battery Discharge Today
@@ -208,7 +208,7 @@ parameters:
         scale: 0.01
         rule: 3
         registers: [0x0699, 0x0698]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:battery-medium"
 
   - group: Grid
     items:
@@ -282,7 +282,7 @@ parameters:
         scale: 0.01
         rule: 3
         registers: [0x068D, 0x068C]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:home-import-outline"
 
       - name: "Total Energy Import"
         alt: "Energy Purchase Total"
@@ -293,7 +293,7 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x068F, 0x068E]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:home-import-outline"
 
       - name: "Today Energy Export"
         alt: Energy Selling Today
@@ -305,7 +305,7 @@ parameters:
         scale: 0.01
         rule: 3
         registers: [0x0691, 0x0690]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:home-export-outline"
 
       - name: "Total Energy Export"
         alt: "Energy Selling Total"
@@ -316,7 +316,7 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x0693, 0x0692]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:home-export-outline"
 
   - group: Device
     items:
@@ -328,18 +328,24 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0404]
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
+        options: ["Waiting", "Checking grid", "Grid connected", "Grid UFP", "Emergency power supply", "Recoverable fault", "Permanent fault", "Self-charging"]
         lookup:
           - key: 0x0000
-            value: "Standby"
+            value: "Waiting"
           - key: 0x0001
-            value: "Self-test"
+            value: "Checking grid"
           - key: 0x0002
-            value: "Normal"
+            value: "Grid connected"
           - key: 0x0003
-            value: "Alarm"
+            value: "Grid UFP"
           - key: 0x0004
-            value: "Fault"
+            value: "Emergency power supply"
+          - key: 0x0005
+            value: "Recoverable fault"
+          - key: 0x0006
+            value: "Permanent fault"
+          - key: 0x0007
+            value: "Self-charging"
 
       - name: "Temperature"
         realtime:
