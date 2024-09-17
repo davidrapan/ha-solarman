@@ -23,23 +23,24 @@ _LOGGER = logging.getLogger(__name__)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     sm_start = bytes.fromhex("AA")
+    sm_passthrough = False
 
-    def __init__(self, address, serial, port, mb_slave_id, passthrough):
+    def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
-        self._passthrough = passthrough
+        
 
     async def tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
 
     def _received_frame_is_valid(self, frame):
-        if self._passthrough:
+        if self.sm_passthrough:
             return True
         if not frame.startswith(self.v5_start):
             self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         if frame[5] != self.sequence_number and is_ethernet_frame(frame):
             self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
-            self._passthrough = True
+            self.sm_passthrough = True
             return False
         if frame[5] != self.sequence_number:
             self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
@@ -50,48 +51,48 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return True
 
     async def read_coils(self, register_addr, quantity):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().read_coils(register_addr, quantity)
         return await self.tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
 
     async def read_discrete_inputs(self, register_addr, quantity):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().read_discrete_inputs(register_addr, quantity)
         return await self.tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
 
     async def read_input_registers(self, register_addr, quantity):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().read_input_registers(register_addr, quantity)
         return await self.tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
 
     async def read_holding_registers(self, register_addr, quantity):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().read_holding_registers(register_addr, quantity)
         return await self.tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
 
     async def write_single_coil(self, register_addr, value):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().write_single_coil(register_addr, value)
         return await self.tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
 
     async def write_multiple_coils(self, register_addr, values):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().write_multiple_coils(register_addr, values)
         return await self.tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
 
     async def write_holding_register(self, register_addr, value):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().write_holding_register(register_addr, value)
         return await self.tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
 
     async def write_multiple_holding_registers(self, register_addr, values):
-        if not self._passthrough:
+        if not self.sm_passthrough:
             return await super().write_multiple_holding_registers(register_addr, values)
         return await self.tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
-    def __init__(self, address, serial, port, mb_slave_id, passthrough):
-        super().__init__(address, serial, port, mb_slave_id, passthrough)
+    def __init__(self, address, serial, port, mb_slave_id):
+        super().__init__(address, serial, port, mb_slave_id)
         self._is_reading = 0
         self.state_updated = datetime.now()
         self.state_interval = 0

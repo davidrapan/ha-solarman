@@ -45,7 +45,6 @@ async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CO
             vol.Required(CONF_INVERTER_SERIAL, default = data.get(CONF_INVERTER_SERIAL)): cv.positive_int,
             vol.Optional(CONF_INVERTER_PORT, default = data.get(CONF_INVERTER_PORT)): cv.port,
             vol.Optional(CONF_INVERTER_MB_SLAVE_ID, default = data.get(CONF_INVERTER_MB_SLAVE_ID)): cv.positive_int,
-            vol.Optional(CONF_PASSTHROUGH, default = data.get(CONF_PASSTHROUGH)): bool,
             vol.Optional(CONF_LOOKUP_FILE, default = data.get(CONF_LOOKUP_FILE)): vol.In(lookup_files),
             vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = data.get(CONF_BATTERY_NOMINAL_VOLTAGE)): cv.positive_int,
             vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = data.get(CONF_BATTERY_LIFE_CYCLE_RATING)): cv.positive_int,

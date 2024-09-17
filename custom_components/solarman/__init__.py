@@ -30,7 +30,6 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     inverter_serial = options.get(CONF_INVERTER_SERIAL)
     inverter_port = options.get(CONF_INVERTER_PORT)
     inverter_mb_slave_id = options.get(CONF_INVERTER_MB_SLAVE_ID)
-    inverter_passthrough = options.get(CONF_PASSTHROUGH)
     inverter_mac = None
 
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
@@ -52,12 +51,10 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
     if inverter_mb_slave_id is None:
         inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
-    if inverter_passthrough is None:
-        inverter_passthrough = False
     if lookup_file is None:
         raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
 
-    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id, inverter_passthrough)
+    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id)
 
     await inverter.load(name, inverter_mac, lookup_path, lookup_file)
 
