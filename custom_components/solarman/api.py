@@ -27,7 +27,6 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
 
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
-        
 
     async def tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
@@ -171,25 +170,18 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.state = -1
         await self.async_disconnect(loud)
 
-    async def async_read(self, code, start, quantity) -> None:
-        await self.async_connect()
-
-        match code: 
-            case CODE.READ_COILS:
-                return await self.read_coils(start, quantity)
-            case CODE.READ_DISCRETE_INPUTS:
-                return await self.read_discrete_inputs(start, quantity)
-            case CODE.READ_HOLDING_REGISTERS:
-                return await self.read_holding_registers(start, quantity)
-            case CODE.READ_INPUT:
-                return await self.read_input_registers(start, quantity)
-            case _:
-                raise Exception(f"[{self.serial}] Used incorrect modbus reading function code {code}")
-
-    async def async_write(self, code, start, arg):
+    async def async_read_write(self, code, start, arg):
         await self.async_connect()
 
         match code:
+            case CODE.READ_COILS:
+                return await self.read_coils(start, arg)
+            case CODE.READ_DISCRETE_INPUTS:
+                return await self.read_discrete_inputs(start, arg)
+            case CODE.READ_HOLDING_REGISTERS:
+                return await self.read_holding_registers(start, arg)
+            case CODE.READ_INPUT:
+                return await self.read_input_registers(start, arg)
             case CODE.WRITE_SINGLE_COIL:
                 return await self.write_single_coil(start, arg)
             case CODE.WRITE_HOLDING_REGISTER:
@@ -199,7 +191,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
             case CODE.WRITE_MULTIPLE_HOLDING_REGISTERS:
                 return await self.write_multiple_holding_registers(start, arg)
             case _:
-                raise Exception(f"[{self.serial}] Used incorrect modbus writing function code {code}")
+                raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
     async def wait_for_reading_done(self, attempts_left = ACTION_ATTEMPTS):
         while self._is_reading == 1 and attempts_left > 0:
@@ -258,7 +250,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            self.profile.parse(await self.async_read(code, start, quantity), start, quantity)
+                            self.profile.parse(await self.async_read_write(code, start, quantity), start, quantity)
                             results[i] = 1
                         except (V5FrameError, TimeoutError, Exception) as e:
                             results[i] = 0
@@ -306,7 +298,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
             attempts_left -= 1
 
             try:
-                response = await self.async_write(code, start, arg) if code > 4 else await self.async_read(code, start, arg)
+                response = await self.async_read_write(code, start, arg)
                 _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, response: {response}")
                 return response
             except Exception as e:
