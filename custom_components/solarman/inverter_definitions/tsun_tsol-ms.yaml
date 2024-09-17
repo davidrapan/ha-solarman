@@ -1,0 +1,187 @@
+# Microinverter TSUN TSOL-MS300~800
+# From https://github.com/davidrapan/ha-solarman/issues/153
+## 2x MPPT, 1x Device
+## 1x Logger, 2x Module
+## First version: 10.09.2024
+## Tested with TSUN TSOL-MS800 (Serial: Y47E...) FW: LSW5BLE_17_02B0_1.08-D1
+default:
+  update_interval: 5
+  digits: 6
+
+parameters:
+  - group: PV
+    items:
+      - name: "PV1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3010]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3011]
+        icon: "mdi:solar-power"
+
+      - name: PV1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        scale: 0.1
+        registers: [0x3012]
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3013]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3014]
+        icon: "mdi:solar-power"
+
+      - name: PV2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        scale: 0.1
+        registers: [0x3015]
+
+      - name: "Today Production"
+        friendly_name: Today's Production
+        alt: Daily Production
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x301c]
+        icon: "mdi:solar-power"
+
+      - name: "Today Production 1"
+        friendly_name: Today's Production 1
+        alt: Daily Production 1
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x301f]
+        icon: "mdi:solar-power"
+
+      - name: "Today Production 2"
+        friendly_name: Today's Production 2
+        alt: "Daily Production 2"
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x3022]
+        icon: "mdi:solar-power"
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x301e]
+        icon: "mdi:solar-power"
+
+  - group: Grid
+    items:
+      - name: "Grid Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3009]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x300a]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x300b]
+        icon: "mdi:transmission-tower"
+
+  - group: Device
+    items:
+      - name: "Device State"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x3000]
+        icon: "mdi:information"
+        range:
+          min: 0
+          max: 5
+        lookup:
+          - key: 0x0000
+            value: "Standby"
+          - key: 0x0001
+            value: "Normal"
+
+      - name: "Temperature"
+        class: "temperature"
+        uom: "°C"
+        state_class: "measurement"
+        scale: 1
+        rule: 1
+        offset: 40
+        registers: [0x300c]
+
+      - name: "PV Max Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x2007]
+
+      - name: "Rated power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x300e]
+
+      - name: "Output Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3
+        registers: [0x300f]
