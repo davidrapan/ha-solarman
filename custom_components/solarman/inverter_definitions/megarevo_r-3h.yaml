@@ -163,8 +163,8 @@ parameters:
         registers: [0x311B]
         icon: "mdi:thermometer"
 
-      - name: "Today PV Production"
-        friendly_name: Today's PV Production
+      - name: "Today Production"
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -213,7 +213,7 @@ parameters:
         registers: [0x316F]
         icon: "mdi:battery-minus"
 
-      - name: "Total PV Production"
+      - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -221,6 +221,8 @@ parameters:
         rule: 3
         registers: [0x3165]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Total Energy Import"
         class: "energy"
@@ -230,6 +232,8 @@ parameters:
         rule: 3
         registers: [0x317D]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
 
       - name: "Total Energy Export"
         class: "energy"
@@ -239,6 +243,8 @@ parameters:
         rule: 3
         registers: [0x3167]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
 
       - name: "Total Load Consumption"
         class: "energy"
@@ -247,6 +253,8 @@ parameters:
         scale: 0.001
         rule: 3
         registers: [0x3169]
+        validation:
+          min: 0.1
 
       - name: "Total Battery Charge"
         class: "energy"
@@ -256,6 +264,8 @@ parameters:
         rule: 3
         registers: [0x317F]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -265,6 +275,8 @@ parameters:
         rule: 3
         registers: [0x3181]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
       - name: "DC Temperature"
         class: "temperature"

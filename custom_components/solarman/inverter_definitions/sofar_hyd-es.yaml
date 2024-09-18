@@ -96,6 +96,8 @@ parameters:
         rule: 3
         registers: [0x021D, 0x021C]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Total Production time"
         class: ""
@@ -157,6 +159,8 @@ parameters:
         rule: 3
         registers: [0x021F, 0x021E]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
 
       - name: "Total Energy Import"
         alt: "Total Grid Consumption"
@@ -167,6 +171,8 @@ parameters:
         rule: 3
         registers: [0x0221, 0x0220]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
 
       - name: "Total Load Consumption"
         alt: "Total Power Consumption"
@@ -177,6 +183,8 @@ parameters:
         rule: 3
         registers: [0x0223, 0x0222]
         icon: "mdi:lightning-bolt"
+        validation:
+          min: 0.1
 
   - group: Load
     items:
@@ -340,6 +348,8 @@ parameters:
         rule: 3
         registers: [0x0227, 0x0226]
         icon: "mdi:battery"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         alt: "Battery Total Discharge"
@@ -350,6 +360,8 @@ parameters:
         rule: 3
         registers: [0x0229, 0x0228]
         icon: "mdi:battery"
+        validation:
+          min: 0.1
 
       - name: "Max Charge Voltage"
         class: ""

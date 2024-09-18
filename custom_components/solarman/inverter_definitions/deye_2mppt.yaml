@@ -185,7 +185,7 @@ parameters:
         registers: [0x004C]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "AC Output Frequency"
+      - name: "Output Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -274,7 +274,7 @@ parameters:
           - key: 0x0004
             value: "Fault"
 
-      - name: "Total AC Output Power (Active)"
+      - name: "Output Power"
         class: "power"
         state_class: "measurement"
         uom: "W"

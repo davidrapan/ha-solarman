@@ -146,7 +146,7 @@ parameters:
           - key: 0x0004
             value: "Fault"
 
-      - name: "Total Output AC Power"
+      - name: "Output AC Power"
         class: "power"
         state_class: "measurement"
         uom: "W"

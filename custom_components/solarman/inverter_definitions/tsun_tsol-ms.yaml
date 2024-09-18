@@ -105,6 +105,8 @@ parameters:
         rule: 1
         registers: [0x301e]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
   - group: Grid
     items:

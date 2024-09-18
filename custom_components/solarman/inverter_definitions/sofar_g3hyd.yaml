@@ -815,6 +815,8 @@ parameters:
         rule: 3
         registers: [0x0687, 0x0686]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
         class: "energy"
@@ -832,6 +834,8 @@ parameters:
         rule: 3
         registers: [0x068B, 0x068A]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
       - name: Today Energy Import
         alt: Daily Energy Bought
         friendly_name: Today's Energy Import
@@ -851,6 +855,8 @@ parameters:
         rule: 3
         registers: [0x068F, 0x068E]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
       - name: "Today Energy Export"
         alt: Daily Energy Sold
         friendly_name: Today's Energy Export
@@ -870,6 +876,8 @@ parameters:
         rule: 3
         registers: [0x0693, 0x0692]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
       - name: "Today Battery Charge"
         friendly_name: Today's Battery Charge
         class: "energy"
@@ -887,6 +895,8 @@ parameters:
         rule: 3
         registers: [0x0697, 0x0696]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
       - name: "Today Battery Discharge"
         friendly_name: Today's Battery Discharge
         class: "energy"
@@ -904,6 +914,8 @@ parameters:
         rule: 3
         registers: [0x069b, 0x069A]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
   - group: Alert
     items:

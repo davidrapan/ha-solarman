@@ -136,6 +136,8 @@ parameters:
         rule: 3
         registers: [3042, 3041]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
   - group: Power Grid
     items:
@@ -195,6 +197,8 @@ parameters:
         rule: 3
         registers: [3115, 3114]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
 
       - name: Today Energy Export
         alt: Daily Energy Feed-In
@@ -240,6 +244,8 @@ parameters:
         rule: 3
         registers: [3122, 3121]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
 
   - group: Electricity Consumption
     items:
@@ -296,6 +302,8 @@ parameters:
         rule: 3
         registers: [3153, 3152]
         icon: "mdi:home-lightning-bolt"
+        validation:
+          min: 0.1
 
   - group: Battery
     items:
@@ -407,6 +415,8 @@ parameters:
         rule: 3
         registers: [3293, 3292]
         icon: "mdi:battery-minus-variant"
+        validation:
+          min: 0.1
 
       - name: "Today Battery Discharge"
         alt: Battery Daily Discharge
@@ -430,6 +440,8 @@ parameters:
         rule: 3
         registers: [3300, 3299]
         icon: "mdi:battery-minus-variant"
+        validation:
+          min: 0.1
 
       - name: "Today Battery Charge"
         alt: Battery Daily Charge

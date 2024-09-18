@@ -82,6 +82,8 @@ parameters:
         rule: 1
         registers: [0x07DC]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -91,6 +93,8 @@ parameters:
         rule: 1
         registers: [0x07DE]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
       - name: "Today Battery Charge"
         friendly_name: "Today's Battery Charge"
@@ -316,6 +320,8 @@ parameters:
         rule: 1
         registers: [0x03F7]
         icon: mdi:solar-power
+        validation:
+          min: 0.1
 
       - name: "Total Energy Export"
         class: "energy"
@@ -325,6 +331,8 @@ parameters:
         rule: 1
         registers: [0x03FB]
         icon: mdi:transmission-tower
+        validation:
+          min: 0.1
 
       - name: "Total Energy Import"
         class: "energy"
@@ -334,6 +342,8 @@ parameters:
         rule: 1
         registers: [0x03FD]
         icon: mdi:transmission-tower
+        validation:
+          min: 0.1
 
       - name: "Total Load Consumption"
         class: "power"
@@ -342,3 +352,5 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x03FF]
+        validation:
+          min: 0.1

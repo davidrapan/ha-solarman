@@ -64,6 +64,8 @@ parameters:
         rule: 3
         registers: [0x0015, 0x0014]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Today Production time"
         class: ""

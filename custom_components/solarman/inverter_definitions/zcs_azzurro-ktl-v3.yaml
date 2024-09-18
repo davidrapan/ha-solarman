@@ -43,6 +43,8 @@ parameters:
         rule: 3
         registers: [0x0687, 0x0686]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "PV1 Power"
         class: "power"

@@ -32,6 +32,8 @@ parameters:
         rule: 3
         registers: [0x0687, 0x0686]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "PV1 Power"
         realtime:
@@ -155,6 +157,8 @@ parameters:
         rule: 1
         registers: [0x0697, 0x0696]
         icon: "mdi:battery-high"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         alt: "Battery Discharge Total"
@@ -166,6 +170,8 @@ parameters:
         rule: 1
         registers: [0x069B, 0x069A]
         icon: "mdi:battery-medium"
+        validation:
+          min: 0.1
 
       - name: "Battery Cycles"
         class: ""
@@ -294,6 +300,8 @@ parameters:
         rule: 3
         registers: [0x068F, 0x068E]
         icon: "mdi:home-import-outline"
+        validation:
+          min: 0.1
 
       - name: "Today Energy Export"
         alt: Energy Selling Today
@@ -317,6 +325,8 @@ parameters:
         rule: 3
         registers: [0x0693, 0x0692]
         icon: "mdi:home-export-outline"
+        validation:
+          min: 0.1
 
   - group: Device
     items:

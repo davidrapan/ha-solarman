@@ -235,6 +235,8 @@ parameters:
         rule: 3
         registers: [0x0687, 0x0686]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -254,6 +256,8 @@ parameters:
         rule: 3
         registers: [0x068B, 0x068A]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
   - group: Alert
     items:

@@ -56,6 +56,8 @@ parameters:
         rule: 3
         registers: [0x021D, 0x021C]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
 
       - name: "Today Production Time"
         class: "duration"
@@ -106,6 +108,8 @@ parameters:
         rule: 3
         registers: [0x0223, 0x0222]
         icon: "mdi:home-lightning-bolt-outline"
+        validation:
+          min: 0.1
 
   - group: Grid
     items:
@@ -272,6 +276,8 @@ parameters:
         rule: 3
         registers: [0x0227, 0x0226]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         update_interval: 30
@@ -282,6 +288,8 @@ parameters:
         rule: 3
         registers: [0x0229, 0x0228]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
       - name: "Battery SOH"
         update_interval: 300

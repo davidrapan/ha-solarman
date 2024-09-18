@@ -74,6 +74,8 @@ parameters:
         rule: 1
         registers: [5164]
         icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -83,6 +85,8 @@ parameters:
         rule: 1
         registers: [5166]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
       - name: "Battery Voltage"
         class: "voltage"
