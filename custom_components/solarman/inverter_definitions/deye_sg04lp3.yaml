@@ -484,6 +484,22 @@ parameters:
           min: 3800
           max: 6100
 
+      - name: "Battery Generator Charging Current"
+        update_interval: 300
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x007D]
+        configurable:
+          min: 0
+          max: 240
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 240
+
       - name: "Battery Grid Charging Current"
         update_interval: 300
         class: "current"
@@ -500,6 +516,16 @@ parameters:
           min: 0
           max: 240
 
+      - name: "Battery Generator Charging"
+        update_interval: 300
+        platform: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0081]
+        icon: "mdi:battery"
+
       - name: "Battery Grid Charging"
         update_interval: 300
         platform: "switch"
@@ -509,6 +535,16 @@ parameters:
         rule: 1
         registers: [0x0082]
         icon: "mdi:battery"
+
+      - name: "Generator"
+        update_interval: 300
+        platform: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0084]
+        icon: "mdi:generator-stationary"
 
       - name: "SmartLoad Mode"
         update_interval: 300
