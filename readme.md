@@ -24,9 +24,6 @@
 > Inspired by [StephanJoubert/home_assistant_solarman](https://github.com/StephanJoubert/home_assistant_solarman) but w/ a lot of [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
 > Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/) + incorporates many more fixes and improvements and also up to date features of HA (while trying to fully preserve backward compatibility)
 
-> [!WARNING]  
-> It's not possible to install this integration side by side using HACS with the version from Stephan! It will be overwritten when not done manually  
-
 ## 🔨 Installation
 
 [![🔌 Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=davidrapan&repository=ha-solarman&category=integration)
