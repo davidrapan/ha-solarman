@@ -65,7 +65,7 @@ class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
     @property
     def is_on(self) -> bool | None:
         """Return True if entity is on."""
-        return self._attr_state != 0
+        return self._attr_state != self._value_off
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
