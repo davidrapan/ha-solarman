@@ -45,11 +45,13 @@ class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
 
         self._value_on = 1
         self._value_off = 0
-
-        if "value" in sensor:
-            value = sensor["value"]
+        if "value" in sensor and (value := sensor["value"]):
+            if True in value:
+                self._value_on = value[True]
             if "on" in value:
                 self._value_on = value["on"]
+            if False in value:
+                self._value_off = value[False]
             if "off" in value:
                 self._value_off = value["off"]
 
