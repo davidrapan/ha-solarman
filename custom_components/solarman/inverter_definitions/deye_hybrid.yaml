@@ -280,6 +280,42 @@ parameters:
         offset: 1000
         registers: [0x00B6]
 
+      - name: "Battery Grid Charging Current"
+        platform: number
+        class: "current"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00E6]
+        range:
+          min: 000
+          max: 240
+        icon: mdi:current-dc
+
+      - name: "Battery Generator Charging Current"
+        platform: number
+        class: "current"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00E3]
+        range:
+          min: 000
+          max: 240
+        icon: mdi:current-dc
+
+      - name: "Generator Force"
+        platform: switch
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0146]
+        value:
+          on: 0x2000
+          off: 0x0000
+        icon: mdi:generator-stationary
+
   - group: Grid
     items:
       - name: "Grid Power"
