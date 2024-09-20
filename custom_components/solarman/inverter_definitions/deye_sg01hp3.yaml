@@ -315,7 +315,7 @@ parameters:
         configurable:
           min: 0
           max: 240
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
         range:
           min: 0
           max: 240
@@ -489,7 +489,7 @@ parameters:
         configurable:
           min: 0
           max: 240
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
         range:
           min: 0
           max: 240
@@ -505,7 +505,7 @@ parameters:
         configurable:
           min: 0
           max: 240
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
         range:
           min: 0
           max: 240

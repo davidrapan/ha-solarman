@@ -280,7 +280,7 @@ parameters:
         offset: 1000
         registers: [0x00B6]
 
-      - name: "Grid Charge Ampere"
+      - name: "Battery Grid Charging Current"
         platform: number
         class: "current"
         uom: "A"
@@ -289,10 +289,10 @@ parameters:
         registers: [0x00E6]
         range:
           min: 000
-          max: 999
+          max: 240
         icon: mdi:current-dc
 
-      - name: "Generator Charge Ampere"
+      - name: "Battery Generator Charging Current"
         platform: number
         class: "current"
         uom: "A"
@@ -301,7 +301,7 @@ parameters:
         registers: [0x00E3]
         range:
           min: 000
-          max: 999
+          max: 240
         icon: mdi:current-dc
 
       - name: "Generator Force"
