@@ -312,8 +312,8 @@ parameters:
         rule: 1
         registers: [0x0146]
         value:
-          "on": 0x2000
-          "off": 0x0000
+          on: 0x2000
+          off: 0x0000
         icon: mdi:generator-stationary
 
   - group: Grid
@@ -1036,5 +1036,5 @@ parameters:
         rule: 1
         registers: [0x00F8]
         value:
-          "on": 0x00FF
-          "off": 0x0000
+          on: 0x00FF
+          off: 0x0000

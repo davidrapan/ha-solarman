@@ -710,8 +710,8 @@ parameters:
         rule: 1
         registers: [0x0092]
         value:
-          "on": 0x00FF
-          "off": 0x0000
+          on: 0x00FF
+          off: 0x0000
 
       - name: Program 1 Time
         update_interval: 300
