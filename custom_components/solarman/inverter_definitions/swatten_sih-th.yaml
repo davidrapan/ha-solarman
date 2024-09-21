@@ -325,7 +325,7 @@ parameters:
 #            registers: [???] # Missing Today Load Consumption
 #        validation:
 #          default: 0
-#          min: 0.5
+#          min: 1
 
 #      - name: Total Losses
 #        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
@@ -368,7 +368,7 @@ parameters:
 #            scale: 0.1
 #            registers: [???] # Missing Total Load Consumption
 #        validation:
-#          min: 0.5
+#          min: 1
 
   - group: Battery
     items: 
