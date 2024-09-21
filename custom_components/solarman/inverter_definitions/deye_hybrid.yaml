@@ -4,10 +4,10 @@ default:
 
 parameters:
   - group: PV
+    update_interval: 5
     items:
       - name: "PV Power"
         description: Combined power of all inputs
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -72,6 +72,8 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
+  - group: Total
+    items:
       - name: Today Losses
         alt: Daily Losses
         friendly_name: Today's Losses
@@ -270,6 +272,7 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x00BF]
+        icon: "mdi:current-dc"
 
       - name: "Battery Temperature"
         class: "temperature"
@@ -287,10 +290,10 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00E6]
+        icon: "mdi:current-dc"
         range:
           min: 000
           max: 240
-        icon: mdi:current-dc
 
       - name: "Battery Generator Charging Current"
         platform: number
@@ -299,10 +302,10 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00E3]
+        icon: "mdi:current-dc"
         range:
           min: 000
           max: 240
-        icon: mdi:current-dc
 
       - name: "Generator Force"
         platform: switch

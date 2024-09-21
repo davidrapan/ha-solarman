@@ -63,7 +63,6 @@ parameters:
       - name: "Device Protocol Version"
         attribute:
         update_interval: 300
-        scale: 1
         rule: 7
         remove: "0."
         registers: [0x0002]
@@ -306,15 +305,13 @@ parameters:
 
       - name: "Battery Max Charging Current"
         update_interval: 300
+        platform: number
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 1
         rule: 1
         registers: [0x006C]
-        configurable:
-          min: 0
-          max: 240
         icon: "mdi:current-dc"
         range:
           min: 0
@@ -322,16 +319,14 @@ parameters:
 
       - name: "Battery Max Discharging Current"
         update_interval: 300
+        platform: number
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 1
         rule: 1
         registers: [0x006D]
-        configurable:
-          min: 0
-          max: 240
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
         range:
           min: 0
           max: 240
@@ -480,15 +475,13 @@ parameters:
 
       - name: "Battery Generator Charging Current"
         update_interval: 300
+        platform: number
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 1
         rule: 1
         registers: [0x007D]
-        configurable:
-          min: 0
-          max: 240
         icon: "mdi:current-dc"
         range:
           min: 0
@@ -496,15 +489,13 @@ parameters:
 
       - name: "Battery Grid Charging Current"
         update_interval: 300
+        platform: number
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 1
         rule: 1
         registers: [0x0080]
-        configurable:
-          min: 0
-          max: 240
         icon: "mdi:current-dc"
         range:
           min: 0
@@ -1125,7 +1116,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x00D2]
-        icon: "mdi:battery"
 
       - name: "BMS Discharging Voltage"
         attribute:
@@ -1135,7 +1125,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x00D3]
-        icon: "mdi:battery"
 
       - name: "BMS Charging Current Limit"
         attribute:
@@ -1145,7 +1134,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00D4]
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
 
       - name: "BMS Discharging Current Limit"
         attribute:
@@ -1155,7 +1144,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00D5]
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
 
       - name: "BMS SOC"
         attribute:
@@ -1187,6 +1176,7 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x00D8]
+        icon: "mdi:current-dc"
 
       - name: "BMS Max Charging Current"
         attribute:
@@ -1196,7 +1186,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00DA]
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
 
       - name: "BMS Max Discharging Current"
         attribute:
@@ -1206,7 +1196,7 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00DB]
-        icon: "mdi:battery"
+        icon: "mdi:current-dc"
 
       - name: "Battery Alarm"
         platform: binary_sensor
@@ -1254,20 +1244,6 @@ parameters:
         rule: 1
         registers: [0x00DF]
         icon: "mdi:battery"
-        options:
-          [
-            "PYLON",
-            "Tianbangda",
-            "KOK",
-            "Keith",
-            "Toppai",
-            "Peneng 485",
-            "Jeris 485",
-            "Sunwoda 485",
-            "Xinrui 485",
-            "Tianbangda 485",
-            "Shenggao Electric CAN",
-          ]
         lookup:
           - key: 0x0000
             value: "PYLON"
@@ -1795,6 +1771,7 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x024F]
+        icon: "mdi:current-dc"
 
       # Battery - Actual capacity of the battery
       - name: "Battery Corrected Capacity"
@@ -2384,11 +2361,11 @@ parameters:
         registers: [0x029B, 0x029F]
 
   - group: PV
+    update_interval: 5
     items:
       # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
       - name: "PV Power"
         description: Combined power of all inputs
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2408,7 +2385,6 @@ parameters:
 
       # PV - The power of Input 1 (L:1W, H:10W)
       - name: "PV1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2419,7 +2395,6 @@ parameters:
 
       # PV - The power of Input 2 (L:1W, H:10W)
       - name: "PV2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2431,7 +2406,6 @@ parameters:
       # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         disabled:
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2443,7 +2417,6 @@ parameters:
       # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         disabled:
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2454,7 +2427,6 @@ parameters:
 
       # PV - The voltage of Input 1
       - name: "PV1 Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2468,7 +2440,6 @@ parameters:
 
       # PV - The current of Input 1
       - name: "PV1 Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2482,7 +2453,6 @@ parameters:
 
       # PV - The voltage of Input 2
       - name: "PV2 Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2496,7 +2466,6 @@ parameters:
 
       # PV - The current of Input 2
       - name: "PV2 Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2511,7 +2480,6 @@ parameters:
       # PV - The voltage of Input 3
       - name: "PV3 Voltage"
         disabled:
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2526,7 +2494,6 @@ parameters:
       # PV - The current of Input 3
       - name: "PV3 Current"
         disabled:
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2541,7 +2508,6 @@ parameters:
       # PV - The voltage of Input 4
       - name: "PV4 Voltage"
         disabled:
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2556,7 +2522,6 @@ parameters:
       # PV - The current of Input 4
       - name: "PV4 Current"
         disabled:
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
