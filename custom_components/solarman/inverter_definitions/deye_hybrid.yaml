@@ -404,6 +404,28 @@ parameters:
         registers: [0x00AB]
         icon: "mdi:transmission-tower"
 
+      - name: "Today Energy"
+        alt: Daily Energy
+        friendly_name: Today's Energy
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 2
+        registers: [0x003C]
+        icon: "mdi:transmission-tower"
+
+      - name: "Total Energy"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 4
+        registers: [0x003F, 0x0040]
+        icon: "mdi:transmission-tower"
+        validation:
+          min: 0.1
+
       - name: Today Energy Import
         alt: Today Energy Bought
         friendly_name: Today's Energy Import
@@ -447,17 +469,6 @@ parameters:
         rule: 3
         registers: [0x0051, 0x0052]
         icon: "mdi:transmission-tower-import"
-        validation:
-          min: 0.1
-
-      - name: "Total Grid Production"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.1
-        rule: 4
-        registers: [0x003F, 0x0040]
-        icon: "mdi:transmission-tower"
         validation:
           min: 0.1
 
