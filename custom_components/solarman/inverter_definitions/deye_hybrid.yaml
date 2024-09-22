@@ -85,23 +85,18 @@ parameters:
         uom: "kWh"
         rule: 1
         digits: 1
+        scale: 0.1
         registers: [0x004C, 0x006C, 0x0047, 0x004D, 0x0046, 0x0054]
         uint: enforce
         sensors:
-          - scale: 0.1
-            registers: [0x004C]
-          - scale: 0.1
-            registers: [0x006C]
-          - scale: 0.1
-            registers: [0x0047]
+          - registers: [0x004C]
+          - registers: [0x006C]
+          - registers: [0x0047]
           - operator: subtract
-            scale: 0.1
             registers: [0x004D]
           - operator: subtract
-            scale: 0.1
             registers: [0x0046]
           - operator: subtract
-            scale: 0.1
             registers: [0x0054]
         validation:
           default: 0
@@ -116,6 +111,7 @@ parameters:
         uom: "kWh"
         rule: 3
         digits: 1
+        scale: 0.1
         registers:
           [
             0x004E,
@@ -133,20 +129,14 @@ parameters:
           ]
         uint: enforce
         sensors:
-          - scale: 0.1
-            registers: [0x004E, 0x0050]
-          - scale: 0.1
-            registers: [0x0060, 0x0061]
-          - scale: 0.1
-            registers: [0x004A, 0x004B]
+          - registers: [0x004E, 0x0050]
+          - registers: [0x0060, 0x0061]
+          - registers: [0x004A, 0x004B]
           - operator: subtract
-            scale: 0.1
             registers: [0x0051, 0x0052]
           - operator: subtract
-            scale: 0.1
             registers: [0x0048, 0x0049]
           - operator: subtract
-            scale: 0.1
             registers: [0x0055, 0x0056]
         validation:
           min: 1
@@ -225,21 +215,33 @@ parameters:
         validation:
           min: 0.1
 
+      # Battery - The state of battery
       - name: "Battery State"
+        description: Determines battery state from battery power by +-50 W
         class: "enum"
         state_class: ""
         uom: ""
         scale: 1
-        rule: 1
-        registers: [0x00BD]
-        lookup:
-          - key: 0
-            value: "charging"
-          - key: 1
-            value: "idle"
-          - key: 2
-            value: "discharging"
+        rule: 0
+        options: ["charging", "idle", "discharging"]
         icon: "mdi:battery"
+
+# Not working???
+#      - name: "Battery State"
+#        class: "enum"
+#        state_class: ""
+#        uom: ""
+#        scale: 1
+#        rule: 1
+#        registers: [0x00BD]
+#        lookup:
+#          - key: 0
+#            value: "charging"
+#          - key: 1
+#            value: "idle"
+#          - key: 2
+#            value: "discharging"
+#        icon: "mdi:battery"
 
       - name: "Battery Power"
         class: "power"
@@ -307,7 +309,7 @@ parameters:
           min: 000
           max: 240
 
-      - name: "Generator Force"
+      - name: "Generator"
         platform: switch
         state_class: ""
         uom: ""
@@ -330,7 +332,7 @@ parameters:
         registers: [0x00A9]
         icon: "mdi:transmission-tower"
 
-      - name: "Grid Voltage L1"
+      - name: "Grid L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -339,7 +341,7 @@ parameters:
         registers: [0x0096]
         icon: "mdi:transmission-tower"
 
-      - name: "Grid Current L1"
+      - name: "Grid L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -348,7 +350,7 @@ parameters:
         registers: [0x00A0]
         icon: "mdi:transmission-tower"
 
-      - name: "Grid Voltage L2"
+      - name: "Grid L2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -357,7 +359,7 @@ parameters:
         registers: [0x0097]
         icon: "mdi:transmission-tower"
 
-      - name: "Grid Current L2"
+      - name: "Grid L2 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -549,14 +551,12 @@ parameters:
             value: "Alarm"
           - key: 0x0004
             value: "Fault"
-
-      - name: "Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 1
-        rule: 2
-        registers: [0x00AF]
+        attributes:
+          [
+            "Device Serial Number",
+            "Communication Board Version No.",
+            "Control Board Version No.",
+          ]
 
       - name: "Grid Frequency"
         class: "frequency"
@@ -566,7 +566,7 @@ parameters:
         rule: 1
         registers: [0x004F]
 
-      - name: "Current L1"
+      - name: "Internal L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -574,14 +574,14 @@ parameters:
         rule: 2
         registers: [0x00A4]
 
-      - name: "Current L2"
+      - name: "Internal L2 Current"
         class: "current"
         uom: "A"
         scale: 0.01
         rule: 2
         registers: [0x00A5]
 
-      - name: "Inverter L1 Power"
+      - name: "Internal L1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -589,13 +589,21 @@ parameters:
         rule: 2
         registers: [0x00AD]
 
-      - name: "Inverter L2 Power"
+      - name: "Internal L2 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         scale: 1
         rule: 2
         registers: [0x00AE]
+
+      - name: "Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 2
+        registers: [0x00AF]
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
@@ -635,7 +643,7 @@ parameters:
         offset: 1000
         registers: [0x005A]
 
-      - name: "AC Temperature"
+      - name: "Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -644,32 +652,35 @@ parameters:
         offset: 1000
         registers: [0x005B]
 
-      - name: "Inverter ID"
+      - name: "Device Serial Number"
+        attribute:
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
-        isstr: true
+        icon: "mdi:information"
 
       - name: "Communication Board Version No."
+        attribute:
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x000E]
-        isstr: true
+        icon: "mdi:information"
 
       - name: "Control Board Version No."
+        attribute:
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 1
         registers: [0x000D]
-        isstr: true
+        icon: "mdi:information"
 
       - name: "Grid"
         update_interval: 30
@@ -698,35 +709,77 @@ parameters:
         rule: 1
         registers: [0x00A6]
 
-      - name: "Work Mode"
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 3
-        registers: [0x00F4, 0x00F7]
-        lookup:
-          - key: 0
-            value: "Selling First"
-          - key: 1
-            value: "Zero-Export to Load&Solar Sell"
-          - key: 2
-            value: "Zero-Export to Home&Solar Sell"
-          - key: 3
-            value: "Zero-Export to Load"
-          - key: 4
-            value: "Zero-Export to Home"
-        icon: "mdi:home-lightning-bolt"
-
-  - group: Alert
+  - group: Work Mode
     items:
-      - name: "Alert"
+      - name: Energy Pattern
+        update_interval: 300
+        platform: "select"
+        rule: 1
+        registers: [0x00F3]
+        options: ["Battery First", "Load First"]
+        lookup:
+          - key: 0x0000
+            value: "Battery First"
+          - key: 0x0001
+            value: "Load First"
+
+      - name: "Work Mode"
+        update_interval: 300
+        platform: "select"
+        rule: 1
+        registers: [0x00F4]
+        options: ["Export First", "Zero Export To Load", "Zero Export To CT"]
+        lookup:
+          - key: 0x0000
+            value: "Export First"
+          - key: 0x0001
+            value: "Zero Export To Load"
+          - key: 0x0002
+            value: "Zero Export To CT"
+
+      - name: Export Surplus Power
+        alt: Max Sell Power
+        update_interval: 300
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00F5]
+        range:
+          min: 0
+          max: 12000
+
+      - name: Export Surplus
+        alt: Solar Sell
+        update_interval: 300
+        platform: "switch"
+        rule: 1
+        registers: [0x00F7]
+
+      - name: PV Max Power
+        alt: Max Solar Power
+        update_interval: 300
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0035]
+        range:
+          min: 0
+          max: 12000
+
+  - group: Device
+    items:
+      - name: "Device Alarm"
         class: ""
         state_class: ""
         uom: ""
         scale: 1
         rule: 6
         registers: [0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006A]
+        icon: "mdi:alert-outline"
 
   - group: Time of Use
     items:
