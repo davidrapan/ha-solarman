@@ -585,11 +585,11 @@ parameters:
       # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x002b]
+        value:
+          on: 0x0001
+          off: 0x0002
 
       # Island Protection - On/Off Switch
       - name: "Island Protection"
