@@ -208,7 +208,6 @@ class ParameterParser:
         return
 
     def _read_registers(self, rawData, definition, start, length):
-        scale = definition["scale"] if "scale" in definition else 1
         found = True
         value = 0
         shift = 0
@@ -238,7 +237,8 @@ class ParameterParser:
                 if "offset" in definition:
                     value = value - definition["offset"]
 
-                value = value * scale
+                if "scale" in definition and (scale := definition["scale"]):
+                    value = value * scale
 
                 if "divide" in definition and (divide := definition["divide"]) and divide != 0:
                     value //= divide
@@ -247,7 +247,6 @@ class ParameterParser:
 
     def _read_registers_signed(self, rawData, definition, start, length):
         magnitude = definition["magnitude"] if "magnitude" in definition else False
-        scale = definition["scale"] if "scale" in definition else 1
         found = True
         maxint = 0
         value = 0
@@ -273,7 +272,8 @@ class ParameterParser:
             if value > (maxint >> 1):
                 value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
-            value = value * scale
+            if "scale" in definition and (scale := definition["scale"]):
+                value = value * scale
 
             if "divide" in definition and (divide := definition["divide"]) and divide != 0:
                 value //= divide
@@ -287,6 +287,8 @@ class ParameterParser:
 
         if "sensors" in definition:
             for s in definition["sensors"]:
+                if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
+                    s["scale"] = scale
                 if (n := (self._read_registers(rawData, s, start, length) if not "signed" in s else self._read_registers_signed(rawData, s, start, length))) is not None:
                     if not "operator" in s:
                         value += n
