@@ -649,10 +649,10 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x008E]
-        options: ["Selling First", "Zero Export To Load", "Zero Export To CT"]
+        options: ["Export First", "Zero Export To Load", "Zero Export To CT"]
         lookup:
           - key: 0x0000
-            value: "Selling First"
+            value: "Export First"
           - key: 0x0001
             value: "Zero Export To Load"
           - key: 0x0002
@@ -1460,23 +1460,18 @@ parameters:
         uom: "kWh"
         rule: 1
         digits: 1
+        scale: 0.1
         registers: [0x0208, 0x0211, 0x0203, 0x0209, 0x020E, 0x0202]
         uint: enforce
         sensors:
-          - scale: 0.1
-            registers: [0x0208]
-          - scale: 0.1
-            registers: [0x0211]
-          - scale: 0.1
-            registers: [0x0203]
+          - registers: [0x0208]
+          - registers: [0x0211]
+          - registers: [0x0203]
           - operator: subtract
-            scale: 0.1
             registers: [0x0209]
           - operator: subtract
-            scale: 0.1
             registers: [0x020E]
           - operator: subtract
-            scale: 0.1
             registers: [0x0202]
         validation:
           default: 0
@@ -1491,6 +1486,7 @@ parameters:
         uom: "kWh"
         rule: 3
         digits: 1
+        scale: 0.1
         registers:
           [
             0x020A,
@@ -1508,20 +1504,14 @@ parameters:
           ]
         uint: enforce
         sensors:
-          - scale: 0.1
-            registers: [0x020A, 0x020B]
-          - scale: 0.1
-            registers: [0x0216, 0x0217]
-          - scale: 0.1
-            registers: [0x0206, 0x0207]
+          - registers: [0x020A, 0x020B]
+          - registers: [0x0216, 0x0217]
+          - registers: [0x0206, 0x0207]
           - operator: subtract
-            scale: 0.1
             registers: [0x020C, 0x020D]
           - operator: subtract
-            scale: 0.1
             registers: [0x020F, 0x0210]
           - operator: subtract
-            scale: 0.1
             registers: [0x0204, 0x0205]
         validation:
           min: 1
@@ -1629,7 +1619,7 @@ parameters:
         scale: 1
         rule: 3
         registers: [0x0229, 0x022A]
-        icon: "mdi:message-alert-outline"
+        icon: "mdi:alert-outline"
         lookup:
           - key: 0x0000
             value: "OK"
@@ -1655,7 +1645,7 @@ parameters:
         scale: 1
         rule: 3
         registers: [0x22B, 0x022C, 0x022D, 0x022E]
-        icon: "mdi:alert-outline"
+        icon: "mdi:message-alert-outline"
         lookup:
           - key: 0x0000
             value: "OK"
