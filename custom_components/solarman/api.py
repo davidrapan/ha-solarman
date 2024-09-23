@@ -285,7 +285,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return self.get_result()
 
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
-        _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
+        _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
 
         if await self.wait_for_reading_done(wait_for_attempts):
             _LOGGER.debug(f"[{self.serial}] call code {code}: Timeout.")
@@ -297,10 +297,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
             try:
                 response = await self.read_write(code, start, arg)
-                _LOGGER.debug(f"[{self.serial}] call code {code}: {start}, response: {response}")
+                _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, response: {response}")
                 return response
             except Exception as e:
-                _LOGGER.warning(f"[{self.serial}] call code {code}: {start}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                _LOGGER.warning(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
                 if not self.auto_reconnect:
                     await self.disconnect()
                 if not attempts_left > 0:

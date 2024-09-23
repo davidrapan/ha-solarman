@@ -6,7 +6,7 @@
 # 2x MPPT, 2x inverter
 # 1x Logger, 2x Module
 #
-
+#
 ## Tested with:
 ### SUN-800-G3-EU-230    FW: 2.06
 ### SUN-M80-G3-EU-Q0     FW: 2.06
@@ -14,14 +14,248 @@
 ########## May work with:
 ### SUN-M80G3-EU-230  FW: ?.??
 ### SUN-M60G3-EU-Q0   FW: ?.??
+#
 
 default:
   update_interval: 5
   digits: 6
 
 parameters:
+  - group: Device
+    items:
+      - name: "Device"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0000]
+        icon: "mdi:information"
+        lookup:
+          - key: 2
+            value: "String Inverter"
+          - key: 3
+            value: "Single-Phase Hybrid Inverter"
+          - key: 4
+            value: "Microinverter"
+          - key: 5
+            value: "LV 3-Phase Hybrid Inverter"
+          - key: 6
+            value: "HV 3-Phase Hybrid Inverter"
+          - key: 7
+            value: "HV 3-Phase Inverter 6-15kw"
+          - key: 8
+            value: "HV 3-Phase Inverter 20-50kw"
+        attributes:
+          [
+            "Device Modbus Address",
+            "Device Protocol Version",
+            "Device Serial Number",
+            "Device Rated Phase",
+            "Device Chip Type",
+            "Device Communication Board Firmware Version Field 2",
+            "Device Control Board Helper Version",
+            "Device Control Board Firmware Version Field 2",
+            "Device Control Board Firmware Version",
+            "Device Communication Board Firmware Version",
+            "Device Rated Power",
+            "Device MPPTs",
+            "Device Phases",
+          ]
+
+      - name: "Device Modbus Address"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0001]
+        icon: "mdi:information"
+
+      - name: "Device Protocol Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x0002]
+        icon: "mdi:information"
+
+      - name: "Device Serial Number"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 5
+        registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
+
+      - name: "Device Rated Phase"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0008]
+        lookup:
+          - key: 1
+            value: "Single-Phase"
+          - key: 2
+            value: "Three-Phase"
+
+      - name: "Device Chip Type"
+        attribute:
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 6
+        registers: [0x0009]
+        lookup:
+          - key: 0x0000
+            value: "AT32F403A"
+          - key: 0x0001
+            value: "SXX32F103"
+          - key: 0x0002
+            value: "GD32F103"
+          - key: 0x0003
+            value: "GD32F303"
+
+      - name: "Device Communication Board Firmware Version Field 2"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000A]
+
+      - name: "Device Control Board Helper Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000B]
+
+      - name: "Device Control Board Firmware Version Field 2"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000C]
+
+      - name: "Device Control Board Firmware Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000D]
+
+      - name: "Device Communication Board Firmware Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000E]
+
+      - name: "Device Rated Power"
+        attribute:
+        class: "power"
+        state_class: ""
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x0010, 0x0011]
+        icon: "mdi:solar-power"
+
+      - name: "Device MPPTs"
+        attribute:
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x0F00
+        divide: 256
+        registers: [0x0012]
+        range:
+          min: 257
+          max: 2051
+
+      - name: "Device Phases"
+        attribute:
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x000F
+        registers: [0x0012]
+        range:
+          min: 257
+          max: 2051
+
+      - name: "Device State"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x003B]
+        icon: "mdi:information"
+        range:
+          min: 0
+          max: 5
+        lookup:
+          - key: 0x0000
+            value: "Standby"
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
+            value: "Normal"
+          - key: 0x0003
+            value: "Alarm"
+          - key: 0x0004
+            value: "Fault"
+
   - group: PV
     items:
+      - name: PV Power
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E, 0x006F, 0x0070]
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
+
+      - name: PV1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E]
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+
       - name: "PV1 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -29,15 +263,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006D]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x006F]
         icon: "mdi:solar-power"
 
       - name: "PV1 Current"
@@ -49,6 +274,28 @@ parameters:
         registers: [0x006E]
         icon: "mdi:solar-power"
 
+      - name: PV2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006F, 0x0070]
+        sensors:
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x006F]
+        icon: "mdi:solar-power"
+
       - name: "PV2 Current"
         class: "current"
         state_class: "measurement"
@@ -57,34 +304,6 @@ parameters:
         rule: 1
         registers: [0x0070]
         icon: "mdi:solar-power"
-
-      - name: PV1 Power
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        digits: 3
-        registers: [0x006D, 0x006E]
-        sensors:
-          - registers: [0x006D]
-            scale: 0.1
-          - operator: multiply
-            scale: 0.1
-            registers: [0x006E]
-
-      - name: PV2 Power
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        digits: 3
-        registers: [0x006F, 0x0070]
-        sensors:
-          - registers: [0x006F]
-            scale: 0.1
-          - operator: multiply
-            scale: 0.1
-            registers: [0x0070]
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -149,9 +368,133 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "Active Power Regulation"
+  - group: Settings
+    items:
+      - name: "Start-up Self-checking Time"
+        platform: number
         class: ""
         state_class: ""
+        uom: "s"
+        scale: 1
+        rule: 1
+        registers: [0x0015]
+        range:
+          min: 0
+          max: 1000
+
+      - name: "Device Time"
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 8
+        registers: [0x0016, 0x0017, 0x0018]
+        icon: "mdi:clock-time-three-outline"
+
+      - name: "Grid Voltage Upper Limit"
+        platform: number
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x001B]
+        configurable:
+          min: 160
+          max: 550
+        range:
+          min: 1600
+          max: 5500
+
+      - name: "Grid Voltage Lower Limit"
+        platform: number
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x001C]
+        configurable:
+          min: 160
+          max: 550
+        range:
+          min: 1600
+          max: 5500
+
+      - name: "Grid Frequency Upper Limit"
+        platform: number
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x001D]
+        configurable:
+          min: 45
+          max: 65
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Grid Frequency Lower Limit"
+        platform: number
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x001E]
+        configurable:
+          min: 45
+          max: 65
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Over-Frequency Load Reduction Starting Point"
+        platform: number
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0022]
+        configurable:
+          min: 45
+          max: 65
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Over-Frequency Load Reduction Percentage"
+        platform: number
+        class: ""
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x0023]
+        range:
+          min: 0
+          max: 100
+
+      - name: "Power Factor Regulation"
+        platform: number
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        scale: 0.001
+        offset: 1000
+        rule: 1
+        registers: [0x0027]
+        range:
+          min: 0
+          max: 2000
+
+      - name: "Active Power Regulation"
+        platform: number
+        class: ""
+        state_class: "measurement"
         uom: "%"
         scale: 1
         rule: 1
@@ -163,18 +506,67 @@ parameters:
         range:
           min: 0
           max: 1200
-        icon: "mdi:solar-power"
+
+      - name: "" # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+        platform: "switch"
+        rule: 1
+        registers: [0x002b]
+        value:
+          on: 0x0001
+          off: 0x0002
+
+      - name: "Island Protection"
+        platform: "switch"
+        rule: 1
+        registers: [0x002e]
+
+      - name: "Soft Start"
+        platform: "switch"
+        rule: 1
+        registers: [0x002F]
+
+      - name: "GFDI"
+        platform: "switch"
+        rule: 1
+        registers: [0x0030]
+
+      - name: "Over-Frequency Load Reduction"
+        platform: "switch"
+        rule: 1
+        registers: [0x0031]
+
+      - name: "RISO"
+        platform: "switch"
+        rule: 1
+        registers: [0x0032]
+
+      - name: "EEPROM"
+        platform: "select"
+        rule: 1
+        registers: [0x0036]
+        options:
+          [
+            "Normal operation",
+            "Initialize the control board EEPROM",
+            "Initialize the communication board EEPROM",
+          ]
+        lookup:
+          - key: 0
+            value: "Normal operation"
+          - key: 1
+            value: "Initialize the control board EEPROM"
+          - key: 2
+            value: "Initialize the communication board EEPROM"
 
   - group: Grid
     items:
-      - name: "AC Voltage"
+      - name: "Grid Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [0x0049]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid Current"
         class: "current"
@@ -183,107 +575,44 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x004C]
-        icon: "mdi:home-lightning-bolt"
 
-      - name: "Output Frequency"
+      - name: "Grid Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
         registers: [0x004F]
-        icon: "mdi:home-lightning-bolt"
 
-      - name: "Grid Voltage Upper Limit"
-        class: "voltage"
-        state_class: ""
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x001B]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid Voltage Lower Limit"
-        class: "voltage"
-        state_class: ""
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x001C]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid Frequency Upper Limit"
-        class: "frequency"
-        state_class: ""
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x001D]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "Grid Frequency Lower Limit"
-        class: "frequency"
-        state_class: ""
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x001E]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "Over-frequency Load Reduction Starting Point"
-        class: "frequency"
-        state_class: ""
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x0022]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "Over-frequency Load Reduction Percentage"
-        class: ""
-        state_class: ""
-        uom: "%"
-        scale: 1
-        rule: 1
-        registers: [0x0023]
-        icon: ""
-
-  - group: Device
-    items:
-      # Device - Operating (Running) state
-      - name: "Device State"
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x003B]
-        icon: "mdi:information"
-        range:
-          min: 0
-          max: 5
-        lookup:
-          - key: 0x0000
-            value: "Standby"
-          - key: 0x0001
-            value: "Self-test"
-          - key: 0x0002
-            value: "Normal"
-          - key: 0x0003
-            value: "Alarm"
-          - key: 0x0004
-            value: "Fault"
-
-      - name: "Output Power"
+      - name: "Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         scale: 0.1
         rule: 3
         registers: [0x0056, 0x0057]
-        icon: "mdi:home-lightning-bolt"
 
-      - name: "Radiator Temperature"
+      - name: Power losses
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E, 0x006F, 0x0070, 0x0056, 0x0057]
+        uint: enforce
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
+          - operator: subtract
+            registers: [0x0056, 0x0057]
+
+      - name: "Temperature"
         class: "temperature"
         uom: "°C"
         state_class: "measurement"
@@ -291,214 +620,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x005a]
-
-      # Device - Type
-      - name: "Device"
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0000]
-        icon: "mdi:information"
-        lookup:
-          - key: 2
-            value: "String Inverter"
-          - key: 3
-            value: "Single-Phase Hybrid Inverter"
-          - key: 4
-            value: "Microinverter"
-          - key: 5
-            value: "LV 3-Phase Hybrid Inverter"
-          - key: 6
-            value: "HV 3-Phase Hybrid Inverter"
-          - key: 7
-            value: "HV 3-Phase Inverter 6-15kw"
-          - key: 8
-            value: "HV 3-Phase Inverter 20-50kw"
-        attributes:
-          [
-            "Device Modbus Address",
-            "Device Protocol Version",
-            "Device Serial Number",
-            "Device Rated Phase",
-            "Device Rated Power",
-            "Device MPPTs",
-            "Device Phases",
-          ]
-
-      # Device - Modbus Address
-      - name: "Device Modbus Address"
-        attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0001]
-        icon: "mdi:information"
-
-      # Device - Communication Protocol Version
-      - name: "Device Protocol Version"
-        attribute:
-        rule: 7
-        remove: "0."
-        registers: [0x0002]
-        icon: "mdi:information"
-
-      - name: "Device Serial Number"
-        attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 5
-        registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
-
-      - name: "Hardware Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 7
-        registers: [0x000C]
-        icon: "mdi:map-marker"
-
-      - name: "DC Master Firmware Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 7
-        registers: [0x000D]
-        icon: "mdi:map-marker"
-
-      - name: "AC Version. Number"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 7
-        registers: [0x000E]
-        icon: "mdi:map-marker"
-
-      - name: "Device Rated Power"
-        attribute:
-        class: "power"
-        state_class: ""
-        uom: "W"
-        scale: 0.1
-        rule: 4
-        registers: [0x0010, 0x0011]
-        icon: "mdi:solar-power"
-
-      # Device - MPPTs
-      - name: "Device MPPTs"
-        attribute:
-        class: ""
-        state_class: "measurement"
-        uom: ""
-        rule: 1
-        mask: 0x0F00
-        divide: 256
-        registers: [0x0012]
-        range:
-          min: 257
-          max: 2051
-
-      # Device - Phases
-      - name: "Device Phases"
-        attribute:
-        class: ""
-        state_class: "measurement"
-        uom: ""
-        rule: 1
-        mask: 0x000F
-        registers: [0x0012]
-        range:
-          min: 257
-          max: 2051
-
-      - name: "Start-up Self-checking Time "
-        class: ""
-        state_class: ""
-        uom: "s"
-        scale: 1
-        rule: 1
-        registers: [0x0015]
-        icon: "mdi:solar-power"
-
-      - name: "Device Time"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 8
-        registers: [0x0016, 0x0017, 0x0018]
-        icon: "mdi:clock-time-three-outline"
-
-      - name: "Device Rated Phase"
-        attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0008]
-        lookup:
-          - key: 1
-            value: "single-phase"
-          - key: 2
-            value: "three-phase"
-        icon: "mdi:map-marker"
-
-      - name: "Device Chip-Typ"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 6
-        registers: [0x0009]
-        icon: "mdi:map-marker"
-
-      - name: "Power Factor Regulation"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 0.1
-        rule: 2
-        registers: [0x0032]
-        icon: "mdi:exclamation"
-
-      - name: "EEPROM"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0036]
-        lookup:
-          - key: 0
-            value: "Normal operation"
-          - key: 1
-            value: "Initialize the control board EEPROM Mi to restore factory settings"
-          - key: 2
-            value: "Initialize the communication board EEPROM"
-        icon: "mdi:factory"
-
-      - name: "Restore Factory Settings"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0037]
-        lookup:
-          - key: 0
-            value: "Disabled"
-          - key: 1
-            value: "Enabled"
-        icon: "mdi:factory"
 
   - group: Alert
     items:
@@ -509,7 +630,7 @@ parameters:
         scale: 1
         rule: 3
         registers: [0x0065, 0x0066]
-        icon: "mdi:message-alert-outline"
+        icon: "mdi:alert-outline"
         lookup:
           - key: 0x0000
             value: "OK"
@@ -523,17 +644,19 @@ parameters:
             value: "Battery loss"
           - key: 0x80000000
             value: "Parallel communication quality"
+          - key: 0x1D0002
+            value: "OK"
           - key: "default"
             value: "Error"
 
-      - name: "Fault information Word 1"
-        class: ""
+      - name: "Device Fault 1"
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 3
         registers: [0x0067]
-        icon: "mdi:alert-octagon-outline"
+        icon: "mdi:message-alert-outline"
         lookup:
           - key: 0x0000
             value: "OK"
@@ -565,64 +688,21 @@ parameters:
             value: "Arc Fault Reservation"
           - key: 0x2000
             value: "Grid Current Sample Abnormality"
+          - key: "default"
+            value: "Error"
 
-      - name: "Fault information Word 2"
-        class: ""
+      - name: "Device Fault 2"
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
         rule: 3
         registers: [0x0068]
-        icon: "mdi:alert-octagon-outline"
+        icon: "mdi:message-alert-outline"
         lookup:
           - key: 0x0000
             value: "OK"
           - key: 0x191
             value: "Grid phase failure or No Relay Connection"
-
-  - group: Control
-    items:
-      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-      - name: ""
-        platform: "switch"
-        rule: 1
-        registers: [0x002b]
-        value:
-          on: 0x0001
-          off: 0x0002
-
-      # Island Protection - On/Off Switch
-      - name: "Island Protection"
-        platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002e]
-
-      # Soft Start - On/Off Switch
-      - name: "Soft Start"
-        platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x002F]
-
-      # GFDI - On/Off Switch
-      - name: "GFDI"
-        platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0030]
-
-      # Over-frequency Load-shedding - On/Off Switch
-      - name: "Over-frequency Load Reduction"
-        platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x0031]
+          - key: "default"
+            value: "Error"

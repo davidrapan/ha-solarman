@@ -3,8 +3,243 @@ default:
   digits: 6
 
 parameters:
+  - group: Device
+    items:
+      - name: "Device"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0000]
+        icon: "mdi:information"
+        lookup:
+          - key: 2
+            value: "String Inverter"
+          - key: 3
+            value: "Single-Phase Hybrid Inverter"
+          - key: 4
+            value: "Microinverter"
+          - key: 5
+            value: "LV 3-Phase Hybrid Inverter"
+          - key: 6
+            value: "HV 3-Phase Hybrid Inverter"
+          - key: 7
+            value: "HV 3-Phase Inverter 6-15kw"
+          - key: 8
+            value: "HV 3-Phase Inverter 20-50kw"
+        attributes:
+          [
+            "Device Modbus Address",
+            "Device Protocol Version",
+            "Device Serial Number",
+            "Device Rated Phase",
+            "Device Chip Type",
+            "Device Communication Board Firmware Version Field 2",
+            "Device Control Board Helper Version",
+            "Device Control Board Firmware Version Field 2",
+            "Device Control Board Firmware Version",
+            "Device Communication Board Firmware Version",
+            "Device Rated Power",
+            "Device MPPTs",
+            "Device Phases",
+          ]
+
+      - name: "Device Modbus Address"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0001]
+        icon: "mdi:information"
+
+      - name: "Device Protocol Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x0002]
+        icon: "mdi:information"
+
+      - name: "Device Serial Number"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 5
+        registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
+
+      - name: "Device Rated Phase"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x0008]
+        lookup:
+          - key: 1
+            value: "Single-Phase"
+          - key: 2
+            value: "Three-Phase"
+
+      - name: "Device Chip Type"
+        attribute:
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 6
+        registers: [0x0009]
+        lookup:
+          - key: 0x0000
+            value: "AT32F403A"
+          - key: 0x0001
+            value: "SXX32F103"
+          - key: 0x0002
+            value: "GD32F103"
+          - key: 0x0003
+            value: "GD32F303"
+
+      - name: "Device Communication Board Firmware Version Field 2"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000A]
+
+      - name: "Device Control Board Helper Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000B]
+
+      - name: "Device Control Board Firmware Version Field 2"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000C]
+
+      - name: "Device Control Board Firmware Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000D]
+
+      - name: "Device Communication Board Firmware Version"
+        attribute:
+        class: ""
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 7
+        registers: [0x000E]
+
+      - name: "Device Rated Power"
+        attribute:
+        class: "power"
+        state_class: ""
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x0010, 0x0011]
+        icon: "mdi:solar-power"
+
+      - name: "Device MPPTs"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x0F00
+        divide: 256
+        registers: [0x0012]
+        range:
+          min: 257
+          max: 2051
+
+      - name: "Device Phases"
+        attribute:
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: ""
+        rule: 1
+        mask: 0x000F
+        registers: [0x0012]
+        range:
+          min: 257
+          max: 2051
+
+      - name: "Device State"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x003B]
+        icon: "mdi:information"
+        range:
+          min: 0
+          max: 5
+        lookup:
+          - key: 0x0000
+            value: "Standby"
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
+            value: "Normal"
+          - key: 0x0003
+            value: "Alarm"
+          - key: 0x0004
+            value: "Fault"
+
   - group: PV
     items:
+      - name: PV Power
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E, 0x006F, 0x0070]
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
+
+      - name: PV1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E]
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+
       - name: "PV1 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -12,7 +247,29 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006D]
-        icon: "mdi:solar-power-variant"
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x006E]
+        icon: "mdi:solar-power"
+
+      - name: PV2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006F, 0x0070]
+        sensors:
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -21,15 +278,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006F]
-        icon: "mdi:solar-power-variant"
-
-      - name: "PV1 Current"
-        class: "current"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [0x006E]
-        icon: "mdi:solar-power-variant"
+        icon: "mdi:solar-power"
 
       - name: "PV2 Current"
         class: "current"
@@ -38,7 +287,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0070]
-        icon: "mdi:solar-power-variant"
+        icon: "mdi:solar-power"
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -119,33 +368,6 @@ parameters:
         rule: 1
         registers: [0x004F]
 
-  - group: Device
-    items:
-      # Device - Operating (Running) state
-      - name: "Device State"
-        update_interval: 30
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x003B]
-        icon: "mdi:information"
-        range:
-          min: 0
-          max: 5
-        lookup:
-          - key: 0x0000
-            value: "Standby"
-          - key: 0x0001
-            value: "Self-test"
-          - key: 0x0002
-            value: "Normal"
-          - key: 0x0003
-            value: "Alarm"
-          - key: 0x0004
-            value: "Fault"
-
       - name: "Output AC Power"
         class: "power"
         state_class: "measurement"
@@ -154,7 +376,7 @@ parameters:
         rule: 3
         registers: [0x0050, 0x0051]
 
-      - name: "Input Active Power"
+      - name: "Input Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -170,13 +392,33 @@ parameters:
         rule: 3
         registers: [0x0054, 0x0055]
 
-      - name: "Output Active Power"
+      - name: "Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         scale: 0.1
         rule: 3
         registers: [0x0056, 0x0057]
+
+      - name: Power losses
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x006D, 0x006E, 0x006F, 0x0070, 0x0056, 0x0057]
+        uint: enforce
+        sensors:
+          - registers: [0x006D]
+            multiply:
+              registers: [0x006E]
+          - registers: [0x006F]
+            multiply:
+              registers: [0x0070]
+          - operator: subtract
+            registers: [0x0056, 0x0057]
 
       - name: "Output Reactive Power"
         class: "reactive_power"
@@ -185,11 +427,3 @@ parameters:
         rule: 3
         scale: 0.1
         registers: [0x0058, 0x0059]
-
-      - name: "Device Serial Number"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 5
-        registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]

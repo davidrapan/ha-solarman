@@ -290,6 +290,11 @@ class ParameterParser:
                 if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
                     s["scale"] = scale
                 if (n := (self._read_registers(rawData, s, start, length) if not "signed" in s else self._read_registers_signed(rawData, s, start, length))) is not None:
+                    if "multiply" in s and (s_multiply := s["multiply"]):
+                        if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
+                            s_multiply["scale"] = s_scale
+                        if (c := self._read_registers(rawData, s_multiply, start, length)) is not None:
+                            n *= c
                     if not "operator" in s:
                         value += n
                     else:
