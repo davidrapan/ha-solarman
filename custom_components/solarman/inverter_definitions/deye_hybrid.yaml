@@ -1606,44 +1606,92 @@ parameters:
           max: 100
         icon: mdi:sun-clock
 
-      - name: "Program 1"
-        platform: switch
+      - name: Program 1 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0112]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
 
-      - name: "Program 2"
-        platform: switch
+      - name: Program 2 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0113]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
 
-      - name: "Program 3"
-        platform: switch
+      - name: Program 3 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0114]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
 
-      - name: "Program 4"
-        platform: switch
+      - name: Program 4 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0115]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
 
-      - name: "Program 5"
-        platform: switch
+      - name: Program 5 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0116]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
 
-      - name: "Program 6"
-        platform: switch
+      - name: Program 6 Charging
+        platform: select
         rule: 1
-        mask: 1
         registers: [0x0117]
         icon: mdi:sun-clock
+        lookup:
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "Grid"
+          - key: 0x0002
+            value: "Generator"
+          - key: 0x0003
+            value: "Both"
