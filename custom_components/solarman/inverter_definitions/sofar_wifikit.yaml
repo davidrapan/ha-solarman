@@ -392,8 +392,7 @@ parameters:
           - key: 0x0080
             value: "TELE"
           - key: 0x0100
-            value: "DEFAULT"
-          - key: "default"
+            default:
             value: "DEFAULT"
 
       - name: Working Mode

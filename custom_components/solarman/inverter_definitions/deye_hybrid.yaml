@@ -1208,7 +1208,7 @@ parameters:
         range:
           min: 0000
           max: 6300
-        
+
       - name: Battery Generator Charging Start SOC
         platform: number
         class: ""
@@ -1373,16 +1373,34 @@ parameters:
           min: 0
           max: 12000
 
-      - name: "Time of Use"
-        platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
+      - name: Time of Use
+        platform: select
         rule: 1
         registers: [0x00F8]
-        value:
-          on: 0x00FF
-          off: 0x0000
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Monday"
+          - key: 0x0002
+            value: "Tuesday"
+          - key: 0x0004
+            value: "Wednesday"
+          - key: 0x0008
+            value: "Thursday"
+          - key: 0x0010
+            value: "Friday"
+          - key: 0x0020
+            value: "Saturday"
+          - key: 0x0040
+            value: "Sunday"
+          - key: 0x001F
+            value: "Weekdays"
+          - key: 0x0060
+            value: "Weekend"
+          - key: 0x007F
+            default:
+            value: "Enabled"
 
       - name: "Program 1 Time"
         platform: "time"
@@ -1613,7 +1631,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
@@ -1628,7 +1646,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
@@ -1643,7 +1661,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
@@ -1658,7 +1676,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
@@ -1673,7 +1691,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
@@ -1688,7 +1706,7 @@ parameters:
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
-            value: "Off"
+            value: "Disabled"
           - key: 0x0001
             value: "Grid"
           - key: 0x0002
