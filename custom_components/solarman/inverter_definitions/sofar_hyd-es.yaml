@@ -461,18 +461,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0200]
-        isstr: true
-        options:
-          [
-            "Standby",
-            "Self-test",
-            "Normal",
-            "Discharging Check",
-            "Discharging",
-            "EPS",
-            "Alarm",
-            "Fault",
-          ]
         lookup:
           - key: 0
             value: "Standby"
@@ -595,7 +583,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x023A]
-        isstr: true
         lookup:
           - key: 0
             value: "Germany"
@@ -668,7 +655,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x022B]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -823,7 +809,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0201]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -868,7 +853,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0202]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -913,7 +897,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0203]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -958,7 +941,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0204]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -1003,7 +985,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0205]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"

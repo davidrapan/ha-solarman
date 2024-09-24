@@ -190,7 +190,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0000]
-        options: ["Standby", "Self-test", "Normal", "Alarm", "Fault"]
         lookup:
           - key: 0x0000
             value: "Standby"

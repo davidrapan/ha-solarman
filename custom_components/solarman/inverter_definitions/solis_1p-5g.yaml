@@ -46,7 +46,6 @@ parameters:
         rule: 1
         registers: [3043]
         icon: "mdi:list-status"
-        isstr: true
         lookup:
           - key: 0x0
             value: "Waiting"
@@ -193,7 +192,6 @@ parameters:
             33018,
             33019,
           ]
-        isstr: true
 
       - name: "Product Model"
         disabled:
@@ -203,7 +201,6 @@ parameters:
         scale: 1
         rule: 6
         registers: [2999]
-        isstr: true
 
       - name: "DSP Software Version"
         disabled:
@@ -213,7 +210,6 @@ parameters:
         scale: 1
         rule: 6
         registers: [3000]
-        isstr: true
 
       - name: "LCD Software Version"
         disabled:
@@ -223,7 +219,6 @@ parameters:
         scale: 1
         rule: 6
         registers: [3001]
-        isstr: true
 
   - group: PV
     items:

@@ -132,7 +132,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [
             0x0445,
             0x0446,
@@ -149,7 +148,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [0x044D, 0x044E]
         icon: "mdi:alpha-v"
       - name: "Software Version Master"
@@ -157,7 +155,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [0x0453, 0x0454, 0x0455, 0x0456]
         icon: "mdi:alpha-v"
       - name: "Software Version Slave"
@@ -165,7 +162,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [0x0457, 0x0458, 0x0459, 0x045A]
         icon: "mdi:alpha-v"
       - name: "Safety Version"
@@ -180,7 +176,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [0x0460, 0x0461, 0x0462, 0x0463]
         icon: "mdi:alpha-v"
       - name: "Safety Hardware Version"
@@ -188,7 +183,6 @@ parameters:
         uom: ""
         scale: 1
         rule: 5
-        isstr: true
         registers: [0x0464, 0x0465]
         icon: "mdi:alpha-v"
 
@@ -948,7 +942,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0405]
-        isstr: true
         icon: "mdi:wrench"
         lookup:
           - key: 0
@@ -996,7 +989,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x0406]
         lookup:
           - key: 0
@@ -1040,7 +1032,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
 
         registers: [0x0407]
         lookup:
@@ -1086,7 +1077,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -1130,7 +1120,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -1173,7 +1162,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040A]
         lookup:
           - key: 0
@@ -1217,7 +1205,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040B]
         lookup:
           - key: 0
@@ -1263,7 +1250,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -1306,7 +1292,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
 
         registers: [0x040D]
         lookup:
@@ -1351,7 +1336,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040E]
         lookup:
           - key: 0
@@ -1396,7 +1380,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -1440,7 +1423,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"

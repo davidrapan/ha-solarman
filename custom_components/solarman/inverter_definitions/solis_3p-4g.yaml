@@ -53,7 +53,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [2999]
-        isstr: true
 
       - name: "DSP Software Version"
         class: ""
@@ -62,7 +61,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [3000]
-        isstr: true
 
       - name: "LCD Software Version"
         class: ""
@@ -71,7 +69,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [3001]
-        isstr: true
 
       - name: "Inverter Status"
         class: ""
@@ -81,7 +78,6 @@ parameters:
         rule: 1
         registers: [3043]
         icon: "mdi:list-status"
-        isstr: true
         lookup:
           - key: 0
             value: "Waiting"

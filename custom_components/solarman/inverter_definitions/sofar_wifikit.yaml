@@ -401,7 +401,6 @@ parameters:
         platform: select
         rule: 1
         registers: [0x1200]
-        options: ["Auto", "Time of Use", "Timing", "Passive"]
         lookup:
           - key: 0x0000
             value: "Auto"
@@ -810,7 +809,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007]
-        isstr: true
 
       - name: "Software Version"
         class: ""
@@ -819,7 +817,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [0x2008, 0x2009]
-        isstr: true
 
       - name: "Hardware Version"
         class: ""
@@ -828,4 +825,3 @@ parameters:
         scale: 1
         rule: 5
         registers: [0x200A, 0x200B]
-        isstr: true

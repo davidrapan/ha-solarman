@@ -856,7 +856,6 @@ parameters:
         rule: 1
         registers: [0x00C8]
         icon: "mdi:battery"
-        options: ["Lead-Battery, four-stage charging method", "Lithium"]
         lookup:
           - key: 0x0000
             value: "Lead-Battery, four-stage charging method"
@@ -1043,7 +1042,6 @@ parameters:
         rule: 1
         registers: [0x00D5]
         icon: mdi:battery
-        options: [Voltage, Capacity, No Battery]
         lookup:
           - key: 0x0000
             value: Voltage
@@ -1249,7 +1247,6 @@ parameters:
         rule: 1
         registers: [0x00EB]
         icon: "mdi:lightning-bolt-circle"
-        options: ["Generator", "Output", "Microinverter"]
         lookup:
           - key: 0x0000
             value: "Generator"
@@ -1293,7 +1290,6 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x00F3]
-        options: ["Battery First", "Load First"]
         lookup:
           - key: 0x0000
             value: "Battery First"
@@ -1305,7 +1301,6 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x00F4]
-        options: ["Export First", "Zero Export To Load", "Zero Export To CT"]
         lookup:
           - key: 0x0000
             value: "Export First"

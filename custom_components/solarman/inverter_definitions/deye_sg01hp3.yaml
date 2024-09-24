@@ -184,13 +184,9 @@ parameters:
 
   - group: Control
     items:
-      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-      - name: ""
+      - name: "" # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         update_interval: 300
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0050]
 
@@ -199,13 +195,9 @@ parameters:
       - name: "Battery Control Mode"
         update_interval: 300
         platform: "select"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0062]
         icon: "mdi:battery"
-        options: ["Lead-Battery, four-stage charging method", "Lithium"]
         lookup:
           - key: 0x0000
             value: "Lead-Battery, four-stage charging method"
@@ -392,7 +384,6 @@ parameters:
         rule: 1
         registers: [0x006F]
         icon: mdi:battery
-        options: [Voltage, Capacity, No Battery]
         lookup:
           - key: 0x0000
             value: Voltage
@@ -565,9 +556,6 @@ parameters:
       - name: "Battery Generator Charging"
         update_interval: 300
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0081]
         icon: "mdi:battery"
@@ -575,9 +563,6 @@ parameters:
       - name: "Battery Grid Charging"
         update_interval: 300
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0082]
         icon: "mdi:battery"
@@ -585,9 +570,6 @@ parameters:
       - name: "Generator"
         update_interval: 300
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0084]
         icon: "mdi:generator-stationary"
@@ -595,13 +577,9 @@ parameters:
       - name: "SmartLoad Mode"
         update_interval: 300
         platform: "select"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0085]
         icon: "mdi:lightning-bolt-circle"
-        options: ["Generator", "Output", "Microinverter"]
         lookup:
           - key: 0x0000
             value: "Generator"
@@ -656,15 +634,6 @@ parameters:
         platform: "select"
         registers: [0x008A]
         rule: 1
-        options:
-          [
-            LN:220VAC LL:380VAC,
-            LN:230VAC LL:398VAC,
-            LN:240VAC LL:415VAC,
-            LN:120VAC LL:208VAC,
-            LN:133VAC LL:220VAC,
-            LN:100VAC LL:173VAC,
-          ]
         lookup:
           - key: 0x0
             value: LN:220VAC LL:380VAC
@@ -684,12 +653,8 @@ parameters:
       - name: Energy Pattern
         update_interval: 300
         platform: "select"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x008D]
-        options: ["Battery First", "Load First"]
         lookup:
           - key: 0x0000
             value: "Battery First"
@@ -699,12 +664,8 @@ parameters:
       - name: Work Mode
         update_interval: 300
         platform: "select"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x008E]
-        options: ["Export First", "Zero Export To Load", "Zero Export To CT"]
         lookup:
           - key: 0x0000
             value: "Export First"
@@ -756,9 +717,6 @@ parameters:
       - name: Time of Use
         update_interval: 300
         platform: "switch"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0092]
         value:
@@ -1115,54 +1073,36 @@ parameters:
 
       - name: Program 1 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00AC]
         icon: mdi:sun-clock
 
       - name: Program 2 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00AD]
         icon: mdi:sun-clock
 
       - name: Program 3 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00AE]
         icon: mdi:sun-clock
 
       - name: Program 4 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00AF]
         icon: mdi:sun-clock
 
       - name: Program 5 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00B0]
         icon: mdi:sun-clock
 
       - name: Program 6 Grid Charging
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00B1]
         icon: mdi:sun-clock

@@ -425,7 +425,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x0405]
-        isstr: true
         icon: "mdi:wrench"
         lookup:
           - key: 0
@@ -471,7 +470,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x0406]
         lookup:
           - key: 0
@@ -517,7 +515,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x0407]
         lookup:
           - key: 0
@@ -564,7 +561,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -610,7 +606,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -655,7 +650,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040A]
         lookup:
           - key: 0
@@ -701,7 +695,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040B]
         lookup:
           - key: 0
@@ -748,7 +741,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -793,7 +785,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040D]
         lookup:
           - key: 0
@@ -839,7 +830,6 @@ parameters:
         scale: 1
         rule: 1
         icon: "mdi:wrench"
-        isstr: true
         registers: [0x040E]
         lookup:
           - key: 0
@@ -886,7 +876,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"
@@ -932,7 +921,6 @@ parameters:
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]
-        isstr: true
         lookup:
           - key: 0
             value: "No error"

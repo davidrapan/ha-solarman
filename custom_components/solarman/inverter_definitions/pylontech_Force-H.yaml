@@ -19,7 +19,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [5200, 5201, 5202, 5203, 5204, 5205, 5206, 5207]
-        isstr: true
 
       - name: "Brand"
         class: ""
@@ -28,7 +27,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [4096, 4097, 4098]
-        isstr: true
 
       - name: "Device Name"
         class: ""
@@ -37,7 +35,6 @@ parameters:
         scale: 1
         rule: 5
         registers: [4101, 4102, 4103, 4104, 4105]
-        isstr: true
 
       - name: "FW Version"
         class: ""
@@ -46,7 +43,6 @@ parameters:
         scale: 1
         rule: 7
         registers: [4106] # 00000001	00000110 = V1.6
-        isstr: true
 
       - name: "Battery Module (series)"
         class: ""

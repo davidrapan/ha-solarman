@@ -208,6 +208,7 @@ parameters:
           - registers: [0x006F]
             multiply:
               registers: [0x0070]
+        icon: "mdi:solar-power-variant"
 
       - name: PV1 Power
         class: "power"
@@ -221,6 +222,7 @@ parameters:
           - registers: [0x006D]
             multiply:
               registers: [0x006E]
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
         class: "voltage"
@@ -229,7 +231,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006D]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Current"
         class: "current"
@@ -238,7 +240,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006E]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: PV2 Power
         class: "power"
@@ -252,6 +254,7 @@ parameters:
           - registers: [0x006F]
             multiply:
               registers: [0x0070]
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -260,7 +263,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x006F]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Current"
         class: "current"
@@ -269,7 +272,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0070]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -510,12 +513,6 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x0036]
-        options:
-          [
-            "Normal operation",
-            "Initialize the control board EEPROM",
-            "Initialize the communication board EEPROM",
-          ]
         lookup:
           - key: 0
             value: "Normal operation"

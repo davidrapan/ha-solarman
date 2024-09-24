@@ -19,7 +19,6 @@ parameters:
         rule: 1
         registers: [33095]
         icon: "mdi:home-lightning-bolt"
-        isstr: true
         lookup:
           - key: 0x0
             value: "Waiting State"
@@ -126,7 +125,6 @@ parameters:
         rule: 1
         registers: [33121]
         icon: "mdi:home-lightning-bolt"
-        isstr: true
         lookup:
           - key: 0x701
             value: "Normal Operation"
@@ -153,7 +151,6 @@ parameters:
         rule: 1
         registers: [33116]
         icon: "mdi:alert"
-        isstr: true
         lookup:
           - key: 0x0000
             value: "No Fault"
@@ -188,7 +185,6 @@ parameters:
         rule: 1
         registers: [33117]
         icon: "mdi:alert"
-        isstr: true
         lookup:
           - key: 0x0
             value: "No Fault"
@@ -205,7 +201,6 @@ parameters:
         rule: 1
         registers: [33118]
         icon: "mdi:alert"
-        isstr: true
         lookup:
           - key: 0x0
             value: "No Fault"
@@ -224,7 +219,6 @@ parameters:
         rule: 1
         registers: [33119]
         icon: "mdi:alert"
-        isstr: true
         lookup:
           - key: 0x0000
             value: "No Fault"
@@ -265,7 +259,6 @@ parameters:
         rule: 1
         registers: [33120]
         icon: "mdi:alert"
-        isstr: true
         lookup:
           - key: 0x0000
             value: "No Fault"
@@ -321,7 +314,6 @@ parameters:
       #      scale: 1
       #      rule: 5
       #      registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
-      #      isstr: true
 
       #    - name: "Product Model"
       #      class: ""
@@ -330,7 +322,6 @@ parameters:
       #      scale: 1
       #      rule: 6
       #      registers: [33000]
-      #      isstr: true
 
       #    - name: "DSP Software Version"
       #      class: ""
@@ -339,7 +330,6 @@ parameters:
       #      scale: 1
       #      rule: 6
       #      registers: [33001]
-      #      isstr: true
 
       #    - name: "LCD Software Version"
       #      class: ""
@@ -348,7 +338,6 @@ parameters:
       #      scale: 1
       #      rule: 6
       #      registers: [33002]
-      #      isstr: true
 
       #    - name: "Protocol Software Version"
       #      class: ""
@@ -357,7 +346,6 @@ parameters:
       #      scale: 1
       #      rule: 6
       #      registers: [33003]
-      #      isstr: true
 
       - name: "Storage Control Mode"
         class: ""
@@ -367,7 +355,6 @@ parameters:
         rule: 1
         registers: [33132]
         icon: "mdi:battery-clock"
-        isstr: true
         lookup:
           - key: 0x21
             value: "Self Use"
@@ -729,7 +716,6 @@ parameters:
         scale: 1
         rule: 1
         registers: [33135]
-        isstr: true
         lookup:
           - key: 0
             value: "charging"

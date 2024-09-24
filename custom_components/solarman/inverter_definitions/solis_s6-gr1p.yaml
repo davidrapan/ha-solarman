@@ -161,7 +161,6 @@ parameters:
   #      scale: 1
   #      rule: 5
   #      registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
-  #      isstr: true
 
   #    - name: "Product Model"
   #      class: ""
@@ -170,7 +169,6 @@ parameters:
   #      scale: 1
   #      rule: 6
   #      registers: [2999]
-  #      isstr: true
 
   #    - name: "DSP Software Version"
   #      class: ""
@@ -179,7 +177,6 @@ parameters:
   #      scale: 1
   #      rule: 6
   #     registers: [3000]
-  #      isstr: true
 
   #    - name: "LCD Software Version"
   #      class: ""
@@ -188,82 +185,81 @@ parameters:
   #      scale: 1
   #      rule: 6
   #      registers: [3001]
-  #      isstr: true
 
   - group: PV
     items:
-        - name: "PV Power"
-          class: "power"
-          state_class: "measurement"
-          uom: "kW"
-          scale: 0.001
-          rule: 3
-          registers: [3007, 3006]
-          icon: "mdi:solar-power"
+      - name: "PV Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        scale: 0.001
+        rule: 3
+        registers: [3007, 3006]
+        icon: "mdi:solar-power"
 
-        - name: "PV1 Voltage"
-          class: "voltage"
-          state_class: "measurement"
-          uom: "V"
-          scale: 0.1
-          rule: 1
-          registers: [3021]
-          icon: "mdi:solar-power"
+      - name: "PV1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3021]
+        icon: "mdi:solar-power"
 
-        - name: "PV1 Current"
-          class: "current"
-          state_class: "measurement"
-          uom: "A"
-          scale: 0.1
-          rule: 1
-          registers: [3022]
-          icon: "mdi:current-dc"
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [3022]
+        icon: "mdi:current-dc"
 
-        - name: "PV1 Power"
-          class: "power"
-          state_class: "measurement"
-          uom: "kW"
-          rule: 1
-          digits: 3
-          registers: [3021, 3022]
-          sensors:
-            - registers: [3021]
-              scale: 0.1
-            - operator: multiply
-              scale: 0.0001
-              registers: [3022]
+      - name: "PV1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        rule: 1
+        digits: 3
+        registers: [3021, 3022]
+        sensors:
+          - registers: [3021]
+            scale: 0.1
+          - operator: multiply
+            scale: 0.0001
+            registers: [3022]
 
-        - name: "PV2 Voltage"
-          class: "voltage"
-          state_class: "measurement"
-          uom: "V"
-          scale: 0.1
-          rule: 1
-          registers: [3023]
-          icon: "mdi:solar-power"
+      - name: "PV2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3023]
+        icon: "mdi:solar-power"
 
-        - name: "PV2 Current"
-          class: "current"
-          state_class: "measurement"
-          uom: "A"
-          scale: 0.1
-          rule: 1
-          registers: [3024]
-          icon: "mdi:current-dc"
+      - name: "PV2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [3024]
+        icon: "mdi:current-dc"
 
-        - name: "PV2 Power"
-          class: "power"
-          state_class: "measurement"
-          uom: "kW"
-          rule: 1
-          digits: 3
-          registers: [3023, 3024]
-          sensors:
-            - registers: [3023]
-              scale: 0.1
-            - operator: multiply
-              scale: 0.0001
-              registers: [3024]
+      - name: "PV2 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        rule: 1
+        digits: 3
+        registers: [3023, 3024]
+        sensors:
+          - registers: [3023]
+            scale: 0.1
+          - operator: multiply
+            scale: 0.0001
+            registers: [3024]
 
   - group: Load
     items:
