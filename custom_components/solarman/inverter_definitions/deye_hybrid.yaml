@@ -627,7 +627,7 @@ parameters:
         validation:
           min: 0.1
 
-  - group: Upload
+  - group: Load
     items:
       - name: "Load Power"
         class: "power"
@@ -847,11 +847,444 @@ parameters:
 
   - group: Settings
     items:
+      - name: "Battery Control Mode"
+        update_interval: 300
+        platform: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00C8]
+        icon: "mdi:battery"
+        options: ["Lead-Battery, four-stage charging method", "Lithium"]
+        lookup:
+          - key: 0x0000
+            value: "Lead-Battery, four-stage charging method"
+          - key: 0x0001
+            value: "Lithium"
+
+      - name: "Battery Equalization"
+        update_interval: 300
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00C9]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        icon: "mdi:battery"
+        range:
+          min: 3800
+          max: 6100
+
+      - name: "Battery Absorption"
+        update_interval: 300
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00CA]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        icon: "mdi:battery"
+        range:
+          min: 3800
+          max: 6100
+
+      - name: "Battery Float"
+        update_interval: 300
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00CB]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        icon: "mdi:battery"
+        range:
+          min: 3800
+          max: 6100
+
+      - name: "Battery Capacity"
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: "Ah"
+        scale: 1
+        rule: 1
+        registers: [0x00CC]
+        configurable:
+          min: 0
+          max: 2000
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 2000
+
+      - name: "Battery Empty"
+        update_interval: 300
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00CD]
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        icon: "mdi:battery"
+
+      - name: "Zero Export power"
+        update_interval: 300
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x00CE]
+        configurable:
+          min: 0
+          max: 500
+        icon: "mdi:transmission-tower-import"
+
+      - name: "Battery Equalization Cycle"
+        update_interval: 300
+        class: "duration"
+        state_class: "measurement"
+        uom: "d"
+        scale: 1
+        rule: 1
+        registers: [0x00CF]
+        configurable:
+          min: 0
+          max: 90
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 90
+
+      - name: "Battery Equalization Time"
+        update_interval: 300
+        class: "duration"
+        state_class: "measurement"
+        uom: "h"
+        scale: 0.5
+        rule: 1
+        registers: [0x00D0]
+        configurable:
+          min: 0
+          max: 10
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 20
+
+      - name: "Battery Temperature Compensation"
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: "mV/*C"
+        scale: 1
+        rule: 2
+        registers: [0x00D1]
+        configurable:
+          min: 0
+          max: 50
+          step: 0.1
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 50
+
+      - name: "Battery Max Charging Current"
+        update_interval: 300
+        platform: number
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00D2]
+        icon: "mdi:current-dc"
+        range:
+          min: 0
+          max: 240
+
+      - name: "Battery Max Discharging Current"
+        update_interval: 300
+        platform: number
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00D3]
+        icon: "mdi:current-dc"
+        range:
+          min: 0
+          max: 240
+
+      - name: "Battery Operation Mode"
+        update_interval: 300
+        platform: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00D5]
+        icon: mdi:battery
+        options: [Voltage, Capacity, No Battery]
+        lookup:
+          - key: 0x0000
+            value: Voltage
+          - key: 0x0001
+            value: Capacity
+          - key: 0x0002
+            value: No Battery
+
       - name: "Battery Wake Up"
         update_interval: 300
         platform: "switch"
         rule: 1
         registers: [0x00D6]
+
+      - name: Battery Resistance
+        update_interval: 300
+        class: ""
+        state_class: measurement
+        uom: "mΩ"
+        scale: 1
+        rule: 1
+        registers: [0x00D7]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 6000
+
+      - name: Battery Charging efficiency
+        update_interval: 300
+        class: ""
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x00D8]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 1000
+        validation:
+          min: 0
+          max: 100
+
+      - name: Battery Shutdown SOC
+        update_interval: 300
+        class: ""
+        state_class: measurement
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00D9]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 100
+
+      - name: Battery Restart SOC
+        update_interval: 300
+        class: ""
+        state_class: measurement
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00DA]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 100
+
+      - name: Battery Low SOC
+        update_interval: 300
+        class: ""
+        state_class: measurement
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00DB]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 100
+
+      - name: Battery Shutdown Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00DC]
+        icon: mdi:battery
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+
+      - name: Battery Restart Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00DD]
+        icon: mdi:battery
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+
+      - name: Battery Low Voltage
+        update_interval: 300
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00DE]
+        icon: mdi:battery
+        configurable:
+          min: 38
+          max: 61
+          step: 0.1
+        range:
+          min: 3800
+          max: 6100
+
+      - name: "Battery Generator Charging Current"
+        update_interval: 300
+        platform: number
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00E3]
+        icon: "mdi:current-dc"
+        range:
+          min: 0
+          max: 240
+
+      - name: "Battery Grid Charging Current"
+        update_interval: 300
+        platform: number
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 1
+        rule: 1
+        registers: [0x00E6]
+        icon: "mdi:current-dc"
+        range:
+          min: 0
+          max: 240
+
+      - name: "Battery Generator Charging"
+        update_interval: 300
+        platform: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00E7]
+        icon: "mdi:battery"
+
+      - name: "Battery Grid Charging"
+        update_interval: 300
+        platform: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00E8]
+        icon: "mdi:battery"
+
+      - name: "Generator"
+        update_interval: 300
+        platform: "switch"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00EA]
+        icon: "mdi:generator-stationary"
+
+      - name: "SmartLoad Mode"
+        update_interval: 300
+        platform: "select"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x00EB]
+        icon: "mdi:lightning-bolt-circle"
+        options: ["Generator", "Output", "Microinverter"]
+        lookup:
+          - key: 0x0000
+            value: "Generator"
+          - key: 0x0001
+            value: "Output"
+          - key: 0x0002
+            value: "Microinverter"
+
+      - name: "SmartLoad Off"
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00ED]
+        icon: "mdi:lightning-bolt-circle"
+        configurable:
+        range:
+          min: 0
+          max: 100
+
+      - name: "SmartLoad On"
+        update_interval: 300
+        class: ""
+        state_class: "measurement"
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00EF]
+        icon: "mdi:lightning-bolt-circle"
+        configurable:
+        range:
+          min: 0
+          max: 100
 
   - group: Work Mode
     items:
