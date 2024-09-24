@@ -11,29 +11,39 @@ default:
   digits: 6
 
 parameters:
-  - group: Parameters
+  - group: Info
+    update_interval: 300
     items:
-      # Device - Type
       - name: "Device"
-        update_interval: 300
-        uom: ""
-        scale: 1
+        class: "enum"
         rule: 1
         registers: [0x0000]
         icon: "mdi:information"
         lookup:
+          - key: 0x0002
+            value: "String Inverter"
           - key: 0x0200
             value: "String Inverter"
+          - key: 0x0003
+            value: "Single-Phase Hybrid Inverter"
           - key: 0x0300
             value: "Single-Phase Hybrid Inverter"
+          - key: 0x0004
+            value: "Microinverter"
           - key: 0x0400
             value: "Microinverter"
           - key: 0x0005
             value: "LV 3-Phase Hybrid Inverter"
+          - key: 0x0500
+            value: "LV 3-Phase Hybrid Inverter"
           - key: 0x0006
             value: "HV 3-Phase Hybrid Inverter"
+          - key: 0x0007
+            value: "HV 3-Phase Inverter 6-15kw"
           - key: 0x0600
             value: "HV 3-Phase Inverter 6-15kw"
+          - key: 0x0008
+            value: "HV 3-Phase Inverter 20-50kw"
           - key: 0x0601
             value: "HV 3-Phase Inverter 20-50kw"
         attributes:
@@ -42,48 +52,100 @@ parameters:
             "Device Modbus Address",
             "Device Protocol Version",
             "Device Serial Number",
+            "Device Control Board Version",
+            "Device Control Board Auxiliary MCU Software Version",
+            "Device Control Board Bootloader Software Version",
+            "Device AFCI Version",
+            "Device Control Board Auxiliary MCU Board Version",
+            "Device Control Board Firmware Version 2",
+            "Device Control Board Firmware Version",
+            "Device Communication Board Firmware Version 1",
+            "Device Communication Board Firmware Version 2",
+            "Device Communication Board Firmware Version",
             "Device Rated Power",
             "Device MPPTs",
             "Device Phases",
           ]
 
-      # Device - Modbus Address
       - name: "Device Modbus Address"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0001]
-        icon: "mdi:information"
 
-      # Device - Communication Protocol Version
       - name: "Device Protocol Version"
         attribute:
-        update_interval: 300
         rule: 7
         remove: "0."
         registers: [0x0002]
-        icon: "mdi:information"
 
-      # Device - Serial Number
       - name: "Device Serial Number"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
-        icon: "mdi:information"
 
-      # Device - Rated Power
+      - name: "Device Control Board Version"
+        attribute:
+        rule: 7
+        mask: 0x00FF
+        remove: "0."
+        registers: [0x000A]
+
+      - name: "Device Control Board Auxiliary MCU Software Version"
+        attribute:
+        rule: 1
+        mask: 0xFF00
+        registers: [0x000B]
+
+      - name: "Device Control Board Bootloader Software Version"
+        attribute:
+        rule: 1
+        mask: 0x00FF
+        registers: [0x000B]
+
+      - name: "Device AFCI Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x000C]
+
+      - name: "Device Control Board Auxiliary MCU Board Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x000D]
+
+      - name: "Device Control Board Firmware Version 2"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x000E]
+
+      - name: "Device Control Board Firmware Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x000F]
+
+      - name: "Device Communication Board Firmware Version 1"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x0010]
+
+      - name: "Device Communication Board Firmware Version 2"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x0011]
+
+      - name: "Device Communication Board Firmware Version"
+        attribute:
+        rule: 7
+        remove: "0."
+        registers: [0x0012]
+
       - name: "Device Rated Power"
         attribute:
-        update_interval: 300
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -94,13 +156,8 @@ parameters:
           min: 0
           max: 24000
 
-      # Device - MPPTs
       - name: "Device MPPTs"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: "measurement"
-        uom: ""
         rule: 1
         mask: 0x0F00
         divide: 256
@@ -109,13 +166,8 @@ parameters:
           min: 257
           max: 2051
 
-      # Device - Phases
       - name: "Device Phases"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: "measurement"
-        uom: ""
         rule: 1
         mask: 0x000F
         registers: [0x0016]
@@ -348,6 +400,15 @@ parameters:
             value: Capacity
           - key: 0x0002
             value: No Battery
+
+      - name: "Battery Wake Up"
+        update_interval: 300
+        platform: "switch"
+        rule: 1
+        registers: [0x0081]
+        value:
+          on: 0x101
+          off: 0x00
 
       - name: Battery Resistance
         update_interval: 300

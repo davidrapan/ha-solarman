@@ -3,30 +3,39 @@ default:
   digits: 6
 
 parameters:
-  - group: Device
+  - group: Info
     items:
       - name: "Device"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0000]
         icon: "mdi:information"
         lookup:
-          - key: 2
+          - key: 0x0002
             value: "String Inverter"
-          - key: 3
+          - key: 0x0200
+            value: "String Inverter"
+          - key: 0x0003
             value: "Single-Phase Hybrid Inverter"
-          - key: 4
+          - key: 0x0300
+            value: "Single-Phase Hybrid Inverter"
+          - key: 0x0004
             value: "Microinverter"
-          - key: 5
+          - key: 0x0400
+            value: "Microinverter"
+          - key: 0x0005
             value: "LV 3-Phase Hybrid Inverter"
-          - key: 6
+          - key: 0x0500
+            value: "LV 3-Phase Hybrid Inverter"
+          - key: 0x0006
             value: "HV 3-Phase Hybrid Inverter"
-          - key: 7
+          - key: 0x0007
             value: "HV 3-Phase Inverter 6-15kw"
-          - key: 8
+          - key: 0x0600
+            value: "HV 3-Phase Inverter 6-15kw"
+          - key: 0x0008
+            value: "HV 3-Phase Inverter 20-50kw"
+          - key: 0x0601
             value: "HV 3-Phase Inverter 20-50kw"
         attributes:
           [
@@ -35,9 +44,9 @@ parameters:
             "Device Serial Number",
             "Device Rated Phase",
             "Device Chip Type",
-            "Device Communication Board Firmware Version Field 2",
+            "Device Communication Board Firmware Version 2",
             "Device Control Board Helper Version",
-            "Device Control Board Firmware Version Field 2",
+            "Device Control Board Firmware Version 2",
             "Device Control Board Firmware Version",
             "Device Communication Board Firmware Version",
             "Device Rated Power",
@@ -47,36 +56,23 @@ parameters:
 
       - name: "Device Modbus Address"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0001]
-        icon: "mdi:information"
 
       - name: "Device Protocol Version"
         attribute:
         rule: 7
         remove: "0."
         registers: [0x0002]
-        icon: "mdi:information"
 
       - name: "Device Serial Number"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
 
       - name: "Device Rated Phase"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
+        class: "enum"
         rule: 1
         registers: [0x0008]
         lookup:
@@ -88,9 +84,6 @@ parameters:
       - name: "Device Chip Type"
         attribute:
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 6
         registers: [0x0009]
         lookup:
@@ -103,67 +96,42 @@ parameters:
           - key: 0x0003
             value: "GD32F303"
 
-      - name: "Device Communication Board Firmware Version Field 2"
+      - name: "Device Communication Board Firmware Version 2"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x000A]
 
       - name: "Device Control Board Helper Version"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x000B]
 
-      - name: "Device Control Board Firmware Version Field 2"
+      - name: "Device Control Board Firmware Version 2"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x000C]
 
       - name: "Device Control Board Firmware Version"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x000D]
 
       - name: "Device Communication Board Firmware Version"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x000E]
 
       - name: "Device Rated Power"
         attribute:
         class: "power"
-        state_class: ""
+        state_class: "measurement"
         uom: "W"
         scale: 0.1
         rule: 4
         registers: [0x0010, 0x0011]
-        icon: "mdi:solar-power"
 
       - name: "Device MPPTs"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: "measurement"
-        uom: ""
         rule: 1
         mask: 0x0F00
         divide: 256
@@ -174,10 +142,6 @@ parameters:
 
       - name: "Device Phases"
         attribute:
-        update_interval: 300
-        class: ""
-        state_class: "measurement"
-        uom: ""
         rule: 1
         mask: 0x000F
         registers: [0x0012]
@@ -880,6 +844,14 @@ parameters:
         scale: 1
         rule: 1
         registers: [0x00A6]
+
+  - group: Settings
+    items:
+      - name: "Battery Wake Up"
+        update_interval: 300
+        platform: "switch"
+        rule: 1
+        registers: [0x00D6]
 
   - group: Work Mode
     items:
