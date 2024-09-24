@@ -1330,12 +1330,8 @@ parameters:
           min: 0
           max: 65535
 
-      - name: "BMS Type"
-        attribute:
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
+      - name: Battery BMS Type
+        platform: select
         rule: 1
         registers: [0x00DF]
         icon: "mdi:battery"
@@ -1807,7 +1803,6 @@ parameters:
             "BMS SOC",
             "BMS Current",
             "BMS Voltage",
-            "BMS Type",
             "BMS Other Symbol",
             "BMS Charging Voltage",
             "BMS Discharging Voltage",

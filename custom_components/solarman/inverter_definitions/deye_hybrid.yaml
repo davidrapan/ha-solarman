@@ -1713,3 +1713,32 @@ parameters:
             value: "Generator"
           - key: 0x0003
             value: "Both"
+
+      - name: Battery BMS Type
+        platform: select
+        rule: 1
+        registers: [0x0145]
+        icon: "mdi:battery"
+        lookup:
+          - key: 0x0000
+            value: "PYLON"
+          - key: 0x0001
+            value: "Tianbangda"
+          - key: 0x0002
+            value: "KOK"
+          - key: 0x0003
+            value: "Keith"
+          - key: 0x0004
+            value: "Toppai"
+          - key: 0x0005
+            value: "Peneng 485"
+          - key: 0x0006
+            value: "Jeris 485"
+          - key: 0x0007
+            value: "Sunwoda 485"
+          - key: 0x0008
+            value: "Xinrui 485"
+          - key: 0x0009
+            value: "Tianbangda 485"
+          - key: 0x000A
+            value: "Shenggao Electric CAN"
