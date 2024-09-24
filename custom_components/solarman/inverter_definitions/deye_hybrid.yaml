@@ -4,6 +4,7 @@ default:
 
 parameters:
   - group: Info
+    update_interval: 300
     items:
       - name: "Device"
         class: "enum"
@@ -846,9 +847,9 @@ parameters:
         registers: [0x00A6]
 
   - group: Settings
+    update_interval: 300
     items:
       - name: "Battery Control Mode"
-        update_interval: 300
         platform: "select"
         state_class: ""
         uom: ""
@@ -863,7 +864,6 @@ parameters:
             value: "Lithium"
 
       - name: "Battery Equalization"
-        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -880,7 +880,6 @@ parameters:
           max: 6100
 
       - name: "Battery Absorption"
-        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -897,7 +896,6 @@ parameters:
           max: 6100
 
       - name: "Battery Float"
-        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -914,7 +912,6 @@ parameters:
           max: 6100
 
       - name: "Battery Capacity"
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "Ah"
@@ -930,7 +927,6 @@ parameters:
           max: 2000
 
       - name: "Battery Empty"
-        update_interval: 300
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -944,7 +940,6 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Zero Export power"
-        update_interval: 300
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -957,7 +952,6 @@ parameters:
         icon: "mdi:transmission-tower-import"
 
       - name: "Battery Equalization Cycle"
-        update_interval: 300
         class: "duration"
         state_class: "measurement"
         uom: "d"
@@ -973,7 +967,6 @@ parameters:
           max: 90
 
       - name: "Battery Equalization Time"
-        update_interval: 300
         class: "duration"
         state_class: "measurement"
         uom: "h"
@@ -989,7 +982,6 @@ parameters:
           max: 20
 
       - name: "Battery Temperature Compensation"
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "mV/*C"
@@ -1006,7 +998,6 @@ parameters:
           max: 50
 
       - name: "Battery Max Charging Current"
-        update_interval: 300
         platform: number
         class: "current"
         state_class: "measurement"
@@ -1020,7 +1011,6 @@ parameters:
           max: 240
 
       - name: "Battery Max Discharging Current"
-        update_interval: 300
         platform: number
         class: "current"
         state_class: "measurement"
@@ -1034,7 +1024,6 @@ parameters:
           max: 240
 
       - name: "Battery Operation Mode"
-        update_interval: 300
         platform: "select"
         state_class: ""
         uom: ""
@@ -1051,13 +1040,11 @@ parameters:
             value: No Battery
 
       - name: "Battery Wake Up"
-        update_interval: 300
         platform: "switch"
         rule: 1
         registers: [0x00D6]
 
       - name: Battery Resistance
-        update_interval: 300
         class: ""
         state_class: measurement
         uom: "mΩ"
@@ -1071,7 +1058,6 @@ parameters:
           max: 6000
 
       - name: Battery Charging efficiency
-        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -1088,7 +1074,6 @@ parameters:
           max: 100
 
       - name: Battery Shutdown SOC
-        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -1102,7 +1087,6 @@ parameters:
           max: 100
 
       - name: Battery Restart SOC
-        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -1116,7 +1100,6 @@ parameters:
           max: 100
 
       - name: Battery Low SOC
-        update_interval: 300
         class: ""
         state_class: measurement
         uom: "%"
@@ -1130,7 +1113,6 @@ parameters:
           max: 100
 
       - name: Battery Shutdown Voltage
-        update_interval: 300
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1147,7 +1129,6 @@ parameters:
           max: 6100
 
       - name: Battery Restart Voltage
-        update_interval: 300
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1164,7 +1145,6 @@ parameters:
           max: 6100
 
       - name: Battery Low Voltage
-        update_interval: 300
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1180,8 +1160,70 @@ parameters:
           min: 3800
           max: 6100
 
+      - name: "Generator Operating Time"
+        platform: number
+        class: "duration"
+        state_class: "measurement"
+        uom: "h"
+        scale: 0.1
+        rule: 1
+        registers: [0x00DF]
+        icon: "mdi:generator-stationary"
+        configurable:
+          min: 0
+          max: 24
+        range:
+          min: 0
+          max: 240
+
+      - name: "Generator Cooling Time"
+        platform: number
+        class: "duration"
+        state_class: "measurement"
+        uom: "h"
+        scale: 0.1
+        rule: 1
+        registers: [0x00E0]
+        icon: "mdi:generator-stationary"
+        configurable:
+          min: 0
+          max: 24
+        range:
+          min: 0
+          max: 240
+
+      - name: Battery Generator Charging Start Voltage
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00E1]
+        icon: mdi:battery
+        configurable:
+          min: 00
+          max: 63
+          step: 0.1
+        range:
+          min: 0000
+          max: 6300
+        
+      - name: Battery Generator Charging Start SOC
+        platform: number
+        class: ""
+        state_class: measurement
+        uom: "%"
+        scale: 1
+        rule: 1
+        registers: [0x00E2]
+        icon: mdi:battery
+        configurable:
+        range:
+          min: 0
+          max: 100
+
       - name: "Battery Generator Charging Current"
-        update_interval: 300
         platform: number
         class: "current"
         state_class: "measurement"
@@ -1195,7 +1237,6 @@ parameters:
           max: 240
 
       - name: "Battery Grid Charging Current"
-        update_interval: 300
         platform: number
         class: "current"
         state_class: "measurement"
@@ -1209,7 +1250,6 @@ parameters:
           max: 240
 
       - name: "Battery Generator Charging"
-        update_interval: 300
         platform: "switch"
         state_class: ""
         uom: ""
@@ -1219,7 +1259,6 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Battery Grid Charging"
-        update_interval: 300
         platform: "switch"
         state_class: ""
         uom: ""
@@ -1229,7 +1268,6 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Generator"
-        update_interval: 300
         platform: "switch"
         state_class: ""
         uom: ""
@@ -1239,7 +1277,6 @@ parameters:
         icon: "mdi:generator-stationary"
 
       - name: "SmartLoad Mode"
-        update_interval: 300
         platform: "select"
         state_class: ""
         uom: ""
@@ -1256,7 +1293,6 @@ parameters:
             value: "Microinverter"
 
       - name: "SmartLoad Off"
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -1270,7 +1306,6 @@ parameters:
           max: 100
 
       - name: "SmartLoad On"
-        update_interval: 300
         class: ""
         state_class: "measurement"
         uom: "%"
@@ -1284,9 +1319,9 @@ parameters:
           max: 100
 
   - group: Work Mode
+    update_interval: 300
     items:
       - name: Energy Pattern
-        update_interval: 300
         platform: "select"
         rule: 1
         registers: [0x00F3]
@@ -1297,7 +1332,6 @@ parameters:
             value: "Load First"
 
       - name: "Work Mode"
-        update_interval: 300
         platform: "select"
         rule: 1
         registers: [0x00F4]
@@ -1311,7 +1345,6 @@ parameters:
 
       - name: Export Surplus Power
         alt: Max Sell Power
-        update_interval: 300
         platform: number
         class: "power"
         state_class: "measurement"
@@ -1324,14 +1357,12 @@ parameters:
 
       - name: Export Surplus
         alt: Solar Sell
-        update_interval: 300
         platform: "switch"
         rule: 1
         registers: [0x00F7]
 
       - name: PV Max Power
         alt: Max Solar Power
-        update_interval: 300
         platform: number
         class: "power"
         state_class: "measurement"
@@ -1342,10 +1373,7 @@ parameters:
           min: 0
           max: 12000
 
-  - group: Time of Use
-    items:
       - name: "Time of Use"
-        update_interval: 300
         platform: "switch"
         state_class: ""
         uom: ""
@@ -1357,7 +1385,6 @@ parameters:
           off: 0x0000
 
       - name: "Program 1 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1370,7 +1397,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 2 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1383,7 +1409,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 3 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1396,7 +1421,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 4 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1409,7 +1433,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 5 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1422,7 +1445,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 6 Time"
-        update_interval: 300
         platform: "time"
         state_class: measurement
         uom: ""
@@ -1435,7 +1457,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 1 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1449,7 +1470,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 2 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1463,7 +1483,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 3 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1477,7 +1496,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 4 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1491,7 +1509,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 5 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1505,7 +1522,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 6 Power"
-        update_interval: 300
         platform: number
         class: "power"
         state_class: measurement
@@ -1519,7 +1535,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 1 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1532,7 +1547,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 2 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1545,7 +1559,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 3 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1558,7 +1571,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 4 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1571,7 +1583,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 5 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1584,7 +1595,6 @@ parameters:
         icon: mdi:sun-clock
 
       - name: "Program 6 SOC"
-        update_interval: 300
         platform: number
         state_class: measurement
         uom: "%"
@@ -1598,9 +1608,6 @@ parameters:
 
       - name: "Program 1"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0112]
@@ -1608,9 +1615,6 @@ parameters:
 
       - name: "Program 2"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0113]
@@ -1618,9 +1622,6 @@ parameters:
 
       - name: "Program 3"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0114]
@@ -1628,9 +1629,6 @@ parameters:
 
       - name: "Program 4"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0115]
@@ -1638,9 +1636,6 @@ parameters:
 
       - name: "Program 5"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0116]
@@ -1648,9 +1643,6 @@ parameters:
 
       - name: "Program 6"
         platform: switch
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         mask: 1
         registers: [0x0117]
