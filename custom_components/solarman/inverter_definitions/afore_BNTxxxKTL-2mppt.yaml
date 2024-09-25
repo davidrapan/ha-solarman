@@ -3,48 +3,101 @@
 #
 
 default:
-  update_interval: 10
+  update_interval: 5
   code: 0x04
   digits: 6
 
 parameters:
   - group: PV
     items:
+      - name: PV Power
+        alt: DC Power
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0007, 0x0008, 0x0009, 0x000A]
+        sensors:
+          - registers: [0x0007]
+            multiply:
+              registers: [0x0008]
+          - registers: [0x0009]
+            multiply:
+              registers: [0x000A]
+        icon: "mdi:solar-power-variant"
+
+      - name: PV1 Power
+        alt: DC1 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0007, 0x0008]
+        sensors:
+          - registers: [0x0007]
+            multiply:
+              registers: [0x0008]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV1 Voltage"
+        alt: DC1 Voltage
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [0x0007]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0009]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Current"
+        alt: DC1 Current
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.01
         rule: 1
         registers: [0x0008]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
+
+      - name: PV2 Power
+        alt: DC2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0009, 0x000A]
+        sensors:
+          - registers: [0x0009]
+            multiply:
+              registers: [0x000A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        alt: DC2 Voltage
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0009]
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Current"
+        alt: DC2 Current
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.01
         rule: 1
         registers: [0x000A]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -74,23 +127,6 @@ parameters:
 
   - group: Output
     items:
-      - name: "Output active power"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x0011]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "Grid frequency"
-        class: "frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.1
-        rule: 1
-        registers: [0x000B]
-        icon: "mdi:home-lightning-bolt"
-
       - name: "L1 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -98,15 +134,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0001]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "L1 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x0004]
         icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Voltage"
@@ -118,15 +145,6 @@ parameters:
         registers: [0x0002]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L2 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x0005]
-        icon: "mdi:home-lightning-bolt"
-
       - name: "L3 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -134,6 +152,24 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0003]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "L1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0004]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "L2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0005]
         icon: "mdi:home-lightning-bolt"
 
       - name: "L3 Current"
@@ -145,21 +181,54 @@ parameters:
         registers: [0x0006]
         icon: "mdi:home-lightning-bolt"
 
-  - group: Inverter
-    items:
-      - name: "Inverter module temperature"
+      - name: "Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.1
+        rule: 1
+        registers: [0x000B]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Temperature"
         class: "temperature"
         uom: "°C"
         scale: 0.1
         rule: 1
         registers: [0x000C]
-        icon: "mdi:thermometer"
 
-      - name: "Inverter inner temperature"
+      - name: "DC Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         scale: 0.1
         rule: 1
         registers: [0x000D]
-        icon: "mdi:thermometer"
+
+      - name: Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0011]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: Power losses
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0007, 0x0008, 0x0009, 0x000A, 0x0011]
+        uint: enforce
+        sensors:
+          - registers: [0x0007]
+            multiply:
+              registers: [0x0008]
+          - registers: [0x0009]
+            multiply:
+              registers: [0x000A]
+          - operator: subtract
+            registers: [0x0011]
