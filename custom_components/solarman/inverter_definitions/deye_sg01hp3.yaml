@@ -622,15 +622,6 @@ parameters:
           min: 0
           max: 100
 
-      - name: "SmartLoad"
-        update_interval: 30
-        platform: "binary_sensor"
-        device_class: power
-        rule: 1
-        registers: [0x0228]
-        bit: 3
-        icon: "mdi:lightning-bolt-circle"
-
   - group: Grid Parameters
     update_interval: 300
     items:
@@ -1564,7 +1555,6 @@ parameters:
         rule: 1
         registers: [0x0227]
 
-      # Device - AC Relay
       - name: "Device Relay"
         class: "enum"
         rule: 1
@@ -1589,6 +1579,22 @@ parameters:
             value: "Inv-Grid-Gen"
           - key: "default"
             value: "Power Supply"
+
+      - name: "Grid"
+        platform: "binary_sensor"
+        device_class: power
+        rule: 1
+        registers: [0x0228]
+        bit: 2
+        icon: "mdi:transmission-tower"
+
+      - name: "SmartLoad"
+        platform: "binary_sensor"
+        device_class: power
+        rule: 1
+        registers: [0x0228]
+        bit: 3
+        icon: "mdi:lightning-bolt-circle"
 
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alarm"
@@ -1644,7 +1650,7 @@ parameters:
     items:
       # Battery - The temperature of battery 1
       - name: "Battery Temperature"
-        realtime:
+        update_interval: 5
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -1746,17 +1752,8 @@ parameters:
           max: 3000
 
   - group: Grid
+    update_interval: 5
     items:
-      # Device - Grid On/Off
-      - name: "Grid"
-        update_interval: 30
-        platform: "binary_sensor"
-        device_class: power
-        rule: 1
-        registers: [0x0228]
-        bit: 2
-        icon: "mdi:transmission-tower"
-
       # Grid side - The voltage of phase A
       - name: "Grid L1 Voltage"
         class: "voltage"
@@ -1789,7 +1786,6 @@ parameters:
 
       # Grid internal - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1799,7 +1795,6 @@ parameters:
 
       # Grid internal - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1809,7 +1804,6 @@ parameters:
 
       # Grid internal - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1819,7 +1813,6 @@ parameters:
 
       # Grid internal - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1828,7 +1821,6 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -1898,7 +1890,6 @@ parameters:
 
       # Grid external - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1908,7 +1899,6 @@ parameters:
 
       # Grid external - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1918,7 +1908,6 @@ parameters:
 
       # Grid external - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1928,7 +1917,6 @@ parameters:
 
       # Grid external - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1939,7 +1927,6 @@ parameters:
       # The following three (four) registers change according to the built-in and external settings
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L1 Power"
-        realtime:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -1949,7 +1936,6 @@ parameters:
 
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L2 Power"
-        realtime:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -1959,7 +1945,6 @@ parameters:
 
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L3 Power"
-        realtime:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -1970,7 +1955,6 @@ parameters:
       # Grid - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid Power"
         description: Combined power of all three phases
-        realtime:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -1979,6 +1963,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
   - group: Inverter
+    update_interval: 5
     items:
       # Inverter output - The voltage of phase A
       - name: "Inverter L1 Voltage"
@@ -2036,7 +2021,6 @@ parameters:
 
       # Inverter output - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Inverter L1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2045,7 +2029,6 @@ parameters:
 
       # Inverter output - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Inverter L2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2054,7 +2037,6 @@ parameters:
 
       # Inverter output - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Inverter L3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2063,7 +2045,6 @@ parameters:
 
       # Inverter output - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Inverter Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2097,7 +2078,6 @@ parameters:
             registers: [0x027C, 0x02B6]
 
       - name: "Inverter Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -2109,7 +2089,6 @@ parameters:
     items:
       # Load UPS output - The power of phase A is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2119,7 +2098,6 @@ parameters:
 
       # Load UPS output - The power of phase B is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2129,7 +2107,6 @@ parameters:
 
       # Load UPS output - The power of phase C is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2139,7 +2116,6 @@ parameters:
 
       # Load UPS output - The power is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2148,6 +2124,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
   - group: Load
+    update_interval: 5
     items:
       # Load output - The voltage of phase A
       - name: "Load L1 Voltage"
@@ -2178,7 +2155,6 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2187,7 +2163,6 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2196,7 +2171,6 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2206,7 +2180,6 @@ parameters:
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load Power"
         description: Combined power of all three phases
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2214,7 +2187,6 @@ parameters:
         registers: [0x028D, 0x0293]
 
       - name: "Load Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -2223,6 +2195,7 @@ parameters:
         registers: [0x028F]
 
   - group: SmartLoad/Generator
+    update_interval: 5
     items:
       # SmartLoad/Generator - The voltage of phase A
       - name: "SmartLoad L1 Voltage"
@@ -2253,7 +2226,6 @@ parameters:
 
       # Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2262,7 +2234,6 @@ parameters:
 
       # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2271,7 +2242,6 @@ parameters:
 
       # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L3 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2281,7 +2251,6 @@ parameters:
       # SmartLoad/Generator - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad Power"
         description: Combined power of all three phases
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"

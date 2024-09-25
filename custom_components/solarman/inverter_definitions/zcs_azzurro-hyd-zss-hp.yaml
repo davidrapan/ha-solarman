@@ -11,7 +11,62 @@ default:
 
 parameters:
   - group: PV
+    update_interval: 5
     items:
+      - name: "PV1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0586]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0589]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0584]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0587]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0585]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0588]
+        icon: "mdi:solar-power"
+
       - name: "Today Production"
         friendly_name: Today's Production
         update_interval: 30
@@ -35,70 +90,10 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "PV1 Power"
-        realtime:
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 10
-        rule: 1
-        registers: [0x0586]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Power"
-        realtime:
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 10
-        rule: 1
-        registers: [0x0589]
-        icon: "mdi:solar-power"
-
-      - name: "PV1 Voltage"
-        realtime:
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0584]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Voltage"
-        realtime:
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0587]
-        icon: "mdi:solar-power"
-
-      - name: "PV1 Current"
-        realtime:
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x0585]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Current"
-        realtime:
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x0588]
-        icon: "mdi:solar-power"
-
-  - group: batteries
+  - group: Battery
+    update_interval: 5
     items:
       - name: "Battery Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -108,7 +103,6 @@ parameters:
         icon: "mdi:battery-charging"
 
       - name: "Battery Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -118,7 +112,6 @@ parameters:
         icon: "mdi:battery-charging-10"
 
       - name: "Battery"
-        realtime:
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -134,7 +127,6 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Battery Temperature"
-        realtime:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -176,7 +168,6 @@ parameters:
         icon: "mdi:battery-sync-outline"
 
       - name: "Battery Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -210,9 +201,9 @@ parameters:
         icon: "mdi:battery-medium"
 
   - group: Grid
+    update_interval: 5
     items:
       - name: "Grid Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -222,7 +213,6 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -232,7 +222,6 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -252,7 +241,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Load Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -322,6 +310,7 @@ parameters:
           min: 0.1
 
   - group: Device
+    update_interval: 5
     items:
       - name: "Device State"
         update_interval: 30
@@ -347,7 +336,6 @@ parameters:
             value: "Self-charging"
 
       - name: "Temperature"
-        realtime:
         class: "temperature"
         uom: "°C"
         scale: 0.1
@@ -356,7 +344,6 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Ambient temperature"
-        realtime:
         class: "temperature"
         uom: "°C"
         rule: 2
@@ -364,7 +351,6 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Heatsink temperature"
-        realtime:
         class: "temperature"
         uom: "°C"
         rule: 2
@@ -372,6 +358,7 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
+        update_interval: 300
         state_class: "measurement"
         uom: "kΩ"
         rule: 1

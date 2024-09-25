@@ -19,9 +19,9 @@ default:
 
 parameters:
   - group: PV
+    update_interval: 5
     items:
       - name: "PV1 Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -31,7 +31,6 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "PV2 Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -41,7 +40,6 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "PV1 Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -51,7 +49,6 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "PV2 Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -63,7 +60,6 @@ parameters:
       # PV - The combined power of Input 1 & 2 (L:1W, H:10W)
       - name: "PV Power"
         description: Combined power of all inputs
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -76,7 +72,6 @@ parameters:
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -85,7 +80,6 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "PV2 Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -140,7 +134,7 @@ parameters:
       # Should this be the sum of the 3 phases "Meter Power"?
       - name: "Grid Power"
         alt: "Total Grid Power"
-        realtime:
+        update_interval: 5
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -308,7 +302,7 @@ parameters:
             value: "LFP"
 
       - name: "Battery Voltage"
-        realtime:
+        update_interval: 5
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -318,7 +312,7 @@ parameters:
         icon: "mdi:battery-charging"
 
       - name: "Battery Current"
-        realtime:
+        update_interval: 5
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -328,7 +322,7 @@ parameters:
         icon: "mdi:battery-charging-10"
 
       - name: "Battery Power"
-        realtime:
+        update_interval: 5
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -337,7 +331,7 @@ parameters:
         icon: "mdi:battery-charging-high"
 
       - name: "Battery"
-        realtime:
+        update_interval: 5
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -673,7 +667,7 @@ parameters:
   - group: Inverter
     items:
       - name: "Inverter Bus Voltage"
-        realtime:
+        update_interval: 5
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -683,7 +677,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Inverter DC Bus Voltage"
-        realtime:
+        update_interval: 5
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -717,9 +711,9 @@ parameters:
   # - S: Secondary
   # - T: Tertiary
   - group: R Phase
+    update_interval: 5
     items:
       - name: "R-phase Grid Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -729,7 +723,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Grid Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -739,7 +732,6 @@ parameters:
         icon: "mdi:sine-wave"
 
       - name: "R-phase Meter Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -749,7 +741,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Grid Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -758,7 +749,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Inverter Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -768,7 +758,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Inverter Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -778,7 +767,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Inverter Frequency"
-        realtime:
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -788,7 +776,6 @@ parameters:
         icon: "mdi:sine-wave"
 
       - name: "R-phase Inverter Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -797,7 +784,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Backup Voltage"
-        realtime:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -807,7 +793,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Backup Current"
-        realtime:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -817,7 +802,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Backup Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -826,7 +810,6 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "R-phase Load Power"
-        realtime:
         class: "power"
         state_class: "measurement"
         uom: "W"
