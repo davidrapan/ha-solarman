@@ -178,9 +178,6 @@ parameters:
     items:
       - name: "Device State"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0404]
         lookup:
@@ -206,7 +203,6 @@ parameters:
       - name: "Ambient temperature"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0418]
         icon: "mdi:thermometer"
@@ -214,16 +210,13 @@ parameters:
       - name: "Radiator temperature"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041A]
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
-        class: ""
         state_class: "measurement"
         uom: "Ω"
-        scale: 1
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
@@ -231,10 +224,6 @@ parameters:
   - group: Alert
     items:
       - name: "Alert"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 6
         registers:
           [
@@ -253,10 +242,6 @@ parameters:
           ]
 
       - name: "Fault 1"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -297,10 +282,6 @@ parameters:
             value: "ID16"
 
       - name: "Fault 2"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -341,10 +322,6 @@ parameters:
             value: "ID32"
 
       - name: "Fault 3"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0407]
@@ -385,10 +362,6 @@ parameters:
             value: "ID048 Serial number error"
 
       - name: "Fault 4"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -429,10 +402,6 @@ parameters:
             value: "ID064 "
 
       - name: "Fault 5"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -473,10 +442,6 @@ parameters:
             value: "ID080 "
 
       - name: "Fault 6"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -517,10 +482,6 @@ parameters:
             value: "ID096 "
 
       - name: "Fault 7"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -561,10 +522,6 @@ parameters:
             value: "ID112 Overload protection 3"
 
       - name: "Fault 8"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -605,10 +562,6 @@ parameters:
             value: "ID128 "
 
       - name: "Fault 9"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040D]
@@ -649,10 +602,6 @@ parameters:
             value: "ID144 "
 
       - name: "Fault 10"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -693,10 +642,6 @@ parameters:
             value: "ID160 Lithium battery 4 communication failure"
 
       - name: "Fault 11"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -737,10 +682,6 @@ parameters:
             value: "ID176 Meter communication failure"
 
       - name: "Fault 12"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]

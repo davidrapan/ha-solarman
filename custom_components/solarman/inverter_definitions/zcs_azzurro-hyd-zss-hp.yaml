@@ -122,16 +122,13 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0608]
         icon: "mdi:battery"
 
       - name: "Battery SOH"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0609]
         icon: "mdi:battery"
@@ -141,7 +138,6 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 1
         #se non funziona cambia questo in 2
         rule: 1
         registers: [0x0607]
@@ -174,10 +170,7 @@ parameters:
           min: 0.1
 
       - name: "Battery Cycles"
-        class: ""
-        state_class: ""
         uom: "Charges"
-        scale: 1
         rule: 1
         registers: [0x060A]
         icon: "mdi:battery-sync-outline"
@@ -333,9 +326,6 @@ parameters:
       - name: "Device State"
         update_interval: 30
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0404]
         lookup:
@@ -369,7 +359,6 @@ parameters:
         realtime:
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0418]
         icon: "mdi:thermometer"
@@ -378,16 +367,13 @@ parameters:
         realtime:
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041A]
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
-        class: ""
         state_class: "measurement"
         uom: "kΩ"
-        scale: 1
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
@@ -396,10 +382,6 @@ parameters:
     items:
       - name: "Device Alarm"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 6
         registers:
           [
@@ -419,10 +401,6 @@ parameters:
 
       - name: "Fault 1"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -464,10 +442,6 @@ parameters:
 
       - name: "Fault 2"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -509,10 +483,6 @@ parameters:
 
       - name: "Fault 3"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0407]
@@ -554,10 +524,6 @@ parameters:
 
       - name: "Fault 4"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -599,10 +565,6 @@ parameters:
 
       - name: "Fault 5"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -644,10 +606,6 @@ parameters:
 
       - name: "Fault 6"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -689,10 +647,6 @@ parameters:
 
       - name: "Fault 7"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -734,10 +688,6 @@ parameters:
 
       - name: "Fault 8"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -779,10 +729,6 @@ parameters:
 
       - name: "Fault 9"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040D]
@@ -824,10 +770,6 @@ parameters:
 
       - name: "Fault 10"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -869,10 +811,6 @@ parameters:
 
       - name: "Fault 11"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -914,10 +852,6 @@ parameters:
 
       - name: "Fault 12"
         update_interval: 30
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]

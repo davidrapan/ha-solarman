@@ -151,9 +151,6 @@ parameters:
 
       - name: "Device State"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x003B]
         icon: "mdi:information"

@@ -12,8 +12,6 @@ parameters:
   - group: Inverter
     items:
       - name: "Inverter status"
-        class: ""
-        scale: 1
         rule: 1
         registers: [0x0404]
         lookup:
@@ -37,77 +35,66 @@ parameters:
       - name: "Ambient temperature 1"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0418]
         icon: "mdi:thermometer"
       - name: "Ambient temperature 2"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0419]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 1"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041A]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 2"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041B]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 3"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041C]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 4"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041D]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 5"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041E]
         icon: "mdi:thermometer"
       - name: "Radiator temperature 6"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x041F]
         icon: "mdi:thermometer"
       - name: "Module temperature 1"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0420]
         icon: "mdi:thermometer"
       - name: "Module temperature 2"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0421]
         icon: "mdi:thermometer"
       - name: "Module temperature 3"
         class: "temperature"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0422]
         icon: "mdi:thermometer"
@@ -115,22 +102,16 @@ parameters:
         class: "duration"
         state_class: "measurement"
         uom: "min"
-        scale: 1
         rule: 1
         registers: [0x0426]
         icon: "mdi:clock"
       - name: "Insulation resistance"
-        class: ""
         state_class: "measurement"
         uom: "kΩ"
-        scale: 1
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
       - name: "Serial Number"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [
             0x0445,
@@ -144,44 +125,26 @@ parameters:
           ] # serial number 17th to 20th digits are in 0x0470 and 0x0471
         icon: "mdi:barcode"
       - name: "Hardware Version"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x044D, 0x044E]
         icon: "mdi:alpha-v"
       - name: "Software Version Master"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0453, 0x0454, 0x0455, 0x0456]
         icon: "mdi:alpha-v"
       - name: "Software Version Slave"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0457, 0x0458, 0x0459, 0x045A]
         icon: "mdi:alpha-v"
       - name: "Safety Version"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [0x045B, 0x045C]
         icon: "mdi:alpha-v"
       - name: "Safety Firmware Version"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0460, 0x0461, 0x0462, 0x0463]
         icon: "mdi:alpha-v"
       - name: "Safety Hardware Version"
-        class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x0464, 0x0465]
         icon: "mdi:alpha-v"
@@ -267,7 +230,6 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 1
         rule: 2
         registers: [0x0607]
         icon: "mdi:battery"
@@ -275,47 +237,36 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0608]
         icon: "mdi:battery"
       - name: "Battery SOH"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0609]
         icon: "mdi:battery"
       - name: "Battery Number of Cycles"
-        class: ""
         state_class: "measurement"
         uom: "cycle"
-        scale: 1
         rule: 1
         registers: [0x060A]
         icon: "mdi:battery"
       - name: "Battery DOD"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x104D]
         icon: "mdi:battery"
       - name: "Battery EOD"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x104E]
         icon: "mdi:battery"
       - name: "Battery EPS Buffer"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x1052]
         icon: "mdi:battery-low"
@@ -914,10 +865,6 @@ parameters:
   - group: Alert
     items:
       - name: "Alert"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 6
         registers:
           [
@@ -936,10 +883,6 @@ parameters:
           ]
 
       - name: "Fault 1"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -983,10 +926,6 @@ parameters:
           - key: 32768
             value: "ID16"
       - name: "Fault 2"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -1026,10 +965,6 @@ parameters:
           - key: 32768
             value: "ID32"
       - name: "Fault 3"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
 
@@ -1070,10 +1005,6 @@ parameters:
           - key: 32768
             value: "ID048 Serial number error"
       - name: "Fault 4"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -1113,10 +1044,6 @@ parameters:
           - key: 32768
             value: "ID064 "
       - name: "Fault 5"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -1156,10 +1083,6 @@ parameters:
           - key: 32768
             value: "ID080 "
       - name: "Fault 6"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -1199,10 +1122,6 @@ parameters:
           - key: 32768
             value: "ID096 "
       - name: "Fault 7"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -1243,10 +1162,6 @@ parameters:
             value: "ID112 Overload protection 3"
 
       - name: "Fault 8"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -1286,10 +1201,6 @@ parameters:
           - key: 32768
             value: "ID128 "
       - name: "Fault 9"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
 
@@ -1330,10 +1241,6 @@ parameters:
           - key: 32768
             value: "ID144 "
       - name: "Fault 10"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -1373,10 +1280,6 @@ parameters:
           - key: 32768
             value: "ID160 Lithium battery 4 communication failure"
       - name: "Fault 11"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -1416,10 +1319,6 @@ parameters:
           - key: 32768
             value: "ID176 Meter communication failure"
       - name: "Fault 12"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]

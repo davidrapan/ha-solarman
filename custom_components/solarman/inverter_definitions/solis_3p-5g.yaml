@@ -12,10 +12,7 @@ parameters:
   - group: InverterStatus
     items:
       - name: "Inverter Status"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33095]
         icon: "mdi:home-lightning-bolt"
@@ -118,10 +115,7 @@ parameters:
             value: "Bypass overload fault"
 
       - name: "Operating Status"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33121]
         icon: "mdi:home-lightning-bolt"
@@ -144,10 +138,7 @@ parameters:
             value: "Bypass Overload"
 
       - name: "Grid Fault Status"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33116]
         icon: "mdi:alert"
@@ -178,10 +169,7 @@ parameters:
             value: "Failsafe"
 
       - name: "Backup Load Fault Status"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33117]
         icon: "mdi:alert"
@@ -194,10 +182,7 @@ parameters:
             value: "Bypass Overload Fault"
 
       - name: "Battery Fault Status"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33118]
         icon: "mdi:alert"
@@ -212,10 +197,7 @@ parameters:
             value: "Battery UnderVoltage Detection"
 
       - name: "Fault Status 04 (Device)"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33119]
         icon: "mdi:alert"
@@ -252,10 +234,6 @@ parameters:
             value: "Grid Current Sample Abnormality"
 
       - name: "Fault Status 05 (Device)"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33120]
         icon: "mdi:alert"
@@ -308,50 +286,27 @@ parameters:
       # If enabling, ensure to amend the request start register.
       #
       #    - name: "Inverter ID"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
       #      rule: 5
       #      registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
 
       #    - name: "Product Model"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
       #      rule: 6
       #      registers: [33000]
 
       #    - name: "DSP Software Version"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
       #      rule: 6
       #      registers: [33001]
 
       #    - name: "LCD Software Version"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
       #      rule: 6
       #      registers: [33002]
 
       #    - name: "Protocol Software Version"
-      #      class: ""
-      #      state_class: ""
-      #      uom: ""
-      #      scale: 1
       #      rule: 6
       #      registers: [33003]
 
       - name: "Storage Control Mode"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33132]
         icon: "mdi:battery-clock"
@@ -410,7 +365,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 3
         registers: [33058, 33057]
         icon: "mdi:solar-power"
@@ -430,7 +384,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33152, 33151]
         icon: "mdi:solar-power"
@@ -457,7 +410,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33080, 33079]
         icon: "mdi:transmission-tower"
@@ -470,7 +422,6 @@ parameters:
         class: "reactive_power"
         state_class: "measurement"
         uom: "var"
-        scale: 1
         rule: 4
         registers: [33082]
         icon: "mdi:transmission-tower"
@@ -479,7 +430,6 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 1
         rule: 4
         registers: [33084, 33083]
         icon: "mdi:transmission-tower"
@@ -509,7 +459,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33032, 33031]
         icon: "mdi:solar-power"
@@ -518,7 +467,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33038, 33037]
         icon: "mdi:solar-power"
@@ -527,7 +475,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33030, 33029]
         icon: "mdi:solar-power"
@@ -548,7 +495,6 @@ parameters:
       - name: "Meter Power Factor"
         class: "power_factor"
         state_class: "measurement"
-        uom: ""
         scale: 0.01
         rule: 2
         registers: [33281]
@@ -576,7 +522,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33258, 33257]
         icon: "mdi:transmission-tower"
@@ -585,7 +530,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33260, 33259]
         icon: "mdi:transmission-tower"
@@ -594,7 +538,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33262, 33261]
         icon: "mdi:transmission-tower"
@@ -603,7 +546,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33264, 33263]
         icon: "mdi:transmission-tower"
@@ -612,7 +554,6 @@ parameters:
         class: "reactive_power"
         state_class: "measurement"
         uom: "var"
-        scale: 1
         rule: 4
         registers: [33266, 33265]
         icon: "mdi:transmission-tower"
@@ -621,7 +562,6 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 1
         rule: 4
         registers: [33274, 33273]
         icon: "mdi:transmission-tower"
@@ -640,7 +580,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33170, 33169]
         icon: "mdi:home-import-outline"
@@ -661,7 +600,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33174, 33173]
         icon: "mdi:home-export-outline"
@@ -674,7 +612,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 1
         registers: [33147]
         icon: "mdi:home-lightning-bolt"
@@ -683,7 +620,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 1
         registers: [33148]
         icon: "mdi:home-battery"
@@ -701,7 +637,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33178, 33177]
         validation:
@@ -710,10 +645,7 @@ parameters:
   - group: Battery
     items:
       - name: "Battery State"
-        class: ""
         state_class: "measurement"
-        uom: ""
-        scale: 1
         rule: 1
         registers: [33135]
         lookup:
@@ -729,7 +661,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [33150, 33149]
         icon: "mdi:battery-charging"
@@ -738,16 +669,13 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [33139]
         icon: "mdi:battery"
 
       - name: "Battery SOH"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [33140]
         icon: "mdi:battery"
@@ -794,7 +722,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33162, 33161]
         icon: "mdi:battery-plus"
@@ -805,7 +732,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [33166, 33165]
         icon: "mdi:battery-minus"

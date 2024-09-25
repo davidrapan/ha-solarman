@@ -253,10 +253,8 @@ parameters:
           max: 6100
 
       - name: "Battery Capacity"
-        class: ""
         state_class: "measurement"
         uom: "Ah"
-        scale: 1
         rule: 1
         registers: [0x0066]
         configurable:
@@ -284,7 +282,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 1
         registers: [0x0068]
         configurable:
@@ -296,7 +293,6 @@ parameters:
         class: "duration"
         state_class: "measurement"
         uom: "d"
-        scale: 1
         rule: 1
         registers: [0x0069]
         configurable:
@@ -323,10 +319,8 @@ parameters:
           max: 20
 
       - name: "Battery Temperature Compensation"
-        class: ""
         state_class: "measurement"
         uom: "mV/*C"
-        scale: 1
         rule: 2
         registers: [0x006B]
         configurable:
@@ -343,7 +337,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x006C]
         icon: "mdi:current-dc"
@@ -356,7 +349,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x006D]
         icon: "mdi:current-dc"
@@ -366,9 +358,6 @@ parameters:
 
       - name: "Battery Operation Mode"
         platform: "select"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x006F]
         icon: mdi:battery
@@ -389,10 +378,8 @@ parameters:
           off: 0x00
 
       - name: Battery Resistance
-        class: ""
         state_class: measurement
         uom: "mΩ"
-        scale: 1
         rule: 1
         registers: [0x0071]
         icon: mdi:battery
@@ -402,7 +389,6 @@ parameters:
           max: 6000
 
       - name: Battery Charging efficiency
-        class: ""
         state_class: measurement
         uom: "%"
         scale: 0.1
@@ -418,10 +404,8 @@ parameters:
           max: 100
 
       - name: Battery Shutdown SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0073]
         icon: mdi:battery
@@ -431,10 +415,8 @@ parameters:
           max: 100
 
       - name: Battery Restart SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0074]
         icon: mdi:battery
@@ -444,10 +426,8 @@ parameters:
           max: 100
 
       - name: Battery Low SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0075]
         icon: mdi:battery
@@ -555,10 +535,8 @@ parameters:
 
       - name: Battery Generator Charging Start SOC
         platform: number
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x007C]
         icon: mdi:battery
@@ -572,7 +550,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x007D]
         icon: "mdi:current-dc"
@@ -585,7 +562,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x0080]
         icon: "mdi:current-dc"
@@ -625,10 +601,8 @@ parameters:
             value: "Microinverter"
 
       - name: "SmartLoad Off"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0087]
         icon: "mdi:lightning-bolt-circle"
@@ -638,10 +612,8 @@ parameters:
           max: 100
 
       - name: "SmartLoad On"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0089]
         icon: "mdi:lightning-bolt-circle"
@@ -654,8 +626,6 @@ parameters:
         update_interval: 30
         platform: "binary_sensor"
         device_class: power
-        state_class: ""
-        uom: ""
         rule: 1
         registers: [0x0228]
         bit: 3
@@ -726,7 +696,6 @@ parameters:
         alt: Solar Sell
         update_interval: 300
         platform: "switch"
-        scale: 1
         rule: 1
         registers: [0x0091]
 
@@ -778,8 +747,6 @@ parameters:
       - name: Program 1 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0094]
         range:
@@ -790,8 +757,6 @@ parameters:
       - name: Program 2 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0095]
         range:
@@ -802,8 +767,6 @@ parameters:
       - name: Program 3 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0096]
         range:
@@ -814,8 +777,6 @@ parameters:
       - name: Program 4 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0097]
         range:
@@ -826,8 +787,6 @@ parameters:
       - name: Program 5 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0098]
         range:
@@ -838,8 +797,6 @@ parameters:
       - name: Program 6 Time
         platform: "time"
         state_class: measurement
-        uom: ""
-        scale: 1
         rule: 9
         registers: [0x0099]
         range:
@@ -1034,10 +991,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 1 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00A6]
         configurable:
@@ -1047,10 +1002,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 2 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00A7]
         configurable:
@@ -1060,10 +1013,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 3 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00A8]
         configurable:
@@ -1073,10 +1024,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 4 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00A9]
         configurable:
@@ -1086,10 +1035,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 5 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00AA]
         configurable:
@@ -1099,10 +1046,8 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 6 SOC
-        class: ""
         state_class: measurement
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00AB]
         configurable:
@@ -1226,7 +1171,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x00D4]
         icon: "mdi:current-dc"
@@ -1236,17 +1180,14 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x00D5]
         icon: "mdi:current-dc"
 
       - name: "Battery BMS SOC"
         attribute:
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x00D6]
         icon: "mdi:battery"
@@ -1278,7 +1219,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x00DA]
         icon: "mdi:current-dc"
@@ -1288,7 +1228,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 1
         rule: 1
         registers: [0x00DB]
         icon: "mdi:current-dc"
@@ -1296,9 +1235,6 @@ parameters:
       - name: "Battery Alarm"
         platform: binary_sensor
         class: "problem"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
@@ -1306,10 +1242,6 @@ parameters:
 
       - name: "Battery BMS Fault Location"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00DD]
         icon: "mdi:battery-alert"
@@ -1319,10 +1251,6 @@ parameters:
 
       - name: "Battery BMS Other Symbol"
         attribute:
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x00DE]
         icon: "mdi:battery-unknown"
@@ -1410,20 +1338,14 @@ parameters:
         alt: Daily Battery Life Cycles
         friendly_name: Today's Battery Life Cycles
         description: Calculates today's battery life cycles based on today's charged amount
-        class: ""
         state_class: "total_increasing"
-        uom: ""
-        scale: 1
         rule: 0
         digits: 2
         icon: "mdi:battery-sync"
 
       - name: "Total Battery Life Cycles"
         description: Calculates total battery life cycles based on total charged amount
-        class: ""
         state_class: "total_increasing"
-        uom: ""
-        scale: 1
         rule: 0
         digits: 2
         icon: "mdi:battery-sync"
@@ -1618,9 +1540,6 @@ parameters:
     items:
       - name: "Device State"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x01F4]
         icon: "mdi:information"
@@ -1642,17 +1561,12 @@ parameters:
       - name: "" # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: "binary_sensor"
         device_class: running
-        state_class: ""
-        uom: ""
         rule: 1
         registers: [0x0227]
 
       # Device - AC Relay
       - name: "Device Relay"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0228]
         icon: "mdi:information"
@@ -1679,9 +1593,6 @@ parameters:
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alarm"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 3
         registers: [0x0229, 0x022A]
         icon: "mdi:alert-outline"
@@ -1704,9 +1615,6 @@ parameters:
       # Device - Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 3
         registers: [0x22B, 0x022C, 0x022D, 0x022E]
         icon: "mdi:message-alert-outline"
@@ -1765,7 +1673,6 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x024C]
         range:
@@ -1801,10 +1708,8 @@ parameters:
       # Battery - The state of health
       - name: "Battery SOH"
         description: Calculates state of health based on total charged amount
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 0
         digits: 2
         icon: "mdi:battery-heart"
@@ -1813,9 +1718,6 @@ parameters:
       - name: "Battery State"
         description: Determines battery state from battery power by +-50 W
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 0
         options: ["charging", "idle", "discharging"]
         icon: "mdi:battery"
@@ -1836,7 +1738,6 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "Ah"
-        scale: 1
         rule: 1
         registers: [0x0250]
         icon: "mdi:battery"
@@ -1851,8 +1752,6 @@ parameters:
         update_interval: 30
         platform: "binary_sensor"
         device_class: power
-        state_class: ""
-        uom: ""
         rule: 1
         registers: [0x0228]
         bit: 2
@@ -1894,7 +1793,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x025C, 0x02BC]
         icon: "mdi:transmission-tower"
@@ -1905,7 +1803,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x025D, 0x02BD]
         icon: "mdi:transmission-tower"
@@ -1916,7 +1813,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x025E, 0x02BE]
         icon: "mdi:transmission-tower"
@@ -1927,7 +1823,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x025F, 0x02BF]
         icon: "mdi:transmission-tower"
@@ -2007,7 +1902,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x0268, 0x02C1]
         icon: "mdi:transmission-tower"
@@ -2018,7 +1912,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x0269, 0x02C2]
         icon: "mdi:transmission-tower"
@@ -2029,7 +1922,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x026A, 0x02C3]
         icon: "mdi:transmission-tower"
@@ -2040,7 +1932,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x026B, 0x02C4]
         icon: "mdi:transmission-tower"
@@ -2052,7 +1943,6 @@ parameters:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x026E, 0x02AF]
         icon: "mdi:transmission-tower"
@@ -2063,7 +1953,6 @@ parameters:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x026F, 0x02B0]
         icon: "mdi:transmission-tower"
@@ -2074,7 +1963,6 @@ parameters:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x0270, 0x02B1]
         icon: "mdi:transmission-tower"
@@ -2086,7 +1974,6 @@ parameters:
         class: "measurement"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x0271, 0x02B2]
         icon: "mdi:transmission-tower"
@@ -2153,7 +2040,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x0279, 0x02B3]
 
@@ -2163,7 +2049,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x027A, 0x02B4]
 
@@ -2173,7 +2058,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x027B, 0x02B5]
 
@@ -2183,7 +2067,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x027C, 0x02B6]
 
@@ -2230,7 +2113,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 3
         registers: [0x0280, 0x02B8]
         icon: "mdi:home-lightning-bolt"
@@ -2241,7 +2123,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 3
         registers: [0x0281, 0x02B9]
         icon: "mdi:home-lightning-bolt"
@@ -2252,7 +2133,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 3
         registers: [0x0282, 0x02BA]
         icon: "mdi:home-lightning-bolt"
@@ -2263,7 +2143,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 3
         registers: [0x0283, 0x02BB]
         icon: "mdi:home-lightning-bolt"
@@ -2303,7 +2182,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x028A, 0x0290]
 
@@ -2313,7 +2191,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x028B, 0x0291]
 
@@ -2323,7 +2200,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x028C, 0x0292]
 
@@ -2334,7 +2210,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 4
         registers: [0x028D, 0x0293]
 
@@ -2382,7 +2257,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 2
         registers: [0x0298, 0x029C]
 
@@ -2392,7 +2266,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 2
         registers: [0x0299, 0x029D]
 
@@ -2402,7 +2275,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 2
         registers: [0x029A, 0x029E]
 
@@ -2413,7 +2285,6 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 1
         rule: 2
         registers: [0x029B, 0x029F]
 

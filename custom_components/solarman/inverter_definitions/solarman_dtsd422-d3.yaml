@@ -126,7 +126,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x000E, 0x000D]
@@ -136,7 +135,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0010, 0x000F]
@@ -146,7 +144,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0012, 0x0011]
@@ -156,7 +153,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0014, 0x0013]
@@ -166,7 +162,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x100E, 0x100D]
@@ -176,7 +171,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1010, 0x100F]
@@ -186,7 +180,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1012, 0x1011]
@@ -196,7 +189,6 @@ parameters:
         class: power
         state_class: measurement
         uom: W
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1014, 0x1013]
@@ -208,7 +200,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0016, 0x0015]
@@ -218,7 +209,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0018, 0x0017]
@@ -228,7 +218,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x001A, 0x0019]
@@ -238,7 +227,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x001C, 0x001B]
@@ -248,7 +236,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1016, 0x1015]
@@ -258,7 +245,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1018, 0x1017]
@@ -268,7 +254,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x101A, 0x1019]
@@ -278,7 +263,6 @@ parameters:
         class: reactive_power
         state_class: measurement
         uom: var
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x101C, 0x101B]
@@ -290,7 +274,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x001E, 0x001D]
@@ -300,7 +283,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0020, 0x001F]
@@ -310,7 +292,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0022, 0x0021]
@@ -320,7 +301,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x0024, 0x0023]
@@ -330,7 +310,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x101E, 0x101D]
@@ -340,7 +319,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1020, 0x101F]
@@ -350,7 +328,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1022, 0x1021]
@@ -360,7 +337,6 @@ parameters:
         class: apparent_power
         state_class: measurement
         uom: VA
-        scale: 1
         rule: 4
         magnitude: True
         registers: [0x1024, 0x1023]
@@ -370,7 +346,6 @@ parameters:
       - name: CT1-3 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -379,7 +354,6 @@ parameters:
       - name: CT1 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -388,7 +362,6 @@ parameters:
       - name: CT2 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -397,7 +370,6 @@ parameters:
       - name: CT3 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -406,7 +378,6 @@ parameters:
       - name: CT4-6 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -415,7 +386,6 @@ parameters:
       - name: CT4 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -424,7 +394,6 @@ parameters:
       - name: CT5 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True
@@ -433,7 +402,6 @@ parameters:
       - name: CT6 Power Factor
         class: power_factor
         state_class: measurement
-        uom: ""
         scale: 0.001
         rule: 2
         magnitude: True

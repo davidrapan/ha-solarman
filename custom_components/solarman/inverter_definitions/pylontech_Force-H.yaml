@@ -13,50 +13,26 @@ parameters:
   - group: Basic information
     items:
       - name: "Device Serial Number"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [5200, 5201, 5202, 5203, 5204, 5205, 5206, 5207]
 
       - name: "Brand"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [4096, 4097, 4098]
 
       - name: "Device Name"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [4101, 4102, 4103, 4104, 4105]
 
       - name: "FW Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 7
         registers: [4106] # 00000001	00000110 = V1.6
 
       - name: "Battery Module (series)"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5174]
 
       - name: "Battery Cell (series)"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5175]
 
@@ -66,7 +42,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 1
         registers: [5164]
         icon: "mdi:battery-plus"
@@ -77,7 +52,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 1
         registers: [5166]
         icon: "mdi:battery-minus"
@@ -115,16 +89,11 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [5127]
         icon: "mdi:battery"
 
       - name: "Battery Cycle Times"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5128]
         icon: "mdi:battery-heart"
@@ -182,18 +151,10 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Max Cell Voltage ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5138]
 
       - name: "Min Cell Voltage ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5139]
 
@@ -216,18 +177,10 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Max Cell Temperature ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5142]
 
       - name: "Min Cell Temperature ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5143]
 
@@ -250,18 +203,10 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Max Module Voltage ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5146]
 
       - name: "Min Module Voltage ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5147]
 
@@ -284,26 +229,16 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Max Module Temperature ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5150]
 
       - name: "Min Module Temperature ID"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [5151]
 
       - name: "Battery Pack SOH"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [5152]
         icon: "mdi:battery"

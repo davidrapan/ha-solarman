@@ -169,9 +169,6 @@ parameters:
 
       - name: "Device State"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x003B]
         icon: "mdi:information"
@@ -454,10 +451,7 @@ parameters:
     items:
       - name: "Start-up Self-checking Time"
         platform: number
-        class: ""
-        state_class: ""
         uom: "s"
-        scale: 1
         rule: 1
         registers: [0x0015]
         range:
@@ -465,10 +459,6 @@ parameters:
           max: 1000
 
       - name: "Device Time"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
         icon: "mdi:clock-time-three-outline"
@@ -550,10 +540,8 @@ parameters:
 
       - name: "Over-Frequency Load Reduction Percentage"
         platform: number
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0023]
         range:
@@ -562,9 +550,7 @@ parameters:
 
       - name: "Power Factor Regulation"
         platform: number
-        class: ""
         state_class: "measurement"
-        uom: ""
         scale: 0.001
         offset: 1000
         rule: 1
@@ -575,10 +561,8 @@ parameters:
 
       - name: "Active Power Regulation"
         platform: number
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0028]
         configurable:
@@ -719,9 +703,6 @@ parameters:
     items:
       - name: "Device Alarm"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 3
         registers: [0x0065, 0x0066]
         icon: "mdi:alert-outline"
@@ -743,9 +724,6 @@ parameters:
 
       - name: "Device Fault 1"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 3
         registers: [0x0067]
         icon: "mdi:message-alert-outline"
@@ -785,9 +763,6 @@ parameters:
 
       - name: "Device Fault 2"
         class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 3
         registers: [0x0068]
         icon: "mdi:message-alert-outline"

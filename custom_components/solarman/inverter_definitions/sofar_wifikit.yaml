@@ -52,7 +52,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [0x021D, 0x021C]
         icon: "mdi:solar-power"
@@ -63,7 +62,6 @@ parameters:
         class: "duration"
         state_class: "total_increasing"
         uom: "min"
-        scale: 1
         rule: 1
         registers: [0x0243]
         icon: "mdi:sun-clock-outline"
@@ -72,7 +70,6 @@ parameters:
         class: "duration"
         state_class: "total_increasing"
         uom: "h"
-        scale: 1
         rule: 3
         registers: [0x0245, 0x244]
         icon: "mdi:sun-clock-outline"
@@ -104,7 +101,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [0x0223, 0x0222]
         icon: "mdi:home-lightning-bolt-outline"
@@ -231,7 +227,6 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x210]
         icon: "mdi:battery"
@@ -240,7 +235,6 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 1
         rule: 1
         registers: [0x0211]
         icon: "mdi:thermometer"
@@ -272,7 +266,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [0x0227, 0x0226]
         icon: "mdi:battery-plus"
@@ -284,7 +277,6 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 1
         rule: 3
         registers: [0x0229, 0x0228]
         icon: "mdi:battery-minus"
@@ -293,19 +285,13 @@ parameters:
 
       - name: "Battery SOH"
         update_interval: 300
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x0237]
         icon: "mdi:battery-heart"
 
       - name: "Battery Capacity"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x10B1]
         icon: "mdi:battery-high"
@@ -347,10 +333,8 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Battery Discharge Depth"
-        class: ""
         state_class: "measurement"
         uom: "%"
-        scale: 1
         rule: 1
         registers: [0x10B9]
         icon: "mdi:battery-high"
@@ -414,7 +398,6 @@ parameters:
     items:
       - name: "Inverter Status"
         class: "enum"
-        scale: 1
         rule: 1
         registers: [0x200]
         lookup:
@@ -440,7 +423,6 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 1
         rule: 1
         registers: [0x0238]
         icon: "mdi:thermometer"
@@ -449,7 +431,6 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 1
         rule: 1
         registers: [0x0239]
         icon: "mdi:thermometer"
@@ -473,37 +454,23 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Countdown Time"
-        class: ""
         state_class: "measurement"
         uom: "s"
-        scale: 1
         rule: 1
         registers: [0x022A]
         icon: ""
 
       - name: "Inverter Alert Message"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x022B]
         icon: ""
 
       - name: "Communication Board Inner Message"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0242]
         icon: ""
 
       - name: "Country"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x023A]
         lookup:
@@ -572,10 +539,6 @@ parameters:
   - group: Alert
     items:
       - name: "Fault 1"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0201]
         lookup:
@@ -616,10 +579,6 @@ parameters:
         icon: "mdi:wrench"
 
       - name: "Fault 2"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0202]
         lookup:
@@ -660,10 +619,6 @@ parameters:
         icon: "mdi:wrench"
 
       - name: "Fault 3"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0203]
         lookup:
@@ -704,10 +659,6 @@ parameters:
         icon: "mdi:wrench"
 
       - name: "Fault 4"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0204]
         lookup:
@@ -748,10 +699,6 @@ parameters:
         icon: "mdi:wrench"
 
       - name: "Fault 5"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x0205]
         lookup:
@@ -794,33 +741,17 @@ parameters:
   - group: InverterInformation
     items:
       - name: "Production Code"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 1
         registers: [0x2000]
 
       - name: "Serial Number"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007]
 
       - name: "Software Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x2008, 0x2009]
 
       - name: "Hardware Version"
-        class: ""
-        state_class: ""
-        uom: ""
-        scale: 1
         rule: 5
         registers: [0x200A, 0x200B]
