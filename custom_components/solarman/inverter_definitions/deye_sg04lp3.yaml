@@ -1190,7 +1190,7 @@ parameters:
 
   - group: BMS
     items:
-      - name: "BMS Charging Voltage"
+      - name: "Battery BMS Charging Voltage"
         attribute:
         class: "voltage"
         state_class: "measurement"
@@ -1199,7 +1199,7 @@ parameters:
         rule: 1
         registers: [0x00D2]
 
-      - name: "BMS Discharging Voltage"
+      - name: "Battery BMS Discharging Voltage"
         attribute:
         class: "voltage"
         state_class: "measurement"
@@ -1208,7 +1208,7 @@ parameters:
         rule: 1
         registers: [0x00D3]
 
-      - name: "BMS Charging Current Limit"
+      - name: "Battery BMS Charging Current"
         attribute:
         class: "current"
         state_class: "measurement"
@@ -1218,7 +1218,7 @@ parameters:
         registers: [0x00D4]
         icon: "mdi:current-dc"
 
-      - name: "BMS Discharging Current Limit"
+      - name: "Battery BMS Discharging Current"
         attribute:
         class: "current"
         state_class: "measurement"
@@ -1228,7 +1228,7 @@ parameters:
         registers: [0x00D5]
         icon: "mdi:current-dc"
 
-      - name: "BMS SOC"
+      - name: "Battery BMS SOC"
         attribute:
         class: ""
         state_class: "measurement"
@@ -1241,7 +1241,7 @@ parameters:
           min: 0
           max: 101
 
-      - name: "BMS Voltage"
+      - name: "Battery BMS Voltage"
         attribute:
         class: "voltage"
         state_class: "measurement"
@@ -1250,7 +1250,7 @@ parameters:
         rule: 1
         registers: [0x00D7]
 
-      - name: "BMS Current"
+      - name: "Battery BMS Current"
         attribute:
         class: "current"
         state_class: "measurement"
@@ -1260,7 +1260,7 @@ parameters:
         registers: [0x00D8]
         icon: "mdi:current-dc"
 
-      - name: "BMS Max Charging Current"
+      - name: "Battery BMS Max Charging Current"
         attribute:
         class: "current"
         state_class: "measurement"
@@ -1270,7 +1270,7 @@ parameters:
         registers: [0x00DA]
         icon: "mdi:current-dc"
 
-      - name: "BMS Max Discharging Current"
+      - name: "Battery BMS Max Discharging Current"
         attribute:
         class: "current"
         state_class: "measurement"
@@ -1289,9 +1289,9 @@ parameters:
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
-        attributes: ["value", "BMS Fault Location"]
+        attributes: ["value", "Battery BMS Fault Location"]
 
-      - name: "BMS Fault Location"
+      - name: "Battery BMS Fault Location"
         attribute:
         class: ""
         state_class: ""
@@ -1304,7 +1304,7 @@ parameters:
           min: 0
           max: 65535
 
-      - name: "BMS Other Symbol"
+      - name: "Battery BMS Other Symbol"
         attribute:
         class: ""
         state_class: ""
@@ -1346,39 +1346,12 @@ parameters:
           - key: 0x000A
             value: "Shenggao Electric CAN"
 
-  - group: Device
-    items:
-      # Device - Operating (Running) state
-      - name: "Device State"
-        update_interval: 30
-        class: "enum"
-        state_class: ""
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x01F4]
-        icon: "mdi:information"
-        range:
-          min: 0
-          max: 5
-        lookup:
-          - key: 0x0000
-            value: "Standby"
-          - key: 0x0001
-            value: "Self-test"
-          - key: 0x0002
-            value: "Normal"
-          - key: 0x0003
-            value: "Alarm"
-          - key: 0x0004
-            value: "Fault"
-
   - group: Meter
+    update_interval: 30
     items:
       - name: Today Battery Charge
         alt: Daily Battery Charge
         friendly_name: Today's Battery Charge
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1390,7 +1363,6 @@ parameters:
       - name: Today Battery Discharge
         alt: Daily Battery Discharge
         friendly_name: Today's Battery Discharge
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1400,7 +1372,6 @@ parameters:
         icon: "mdi:battery-minus"
 
       - name: "Total Battery Charge"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1412,7 +1383,6 @@ parameters:
           min: 0.1
 
       - name: "Total Battery Discharge"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1427,7 +1397,6 @@ parameters:
         alt: Daily Battery Life Cycles
         friendly_name: Today's Battery Life Cycles
         description: Calculates today's battery life cycles based on today's charged amount
-        update_interval: 30
         class: ""
         state_class: "total_increasing"
         uom: ""
@@ -1437,7 +1406,6 @@ parameters:
         icon: "mdi:battery-sync"
 
       - name: "Total Battery Life Cycles"
-        update_interval: 30
         description: Calculates total battery life cycles based on total charged amount
         class: ""
         state_class: "total_increasing"
@@ -1453,7 +1421,6 @@ parameters:
         alt: Daily Energy Bought
         friendly_name: Today's Energy Import
         description: Today's energy imported from the grid
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1466,7 +1433,6 @@ parameters:
         alt: Daily Energy Sold
         friendly_name: Today's Energy Export
         description: Today's energy exported/returned to the grid
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1478,7 +1444,6 @@ parameters:
       - name: Total Energy Import
         alt: Total Energy Bought
         description: Total energy imported from the grid
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1492,7 +1457,6 @@ parameters:
       - name: Total Energy Export
         alt: Total Energy Sold
         description: Total energy exported/returned to the grid
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1506,7 +1470,6 @@ parameters:
       - name: Today Load Consumption
         alt: Daily Load Consumption
         friendly_name: Today's Load Consumption
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1515,7 +1478,6 @@ parameters:
         registers: [0x020E]
 
       - name: "Total Load Consumption"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1529,7 +1491,6 @@ parameters:
         alt: Daily Losses
         friendly_name: Today's Losses
         description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         ensure_increasing:
@@ -1555,7 +1516,6 @@ parameters:
 
       - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         ensure_increasing:
@@ -1595,7 +1555,6 @@ parameters:
       - name: Today Production
         alt: Daily Production
         friendly_name: Today's Production
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1605,7 +1564,6 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "Total Production"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -1617,7 +1575,6 @@ parameters:
           min: 0.1
 
       - name: "DC Temperature"
-        update_interval: 30
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -1631,7 +1588,6 @@ parameters:
           max: 3000
 
       - name: "Temperature"
-        update_interval: 30
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -1645,10 +1601,32 @@ parameters:
           max: 3000
 
   - group: State
+    update_interval: 30
     items:
-      # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-      - name: ""
-        update_interval: 30
+      - name: "Device State"
+        class: "enum"
+        state_class: ""
+        uom: ""
+        scale: 1
+        rule: 1
+        registers: [0x01F4]
+        icon: "mdi:information"
+        range:
+          min: 0
+          max: 5
+        lookup:
+          - key: 0x0000
+            value: "Standby"
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
+            value: "Normal"
+          - key: 0x0003
+            value: "Alarm"
+          - key: 0x0004
+            value: "Fault"
+
+      - name: "" # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: "binary_sensor"
         device_class: running
         state_class: ""
@@ -1658,7 +1636,6 @@ parameters:
 
       # Device - AC Relay
       - name: "Device Relay"
-        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
@@ -1688,7 +1665,6 @@ parameters:
 
       # Device - Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alarm"
-        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
@@ -1714,7 +1690,6 @@ parameters:
 
       # Device - Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
-        update_interval: 30
         class: "enum"
         state_class: ""
         uom: ""
@@ -1789,16 +1764,16 @@ parameters:
         attributes:
           [
             "Battery Corrected Capacity",
-            "BMS SOC",
-            "BMS Current",
-            "BMS Voltage",
-            "BMS Other Symbol",
-            "BMS Charging Voltage",
-            "BMS Discharging Voltage",
-            "BMS Charging Current Limit",
-            "BMS Discharging Current Limit",
-            "BMS Max Charging Current",
-            "BMS Max Discharging Current",
+            "Battery BMS SOC",
+            "Battery BMS Current",
+            "Battery BMS Voltage",
+            "Battery BMS Other Symbol",
+            "Battery BMS Charging Voltage",
+            "Battery BMS Discharging Voltage",
+            "Battery BMS Charging Current",
+            "Battery BMS Discharging Current",
+            "Battery BMS Max Charging Current",
+            "Battery BMS Max Discharging Current",
           ]
 
       # Battery - The power of battery is S16bit
