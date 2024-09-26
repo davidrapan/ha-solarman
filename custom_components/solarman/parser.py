@@ -153,7 +153,12 @@ class ParameterParser:
 
     def lookup_value(self, value, keyvaluepairs):
         for o in keyvaluepairs:
-            if o["key"] == value or "default" in o or o["key"] == "default":
+            key = o["key"]
+            if isinstance(key, list):
+                for k in key:
+                    if k == value:
+                        return o["value"]
+            elif key == value or "default" in o or key == "default":
                 return o["value"]
 
         return keyvaluepairs[0]["value"]

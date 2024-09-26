@@ -495,12 +495,18 @@ parameters:
         scale: 0.1
         registers:
           [
-            0x03FD, 0x03FC,
-            0x03F7, 0x03F6,
-            0x07DE, 0x07DD,
-            0x03FB, 0x03FA,
-            0x03FF, 0x03FE,
-            0x07DC, 0x07DB,
+            0x03FD,
+            0x03FC,
+            0x03F7,
+            0x03F6,
+            0x07DE,
+            0x07DD,
+            0x03FB,
+            0x03FA,
+            0x03FF,
+            0x03FE,
+            0x07DC,
+            0x07DB,
           ]
         uint: enforce
         sensors:
