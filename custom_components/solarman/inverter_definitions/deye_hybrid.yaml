@@ -814,6 +814,11 @@ parameters:
   - group: Settings
     update_interval: 300
     items:
+      - name: "Date & Time"
+        platform: datetime
+        rule: 8
+        registers: [0x0016, 0x0017, 0x0018]
+
       - name: "Battery Control Mode"
         platform: "select"
         rule: 1

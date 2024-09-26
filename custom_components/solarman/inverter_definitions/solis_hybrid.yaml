@@ -287,8 +287,9 @@ parameters:
           - key: 0x8000
             value: "DSP Communication Failed"
 
-      - name: "DateTime"
-        device_class: "date"
+      - name: "Date & Time"
+        platform: datetime
+        update_interval: 60
         rule: 8
         registers: [33022, 33023, 33024, 33025, 33026, 33027]
 

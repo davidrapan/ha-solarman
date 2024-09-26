@@ -175,16 +175,15 @@ parameters:
           min: 257
           max: 2051
 
-      - name: "Device DateTime"
-        attribute:
-        update_interval: 30
-        device_class: "date"
-        rule: 8
-        registers: [0x003E, 0x003F, 0x0040]
-
   - group: Control
     update_interval: 300
     items:
+      - name: "Date & Time"
+        platform: datetime
+        update_interval: 60
+        rule: 8
+        registers: [0x003E, 0x003F, 0x0040]
+
       - name: "" # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: "switch"
         rule: 1

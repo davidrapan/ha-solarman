@@ -2,7 +2,7 @@ import types
 from datetime import timedelta as td
 
 DOMAIN = "solarman"
-PLATFORMS: list[str] = ["sensor", "binary_sensor", "switch", "number", "select", "time"]
+PLATFORMS: list[str] = ["sensor", "binary_sensor", "switch", "number", "select", "time", "datetime"]
 
 IP_BROADCAST = "<broadcast>"
 IP_ANY = "0.0.0.0"
