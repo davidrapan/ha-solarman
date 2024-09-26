@@ -183,7 +183,7 @@ parameters:
         rule: 8
         registers: [0x003E, 0x003F, 0x0040]
 
-      - name: "" # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+      - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: "switch"
         rule: 1
         registers: [0x0050]
@@ -203,6 +203,7 @@ parameters:
             value: "Lithium"
 
       - name: "Battery Equalization"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -219,6 +220,7 @@ parameters:
           max: 6100
 
       - name: "Battery Absorption"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -235,6 +237,7 @@ parameters:
           max: 6100
 
       - name: "Battery Float"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -251,19 +254,18 @@ parameters:
           max: 6100
 
       - name: "Battery Capacity"
+        platform: number
         state_class: "measurement"
         uom: "Ah"
         rule: 1
         registers: [0x0066]
-        configurable:
-          min: 0
-          max: 2000
         icon: "mdi:battery"
         range:
           min: 0
           max: 2000
 
       - name: "Battery Empty"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -277,31 +279,31 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Zero Export power"
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 1
         registers: [0x0068]
-        configurable:
+        range:
           min: 0
           max: 500
         icon: "mdi:transmission-tower-import"
 
       - name: "Battery Equalization Cycle"
+        platform: number
         class: "duration"
         state_class: "measurement"
         uom: "d"
         rule: 1
         registers: [0x0069]
-        configurable:
-          min: 0
-          max: 90
         icon: "mdi:battery"
         range:
           min: 0
           max: 90
 
       - name: "Battery Equalization Time"
+        platform: number
         class: "duration"
         state_class: "measurement"
         uom: "h"
@@ -317,6 +319,7 @@ parameters:
           max: 20
 
       - name: "Battery Temperature Compensation"
+        platform: number
         state_class: "measurement"
         uom: "mV/*C"
         rule: 2
@@ -376,24 +379,24 @@ parameters:
           off: 0x00
 
       - name: Battery Resistance
+        platform: number
         state_class: measurement
         uom: "mΩ"
         rule: 1
         registers: [0x0071]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 6000
 
       - name: Battery Charging efficiency
+        platform: number
         state_class: measurement
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x0072]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 1000
@@ -402,39 +405,40 @@ parameters:
           max: 100
 
       - name: Battery Shutdown SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x0073]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Restart SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x0074]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Low SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x0075]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Shutdown Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -451,6 +455,7 @@ parameters:
           max: 6100
 
       - name: Battery Restart Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -467,6 +472,7 @@ parameters:
           max: 6100
 
       - name: Battery Low Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -538,7 +544,6 @@ parameters:
         rule: 1
         registers: [0x007C]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
@@ -622,23 +627,23 @@ parameters:
             value: "Microinverter"
 
       - name: "SmartLoad Off"
+        platform: number
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x0087]
         icon: "mdi:lightning-bolt-circle"
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: "SmartLoad On"
+        platform: number
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x0089]
         icon: "mdi:lightning-bolt-circle"
-        configurable:
         range:
           min: 0
           max: 100
@@ -718,6 +723,7 @@ parameters:
 
       - name: Export Surplus Power
         alt: Max Sell Power
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -733,14 +739,13 @@ parameters:
 
       - name: Export Surplus
         alt: Solar Sell
-        update_interval: 300
         platform: "switch"
         rule: 1
         registers: [0x0091]
 
       - name: PV Max Power
         alt: Max Solar Power
-        update_interval: 300
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -845,6 +850,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 1 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -860,6 +866,7 @@ parameters:
           max: 2500
 
       - name: Program 2 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -875,6 +882,7 @@ parameters:
           max: 2500
 
       - name: Program 3 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -890,6 +898,7 @@ parameters:
           max: 2500
 
       - name: Program 4 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -905,6 +914,7 @@ parameters:
           max: 2500
 
       - name: Program 5 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -920,6 +930,7 @@ parameters:
           max: 2500
 
       - name: Program 6 Power
+        platform: number
         class: "power"
         state_class: measurement
         uom: "W"
@@ -935,6 +946,7 @@ parameters:
           max: 2500
 
       - name: Program 1 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -951,6 +963,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 2 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -967,6 +980,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 3 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -983,6 +997,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 4 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -999,6 +1014,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 5 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1015,6 +1031,7 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 6 Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1031,66 +1048,66 @@ parameters:
         icon: mdi:sun-clock
 
       - name: Program 1 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00A6]
-        configurable:
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
       - name: Program 2 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00A7]
-        configurable:
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
       - name: Program 3 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00A8]
-        configurable:
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
       - name: Program 4 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00A9]
-        configurable:
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
       - name: Program 5 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00AA]
-        configurable:
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
       - name: Program 6 SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00AB]
-        configurable:
         range:
           min: 0
           max: 100
@@ -1193,7 +1210,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x00BE]
-        icon: 'mdi:generator-stationary'
+        icon: "mdi:generator-stationary"
         configurable:
           min: 0
           max: 16000
@@ -1208,7 +1225,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x00BF]
-        icon: 'mdi:transmission-tower'
+        icon: "mdi:transmission-tower"
         configurable:
           min: 0
           max: 16000
@@ -1628,7 +1645,7 @@ parameters:
           - key: 0x0004
             value: "Fault"
 
-      - name: "" # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+      - name: "" # Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: "binary_sensor"
         device_class: running
         rule: 1
@@ -1675,7 +1692,7 @@ parameters:
         bit: 3
         icon: "mdi:lightning-bolt-circle"
 
-      # Device - Alarm message (word 1 & 2) [0, 65535]
+      # Alarm message (word 1 & 2) [0, 65535]
       - name: "Device Alarm"
         class: "enum"
         rule: 3
@@ -1697,7 +1714,7 @@ parameters:
           - key: "default"
             value: "Error"
 
-      # Device - Fault message (word 1, 2, 3 & 4) [0, 65535]
+      # Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
         class: "enum"
         rule: 3
@@ -2041,11 +2058,11 @@ parameters:
         registers: [0x0271, 0x02B2]
         icon: "mdi:transmission-tower"
 
-  - group: Inverter
+  - group: Output
     update_interval: 5
     items:
-      # Inverter output - The voltage of phase A
-      - name: "Inverter L1 Voltage"
+      # Output - The voltage of phase A
+      - name: "Output L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2053,8 +2070,8 @@ parameters:
         rule: 1
         registers: [0x0273]
 
-      # Inverter output - The voltage of phase B
-      - name: "Inverter L2 Voltage"
+      # Output - The voltage of phase B
+      - name: "Output L2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2062,8 +2079,8 @@ parameters:
         rule: 1
         registers: [0x0274]
 
-      # Inverter output - The voltage of phase C
-      - name: "Inverter L3 Voltage"
+      # Output - The voltage of phase C
+      - name: "Output L3 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2071,8 +2088,8 @@ parameters:
         rule: 1
         registers: [0x0275]
 
-      # Inverter output - The current of phase A is S16bit (low 16 bits)
-      - name: "Inverter L1 Current"
+      # Output - The current of phase A is S16bit (low 16 bits)
+      - name: "Output L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2080,8 +2097,8 @@ parameters:
         rule: 2
         registers: [0x0276]
 
-      # Inverter output - The current of phase B is S16bit (low 16 bits)
-      - name: "Inverter L2 Current"
+      # Output - The current of phase B is S16bit (low 16 bits)
+      - name: "Output L2 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2089,8 +2106,8 @@ parameters:
         rule: 2
         registers: [0x0277]
 
-      # Inverter output - The current of phase C is S16bit (low 16 bits)
-      - name: "Inverter L3 Current"
+      # Output - The current of phase C is S16bit (low 16 bits)
+      - name: "Output L3 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2098,39 +2115,39 @@ parameters:
         rule: 2
         registers: [0x0278]
 
-      # Inverter output - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Inverter L1 Power"
+      # Output - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Output L1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
         registers: [0x0279, 0x02B3]
 
-      # Inverter output - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Inverter L2 Power"
+      # Output - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Output L2 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
         registers: [0x027A, 0x02B4]
 
-      # Inverter output - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Inverter L3 Power"
+      # Output - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Output L3 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
         registers: [0x027B, 0x02B5]
 
-      # Inverter output - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Inverter Power"
+      # Output - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Power"
+        alt: Output Power
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
         registers: [0x027C, 0x02B6]
 
-      # Inverter - Includes consumption of the inverter device itself as well AC/DC conversion losses
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
         class: "power"
@@ -2156,7 +2173,7 @@ parameters:
             signed:
             registers: [0x027C, 0x02B6]
 
-      - name: "Inverter Frequency"
+      - name: "Output Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"

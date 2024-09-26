@@ -831,6 +831,7 @@ parameters:
             value: "Lithium"
 
       - name: "Battery Equalization"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -847,6 +848,7 @@ parameters:
           max: 6100
 
       - name: "Battery Absorption"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -863,6 +865,7 @@ parameters:
           max: 6100
 
       - name: "Battery Float"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -879,19 +882,18 @@ parameters:
           max: 6100
 
       - name: "Battery Capacity"
+        platform: number
         state_class: "measurement"
         uom: "Ah"
         rule: 1
         registers: [0x00CC]
-        configurable:
-          min: 0
-          max: 2000
         icon: "mdi:battery"
         range:
           min: 0
           max: 2000
 
       - name: "Battery Empty"
+        platform: number
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -905,31 +907,31 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Zero Export power"
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 1
         registers: [0x00CE]
-        configurable:
+        range:
           min: 0
           max: 500
         icon: "mdi:transmission-tower-import"
 
       - name: "Battery Equalization Cycle"
+        platform: number
         class: "duration"
         state_class: "measurement"
         uom: "d"
         rule: 1
         registers: [0x00CF]
-        configurable:
-          min: 0
-          max: 90
         icon: "mdi:battery"
         range:
           min: 0
           max: 90
 
       - name: "Battery Equalization Time"
+        platform: number
         class: "duration"
         state_class: "measurement"
         uom: "h"
@@ -945,6 +947,7 @@ parameters:
           max: 20
 
       - name: "Battery Temperature Compensation"
+        platform: number
         state_class: "measurement"
         uom: "mV/*C"
         rule: 2
@@ -1001,24 +1004,24 @@ parameters:
         registers: [0x00D6]
 
       - name: Battery Resistance
+        platform: number
         state_class: measurement
         uom: "mΩ"
         rule: 1
         registers: [0x00D7]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 6000
 
       - name: Battery Charging efficiency
+        platform: number
         state_class: measurement
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x00D8]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 1000
@@ -1027,39 +1030,40 @@ parameters:
           max: 100
 
       - name: Battery Shutdown SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00D9]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Restart SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00DA]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Low SOC
+        platform: number
         state_class: measurement
         uom: "%"
         rule: 1
         registers: [0x00DB]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: Battery Shutdown Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1076,6 +1080,7 @@ parameters:
           max: 6100
 
       - name: Battery Restart Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1092,6 +1097,7 @@ parameters:
           max: 6100
 
       - name: Battery Low Voltage
+        platform: number
         class: "voltage"
         state_class: measurement
         uom: "V"
@@ -1163,7 +1169,6 @@ parameters:
         rule: 1
         registers: [0x00E2]
         icon: mdi:battery
-        configurable:
         range:
           min: 0
           max: 100
@@ -1247,23 +1252,23 @@ parameters:
             value: "Microinverter"
 
       - name: "SmartLoad Off"
+        platform: number
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x00ED]
         icon: "mdi:lightning-bolt-circle"
-        configurable:
         range:
           min: 0
           max: 100
 
       - name: "SmartLoad On"
+        platform: number
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x00EF]
         icon: "mdi:lightning-bolt-circle"
-        configurable:
         range:
           min: 0
           max: 100
@@ -1279,7 +1284,7 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x00F1]
-        icon: 'mdi:solar-power'
+        icon: "mdi:solar-power"
         range:
           min: 0000
           max: 8000
@@ -1677,7 +1682,7 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x0124]
-        icon: 'mdi:generator-stationary'
+        icon: "mdi:generator-stationary"
         range:
           min: 0
           max: 16000
@@ -1688,7 +1693,7 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x0125]
-        icon: 'mdi:transmission-tower'
+        icon: "mdi:transmission-tower"
         range:
           min: 0
           max: 16000
