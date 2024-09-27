@@ -54,7 +54,12 @@ def group_when(iterable, predicate, max_size = REQUEST_MAX_SIZE):
     yield iterable[x:size]
 
 def is_ethernet_frame(frame):
-    return frame[3:5] == struct.pack("<H", 0x4510) and len(frame) > 9 and int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:]) and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])
+    if frame[3:5] == CONTROL_CODE.REQUEST and (frame_len := len(frame)):
+        if frame_len > 9:
+            return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:]) and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])
+        if frame_len > 6: # [0xa5, 0x17, 0x00, 0x10, 0x45, 0x03, 0x00, 0x98, 0x02]
+            return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])
+    return False
 
 def format_exception(e):
     return f"{type(e).__name__}{f': {e}' if f'{e}' else ''}"
