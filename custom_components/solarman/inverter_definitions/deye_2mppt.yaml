@@ -495,7 +495,7 @@ parameters:
           max: 1200
 
       - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-        platform: "switch"
+        platform: switch
         rule: 1
         registers: [0x002b]
         value:

@@ -144,6 +144,14 @@ parameters:
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
 
+      - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+        platform: switch
+        rule: 1
+        registers: [0x002b]
+        value:
+          on: 0x0001
+          off: 0x0002
+
       - name: "Device State"
         class: "enum"
         rule: 1
