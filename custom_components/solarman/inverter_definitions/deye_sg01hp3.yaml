@@ -2395,7 +2395,7 @@ parameters:
       # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         alt: DC3 Power
-        disabled:
+        hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2407,7 +2407,7 @@ parameters:
       # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         alt: DC4 Power
-        disabled:
+        hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2470,7 +2470,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: DC3 Voltage
-        disabled:
+        hidden:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2484,7 +2484,7 @@ parameters:
 
       - name: "PV3 Current"
         alt: DC3 Current
-        disabled:
+        hidden:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2498,7 +2498,7 @@ parameters:
 
       - name: "PV4 Voltage"
         alt: DC4 Voltage
-        disabled:
+        hidden:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2512,7 +2512,7 @@ parameters:
 
       - name: "PV4 Current"
         alt: DC4 Current
-        disabled:
+        hidden:
         class: "current"
         state_class: "measurement"
         uom: "A"
