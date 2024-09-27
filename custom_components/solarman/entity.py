@@ -36,7 +36,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
     @property
     def available(self) -> bool:
-        return self._attr_available and self.coordinator.inverter.available()
+        return self.coordinator.last_update_success and self.coordinator.inverter.available()
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -77,6 +77,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         #self._attr_has_entity_name = True
 
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
+        self._attr_entity_registry_visible_default = not "hidden" in sensor
 
         self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
         #elf._attr_name = "{}".format(self.sensor_name) if self.sensor_name else self.coordinator.inverter.name

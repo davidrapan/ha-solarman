@@ -41,8 +41,8 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        self._attr_device_class = None
-        self._attr_entity_category = EntityCategory.CONFIG
+        if not "control" in sensor:
+            self._attr_entity_category = EntityCategory.CONFIG
 
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
         self._multiple_registers = False

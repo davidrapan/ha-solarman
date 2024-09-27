@@ -40,7 +40,8 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanNumberEntity(SolarmanEntity, NumberEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        self._attr_entity_category = EntityCategory.CONFIG
+        if not "control" in sensor:
+            self._attr_entity_category = EntityCategory.CONFIG
 
         if "mode" in sensor and (mode := sensor["mode"]):
             self._attr_mode = mode

@@ -59,8 +59,8 @@ class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
 class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY 
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
     def available(self) -> bool:

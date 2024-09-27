@@ -40,8 +40,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
         SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        self._attr_entity_category = EntityCategory.CONFIG
         self._attr_device_class = SwitchDeviceClass.SWITCH
+        if not "control" in sensor:
+            self._attr_entity_category = EntityCategory.CONFIG
 
         self._value_on = 1
         self._value_off = 0
