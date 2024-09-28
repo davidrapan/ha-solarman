@@ -412,6 +412,7 @@ parameters:
         class: "enum"
         rule: 1
         registers: [0x0200]
+        icon: "mdi:state-machine"
         lookup:
           - key: 0
             value: "Standby"

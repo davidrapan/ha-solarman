@@ -325,7 +325,7 @@ parameters:
       - name: "Device State"
         rule: 1
         registers: [0x09C4]
-        icon: "mdi:information"
+        icon: "mdi:state-machine"
         lookup:
           - key: 0
             value: "Init"

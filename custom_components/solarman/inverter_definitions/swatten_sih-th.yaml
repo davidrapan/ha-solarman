@@ -1,4 +1,4 @@
-# Swatten SiH-5/6/8/10kW-TH 
+# Swatten SiH-5/6/8/10kW-TH
 # Three Phase Hybrid Inverter（HV）- Residential Storage Inverter ~ https://www.swatten.com/show-3-5.html
 # From https://github.com/davidrapan/ha-solarman/discussions/166
 
@@ -12,7 +12,7 @@ requests:
   - start: 4056
     end: 4085
     mb_functioncode: 0x04
-  - start: 10002 
+  - start: 10002
     end: 10008
     mb_functioncode: 0x04
   - start: 5401
@@ -31,15 +31,15 @@ requests:
     mb_functioncode: 0x04
 
   # Battery side
-  - start: 10020 
+  - start: 10020
     end: 10028
     mb_functioncode: 0x04
-  - start: 10040 
+  - start: 10040
     end: 10042
     mb_functioncode: 0x04
 
   # Other
-  - start: 10000 
+  - start: 10000
     end: 10000
     mb_functioncode: 0x04
   - start: 4197
@@ -50,16 +50,16 @@ requests:
     mb_functioncode: 0x04
 
   # Settings
-  - start: 26101 
+  - start: 26101
     end: 26101
     mb_functioncode: 0x03
-  - start: 20030 
+  - start: 20030
     end: 20030
     mb_functioncode: 0x03
 
 parameters:
   - group: PV
-    items: 
+    items:
       - name: "PV1 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -215,7 +215,7 @@ parameters:
             registers: [4081, 4082]
 
   - group: Grid
-    items: 
+    items:
       - name: "Today Production"
         alt: "Daily Production"
         class: "energy"
@@ -224,7 +224,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [10002]
-        icon: 'mdi:solar-power'
+        icon: "mdi:solar-power"
 
       - name: "Total Production"
         class: "energy"
@@ -233,9 +233,9 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [10003, 10004]
-        icon: 'mdi:solar-power'
+        icon: "mdi:solar-power"
         validation:
-            min: 0.1
+          min: 0.1
 
       - name: "Load Power"
         class: "power"
@@ -252,7 +252,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [10036]
-        icon: 'mdi:transmission-tower-export'
+        icon: "mdi:transmission-tower-export"
 
       - name: "Total Energy Import"
         alt: "Total Energy Purchased"
@@ -262,9 +262,9 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [10037, 10038]
-        icon: 'mdi:transmission-tower-export'
+        icon: "mdi:transmission-tower-export"
         validation:
-            min: 0.1
+          min: 0.1
 
       - name: "Today Energy Export"
         alt: "Daily Energy Sold"
@@ -274,7 +274,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [10045]
-        icon: 'mdi:transmission-tower-import'
+        icon: "mdi:transmission-tower-import"
 
       - name: "Total Energy Export"
         alt: "Total Energy Sold"
@@ -284,88 +284,88 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [10046, 10047]
-        icon: 'mdi:transmission-tower-import'
+        icon: "mdi:transmission-tower-import"
         validation:
-            min: 0.1
+          min: 0.1
 
-#      - name: Today Losses
-#        alt: Daily Losses
-#        friendly_name: Today's Losses
-#        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
-#        update_interval: 30
-#        class: "energy"
-#        state_class: "total_increasing"
-#        ensure_increasing:
-#        uom: "kWh"
-#        rule: 1
-#        digits: 1
-#        registers: [10036, 10002, 10026, 10045, 10040, ???]
-#        uint: enforce
-#        sensors:
-#          - scale: 0.1
-#            registers: [10036]
-#          - scale: 0.1
-#            registers: [10002]
-#          - scale: 0.1
-#            registers: [10026]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [10045]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [10040]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [???] # Missing Today Load Consumption
-#        validation:
-#          default: 0
-#          min: 1
+  #      - name: Today Losses
+  #        alt: Daily Losses
+  #        friendly_name: Today's Losses
+  #        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+  #        update_interval: 30
+  #        class: "energy"
+  #        state_class: "total_increasing"
+  #        ensure_increasing:
+  #        uom: "kWh"
+  #        rule: 1
+  #        digits: 1
+  #        registers: [10036, 10002, 10026, 10045, 10040, ???]
+  #        uint: enforce
+  #        sensors:
+  #          - scale: 0.1
+  #            registers: [10036]
+  #          - scale: 0.1
+  #            registers: [10002]
+  #          - scale: 0.1
+  #            registers: [10026]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [10045]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [10040]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [???] # Missing Today Load Consumption
+  #        validation:
+  #          default: 0
+  #          min: 1
 
-#      - name: Total Losses
-#        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
-#        update_interval: 30
-#        class: "energy"
-#        state_class: "total_increasing"
-#        ensure_increasing:
-#        uom: "kWh"
-#        rule: 3
-#        digits: 1
-#        registers:
-#          [
-#            10037,
-#            10038,
-#            10003,
-#            10004,
-#            10027,
-#            10028,
-#            10046,
-#            10047,
-#            10041,
-#            10042,
-#            ???,
-#          ]
-#        uint: enforce
-#        sensors:
-#          - scale: 0.1
-#            registers: [10037, 10038]
-#          - scale: 0.1
-#            registers: [10003, 10004]
-#          - scale: 0.1
-#            registers: [10027, 10028]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [10046, 10047]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [10041, 10042]
-#          - operator: subtract
-#            scale: 0.1
-#            registers: [???] # Missing Total Load Consumption
-#        validation:
-#          min: 1
+  #      - name: Total Losses
+  #        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+  #        update_interval: 30
+  #        class: "energy"
+  #        state_class: "total_increasing"
+  #        ensure_increasing:
+  #        uom: "kWh"
+  #        rule: 3
+  #        digits: 1
+  #        registers:
+  #          [
+  #            10037,
+  #            10038,
+  #            10003,
+  #            10004,
+  #            10027,
+  #            10028,
+  #            10046,
+  #            10047,
+  #            10041,
+  #            10042,
+  #            ???,
+  #          ]
+  #        uint: enforce
+  #        sensors:
+  #          - scale: 0.1
+  #            registers: [10037, 10038]
+  #          - scale: 0.1
+  #            registers: [10003, 10004]
+  #          - scale: 0.1
+  #            registers: [10027, 10028]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [10046, 10047]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [10041, 10042]
+  #          - operator: subtract
+  #            scale: 0.1
+  #            registers: [???] # Missing Total Load Consumption
+  #        validation:
+  #          min: 1
 
   - group: Battery
-    items: 
+    items:
       - name: "Battery Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -416,12 +416,12 @@ parameters:
       - name: "Today Battery Discharge"
         alt: "Daily Battery Discharge"
         class: "energy"
-        state_class: "total_increasing"      
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [10026]
-        icon: 'mdi:battery-minus'
+        icon: "mdi:battery-minus"
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -430,40 +430,40 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [10027, 10028]
-        icon: 'mdi:battery-minus'
+        icon: "mdi:battery-minus"
         validation:
-            min: 0.1
+          min: 0.1
 
       - name: "Today Battery Charge"
         alt: "Daily Battery Charge"
         class: "energy"
-        state_class: "total_increasing"      
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [10040]
-        icon: 'mdi:battery-plus'
+        icon: "mdi:battery-plus"
 
       - name: "Total Battery Charge"
         class: "energy"
-        state_class: "total_increasing"      
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [10041, 10042]
-        icon: 'mdi:battery-plus'
+        icon: "mdi:battery-plus"
         validation:
-            min: 0.1
+          min: 0.1
 
   - group: Inverter
-    items: 
+    items:
       - name: "Device State"
         class: "enum"
-        state_class: ""      
+        state_class: ""
         rule: 1
         registers: [10000]
-        icon: "mdi:information"
-        lookup: 
+        icon: "mdi:state-machine"
+        lookup:
           - key: 0
             value: "Grid-connected normal operation"
           - key: 0x0800
@@ -485,13 +485,13 @@ parameters:
 
       - name: "Temperature"
         class: "temperature"
-        state_class: "measurement"      
+        state_class: "measurement"
         uom: "°C"
         scale: 0.1
         rule: 2
-        offset: 0     
+        offset: 0
         registers: [4058]
-        icon: 'mdi:thermometer'
+        icon: "mdi:thermometer"
 
       # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
@@ -507,9 +507,9 @@ parameters:
         registers: [20030]
 
   - group: Alarm
-    items: 
+    items:
       - name: "Device Alarm"
-        state_class: ""      
+        state_class: ""
         rule: 1
         registers: [5253] #, 5254, 5255, 5256, 5257, 5258, 5259, 5260, 5261, 5262]
         icon: "mdi:alert-outline"
@@ -518,7 +518,7 @@ parameters:
             value: "No Alert"
 
   - group: Settings
-    items: 
+    items:
       - name: "Battery Type"
         attribute:
         rule: 2

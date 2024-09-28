@@ -755,25 +755,25 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Disabled"
-          - key: 0x0001
+          - key: 0x0003
             value: "Monday"
-          - key: 0x0002
+          - key: 0x0005
             value: "Tuesday"
-          - key: 0x0004
+          - key: 0x0009
             value: "Wednesday"
-          - key: 0x0008
+          - key: 0x0011
             value: "Thursday"
-          - key: 0x0010
+          - key: 0x0021
             value: "Friday"
-          - key: 0x0020
+          - key: 0x0041
             value: "Saturday"
-          - key: 0x0040
+          - key: 0x0081
             value: "Sunday"
-          - key: 0x001F
+          - key: 0x003F
             value: "Weekdays"
-          - key: 0x0060
+          - key: 0x00C1
             value: "Weekend"
-          - key: 0x007F
+          - key: 0x00FF
             default:
             value: "Enabled"
 
@@ -1585,7 +1585,7 @@ parameters:
         class: "enum"
         rule: 1
         registers: [0x01F4]
-        icon: "mdi:information"
+        icon: "mdi:state-machine"
         range:
           min: 0
           max: 5
@@ -1611,7 +1611,7 @@ parameters:
         class: "enum"
         rule: 1
         registers: [0x0228]
-        icon: "mdi:information"
+        icon: "mdi:directions-fork"
         lookup:
           - key: 0x0000
             value: "Off"

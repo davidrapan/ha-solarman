@@ -156,7 +156,7 @@ parameters:
         class: "enum"
         rule: 1
         registers: [0x003B]
-        icon: "mdi:information"
+        icon: "mdi:state-machine"
         range:
           min: 0
           max: 5

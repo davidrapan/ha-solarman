@@ -317,6 +317,7 @@ parameters:
         class: "enum"
         rule: 1
         registers: [0x0404]
+        icon: "mdi:state-machine"
         lookup:
           - key: 0x0000
             value: "Waiting"

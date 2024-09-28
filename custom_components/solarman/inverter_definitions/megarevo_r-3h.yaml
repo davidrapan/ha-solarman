@@ -134,7 +134,7 @@ parameters:
             value: "Grid Peak Shift"
           - key: 2
             value: "Battery Priority (Storm Watch)"
-        icon: "mdi:cog-outline"
+        icon: "mdi:state-machine"
 
       - name: "Temperature"
         class: "Temperature"
