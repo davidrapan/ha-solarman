@@ -1690,17 +1690,17 @@ parameters:
         registers: [0x0229, 0x022A]
         icon: "mdi:alert-outline"
         lookup:
-          - key: 0x0000
+          - key: 0
             value: "OK"
-          - key: 0x0002
+          - bit: 1
             value: "Fan failure"
-          - key: 0x0004
+          - bit: 2
             value: "Grid phase failure"
-          - key: 0x0008
+          - bit: 3
             value: "Meter communication failure"
-          - key: 0x40000000
+          - bit: 30
             value: "Battery loss"
-          - key: 0x80000000
+          - bit: 31
             value: "Parallel communication quality"
           - key: "default"
             value: "Error"
@@ -1712,23 +1712,23 @@ parameters:
         registers: [0x22B, 0x022C, 0x022D, 0x022E]
         icon: "mdi:message-alert-outline"
         lookup:
-          - key: 0x0000
+          - key: 0
             value: "OK"
-          - key: 0x0040
+          - bit: 6
             value: "DC/DC Soft Start failure"
-          - key: 0x0200
+          - bit: 9
             value: "Auxiliary power supply failure"
-          - key: 0x1000
+          - bit: 12
             value: "Working mode changed"
-          - key: 0x00020000
+          - bit: 17
             value: "AC Over-current failure"
-          - key: 0x00040000
+          - bit: 18
             value: "Tz_Integ_Fault failure"
-          - key: 0x00080000
+          - bit: 19
             value: "DC Over-current failure"
-          - key: 0x00400000
+          - bit: 22
             value: "AC current leakage failure"
-          - key: 0x8000000000000000
+          - bit: 63
             value: "Temperature is too high"
           - key: "default"
             value: "Error"

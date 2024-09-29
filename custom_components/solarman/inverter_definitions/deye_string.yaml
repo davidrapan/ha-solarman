@@ -172,6 +172,27 @@ parameters:
           - key: 0x0004
             value: "Fault"
 
+      - name: "Device Alarm"
+        class: "enum"
+        rule: 3
+        registers: [0x0065, 0x0066]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 1
+            value: "Fan failure"
+          - bit: 2
+            value: "Grid phase failure"
+          - bit: 3
+            value: "Meter communication failure"
+          - bit: 30
+            value: "Battery loss"
+          - bit: 31
+            value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
+
   - group: PV
     items:
       - name: PV Power

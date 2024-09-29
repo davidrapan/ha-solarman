@@ -747,17 +747,17 @@ parameters:
         registers: [0x0065, 0x0066]
         icon: "mdi:alert-outline"
         lookup:
-          - key: 0x0000
+          - key: 0
             value: "OK"
-          - key: 0x0002
+          - bit: 1
             value: "Fan failure"
-          - key: 0x0004
+          - bit: 2
             value: "Grid phase failure"
-          - key: 0x0008
+          - bit: 3
             value: "Meter communication failure"
-          - key: 0x40000000
+          - bit: 30
             value: "Battery loss"
-          - key: 0x80000000
+          - bit: 31
             value: "Parallel communication quality"
           - key: "default"
             value: "Error"
