@@ -528,35 +528,35 @@ parameters:
           min: 4500
           max: 6500
 
-      - name: "Starting Voltage Upper Limit"
-        platform: number
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0020]
-        configurable:
-          min: 700
-          max: 900
-        range:
-          min: 7000
-          max: 9000
+      # - name: "Starting Voltage Upper Limit"
+      #   platform: number
+      #   class: "voltage"
+      #   state_class: "measurement"
+      #   uom: "V"
+      #   scale: 0.1
+      #   rule: 1
+      #   registers: [0x0020]
+      #   configurable:
+      #     min: 700
+      #     max: 900
+      #   range:
+      #     min: 7000
+      #     max: 9000
 
-      - name: "Starting Voltage Lower Limit"
-        platform: number
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x0021]
-        configurable:
-          min: 700
-          max: 900
-        range:
-          min: 7000
-          max: 9000
+      # - name: "Starting Voltage Lower Limit"
+      #   platform: number
+      #   class: "voltage"
+      #   state_class: "measurement"
+      #   uom: "V"
+      #   scale: 0.1
+      #   rule: 1
+      #   registers: [0x0021]
+      #   configurable:
+      #     min: 700
+      #     max: 900
+      #   range:
+      #     min: 7000
+      #     max: 9000
 
       - name: "Over-Frequency Load Reduction Start"
         platform: number
