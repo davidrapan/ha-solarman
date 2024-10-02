@@ -202,7 +202,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         result_count = len(result) if result else 0
 
         if result_count > 0:
-            _LOGGER.debug(f"[{self.serial}] Returning {result_count} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state}), Values: {result}]")
+            _LOGGER.debug(f"[{self.serial}] Returning {result_count} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
             now = datetime.now()
             self.state_interval = now - self.state_updated
             self.state_updated = now
@@ -260,6 +260,9 @@ class Inverter(PySolarmanV5AsyncWrapper):
                             if not self.auto_reconnect:
                                 await self.disconnect()
 
+                            if not attempts_left > 0:
+                                raise
+
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
                         _LOGGER.debug(f"[{self.serial}] Querying {start_end} {'succeeded.' if results[i] == 1 else f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
@@ -270,7 +273,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 if not 0 in results:
                     return self.get_result(self.profile)
                 else:
-                    await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results}.")
+                    await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results}")
 
         except TimeoutError:
             last_state = self.state
@@ -282,7 +285,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
         except UpdateFailed:
             raise
         except Exception as e:
-            await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results} with exception: {format_exception(e)}.")
+            #await self.get_failed(f"[{self.serial}] Querying {self.address}:{self.port} failed: {results} with exception: {format_exception(e)}.")
+            await self.get_failed(f"[{self.serial}] {format_exception(e)}: {results}")
         finally:
             self._is_busy = 0
 
