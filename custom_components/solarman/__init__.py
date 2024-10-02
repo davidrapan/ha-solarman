@@ -39,9 +39,13 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         ipaddr = IPv4Address(inverter_host)
     except AddressValueError:
         ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
-    if ipaddr.is_private and (device := get_or_default(await InverterDiscovery(hass, inverter_host, inverter_serial).discover(), inverter_serial)):
-        inverter_host = device["ip"]
-        inverter_mac = device["mac"]
+    if ipaddr.is_private and (discover := await InverterDiscovery(hass, inverter_host, inverter_serial).discover()):
+        if device := get_or_default(discover, inverter_serial):
+            inverter_host = device["ip"]
+            inverter_mac = device["mac"]
+        elif device := get_or_default(discover, (serial := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
+            inverter_serial = serial
+            inverter_mac = device["mac"]
 
     if inverter_host is None:
         raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
