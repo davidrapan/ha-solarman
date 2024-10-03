@@ -64,6 +64,8 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
             if "value" in data:
                 self._attr_extra_state_attributes["value"] = data["value"]
             if self.attributes:
+                if "inverse" in self.attributes:
+                    self._attr_extra_state_attributes["−x"] = -data["state"]
                 for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
                     self._attr_extra_state_attributes[attr.replace(f"{self.sensor_name} ", "")] = self.get_data_state(attr)
 
