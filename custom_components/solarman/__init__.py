@@ -44,6 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
             inverter_host = device["ip"]
             inverter_mac = device["mac"]
         elif device := get_or_default(discover, (serial := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
+            _LOGGER.warning(f"Host {inverter_host} is configured with incorrect serial number '{inverter_serial}'. Remove device and re-add it back with correct one '{serial}'.")
             inverter_serial = serial
             inverter_mac = device["mac"]
 
