@@ -22,18 +22,18 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_setup_entry({config.as_dict()})")
 
+    data = config.data
+    name = data.get(CONF_NAME)
+    inverter_serial = data.get(CONF_INVERTER_SERIAL)
+
     options = config.options
-
-    name = options.get(CONF_NAME)
-
     inverter_host = options.get(CONF_INVERTER_HOST)
-    inverter_serial = options.get(CONF_INVERTER_SERIAL)
     inverter_port = options.get(CONF_INVERTER_PORT)
     inverter_mb_slave_id = options.get(CONF_INVERTER_MB_SLAVE_ID)
     inverter_mac = None
 
-    lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
     lookup_file = options.get(CONF_LOOKUP_FILE)
+    lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
 
     try:
         ipaddr = IPv4Address(inverter_host)
@@ -44,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
             inverter_host = device["ip"]
             inverter_mac = device["mac"]
         elif device := get_or_default(discover, (serial := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
-            _LOGGER.warning(f"Host {inverter_host} is configured with incorrect serial number '{inverter_serial}'. Remove device and re-add it back with correct one '{serial}'.")
+            _LOGGER.warning(f"Host {inverter_host} has '{serial}' serial number but is configured with '{inverter_serial}'.")
             inverter_serial = serial
             inverter_mac = device["mac"]
 

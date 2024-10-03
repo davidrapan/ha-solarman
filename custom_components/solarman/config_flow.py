@@ -34,9 +34,9 @@ def step_user_data_prefill(ip, serial):
 async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_INVERTER_PORT, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }, wname: bool = True) -> vol.Schema:
     lookup_files = await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
     _LOGGER.debug(f"step_user_data_schema: data: {data}, {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
-    #STEP_USER_DATA_SCHEMA = vol.Schema({ vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str }, extra = vol.PREVENT_EXTRA) if wname else vol.Schema({}, extra = vol.PREVENT_EXTRA)
-    #STEP_USER_DATA_SCHEMA = STEP_USER_DATA_SCHEMA.extend(
-    STEP_USER_DATA_SCHEMA = vol.Schema(
+    #data_schema = vol.Schema({ vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str }, extra = vol.PREVENT_EXTRA) if wname else vol.Schema({}, extra = vol.PREVENT_EXTRA)
+    #data_schema = data_schema.extend(
+    data_schema = vol.Schema(
         {
             #vol.Optional("Example of"): "some text to display in the config flow..."
             vol.Required(CONF_NAME, default = data.get(CONF_NAME)): str,
@@ -50,14 +50,31 @@ async def step_user_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CO
         },
         extra = vol.PREVENT_EXTRA
     )
-    _LOGGER.debug(f"step_user_data_schema: STEP_USER_DATA_SCHEMA: {STEP_USER_DATA_SCHEMA}")
-    return STEP_USER_DATA_SCHEMA
+    _LOGGER.debug(f"step_user_data_schema: data_schema: {data_schema}")
+    return data_schema
+
+async def step_init_data_schema(hass: HomeAssistant, data: dict[str, Any] = { CONF_NAME: DEFAULT_NAME, CONF_DISCOVERY: DEFAULT_DISCOVERY, CONF_INVERTER_PORT: DEFAULT_INVERTER_PORT, CONF_INVERTER_MB_SLAVE_ID: DEFAULT_INVERTER_MB_SLAVE_ID, CONF_PASSTHROUGH: DEFAULT_PASSTHROUGH, CONF_LOOKUP_FILE: DEFAULT_LOOKUP_FILE, CONF_BATTERY_NOMINAL_VOLTAGE: DEFAULT_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING: DEFAULT_BATTERY_LIFE_CYCLE_RATING }, wname: bool = True) -> vol.Schema:
+    lookup_files = await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
+    _LOGGER.debug(f"step_init_data_schema: data: {data}, {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
+    data_schema = vol.Schema(
+        {
+            vol.Required(CONF_INVERTER_HOST, default = data.get(CONF_INVERTER_HOST)): str,
+            vol.Optional(CONF_INVERTER_PORT, default = data.get(CONF_INVERTER_PORT)): cv.port,
+            vol.Optional(CONF_INVERTER_MB_SLAVE_ID, default = data.get(CONF_INVERTER_MB_SLAVE_ID)): cv.positive_int,
+            vol.Optional(CONF_LOOKUP_FILE, default = data.get(CONF_LOOKUP_FILE)): vol.In(lookup_files),
+            vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = data.get(CONF_BATTERY_NOMINAL_VOLTAGE)): cv.positive_int,
+            vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = data.get(CONF_BATTERY_LIFE_CYCLE_RATING)): cv.positive_int,
+        },
+        extra = vol.PREVENT_EXTRA
+    )
+    _LOGGER.debug(f"step_init_data_schema: data_schema: {data_schema}")
+    return data_schema
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """
     Validate the user input allows us to connect.
 
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
+    Data has the keys from data_schema with values provided by the user.
     """
     _LOGGER.debug(f"validate_input: {data}")
 
@@ -147,7 +164,7 @@ class OptionsFlowHandler(OptionsFlow):
         """Handle options flow."""
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: user_input: {user_input}, current: {self.entry.options}")
         if user_input is None:
-            return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, self.entry.options, False))
+            return self.async_show_form(step_id = "init", data_schema = await step_init_data_schema(self.hass, self.entry.options, False))
 
         errors = {}
 
@@ -162,9 +179,9 @@ class OptionsFlowHandler(OptionsFlow):
             errors["base"] = "unknown"
         else:
             _LOGGER.debug(f"OptionsFlowHandler.async_step_init: validation passed: {user_input}")
-            return self.async_create_entry(title = user_input[CONF_NAME], data = user_input)
+            return self.async_create_entry(title = self.entry.data[CONF_NAME], data = user_input)
 
-        return self.async_show_form(step_id = "init", data_schema = await step_user_data_schema(self.hass, user_input, False), errors = errors)
+        return self.async_show_form(step_id = "init", data_schema = await step_init_data_schema(self.hass, user_input, False), errors = errors)
 
 class InvalidHost(HomeAssistantError):
     """Error to indicate there is invalid hostname or IP address."""
