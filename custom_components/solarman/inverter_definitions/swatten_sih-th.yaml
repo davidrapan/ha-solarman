@@ -317,9 +317,6 @@ parameters:
   #          - operator: subtract
   #            scale: 0.1
   #            registers: [???] # Missing Today Load Consumption
-  #        validation:
-  #          default: 0
-  #          min: 1
 
   #      - name: Total Losses
   #        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses

@@ -261,9 +261,6 @@ parameters:
             registers: [0x0046]
           - operator: subtract
             registers: [0x0054]
-        validation:
-          default: 0
-          min: 1
 
       - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
