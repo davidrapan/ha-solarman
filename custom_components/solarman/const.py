@@ -1,5 +1,6 @@
 import types
 import struct
+
 from datetime import timedelta as td
 
 DOMAIN = "solarman"
@@ -21,22 +22,17 @@ LOOKUP_DIRECTORY = "inverter_definitions"
 LOOKUP_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 LOOKUP_CUSTOM_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/custom/"
 
-CONF_DISCOVERY = "inverter_discovery"
-CONF_DISCOVERED = "discovered"
+CONF_SERIAL = "inverter_serial"
 CONF_INVERTER_HOST = "inverter_host"
-CONF_INVERTER_SERIAL = "inverter_serial"
 CONF_INVERTER_PORT = "inverter_port"
-CONF_INVERTER_MB_SLAVE_ID = "inverter_mb_slave_id"
-CONF_PASSTHROUGH = "inverter_passthrough"
+CONF_MB_SLAVE_ID = "inverter_mb_slave_id"
 CONF_LOOKUP_FILE = "lookup_file"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 
 DEFAULT_NAME = "Inverter"
-DEFAULT_DISCOVERY = True
 DEFAULT_INVERTER_PORT = 8899
-DEFAULT_INVERTER_MB_SLAVE_ID = 1
-DEFAULT_PASSTHROUGH = False
+DEFAULT_MB_SLAVE_ID = 1
 DEFAULT_LOOKUP_FILE = "deye_hybrid.yaml"
 DEFAULT_BATTERY_NOMINAL_VOLTAGE = 48
 DEFAULT_BATTERY_LIFE_CYCLE_RATING = 6000

@@ -24,42 +24,38 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     data = config.data
     name = data.get(CONF_NAME)
-    inverter_serial = data.get(CONF_INVERTER_SERIAL)
+    serial = data.get(CONF_SERIAL)
 
     options = config.options
     inverter_host = options.get(CONF_INVERTER_HOST)
     inverter_port = options.get(CONF_INVERTER_PORT)
-    inverter_mb_slave_id = options.get(CONF_INVERTER_MB_SLAVE_ID)
+    mb_slave_id = options.get(CONF_MB_SLAVE_ID)
     inverter_mac = None
 
     lookup_file = options.get(CONF_LOOKUP_FILE)
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
 
+    if serial is None:
+        raise vol.Invalid("Configuration parameter [inverter_serial] does not have a value")
+    if inverter_host is None:
+        raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
+    if inverter_port is None:
+        raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
+    if lookup_file is None:
+        raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
+
     try:
         ipaddr = IPv4Address(inverter_host)
     except AddressValueError:
         ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
-    if ipaddr.is_private and (discover := await InverterDiscovery(hass, inverter_host, inverter_serial).discover()):
-        if device := get_or_default(discover, inverter_serial):
+    if ipaddr.is_private and (discover := await InverterDiscovery(hass, inverter_host, serial).discover()):
+        if device := get_or_default(discover, serial):
             inverter_host = device["ip"]
             inverter_mac = device["mac"]
-        elif device := get_or_default(discover, (serial := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
-            _LOGGER.warning(f"Host {inverter_host} has '{serial}' serial number but is configured with '{inverter_serial}'.")
-            inverter_serial = serial
-            inverter_mac = device["mac"]
+        elif device := get_or_default(discover, (s := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
+            raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
 
-    if inverter_host is None:
-        raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
-    if inverter_serial is None:
-        raise vol.Invalid("Configuration parameter [inverter_serial] does not have a value")
-    if inverter_port is None:
-        raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
-    if inverter_mb_slave_id is None:
-        inverter_mb_slave_id = DEFAULT_INVERTER_MB_SLAVE_ID
-    if lookup_file is None:
-        raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
-
-    inverter = Inverter(inverter_host, inverter_serial, inverter_port, inverter_mb_slave_id)
+    inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id if mb_slave_id else DEFAULT_MB_SLAVE_ID)
 
     await inverter.load(name, inverter_mac, lookup_path, lookup_file)
 
