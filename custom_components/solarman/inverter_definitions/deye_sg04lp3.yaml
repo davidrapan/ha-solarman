@@ -558,6 +558,9 @@ parameters:
 
       - name: "Battery Grid Charging Start Voltage"
         platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
         scale: 0.01
         rule: 1
         registers: [0x007E]
@@ -572,6 +575,8 @@ parameters:
 
       - name: "Battery Grid Charging Start"
         platform: number
+        state_class: measurement
+        uom: "%"
         rule: 1
         registers: [0x007F]
         icon: "mdi:battery"
