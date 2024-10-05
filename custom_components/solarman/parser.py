@@ -454,7 +454,9 @@ class ParameterParser:
                 value = value[:-1]
 
             try:
-                self.set_state(key, datetime.strptime(value, '%y/%m/%d %H:%M:%S'))
+                if not "platform" in definition:
+                    value = datetime.strptime(value, '%y/%m/%d %H:%M:%S')
+                self.set_state(key, value)
             except Exception as e:
                 _LOGGER.debug(f"ParameterParser.try_parse_datetime: start: {start}, length: {length}, rawData: {rawData}, definition: {definition} [{format_exception(e)}]")
 

@@ -52,12 +52,12 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
         if registers_length > 1 and registers[1] == registers[0] + 1:
             self._multiple_registers = True
 
-    @cached_property
+    @property
     def native_value(self) -> time | None:
         """Return the state of the setting entity."""
         if not self._attr_native_value:
             return None
-        if isinstance(self._attr_native_value, list):
+        if isinstance(self._attr_native_value, list) and len(self._attr_native_value) > 1:
             return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", "%H:%M").time()
         return datetime.strptime(self._attr_native_value, "%H:%M").time()
 

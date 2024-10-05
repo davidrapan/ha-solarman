@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 from zoneinfo import ZoneInfo
-from datetime import datetime, time
+from datetime import datetime
 from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry
@@ -54,10 +54,12 @@ class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
         if registers_length > 3 and registers[3] == registers[0] + 3:
             self._multiple_registers = True
 
-    @cached_property
+    @property
     def native_value(self) -> datetime | None:
         """Return the value reported by the datetime."""
-        return self._attr_native_value.replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
+        if not self._attr_native_value:
+            return None
+        return datetime.strptime(self._attr_native_value, '%y/%m/%d %H:%M:%S').replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
 
     async def async_set_value(self, value: datetime) -> None:
         """Change the date/time."""
