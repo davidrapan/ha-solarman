@@ -428,6 +428,73 @@ parameters:
         registers: [3301]
         icon: "mdi:battery-plus-variant"
 
+  - group: Losses
+    update_interval: 30
+    items:
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.1
+        registers: [3109, 3036, 3294, 3116, 3147, 0x0054]
+        uint: enforce
+        sensors:
+          - registers: [3109]
+          - registers: [3036]
+          - registers: [3294]
+          - operator: subtract
+            registers: [3116]
+          - operator: subtract
+            registers: [3147]
+          - operator: subtract
+            registers: [3301]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        registers:
+          [
+            3115,
+            3114,
+            3042,
+            3041,
+            3293,
+            3292,
+            3122,
+            3121,
+            3153,
+            3152,
+            3300,
+            3299,
+          ]
+        uint: enforce
+        sensors:
+          - registers: [3115, 3114]
+          - registers: [3042, 3041]
+          - registers: [3293, 3292]
+          - operator: subtract
+            registers: [3122, 3121]
+          - operator: subtract
+            registers: [3153, 3152]
+          - operator: subtract
+            registers: [3300, 3299]
+        validation:
+          min: 1
+
   - group: Inverter Information
     items:
       - name: "Inverter Working Mode"
@@ -816,3 +883,21 @@ parameters:
         rule: 1
         registers: [3144]
         icon: "mdi:home-lightning-bolt"
+
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        registers: [3024, 3025, 3065, 3126]
+        uint: enforce
+        sensors:
+          - registers: [3024]
+          - registers: [3025]
+          - signed:
+            registers: [3065]
+          - operator: subtract
+            signed:
+            registers: [3126]
