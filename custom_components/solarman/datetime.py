@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 from zoneinfo import ZoneInfo
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry
@@ -63,6 +63,9 @@ class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
 
     async def async_set_value(self, value: datetime) -> None:
         """Change the date/time."""
+        # Value set from the device detail page does not have correct tzinfo (set using ACTIONS works as expected)
+        if value.tzinfo == timezone.utc:
+            value = value.astimezone(ZoneInfo(self.coordinator.hass.config.time_zone))
         if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, get_dt_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(value.strftime(DATETIME_FORMAT))
             self.async_write_ha_state()
