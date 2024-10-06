@@ -59,10 +59,10 @@ class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
         """Return the value reported by the datetime."""
         if not self._attr_native_value:
             return None
-        return datetime.strptime(self._attr_native_value, '%y/%m/%d %H:%M:%S').replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
+        return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
 
     async def async_set_value(self, value: datetime) -> None:
         """Change the date/time."""
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, get_dt_as_list_int(value.astimezone(ZoneInfo(self.coordinator.hass.config.time_zone)), self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(value)
+        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, get_dt_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
+            self.set_state(value.strftime(DATETIME_FORMAT))
             self.async_write_ha_state()

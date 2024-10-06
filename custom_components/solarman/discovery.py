@@ -37,7 +37,7 @@ class InverterDiscovery:
                     sock.bind((source, PORT_ANY))
 
                 for ip in ensure_list(ips):
-                    await loop.sock_sendto(sock, DISCOVERY_MESSAGE, (ip, DISCOVERY_PORT))
+                    await loop.sock_sendto(sock, DISCOVERY_MESSAGE[0], (ip, DISCOVERY_PORT))
 
                 while True:
                     try:

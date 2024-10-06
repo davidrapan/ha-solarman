@@ -4,7 +4,7 @@ import struct
 import asyncio
 import aiofiles
 
-from datetime import datetime
+from datetime import datetime, time
 
 from .const import *
 
@@ -90,3 +90,6 @@ def get_battery_cycles(charge, capacity, voltage):
 
 def get_dt_as_list_int(dt: datetime, long):
     return [(dt.year - 2000 << 8) + dt.month, (dt.day << 8) + dt.hour, (dt.minute << 8) + dt.second] if not long else [dt.year - 2000, dt.month, dt.day, dt.hour, dt.minute, dt.second]
+
+def get_t_as_list_int(t: time, long):
+    return [t.hour * 100 + t.minute,] if not long else [t.hour, t.minute]

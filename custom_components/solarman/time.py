@@ -58,12 +58,11 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
         if not self._attr_native_value:
             return None
         if isinstance(self._attr_native_value, list) and len(self._attr_native_value) > 1:
-            return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", "%H:%M").time()
-        return datetime.strptime(self._attr_native_value, "%H:%M").time()
+            return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", TIME_FORMAT).time()
+        return datetime.strptime(self._attr_native_value, TIME_FORMAT).time()
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
-        list_int = [int(value.strftime("%H%M")),] if not self._multiple_registers else [int(value.strftime("%H")), int(value.strftime("%M"))]
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, list_int, ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(value.strftime("%H:%M"))
+        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, get_t_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
+            self.set_state(value.strftime(TIME_FORMAT))
             self.async_write_ha_state()

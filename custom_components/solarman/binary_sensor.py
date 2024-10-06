@@ -75,3 +75,4 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
     def update(self):
         self.set_state(self.coordinator.inverter.state)
         self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state_updated.strftime("%m/%d/%Y, %H:%M:%S")
+        # Maybe set the timestamp using HA's datetime format???
