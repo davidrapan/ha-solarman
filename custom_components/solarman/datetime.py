@@ -4,7 +4,6 @@ import logging
 
 from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
-from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -57,9 +56,12 @@ class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
     @property
     def native_value(self) -> datetime | None:
         """Return the value reported by the datetime."""
-        if not self._attr_native_value:
-            return None
-        return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
+        try:
+            if self._attr_native_value:
+                return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
+        except:
+            _LOGGER.debug(f"SolarmanDateTimeEntity.native_value: {format_exception(e)}")
+        return None
 
     async def async_set_value(self, value: datetime) -> None:
         """Change the date/time."""
