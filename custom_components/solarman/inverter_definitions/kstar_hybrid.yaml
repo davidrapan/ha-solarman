@@ -67,8 +67,10 @@ parameters:
         digits: 0
         registers: [3024, 3025]
         sensors:
-          - registers: [3024]
-          - registers: [3025]
+          - signed:
+            registers: [3024]
+          - signed:
+            registers: [3025]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
@@ -894,8 +896,10 @@ parameters:
         registers: [3024, 3025, 3065, 3126]
         uint: enforce
         sensors:
-          - registers: [3024]
-          - registers: [3025]
+          - signed:
+            registers: [3024]
+          - signed:
+            registers: [3025]
           - signed:
             registers: [3065]
           - operator: subtract
