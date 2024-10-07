@@ -1,0 +1,770 @@
+
+requests:
+
+  - start: 0x1001
+    end: 0x104C
+    mb_functioncode: 0x03
+
+  - start: 0x1080
+    end: 0x1092
+    mb_functioncode: 0x03
+
+  - start: 0x1300
+    end: 0x1362
+    mb_functioncode: 0x03
+
+  - start: 0x1A44
+    end: 0x01A46
+    mb_functioncode: 0x03
+
+# Battery: 0x2000 - 0x2013
+
+parameters:
+ - group: info
+   items:
+    - name: "Rated Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1A44]
+      icon: 'mdi:solar-power'
+    - name: "Rated Frequency"
+      class: "frequency"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x1A45]
+      icon: 'mdi:solar-power'
+    - name: "Rated Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 1
+      rule: 1
+      registers: [0x1A46]
+      icon: 'mdi:solar-power'
+
+ - group: solar
+   items:
+    - name: "Phase A Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1001]
+      icon: 'mdi:solar-power'
+    - name: "Phase A Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1002]
+      icon: 'mdi:solar-power'
+    - name: "Phase A Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1003]
+      icon: 'mdi:solar-power'
+    - name: "Phase A Frequency"
+      class: "power"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x1005]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase B Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1006]
+      icon: 'mdi:solar-power'
+    - name: "Phase B Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1007]
+      icon: 'mdi:solar-power'
+    - name: "Phase B Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1008]
+      icon: 'mdi:solar-power'
+    - name: "Phase B Frequency"
+      class: "power"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x100A]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase C Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x100B]
+      icon: 'mdi:solar-power'
+    - name: "Phase C Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x100C]
+      icon: 'mdi:solar-power'
+    - name: "Phase C Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x100D]
+      icon: 'mdi:solar-power'
+    - name: "Phase C Frequency"
+      class: "power"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x100F]
+      icon: 'mdi:solar-power'
+
+    - name: "PV1 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1010]
+      icon: 'mdi:solar-power'
+    - name: "PV1 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1011]
+      icon: 'mdi:solar-power'
+    - name: "MPPT1 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1012]
+      icon: 'mdi:solar-power'
+
+    - name: "PV2 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1014]
+      icon: 'mdi:solar-power'
+    - name: "PV2 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1015]
+      icon: 'mdi:solar-power'
+    - name: "MPPT2 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1016]
+      icon: 'mdi:solar-power'
+
+    - name: "PV3 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1018]
+      icon: 'mdi:solar-power'
+    - name: "PV3 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1019]
+      icon: 'mdi:solar-power'
+    - name: "MPPT3 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x101A]
+      icon: 'mdi:solar-power'
+
+    - name: "Inner Temperature"
+      class: "temperature"
+      state_class: "measurement"
+      uom: "C"
+      scale: 1
+      rule: 2
+      registers: [0x101C]
+      icon: 'mdi:solar-power'
+
+    - name: "Total Energy"
+      class: "energy"
+      state_class: "measurement"
+      uom: "kwh"
+      scale: 1
+      rule: 3
+      registers: [0x1021]
+      icon: 'mdi:solar-power'
+
+    - name: "Total Generation Time"
+      class: "time"
+      state_class: "measurement"
+      uom: "h"
+      scale: 1
+      rule: 3
+      registers: [0x1023]
+      icon: 'mdi:solar-power'
+
+    - name: "Today Energy"
+      class: "energy"
+      state_class: "measurement"
+      uom: "wh"
+      scale: 1
+      rule: 3
+      registers: [0x1027]
+      icon: 'mdi:solar-power'
+
+    - name: "Active Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "Var"
+      scale: 0.1
+      rule: 4
+      registers: [0x1037]
+      icon: 'mdi:solar-power'
+
+    - name: "Reactive Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1039]
+      icon: 'mdi:solar-power'
+
+    - name: "Today Peak Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x103B]
+      icon: 'mdi:solar-power'
+
+    - name: "Power Factor"
+      class: "time"
+      state_class: "measurement"
+      uom: ""
+      scale: 0.001
+      rule: 2
+      registers: [0x103D]
+      icon: 'mdi:solar-power'
+
+    - name: "PV4 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x103E]
+      icon: 'mdi:solar-power'
+    - name: "PV4 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x103F]
+      icon: 'mdi:solar-power'
+    - name: "MPPT4 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1040]
+      icon: 'mdi:solar-power'
+
+    - name: "PV totally input power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1048]
+      icon: 'mdi:solar-power'
+
+# Decimals of total energy ( 0x104C )
+
+    - name: "PV5 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1080]
+      icon: 'mdi:solar-power'
+    - name: "PV5 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1081]
+      icon: 'mdi:solar-power'
+    - name: "MPPT5 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1082]
+      icon: 'mdi:solar-power'
+
+    - name: "PV6 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1084]
+      icon: 'mdi:solar-power'
+    - name: "PV6 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1085]
+      icon: 'mdi:solar-power'
+    - name: "MPPT6 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1086]
+      icon: 'mdi:solar-power'
+
+    - name: "PV7 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1088]
+      icon: 'mdi:solar-power'
+    - name: "PV7 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1089]
+      icon: 'mdi:solar-power'
+    - name: "MPPT7 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x108A]
+      icon: 'mdi:solar-power'
+
+    - name: "PV8 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x108C]
+      icon: 'mdi:solar-power'
+    - name: "PV8 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x108D]
+      icon: 'mdi:solar-power'
+    - name: "MPPT8 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x108E]
+      icon: 'mdi:solar-power'
+
+    - name: "PV9 Voltage"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1090]
+      icon: 'mdi:solar-power'
+    - name: "PV9 Current"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x1091]
+      icon: 'mdi:solar-power'
+    - name: "MPPT9 Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1092]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase R watt of grid"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1300]
+      icon: 'mdi:solar-power'
+    - name: "Phase S watt of grid"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1302]
+      icon: 'mdi:solar-power'
+    - name: "Phase T watt of grid"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1304]
+      icon: 'mdi:solar-power'
+
+    - name: "Accumulated energy of positive"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1306]
+      icon: 'mdi:solar-power'
+    - name: "Accumulated energy of negative"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1308]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase R watt of load"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x130A]
+      icon: 'mdi:solar-power'
+    - name: "Phase S watt of load"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x130C]
+      icon: 'mdi:solar-power'
+    - name: "Phase T watt of load"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x130E]
+      icon: 'mdi:solar-power'
+
+    - name: "Accumulated energy of load"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1310]
+      icon: 'mdi:solar-power'
+
+    - name: "L1-N phase voltage of grid"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x131A]
+      icon: 'mdi:solar-power'
+    - name: "L2-N phase voltage of grid"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x131B]
+      icon: 'mdi:solar-power'
+    - name: "L3-N phase voltage of grid"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x131C]
+      icon: 'mdi:solar-power'
+
+    - name: "L1 current of grid"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x131D]
+      icon: 'mdi:solar-power'
+    - name: "L2 current of grid"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x131F]
+      icon: 'mdi:solar-power'
+    - name: "L3 current of grid"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x1321]
+      icon: 'mdi:solar-power'
+
+    - name: "L1-N phase voltage of load"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1323]
+      icon: 'mdi:solar-power'
+    - name: "L2-N phase voltage of load"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1324]
+      icon: 'mdi:solar-power'
+    - name: "L3-N phase voltage of load"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1325]
+      icon: 'mdi:solar-power'
+
+    - name: "L1 current of load"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x1326]
+      icon: 'mdi:solar-power'
+    - name: "L2 current of load"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x1328]
+      icon: 'mdi:solar-power'
+    - name: "L3 current of load"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x132A]
+      icon: 'mdi:solar-power'
+
+    - name: "Total import Energy"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1332]
+      icon: 'mdi:solar-power'
+    - name: "Total export Energy"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1334]
+      icon: 'mdi:solar-power'
+    - name: "Total load Energy"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1336]
+      icon: 'mdi:solar-power'
+
+    - name: "Frequency of grid"
+      class: "power"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x1338]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase R Voltage of EPS"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1350]
+      icon: 'mdi:solar-power'
+    - name: "Phase R current of EPS"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x1351]
+      icon: 'mdi:solar-power'
+    - name: "Phase R watt of EPS"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1353]
+      icon: 'mdi:solar-power'
+
+    - name: "Frequency of EPS"
+      class: "power"
+      state_class: "measurement"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x1355]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase S Voltage of EPS"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x1356]
+      icon: 'mdi:solar-power'
+    - name: "Phase S current of EPS"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x1357]
+      icon: 'mdi:solar-power'
+    - name: "Phase S watt of EPS"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1359]
+      icon: 'mdi:solar-power'
+
+    - name: "Phase T Voltage of EPS"
+      class: "voltage"
+      state_class: "measurement"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x135B]
+      icon: 'mdi:solar-power'
+    - name: "Phase T current of EPS"
+      class: "current"
+      state_class: "measurement"
+      uom: "A"
+      scale: 0.01
+      rule: 4
+      registers: [0x135C]
+      icon: 'mdi:solar-power'
+    - name: "Phase T watt of EPS"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x135E]
+      icon: 'mdi:solar-power'
+
+    - name: "Daily energy to EPS"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1360]
+      icon: 'mdi:solar-power'
+    - name: "Accumulated energy to EPS"
+      class: "energy"
+      state_class: "measurement"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1362]
+      icon: 'mdi:solar-power'
+
+# Battery SOC ... Battery acucmultaed discharge energy ... from 0x2000 to 0x2013
