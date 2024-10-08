@@ -120,24 +120,6 @@ class ParameterParser:
 
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code if self._is_single_code else self._registers_table[r[0]] } for r in groups]
 
-    def parse(self, rawData, start, length):
-        for param in self.parameters():
-            for item in param["items"]:
-                if not (self.is_valid(item) and self.is_enabled(item)):
-                    continue
-
-                # Check that the first register in the definition is within the register set in the raw data.
-                # Try parsing if the register is present.
-                registers = item.get("registers")
-                if registers is None:
-                    continue
-
-                firstRegister = registers[0]
-                if start <= firstRegister < start + length:
-                    self.try_parse(rawData, item, start, length)
-
-        return
-
     def get_result(self):
         return self._result
 
@@ -182,49 +164,68 @@ class ParameterParser:
 
         return True
 
-    def try_parse(self, rawData, definition, start, length):
+    def process(self, data):
+        for param in self.parameters():
+            for item in param["items"]:
+                if not (self.is_valid(item) and self.is_enabled(item)):
+                    continue
+
+                # Try parsing if the register is present.
+                registers = item.get("registers")
+                if registers is None:
+                    continue
+
+                # Check that the first register in the definition is within the register set in the raw data.
+                if select(data, registers[0]) is not None:
+                    self.try_parse(data, item)
+
+        return
+
+    def try_parse(self, data, definition):
         try:
-            self.try_parse_field(rawData, definition, start, length)
+            self.try_parse_field(data, definition)
         except Exception as e:
-            _LOGGER.error(f"ParameterParser.try_parse: start: {start}, length: {length}, rawData: {rawData}, definition: {definition} [{format_exception(e)}]")
+            _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {definition} [{format_exception(e)}]")
             raise
 
         return
 
-    def try_parse_field(self, rawData, definition, start, length):
+    def try_parse_field(self, data, definition):
         match definition["rule"]:
             case 1:
-                self.try_parse_unsigned(rawData, definition, start, length)
+                self.try_parse_unsigned(data, definition)
             case 2:
-                self.try_parse_signed(rawData, definition, start, length)
+                self.try_parse_signed(data, definition)
             case 3:
-                self.try_parse_unsigned(rawData, definition, start, length)
+                self.try_parse_unsigned(data, definition)
             case 4:
-                self.try_parse_signed(rawData, definition, start, length)
+                self.try_parse_signed(data, definition)
             case 5:
-                self.try_parse_ascii(rawData, definition, start, length)
+                self.try_parse_ascii(data, definition)
             case 6:
-                self.try_parse_bits(rawData, definition, start, length)
+                self.try_parse_bits(data, definition)
             case 7:
-                self.try_parse_version(rawData, definition, start, length)
+                self.try_parse_version(data, definition)
             case 8:
-                self.try_parse_datetime(rawData, definition, start, length)
+                self.try_parse_datetime(data, definition)
             case 9:
-                self.try_parse_time(rawData, definition, start, length)
+                self.try_parse_time(data, definition)
             case 10:
-                self.try_parse_raw(rawData, definition, start, length)
+                self.try_parse_raw(data, definition)
 
         return
 
-    def _read_registers(self, rawData, definition, start, length):
+    def _read_registers(self, data, definition):
         found = True
         value = 0
         shift = 0
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                value += (rawData[index] & 0xFFFF) << shift
+            if 0 <= index < data[start][0]:
+                value += (data[start][1][index] & 0xFFFF) << shift
                 shift += 16
             else:
                 found = False
@@ -254,7 +255,7 @@ class ParameterParser:
 
         return value if found else None
 
-    def _read_registers_signed(self, rawData, definition, start, length):
+    def _read_registers_signed(self, data, definition):
         magnitude = definition["magnitude"] if "magnitude" in definition else False
         found = True
         maxint = 0
@@ -262,11 +263,13 @@ class ParameterParser:
         shift = 0
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
+            if 0 <= index < data[start][0]:
                 maxint <<= 16
                 maxint |= 0xFFFF
-                value += (rawData[index] & 0xFFFF) << shift
+                value += (data[start][1][index] & 0xFFFF) << shift
                 shift += 16
             else:
                 found = False
@@ -289,7 +292,7 @@ class ParameterParser:
 
         return value if found else None
 
-    def try_parse_unsigned(self, rawData, definition, start, length):
+    def try_parse_unsigned(self, data, definition):
         key = definition["name"]
         value = 0
         found = True
@@ -298,11 +301,11 @@ class ParameterParser:
             for s in definition["sensors"]:
                 if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
                     s["scale"] = scale
-                if (n := (self._read_registers(rawData, s, start, length) if not "signed" in s else self._read_registers_signed(rawData, s, start, length))) is not None:
+                if (n := (self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s))) is not None:
                     if "multiply" in s and (s_multiply := s["multiply"]):
                         if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
                             s_multiply["scale"] = s_scale
-                        if (c := self._read_registers(rawData, s_multiply, start, length)) is not None:
+                        if (c := self._read_registers(data, s_multiply)) is not None:
                             n *= c
                     if not "operator" in s:
                         value += n
@@ -319,7 +322,7 @@ class ParameterParser:
                 else:
                     found = False
         else:
-            value = self._read_registers(rawData, definition, start, length)
+            value = self._read_registers(data, definition)
             found = value is not None
 
         if found:
@@ -343,9 +346,9 @@ class ParameterParser:
 
         return
 
-    def try_parse_signed(self, rawData, definition, start, length):
+    def try_parse_signed(self, data, definition):
         key = definition["name"]
-        value = self._read_registers_signed(rawData, definition, start, length)
+        value = self._read_registers_signed(data, definition)
 
         if value is not None:
             if "inverted" in definition and definition["inverted"]:
@@ -361,15 +364,17 @@ class ParameterParser:
 
         return
 
-    def try_parse_ascii(self, rawData, definition, start, length):
+    def try_parse_ascii(self, data, definition):
         key = definition["name"]         
         found = True
         value = ""
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                temp = rawData[index]
+            if 0 <= index < data[start][0]:
+                temp = data[start][1][index]
                 value = value + chr(temp >> 8) + chr(temp & 0xFF)
             else:
                 found = False
@@ -379,15 +384,17 @@ class ParameterParser:
 
         return  
     
-    def try_parse_bits(self, rawData, definition, start, length):
+    def try_parse_bits(self, data, definition):
         key = definition["name"]         
         found = True
         value = []
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                value.append(hex(rawData[index]))
+            if 0 <= index < data[start][0]:
+                value.append(hex(data[start][1][index]))
             else:
                 found = False
 
@@ -396,15 +403,17 @@ class ParameterParser:
 
         return 
     
-    def try_parse_version(self, rawData, definition, start, length):
+    def try_parse_version(self, data, definition):
         key = definition["name"]
         found = True
         value = ""
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                temp = rawData[index]
+            if 0 <= index < data[start][0]:
+                temp = data[start][1][index]
                 value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
             else:
                 found = False
@@ -417,7 +426,7 @@ class ParameterParser:
 
         return
 
-    def try_parse_datetime(self, rawData, definition, start, length):
+    def try_parse_datetime(self, data, definition):
         key = definition["name"]         
         found = True
         value = ""
@@ -425,9 +434,11 @@ class ParameterParser:
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                temp = rawData[index]
+            if 0 <= index < data[start][0]:
+                temp = data[start][1][index]
                 if registers_count == 3:
                     if i == 0:
                         value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
@@ -458,11 +469,11 @@ class ParameterParser:
                     value = datetime.strptime(value, DATETIME_FORMAT)
                 self.set_state(key, value)
             except Exception as e:
-                _LOGGER.debug(f"ParameterParser.try_parse_datetime: start: {start}, length: {length}, rawData: {rawData}, definition: {definition} [{format_exception(e)}]")
+                _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
 
         return
 
-    def try_parse_time(self, rawData, definition, start, length):
+    def try_parse_time(self, data, definition):
         key = definition["name"]
         found = True
         value = ""
@@ -470,9 +481,11 @@ class ParameterParser:
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                temp = rawData[index]
+            if 0 <= index < data[start][0]:
+                temp = data[start][1][index]
                 if registers_count == 1:
                     value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
                 else:
@@ -487,15 +500,17 @@ class ParameterParser:
 
         return
 
-    def try_parse_raw(self, rawData, definition, start, length):
+    def try_parse_raw(self, data, definition):
         key = definition["name"]
         found = True
         value = []
 
         for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return
             index = r - start
-            if index >= 0 and index < length:
-                value.append(rawData[index])
+            if 0 <= index < data[start][0]:
+                value.append(data[start][1][index])
             else:
                 found = False
 

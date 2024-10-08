@@ -221,7 +221,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def get(self, runtime = 0):
         requests = self.profile.get_requests(runtime)
         requests_count = len(requests) if requests else 0
-        results = [0] * requests_count
+        responses = {}
 
         _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
@@ -233,7 +233,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         try:
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                for i, request in enumerate(requests):
+                for request in requests:
                     code = get_request_code(request)
                     start = get_request_start(request)
                     end = get_request_end(request)
@@ -243,12 +243,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     _LOGGER.debug(f"[{self.serial}] Querying {start_end} ...")
 
                     attempts_left = ACTION_ATTEMPTS
-                    while attempts_left > 0 and results[i] == 0:
+                    while attempts_left > 0 and not start in responses:
                         attempts_left -= 1
 
                         try:
-                            self.profile.parse(await self.read_write(code, start, quantity), start, quantity)
-                            results[i] = 1
+                            responses[start] = [quantity, await self.read_write(code, start, quantity)]
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} succeeded.")
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
@@ -261,14 +260,16 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
+                self.profile.process(responses)
+
         except TimeoutError:
             if await self.get_failed():
                 raise
             _LOGGER.debug(f"[{self.serial}] Timeout fetching {self.name} data")
         except Exception as e:
             if await self.get_failed():
-                raise UpdateFailed(f"[{self.serial}] {format_exception(e)} {results}") from e
-            _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e} {results}")
+                raise UpdateFailed(f"[{self.serial}] {format_exception(e)}") from e
+            _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
         finally:
             self._is_busy = 0
 
