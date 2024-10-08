@@ -171,8 +171,7 @@ class ParameterParser:
                     continue
 
                 # Try parsing if the register is present.
-                registers = item.get("registers")
-                if registers is None:
+                if (registers := item.get("registers")) is None:
                     continue
 
                 # Check that the first register in the definition is within the register set in the raw data.

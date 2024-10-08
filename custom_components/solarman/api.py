@@ -275,7 +275,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return self.get_result(self.profile)
 
-    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
 
         if await self.wait_for_done(wait_for_attempts):
