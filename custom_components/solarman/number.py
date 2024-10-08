@@ -61,6 +61,8 @@ class SolarmanNumberEntity(SolarmanEntity, NumberEntity):
             _LOGGER.warning(f"SolarmanNumberEntity.__init__: Contains more than 1 register!")
 
         if "configurable" in sensor and (configurable := sensor["configurable"]):
+            if "mode" in configurable:
+                self._attr_mode = configurable["mode"]
             if "min" in configurable:
                 self._attr_native_min_value = configurable["min"]
             if "max" in configurable:
