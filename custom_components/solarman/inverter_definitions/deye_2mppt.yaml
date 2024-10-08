@@ -461,6 +461,10 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x0023]
+        configurable:
+          min: 0
+          max: 100
+          step: 0.1
         range:
           min: 0
           max: 100
