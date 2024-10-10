@@ -59,7 +59,7 @@ class SolarmanDateTimeEntity(SolarmanEntity, DateTimeEntity):
         try:
             if self._attr_native_value:
                 return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
-        except:
+        except Exception as e:
             _LOGGER.debug(f"SolarmanDateTimeEntity.native_value: {format_exception(e)}")
         return None
 
