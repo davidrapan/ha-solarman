@@ -543,15 +543,36 @@ parameters:
       registers: [0x1028, 0x1027]
       icon: "mdi:solar-power"
 
-    - name: "Total Production" # aka "Total Energy"
+    - name: "Total Production Fixed" # aka "Total Energy"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 1
-      rule: 3 # unsigned 32
+      rule: 3
       registers: [0x1022, 0x1021]
       icon: "mdi:solar-power"
       
+    - name: "Total Production Decimals" # aka "Decimals of total energy"
+      class: "energy"
+      state_class: "total_increasing"
+      uom: "Wh"
+      scale: 1
+      rule: 1
+      registers: [0x104C]
+      icon: 'mdi:solar-power'
+
+    - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
+      class: "energy"
+      state_class: "total_increasing"
+      uom: "kWh"
+      rule: 3
+      registers: [0x1022, 0x1021, 0x104C]
+      icon: "mdi:solar-power"
+      sensors:
+        - registers: [0x1022, 0x1021]
+        - registers: [0x104C]
+          scale: 0.001
+
     - name: "Generator Operating Time" # aka "Total Generation Time"
       class: "duration"
       state_class: "measurement"
@@ -599,6 +620,51 @@ parameters:
       scale: 10
       rule: 3
       registers: [0x1337, 0x1336]
+
+    - name: "Accumulated energy of positive"
+      class: "energy"
+      state_class: "total_increasing"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1307, 0x1306]
+      icon: 'mdi:solar-power'
+      
+    - name: "Accumulated energy of negative"
+      class: "energy"
+      state_class: "total_increasing"
+      uom: "Wh"
+      scale: 10
+      rule: 3
+      registers: [0x1309, 0x1308]
+      icon: 'mdi:solar-power'
+
+    - name: "Power"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 4
+      registers: [0x1038, 0x1037]
+      icon: 'mdi:solar-power'
+
+    - name: "Reactive Power"
+      class: "reactive_power"
+      state_class: "measurement"
+      uom: "var"
+      scale: 0.1
+      rule: 4 # signed 32
+      registers: [0x1040, 0x1039]
+      icon: 'mdi:solar-power'
+
+    - name: "Power Factor"
+      class: "power_factor"
+      state_class: "measurement"
+      uom: "%"
+      scale: 0.001
+      rule: 2
+      registers: [0x103D]
+      icon: 'mdi:solar-power'
 
 
   - group: grid
@@ -662,7 +728,7 @@ parameters:
       state_class: "measurement"
       uom: "A"
       scale: 0.01
-      rule: 3 # signed 32
+      rule: 4 # signed 32
       registers: [0x131E, 0x131D]
       icon: "mdi:transmission-tower"
 
@@ -881,11 +947,13 @@ parameters:
       scale: 10
       rule: 3
       registers: [0x1363, 0x1362]
-
+      validation:
+        min: 0
+        max: 0xFFFFFFF9
 
   - group: Battery
     items:
-    - name: "Battery BMS SOC"
+    - name: "Battery"
       class: "battery"
       state_class: "measurement"
       uom: "%"
@@ -893,7 +961,7 @@ parameters:
       registers: [0x2000]
       icon: "mdi:battery"
 
-    - name: "Battery BMS Temperature"
+    - name: "Battery Temperature"
       class: "temperature"
       state_class: "measurement"
       uom: "°C"
@@ -902,7 +970,7 @@ parameters:
       registers: [0x2001]
       icon: "mdi:temperature-dc"
 
-    - name: "Battery BMS Voltage"
+    - name: "Battery Voltage"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -911,7 +979,7 @@ parameters:
       registers: [0x2006]
       icon: "mdi:voltage-dc"
 
-    - name: "Battery BMS Current"
+    - name: "Battery Current"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -947,6 +1015,9 @@ parameters:
       rule: 3 # unsigned 32
       registers: [0x200E, 0x200D]
       icon: "mdi:battery-plus"
+      validation:
+        min: 0
+        max: 0xFFFFFFF9
 
     - name: "Today Battery Discharge"
       alt: "Daily Battery Discharge"
@@ -958,7 +1029,7 @@ parameters:
       rule: 3 # unsigned 32
       registers: [0x2010, 0x200F]
       icon: "mdi:battery-minus"
-      
+        
     - name: "Total Battery Discharge"
       class: "energy"
       state_class: "total_increasing"
@@ -967,6 +1038,9 @@ parameters:
       rule: 3 # unsigned 32
       registers: [0x2012, 0x2011]
       icon: "mdi:battery-minus"
+      validation:
+        min: 0
+        max: 0xFFFFFFF9
       
   - group: faults
     items:
@@ -1133,63 +1207,3 @@ parameters:
           value: "GEN voltage abnormal"
         - key: 0x8000
           value: "Reserved"
-
-
-
-
-  - group: ungrouped
-    items:
-
-    - name: "Active Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x1037]
-      icon: 'mdi:solar-power'
-
-    - name: "Reactive Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x1039]
-      icon: 'mdi:solar-power'
-
-    - name: "Power Factor"
-      class: "time"
-      state_class: "measurement"
-      uom: ""
-      scale: 0.001
-      rule: 2
-      registers: [0x103D]
-      icon: 'mdi:solar-power'
-
-    - name: "Decimals of total energy"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 1
-      rule: 2
-      registers: [0x104C]
-      icon: 'mdi:solar-power'
-
-    - name: "Accumulated energy of positive"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1306]
-      icon: 'mdi:solar-power'
-    - name: "Accumulated energy of negative"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1308]
-      icon: 'mdi:solar-power'
-      
