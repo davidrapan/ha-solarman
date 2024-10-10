@@ -57,6 +57,8 @@ class ParameterParser:
         self._lambda = lambda x, y: y - x > self._min_span
         self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
 
+        self._items = [inherit(item, group) for group in self.parameters() for item in group["items"]]
+
     def flush_states(self):
         self._result = {}
 
@@ -75,8 +77,8 @@ class ParameterParser:
     def is_requestable(self, parameters):
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
-    def is_scheduled(self, parameters, runtime, default):
-        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else default) == 0)
+    def is_scheduled(self, parameters, runtime):
+        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else self._update_interval) == 0)
 
     def default_from_unit_of_measurement(self, parameters):
         return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
@@ -87,10 +89,9 @@ class ParameterParser:
 
     def get_sensors(self):
         result = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
-        for i in self.parameters():
-            for j in i["items"]:
-                if self.is_sensor(j):
-                    result.append(j)
+        for i in self._items:
+            if self.is_sensor(i):
+                result.append(i)
 
         return result
 
@@ -103,13 +104,12 @@ class ParameterParser:
 
         registers = []
 
-        for p in self.parameters():
-            for i in p["items"]:
-                if self.is_requestable(i) and self.is_scheduled(i, runtime, self._update_interval if not REQUEST_UPDATE_INTERVAL in p else p[REQUEST_UPDATE_INTERVAL]):
-                    self.set_state(i["name"], self.default_from_unit_of_measurement(i))
-                    if "registers" in i:
-                        for r in i["registers"]:
-                            registers.append(r)
+        for i in self._items:
+            if self.is_requestable(i) and self.is_scheduled(i, runtime):
+                self.set_state(i["name"], self.default_from_unit_of_measurement(i))
+                if "registers" in i:
+                    for r in i["registers"]:
+                        registers.append(r)
 
         if len(registers) == 0:
             return {}
@@ -165,18 +165,17 @@ class ParameterParser:
         return True
 
     def process(self, data):
-        for param in self.parameters():
-            for item in param["items"]:
-                if not (self.is_valid(item) and self.is_enabled(item)):
-                    continue
+        for i in self._items:
+            if not (self.is_valid(i) and self.is_enabled(i)):
+                continue
 
-                # Try parsing if the register is present.
-                if (registers := item.get("registers")) is None:
-                    continue
+            # Try parsing if the register is present.
+            if (registers := i.get("registers")) is None:
+                continue
 
-                # Check that the first register in the definition is within the register set in the raw data.
-                if select(data, registers[0]) is not None:
-                    self.try_parse(data, item)
+            # Check that the first register in the definition is within the register set in the raw data.
+            if select(data, registers[0]) is not None:
+                self.try_parse(data, i)
 
         return
 

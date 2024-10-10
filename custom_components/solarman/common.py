@@ -67,6 +67,11 @@ def format_exception(e):
 def Raise(exception) -> None:
     raise exception
 
+def inherit(item, group):
+    if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
+        item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
+    return item
+
 def select(data, register):
     for d in data:
         if d <= register < d + data[d][0]:
