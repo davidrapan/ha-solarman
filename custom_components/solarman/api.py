@@ -12,7 +12,6 @@ from datetime import datetime
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .const import *
@@ -107,53 +106,26 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port, mb_slave_id)
-        self._is_busy = 0
-        self.state_updated = datetime.now()
-        self.state_interval = 0
-        self.state = -1
-        self.auto_reconnect = AUTO_RECONNECT
-        self.manufacturer = "Solarman"
-        self.model = None
-        self.parameter_definition = None
-        self.device_info = {}
+    _is_busy = 0
+
+    auto_reconnect = AUTO_RECONNECT
+    state = -1
+    state_interval = 0
+    state_updated = datetime.now()
+    device_info = {}
+    profile = None
 
     async def load(self, name, mac, path, file):
         self.name = name
-        self.mac = mac
-        self.lookup_path = path
-        self.lookup_file = process_profile(file if file else "deye_hybrid.yaml")
-        self.model = self.lookup_file.replace(".yaml", "")
-        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
-        self.profile = ParameterParser(self.parameter_definition)
 
-        if "info" in self.parameter_definition and "model" in self.parameter_definition["info"]:
-            info = self.parameter_definition["info"]
-            if "manufacturer" in info:
-                self.manufacturer = info["manufacturer"]
-            if "model" in info:
-                self.model = info["model"]
-        elif '_' in self.model:
-            dev_man = self.model.split('_')
-            self.manufacturer = dev_man[0].capitalize()
-            self.model = dev_man[1].upper()
-        else:
-            self.manufacturer = "Solarman"
-            self.model = "Stick Logger"
-
-        self.device_info = ({ "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.mac))} } if self.mac else {}) | {
-            "identifiers": {(DOMAIN, self.serial)},
-            "name": self.name,
-            "manufacturer": self.manufacturer,
-            "model": self.model,
-            "serial_number": self.serial
-        }
+        if (n := process_profile(file if file else "deye_hybrid.yaml")) and (p := await yaml_open(path + n)):
+            self.device_info = build_device_info(self.serial, mac, name, p["info"] if "info" in p else None, n)
+            self.profile = ParameterParser(p)
 
         _LOGGER.debug(self.device_info)
 
     def get_sensors(self):
-        return self.profile.get_sensors() if self.parameter_definition else []
+        return self.profile.get_sensors() if self.profile else []
 
     def available(self):
         return self.state > -1

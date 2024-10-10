@@ -6,6 +6,8 @@ import aiofiles
 
 from datetime import datetime, time
 
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
+
 from .const import *
 
 def get_current_file_name(value):
@@ -37,6 +39,26 @@ async def yaml_open(file):
 
 def process_profile(filename):
     return filename if not filename in PROFILE_REDIRECT_TABLE else PROFILE_REDIRECT_TABLE[filename]
+
+def build_device_info(serial, mac, name, info, filename):
+    manufacturer = "Solarman"
+    model = "Stick Logger"
+
+    if info and "model" in info:
+        if "manufacturer" in info:
+            manufacturer = info["manufacturer"]
+        model = info["model"]
+    elif '_' in filename and (dev_man := filename.replace(".yaml", "").split('_')):
+        manufacturer = dev_man[0].capitalize()
+        model = dev_man[1].upper()
+
+    return ({ "connections": {(CONNECTION_NETWORK_MAC, format_mac(mac))} } if mac else {}) | {
+        "identifiers": {(DOMAIN, serial)},
+        "serial_number": serial,
+        "manufacturer": manufacturer,
+        "model": model,
+        "name": name
+    }
 
 def is_platform(description, value):
     return (description["platform"] if "platform" in description else "sensor") == value

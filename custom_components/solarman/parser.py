@@ -12,14 +12,15 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
+    _update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
+    _code = DEFAULT_REGISTERS_CODE
+    _min_span = DEFAULT_REGISTERS_MIN_SPAN
+    _digits = DEFAULT_DIGITS
+    _registers_table = {}
+    _result = {}
+
     def __init__(self, profile):
         self._profile = profile
-        self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
-        self._code = DEFAULT_REGISTERS_CODE
-        self._min_span = DEFAULT_REGISTERS_MIN_SPAN
-        self._digits = DEFAULT_DIGITS
-        self._registers_table = {}
-        self._result = {}
 
         if "default" in self._profile:
             default = self._profile["default"]
@@ -41,7 +42,7 @@ class ParameterParser:
                 for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1):
                     requests_table[r] = get_request_code(pr)
 
-        for p in self.parameters():
+        for p in self._profile["parameters"]:
             for i in p["items"]:
                 if "registers" in i:
                     for r in i["registers"]:
@@ -57,13 +58,10 @@ class ParameterParser:
         self._lambda = lambda x, y: y - x > self._min_span
         self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
 
-        self._items = [inherit(item, group) for group in self.parameters() for item in group["items"]]
+        self._items = [inherit(item, group) for group in self._profile["parameters"] for item in group["items"]]
 
     def flush_states(self):
         self._result = {}
-
-    def parameters(self):
-        return self._profile["parameters"]
 
     def is_valid(self, parameters):
         return "name" in parameters and "rule" in parameters  # and "registers" in parameters
