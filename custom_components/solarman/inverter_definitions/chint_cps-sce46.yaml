@@ -596,8 +596,8 @@ parameters:
     - name: "Generator Operating Time" # aka "Total Generation Time"
       class: "duration"
       state_class: "measurement"
-      uom: "d"
-      scale: 0.416
+      uom: "h"
+      scale: 1
       rule: 3 # unsigned 32
       registers: [0x1024, 0x1023]
       icon: "mdi:generator-stationary"
