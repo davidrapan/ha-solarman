@@ -2,7 +2,8 @@
 # CHINT Hybrid inverters | Three Phase | Hybrid Inverter | LV Battery Supported
 #
 # Tested directly on CPS SCE4.6 6KTL-120/EU (https://en.chintpower.com/upload/img/2024-01/65b0c042cfa4c.pdf)
-# The document has been provided directly from CHINT support, there doesn't seems to be a public URL for it.
+#
+# The source MODBUS document has been provided directly from CHINT support, there doesn't seems to be a public URL for it.
 #
 # Registers
 # The 0x1001 - 0x104C = 0x03 function code - Real Time Data: 
@@ -23,6 +24,7 @@ default:
   digits: 6
 
 parameters:
+
   - group: info
     update_interval: 300
     items:
@@ -30,43 +32,71 @@ parameters:
       rule: 5 # ASCII String
       registers: [0x1A00, 0x1A01, 0x1A02, 0x1A03, 0x1A04, 0x1A05, 0x1A06, 0x1A07, 0x1A08, 0x1A09, 0x1A0A, 0x1A0B, 0x1A0C, 0x1A0D, 0x1A0E, 0x1A0F]
       icon: 'mdi:information'
+      attributes:
+        [
+          "Device Protocol Version",
+          "Device Serial Number",
+          "Master Software Version",
+          "Master Software Build Date",
+          "Slave Software Version",
+          "Slave Software Build Date",
+          "Device MPPTs",
+          "Device Rated Voltage",
+          "Device Rated Frequency",
+          "Device Rated Power",
+          "Device Phases",
+          "Production Type",
+          "EMS firmware Version",
+          "EMS firmware Build Date",
+          "DCDC firmware Version",
+          "DCDC firmware Build Date",
+        ]
 
-    - name: "Device Serial Number"
-      rule: 5 # ASCII String
-      registers: [0x1A10, 0x1A11, 0x1A12, 0x1A13, 0x1A14, 0x1A15, 0x1A16, 0x1A17]
-      icon: 'mdi:information'
-      
     - name: "Device Protocol Version"
+      attribute:
       rule: 7 # version
       remove: "0."
       registers: [0x1A1C]  
       icon: 'mdi:information'
+
+    - name: "Device Serial Number"
+      attribute:
+      rule: 5 # ASCII String
+      registers: [0x1A10, 0x1A11, 0x1A12, 0x1A13, 0x1A14, 0x1A15, 0x1A16, 0x1A17]
+      icon: 'mdi:information'
       
     - name: "Master Software Version"
+      attribute:
       rule: 5 # String
       registers: [0x1A1C, 0x1A1D, 0x1A1E]
       icon: 'mdi:information'
       
     - name: "Master Software Build Date"
+      attribute:
       rule: 5 # String
       registers: [0x1A23, 0x1A24, 0x1A25]
       icon: 'mdi:information'
       
     - name: "Slave Firmware Version"
+      attribute:
       rule: 5 # String
       registers: [0x1A26, 0x1A27, 0x1A28]
       icon: 'mdi:information'
       
     - name: "Slave Firmware Build Date"
+      attribute:
       rule: 5 # String
       registers: [0x1A2D, 0x1A2E, 0x1A2F]
       icon: 'mdi:information'
 
     - name: "Device MPPTs"
+      attribute:
       rule: 1 # Unsigned data
       registers: [0x1A3B]
+      icon: 'mdi:information'
 
     - name: "Device Rated Voltage"
+      attribute:
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -76,6 +106,7 @@ parameters:
       icon: 'mdi:information'
       
     - name: "Device Rated Frequency"
+      attribute:
       class: "frequency"
       state_class: "measurement"
       uom: "Hz"
@@ -85,6 +116,7 @@ parameters:
       icon: 'mdi:information'
       
     - name: "Device Rated Power"
+      attribute:
       class: "power"
       state_class: "measurement"
       uom: "W"
@@ -94,11 +126,13 @@ parameters:
       icon: 'mdi:information'
 
     - name: "Device Phases" # Grid Phase Number?
+      attribute:
       rule: 1
       registers: [0x1A48]
       icon: 'mdi:information'
 
     - name: "Production Type"
+      attribute:
       class: "enum"
       rule: 1
       registers: [0x1A5A]
@@ -116,21 +150,25 @@ parameters:
           value: "AC couple with smart load"
 
     - name: "EMS firmware Version"
+      attribute:
       rule: 5 # String
       registers: [0x1A60, 0x1A61, 0x1A62]
       icon: 'mdi:information'
 
     - name: "EMS firmware Build Date"
+      attribute:
       rule: 5 # String
       registers: [0x1A67, 0x1A68, 0x1A69, 0x1A6A, 0x1A6B, 0x1A6C, 0x1A6D]
       icon: 'mdi:information'
 
     - name: "DCDC firmware Version"
+      attribute:
       rule: 5 # String
       registers: [0x1A6F, 0x1A70, 0x1A71]
       icon: 'mdi:information'
 
     - name: "DCDC firmware Build Date"
+      attribute:
       rule: 5 # String
       registers: [0x1A76, 0x1A77, 0x1A78]
       icon: 'mdi:information'
@@ -201,7 +239,7 @@ parameters:
       uom: "W"
       scale: 0.1
       rule: 4 # signed 32
-      registers: [0x1008, 0x1009]
+      registers: [0x1009, 0x1008]
 
     - name: "Output L3 Power" # aka "Phase C Power"
       class: "power"
@@ -209,7 +247,7 @@ parameters:
       uom: "W"
       scale: 0.1
       rule: 4 # signed 32
-      registers: [0x100D, 0x100E]
+      registers: [0x100E, 0x100D]
 
     - name: "Output L1 Frequencyr" # aka "Phase A Frequency"
       class: "frequency"
@@ -543,24 +581,6 @@ parameters:
       registers: [0x1028, 0x1027]
       icon: "mdi:solar-power"
 
-    - name: "Total Production Fixed" # aka "Total Energy"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "kWh"
-      scale: 1
-      rule: 3
-      registers: [0x1022, 0x1021]
-      icon: "mdi:solar-power"
-      
-    - name: "Total Production Decimals" # aka "Decimals of total energy"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 1
-      rule: 1
-      registers: [0x104C]
-      icon: 'mdi:solar-power'
-
     - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
       class: "energy"
       state_class: "total_increasing"
@@ -588,12 +608,12 @@ parameters:
       uom: "W"
       scale: 0.1
       rule: 4
-      registers: [0x103B]
+      registers: [0x103C, 0x103B]
       icon: 'mdi:solar-power'
 
-    - name: "Total Energy Import" # aka "Total import Energy"
-      alt: "Total Energy Bought"
-      description: "Total energy imported from the grid"
+    - name: "Today Energy Import" # aka "Today import Energy"
+      alt: "Today Energy Bought"
+      description: "Today energy imported from the grid"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
@@ -602,9 +622,9 @@ parameters:
       registers: [0x1333, 0x1332]
       icon: "mdi:transmission-tower-export"
 
-    - name: "Total Energy Export" # aka "Total export Energy"
-      alt: "Total Energy Sold"
-      description: "Total energy exported/returned to the grid"
+    - name: "Today Energy Export" # aka "Today export Energy"
+      alt: "Today Energy Sold"
+      description: "Today energy exported/returned to the grid"
       class: "energy"
       state_class: "total_increasing"    
       uom: "Wh"
@@ -613,7 +633,7 @@ parameters:
       registers: [0x1335, 0x1334]
       icon: "mdi:transmission-tower-import"
 
-    - name: "Total Load Consumption" # aka "Total load Energy"
+    - name: "Today Load Consumption" # aka "Total load Energy"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
@@ -621,23 +641,27 @@ parameters:
       rule: 3
       registers: [0x1337, 0x1336]
 
-    - name: "Accumulated energy of positive"
+    - name: "Total Energy Import" # aka "Accumulated energy of positive"
+      alt: "Total Energy Bought"
+      description: "Total energy imported from the grid"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
       scale: 10
       rule: 3
       registers: [0x1307, 0x1306]
-      icon: 'mdi:solar-power'
+      icon: "mdi:transmission-tower-import"
       
-    - name: "Accumulated energy of negative"
+    - name: "Total Energy Export" # aka "Accumulated energy of negative"
+      alt: "Total Energy Sold"
+      description: "Total energy exported/returnedto the grid"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
       scale: 10
       rule: 3
       registers: [0x1309, 0x1308]
-      icon: 'mdi:solar-power'
+      icon: "mdi:transmission-tower-export"
 
     - name: "Power"
       class: "power"
@@ -665,6 +689,68 @@ parameters:
       rule: 2
       registers: [0x103D]
       icon: 'mdi:solar-power'
+
+    - name: "Total Losses"
+      description: "Includes total consumption of the inverter device itself as well AC/DC conversion losses"
+      class: "energy"
+      state_class: "total_increasing"
+      ensure_increasing:
+      uom: "kWh"
+      rule: 3
+      digits: 1
+      scale: 0.1
+      registers:
+        [
+          0x1307,
+          0x1306,
+          0x1022,
+          0x1021,
+          0x104C,
+          0x2010,
+          0x200F,
+          0x1309,
+          0x1308,
+          0x1311,
+          0x1310,
+          0x200E,
+          0x200D,
+        ]
+      uint: enforce
+      sensors:
+        - registers: [0x1307, 0x1306]
+          scale: 0.01
+        - registers: [0x1022, 0x1021]
+        - registers: [0x104C]
+          scale: 0.001
+        - registers: [0x2010, 0x200F]
+          scale: 0.01
+        - operator: subtract
+          registers: [0x1309, 0x1308]
+          scale: 0.01
+        - operator: subtract
+          registers: [0x1311, 0x1310]
+          scale: 0.01
+        - operator: subtract
+          registers: [0x200E, 0x200D]
+          scale: 0.01
+      validation:
+        min: 1
+        
+    - name: "Power losses"
+      description: "Includes consumption of the inverter device itself as well AC/DC conversion losses"
+      class: "power"
+      state_class: "measurement"
+      uom: "W"
+      scale: 0.1
+      rule: 3
+      registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
+      uint: enforce
+      sensors:
+        - registers: [0x1049, 0x1048]
+        - registers: [0x200A, 0x2009]
+        - operator: subtract
+          signed:
+          registers: [0x1038, 0x1037]
 
 
   - group: grid
@@ -757,6 +843,7 @@ parameters:
       scale: 0.01
       rule: 1
       registers: [0x1338]
+      icon: "mdi:transmission-tower"
 
 
   - group: load
@@ -791,14 +878,13 @@ parameters:
       registers: [0x130F, 0x130E]
       icon: "mdi:home-lightning-bolt"
       
-    - name: "Load Energy" # aka "Accumulated energy of load"
+    - name: "Total Load Consumption" # aka "Accumulated energy of load"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
       scale: 10
       rule: 3 # unsigned 32
       registers: [0x1311, 0x1310]
-      icon: 'mdi:solar-power'
 
     - name: "Load L1 Voltage" # aka "L1-N phase voltage of load"
       class: "voltage"
@@ -951,6 +1037,7 @@ parameters:
         min: 0
         max: 0xFFFFFFF9
 
+
   - group: Battery
     items:
     - name: "Battery"
@@ -1041,6 +1128,7 @@ parameters:
       validation:
         min: 0
         max: 0xFFFFFFF9
+      
       
   - group: faults
     items:
