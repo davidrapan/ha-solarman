@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 
 from typing import Any
-from functools import cached_property, partial
 
 from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityDescription

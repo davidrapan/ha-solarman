@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 
 from datetime import datetime, time
-from functools import cached_property, partial
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -55,11 +54,14 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
     @property
     def native_value(self) -> time | None:
         """Return the state of the setting entity."""
-        if not self._attr_native_value:
-            return None
-        if isinstance(self._attr_native_value, list) and len(self._attr_native_value) > 1:
-            return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", TIME_FORMAT).time()
-        return datetime.strptime(self._attr_native_value, TIME_FORMAT).time()
+        try:
+            if self._attr_native_value:
+                if isinstance(self._attr_native_value, list) and len(self._attr_native_value) > 1:
+                    return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", TIME_FORMAT).time()
+                return datetime.strptime(self._attr_native_value, TIME_FORMAT).time()
+        except Exception as e:
+            _LOGGER.debug(f"SolarmanTimeEntity.native_value: {format_exception(e)}")
+        return None
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""

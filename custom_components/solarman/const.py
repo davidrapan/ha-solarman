@@ -59,7 +59,7 @@ AUTO_RECONNECT = True
 # On the contrary changing this value can break:
 # - Request scheduling according "update_interval" properties set in profiles
 # - Inverter configuring flows
-# - Behavior of integration services
+# - Behavior of services
 #
 TIMINGS_INTERVAL = 5
 TIMINGS_INTERVAL_SCALE = 1

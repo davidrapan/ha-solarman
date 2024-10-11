@@ -12,10 +12,13 @@ from .const import *
 _LOGGER = logging.getLogger(__name__)
 
 class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+    _counter = 0
+
+    #self.setup_method = setup_method | setup_method: Callable[[], Awaitable[None]] | None = None
+
     def __init__(self, hass: HomeAssistant, inverter):
         super().__init__(hass, _LOGGER, name = inverter.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
         self.inverter = inverter
-        self._counter = 0
 
     def _accounting(self) -> int:
         try:

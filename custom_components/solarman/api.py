@@ -12,7 +12,6 @@ from datetime import datetime
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .const import *
@@ -107,53 +106,26 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port, mb_slave_id)
-        self._is_busy = 0
-        self.state_updated = datetime.now()
-        self.state_interval = 0
-        self.state = -1
-        self.auto_reconnect = AUTO_RECONNECT
-        self.manufacturer = "Solarman"
-        self.model = None
-        self.parameter_definition = None
-        self.device_info = {}
+    _is_busy = 0
+
+    auto_reconnect = AUTO_RECONNECT
+    state = -1
+    state_interval = 0
+    state_updated = datetime.now()
+    device_info = {}
+    profile = None
 
     async def load(self, name, mac, path, file):
         self.name = name
-        self.mac = mac
-        self.lookup_path = path
-        self.lookup_file = process_profile(file if file else "deye_hybrid.yaml")
-        self.model = self.lookup_file.replace(".yaml", "")
-        self.parameter_definition = await yaml_open(self.lookup_path + self.lookup_file)
-        self.profile = ParameterParser(self.parameter_definition)
 
-        if "info" in self.parameter_definition and "model" in self.parameter_definition["info"]:
-            info = self.parameter_definition["info"]
-            if "manufacturer" in info:
-                self.manufacturer = info["manufacturer"]
-            if "model" in info:
-                self.model = info["model"]
-        elif '_' in self.model:
-            dev_man = self.model.split('_')
-            self.manufacturer = dev_man[0].capitalize()
-            self.model = dev_man[1].upper()
-        else:
-            self.manufacturer = "Solarman"
-            self.model = "Stick Logger"
-
-        self.device_info = ({ "connections": {(CONNECTION_NETWORK_MAC, format_mac(self.mac))} } if self.mac else {}) | {
-            "identifiers": {(DOMAIN, self.serial)},
-            "name": self.name,
-            "manufacturer": self.manufacturer,
-            "model": self.model,
-            "serial_number": self.serial
-        }
+        if (n := process_profile(file if file else "deye_hybrid.yaml")) and (p := await yaml_open(path + n)):
+            self.device_info = build_device_info(self.serial, mac, name, p["info"] if "info" in p else None, n)
+            self.profile = ParameterParser(p)
 
         _LOGGER.debug(self.device_info)
 
     def get_sensors(self):
-        return self.profile.get_sensors() if self.parameter_definition else []
+        return self.profile.get_sensors() if self.profile else []
 
     def available(self):
         return self.state > -1
@@ -221,7 +193,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def get(self, runtime = 0):
         requests = self.profile.get_requests(runtime)
         requests_count = len(requests) if requests else 0
-        results = [0] * requests_count
+        responses = {}
 
         _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
@@ -233,7 +205,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         try:
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                for i, request in enumerate(requests):
+                for request in requests:
                     code = get_request_code(request)
                     start = get_request_start(request)
                     end = get_request_end(request)
@@ -243,12 +215,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     _LOGGER.debug(f"[{self.serial}] Querying {start_end} ...")
 
                     attempts_left = ACTION_ATTEMPTS
-                    while attempts_left > 0 and results[i] == 0:
+                    while attempts_left > 0 and not start in responses:
                         attempts_left -= 1
 
                         try:
-                            self.profile.parse(await self.read_write(code, start, quantity), start, quantity)
-                            results[i] = 1
+                            responses[start] = [quantity, await self.read_write(code, start, quantity)]
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} succeeded.")
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
@@ -261,20 +232,22 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
+                self.profile.process(responses)
+
         except TimeoutError:
             if await self.get_failed():
                 raise
             _LOGGER.debug(f"[{self.serial}] Timeout fetching {self.name} data")
         except Exception as e:
             if await self.get_failed():
-                raise UpdateFailed(f"[{self.serial}] {format_exception(e)} {results}") from e
-            _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e} {results}")
+                raise UpdateFailed(f"[{self.serial}] {format_exception(e)}") from e
+            _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
         finally:
             self._is_busy = 0
 
         return self.get_result(self.profile)
 
-    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS) -> bool:
+    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
 
         if await self.wait_for_done(wait_for_attempts):
