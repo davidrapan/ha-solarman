@@ -175,8 +175,6 @@ class ParameterParser:
             if select(data, registers[0]) is not None:
                 self.try_parse(data, i)
 
-        return
-
     def try_parse(self, data, definition):
         try:
             self.try_parse_field(data, definition)
@@ -184,17 +182,11 @@ class ParameterParser:
             _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {definition} [{format_exception(e)}]")
             raise
 
-        return
-
     def try_parse_field(self, data, definition):
         match definition["rule"]:
-            case 1:
+            case 1 | 3:
                 self.try_parse_unsigned(data, definition)
-            case 2:
-                self.try_parse_signed(data, definition)
-            case 3:
-                self.try_parse_unsigned(data, definition)
-            case 4:
+            case 2 | 4:
                 self.try_parse_signed(data, definition)
             case 5:
                 self.try_parse_ascii(data, definition)
@@ -209,76 +201,32 @@ class ParameterParser:
             case 10:
                 self.try_parse_raw(data, definition)
 
-        return
-
     def _read_registers(self, data, definition):
-        found = True
         value = 0
         shift = 0
 
         for r in definition["registers"]:
             if (start := select(data, r)) is None:
-                return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                value += (data[start][1][index] & 0xFFFF) << shift
-                shift += 16
-            else:
-                found = False
-
-        if found:
-            if not self.in_range(value, definition):
                 return None
 
-            if "mask" in definition:
-                value &= definition["mask"]
+            value += (data[start][1][r - start] & 0xFFFF) << shift
+            shift += 16
 
-            if "bit" in definition:
-                value = (value >> definition["bit"]) & 1
+        if not self.in_range(value, definition):
+            return None
 
-            if "bitmask" in definition and (bitmask := definition["bitmask"]):
-                value = int((value & bitmask) / bitmask)
+        if "mask" in definition:
+            value &= definition["mask"]
 
-            if "lookup" not in definition:
-                if "offset" in definition:
-                    value = value - definition["offset"]
+        if "bit" in definition:
+            value = (value >> definition["bit"]) & 1
 
-                if "scale" in definition and (scale := definition["scale"]):
-                    value = value * scale
+        if "bitmask" in definition and (bitmask := definition["bitmask"]):
+            value = int((value & bitmask) / bitmask)
 
-                if "divide" in definition and (divide := definition["divide"]) and divide != 0:
-                    value //= divide
-
-        return value if found else None
-
-    def _read_registers_signed(self, data, definition):
-        magnitude = definition["magnitude"] if "magnitude" in definition else False
-        found = True
-        maxint = 0
-        value = 0
-        shift = 0
-
-        for r in definition["registers"]:
-            if (start := select(data, r)) is None:
-                return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                maxint <<= 16
-                maxint |= 0xFFFF
-                value += (data[start][1][index] & 0xFFFF) << shift
-                shift += 16
-            else:
-                found = False
-
-        if found:
-            if not self.in_range(value, definition):
-                return None
-
+        if "lookup" not in definition:
             if "offset" in definition:
                 value = value - definition["offset"]
-
-            if value > (maxint >> 1):
-                value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
             if "scale" in definition and (scale := definition["scale"]):
                 value = value * scale
@@ -286,70 +234,83 @@ class ParameterParser:
             if "divide" in definition and (divide := definition["divide"]) and divide != 0:
                 value //= divide
 
-        return value if found else None
+        return value
+
+    def _read_registers_signed(self, data, definition):
+        magnitude = definition["magnitude"] if "magnitude" in definition else False
+        maxint = 0
+        value = 0
+        shift = 0
+
+        for r in definition["registers"]:
+            if (start := select(data, r)) is None:
+                return None
+
+            maxint <<= 16
+            maxint |= 0xFFFF
+            value += (data[start][1][r - start] & 0xFFFF) << shift
+            shift += 16
+
+        if not self.in_range(value, definition):
+            return None
+
+        if "offset" in definition:
+            value = value - definition["offset"]
+
+        if value > (maxint >> 1):
+            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+
+        if "scale" in definition and (scale := definition["scale"]):
+            value = value * scale
+
+        if "divide" in definition and (divide := definition["divide"]) and divide != 0:
+            value //= divide
+
+        return value
+    
+    def _read_registers_custom(self, data, definition):
+        value = 0
+
+        for s in definition["sensors"]:
+            if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
+                s["scale"] = scale
+
+            if (n := (self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s))) is None:
+                return None
+
+            if "multiply" in s and (s_multiply := s["multiply"]):
+                if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
+                    s_multiply["scale"] = s_scale
+                if (c := self._read_registers(data, s_multiply)) is not None:
+                    n *= c
+            if not "operator" in s:
+                value += n
+            else:
+                match s["operator"]:
+                    case "subtract":
+                        value -= n
+                    case "multiply":
+                        value *= n
+                    case "divide" if n != 0:
+                        value /= n
+                    case _:
+                        value += n
+
+        return value
 
     def try_parse_unsigned(self, data, definition):
         key = definition["name"]
-        value = 0
-        found = True
 
-        if "sensors" in definition:
-            for s in definition["sensors"]:
-                if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
-                    s["scale"] = scale
-                if (n := (self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s))) is not None:
-                    if "multiply" in s and (s_multiply := s["multiply"]):
-                        if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
-                            s_multiply["scale"] = s_scale
-                        if (c := self._read_registers(data, s_multiply)) is not None:
-                            n *= c
-                    if not "operator" in s:
-                        value += n
-                    else:
-                        match s["operator"]:
-                            case "subtract":
-                                value -= n
-                            case "multiply":
-                                value *= n
-                            case "divide" if n != 0:
-                                value /= n
-                            case _:
-                                value += n
-                else:
-                    found = False
+        if (value := (self._read_registers(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition))) is None:
+            return
+
+        if "uint" in definition and value < 0:
+            value = 0
+
+        if "lookup" in definition:
+            self.set_state(key, self.lookup_value(value, definition["lookup"]))
+            self._result[key]["value"] = int(value)
         else:
-            value = self._read_registers(data, definition)
-            found = value is not None
-
-        if found:
-            if "uint" in definition and value < 0:
-                value = 0
-
-            if "lookup" in definition:
-                self.set_state(key, self.lookup_value(value, definition["lookup"]))
-                self._result[key]["value"] = int(value)
-            else:
-                if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
-                    if "default" in validation:
-                        value = validation["default"]
-                    else:
-                        return
-
-                self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
-
-                if "attributes" in definition and "value" in definition["attributes"]:
-                    self._result[key]["value"] = int(value)
-
-        return
-
-    def try_parse_signed(self, data, definition):
-        key = definition["name"]
-        value = self._read_registers_signed(data, definition)
-
-        if value is not None:
-            if "inverted" in definition and definition["inverted"]:
-                value = -value
-
             if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
                 if "default" in validation:
                     value = validation["default"]
@@ -358,73 +319,69 @@ class ParameterParser:
 
             self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
-        return
+            if "attributes" in definition and "value" in definition["attributes"]:
+                self._result[key]["value"] = int(value)
+
+    def try_parse_signed(self, data, definition):
+        key = definition["name"]
+
+        if (value := (self._read_registers_signed(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition))) is None:
+            return
+
+        if "inverted" in definition and definition["inverted"]:
+            value = -value
+
+        if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
+            if "default" in validation:
+                value = validation["default"]
+            else:
+                return
+
+        self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
     def try_parse_ascii(self, data, definition):
         key = definition["name"]         
-        found = True
         value = ""
 
         for r in definition["registers"]:
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                temp = data[start][1][index]
-                value = value + chr(temp >> 8) + chr(temp & 0xFF)
-            else:
-                found = False
 
-        if found:
-            self.set_state(key, value)
+            temp = data[start][1][r - start]
+            value = value + chr(temp >> 8) + chr(temp & 0xFF)
 
-        return  
-    
+        self.set_state(key, value)
+
     def try_parse_bits(self, data, definition):
         key = definition["name"]         
-        found = True
         value = []
 
         for r in definition["registers"]:
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                value.append(hex(data[start][1][index]))
-            else:
-                found = False
 
-        if found:
-            self.set_state(key, value)
+            value.append(hex(data[start][1][r - start]))
 
-        return 
-    
+        self.set_state(key, value)
+
     def try_parse_version(self, data, definition):
         key = definition["name"]
-        found = True
         value = ""
 
         for r in definition["registers"]:
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                temp = data[start][1][index]
-                value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
-            else:
-                found = False
 
-        if found:
-            if "remove" in definition:
-                value = value.replace(definition["remove"], "")
+            temp = data[start][1][r - start]
+            value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
 
-            self.set_state(key, value)
+        if "remove" in definition:
+            value = value.replace(definition["remove"], "")
 
-        return
+        self.set_state(key, value)
 
     def try_parse_datetime(self, data, definition):
-        key = definition["name"]         
-        found = True
+        key = definition["name"]
         value = ""
 
         registers_count = len(definition["registers"])
@@ -432,46 +389,39 @@ class ParameterParser:
         for i, r in enumerate(definition["registers"]):
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                temp = data[start][1][index]
-                if registers_count == 3:
-                    if i == 0:
-                        value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
-                    elif i == 1:
-                        value = value + str(temp >> 8) + " " + str(temp & 0xFF) + ":"
-                    elif i == 2:
-                        value = value + str(temp >> 8) + ":" + str(temp & 0xFF)
-                    else:
-                        value = value + str(temp >> 8) + str(temp & 0xFF)
-                elif registers_count == 6:
-                    if i == 0 or i == 1:
-                        value = value + str(temp) + "/"
-                    elif i == 2:
-                        value = value + str(temp) + " "
-                    elif i == 3 or i == 4:
-                        value = value + str(temp) + ":"
-                    else:
-                        value = value + str(temp)
-            else:
-                found = False
 
-        if found:
-            if value.endswith(":"):
-                value = value[:-1]
+            temp = data[start][1][r - start]
+            if registers_count == 3:
+                if i == 0:
+                    value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
+                elif i == 1:
+                    value = value + str(temp >> 8) + " " + str(temp & 0xFF) + ":"
+                elif i == 2:
+                    value = value + str(temp >> 8) + ":" + str(temp & 0xFF)
+                else:
+                    value = value + str(temp >> 8) + str(temp & 0xFF)
+            elif registers_count == 6:
+                if i == 0 or i == 1:
+                    value = value + str(temp) + "/"
+                elif i == 2:
+                    value = value + str(temp) + " "
+                elif i == 3 or i == 4:
+                    value = value + str(temp) + ":"
+                else:
+                    value = value + str(temp)
 
-            try:
-                if not "platform" in definition:
-                    value = datetime.strptime(value, DATETIME_FORMAT)
-                self.set_state(key, value)
-            except Exception as e:
-                _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
+        if value.endswith(":"):
+            value = value[:-1]
 
-        return
+        try:
+            if not "platform" in definition:
+                value = datetime.strptime(value, DATETIME_FORMAT)
+            self.set_state(key, value)
+        except Exception as e:
+            _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
 
     def try_parse_time(self, data, definition):
         key = definition["name"]
-        found = True
         value = ""
 
         registers_count = len(definition["registers"])
@@ -479,38 +429,25 @@ class ParameterParser:
         for i, r in enumerate(definition["registers"]):
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                temp = data[start][1][index]
-                if registers_count == 1:
-                    value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
-                else:
-                    value = value + str("{:02d}".format(int(temp)))
-                    if i == 0 or (i == 1 and registers_count > 2):
-                        value = value + ":"
+
+            temp = data[start][1][r - start]
+            if registers_count == 1:
+                value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
             else:
-                found = False
+                value = value + str("{:02d}".format(int(temp)))
+                if i == 0 or (i == 1 and registers_count > 2):
+                    value = value + ":"
 
-        if found:
-            self.set_state(key, value)
-
-        return
+        self.set_state(key, value)
 
     def try_parse_raw(self, data, definition):
         key = definition["name"]
-        found = True
         value = []
 
         for r in definition["registers"]:
             if (start := select(data, r)) is None:
                 return
-            index = r - start
-            if 0 <= index < data[start][0]:
-                value.append(data[start][1][index])
-            else:
-                found = False
 
-        if found:
-            self.set_state(key, value)
+            value.append(data[start][1][r - start])
 
-        return
+        self.set_state(key, value)
