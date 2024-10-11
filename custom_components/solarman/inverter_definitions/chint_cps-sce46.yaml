@@ -596,8 +596,8 @@ parameters:
     - name: "Generator Operating Time" # aka "Total Generation Time"
       class: "duration"
       state_class: "measurement"
-      uom: "h"
-      scale: 1
+      uom: "d"
+      scale: 0.416
       rule: 3 # unsigned 32
       registers: [0x1024, 0x1023]
       icon: "mdi:generator-stationary"
@@ -646,8 +646,9 @@ parameters:
       description: "Total energy imported from the grid"
       class: "energy"
       state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
+      uom: "kWh"
+      scale: 0.01
+      digits: 2
       rule: 3
       registers: [0x1307, 0x1306]
       icon: "mdi:transmission-tower-import"
@@ -657,8 +658,9 @@ parameters:
       description: "Total energy exported/returnedto the grid"
       class: "energy"
       state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
+      uom: "kWh"
+      scale: 0.01
+      digits: 2
       rule: 3
       registers: [0x1309, 0x1308]
       icon: "mdi:transmission-tower-export"
@@ -751,6 +753,31 @@ parameters:
         - operator: subtract
           signed:
           registers: [0x1038, 0x1037]
+
+    - name: "Today Losses"
+      alt: "Daily Losses"
+      friendly_name: "Today's Losses"
+      description: "Includes today's consumption of the inverter device itself as well AC/DC conversion losses"
+      class: "energy"
+      state_class: "total_increasing"
+      ensure_increasing:
+      uom: "kWh"
+      rule: 1
+      scale: 0.01
+      digits: 1
+      registers: [0x1333, 0x1332, 0x1028, 0x1027, 0x2010, 0x200F, 0x1335, 0x1334, 0x1337, 0x1336, 0x200C, 0x200B]
+      uint: enforce
+      sensors:
+        - registers: [0x1333, 0x1332]
+        - registers: [0x1028, 0x1027]
+          scale: 0.001
+        - registers: [0x2010, 0x200F]
+        - operator: subtract
+          registers: [0x1335, 0x1334]
+        - operator: subtract
+          registers: [0x1337, 0x1336]
+        - operator: subtract
+          registers: [0x200C, 0x200B]
 
 
   - group: grid
@@ -1026,7 +1053,7 @@ parameters:
       rule: 3
       registers: [0x1361, 0x1360]
       
-    - name: "EPS Stored energy" # aka "Accumulated energy to EPS"
+    - name: "EPS Total energy" # aka "Accumulated energy to EPS"
       class: "energy"
       state_class: "total_increasing"
       uom: "Wh"
@@ -1093,6 +1120,9 @@ parameters:
       rule: 3 # unsigned 32
       registers: [0x200C, 0x200B]
       icon: "mdi:battery-plus"
+      validation:
+        min: 0
+        max: 0xFFFFFFF9
 
     - name: "Total Battery Charge"
       class: "energy"
@@ -1116,6 +1146,9 @@ parameters:
       rule: 3 # unsigned 32
       registers: [0x2010, 0x200F]
       icon: "mdi:battery-minus"
+      validation:
+        min: 0
+        max: 0xFFFFFFF9
         
     - name: "Total Battery Discharge"
       class: "energy"
