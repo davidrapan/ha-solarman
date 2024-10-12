@@ -148,17 +148,17 @@ class ParameterParser:
         return keyvaluepairs[0]["value"]
 
     def do_validate(self, key, value, rule):
-        if "min" in rule:
-            if rule["min"] > value:
-                if "invalidate_all" in rule:
-                    raise ValueError(f"Invalidate complete dataset ({key} ~ {value})")
-                return False
+        if "min" in rule and (min := rule["min"]) and min > value:
+            _LOGGER.debug(f"do_validate {key}: {value} < {min}")
+            if "invalidate_all" in rule:
+                raise ValueError(f"Invalidate complete dataset - {key}: {value} < {min}")
+            return False
 
-        if "max" in rule:
-            if rule["max"] < value:
-                if "invalidate_all" in rule:
-                    raise ValueError(f"Invalidate complete dataset ({key} ~ {value})")
-                return False
+        if "max" in rule and (max := rule["max"]) and max < value:
+            _LOGGER.debug(f"do_validate {key}: {value} > {max}")
+            if "invalidate_all" in rule:
+                raise ValueError(f"Invalidate complete dataset - {key}: {value} > {max}")
+            return False
 
         return True
 
@@ -279,10 +279,9 @@ class ParameterParser:
                 return None
 
             if (validation := get_or_default(s, "validation")) and not self.do_validate(s["registers"], n, validation):
-                if "default" in validation:
-                    n = validation["default"]
-                else:
+                if not "default" in validation:
                     continue
+                n = validation["default"]
 
             if "multiply" in s and (s_multiply := s["multiply"]):
                 if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
@@ -316,17 +315,18 @@ class ParameterParser:
         if "lookup" in definition:
             self.set_state(key, self.lookup_value(value, definition["lookup"]))
             self._result[key]["value"] = int(value)
-        else:
-            if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
-                if "default" in validation:
-                    value = validation["default"]
-                else:
-                    return
 
-            self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
+            return
 
-            if "attributes" in definition and "value" in definition["attributes"]:
-                self._result[key]["value"] = int(value)
+        if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
+            if not "default" in validation:
+                return
+            value = validation["default"]
+
+        self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
+
+        if "attributes" in definition and "value" in definition["attributes"]:
+            self._result[key]["value"] = int(value)
 
     def try_parse_signed(self, data, definition):
         key = definition["name"]
@@ -338,10 +338,9 @@ class ParameterParser:
             value = -value
 
         if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
-            if "default" in validation:
-                value = validation["default"]
-            else:
+            if not "default" in validation:
                 return
+            value = validation["default"]
 
         self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
