@@ -278,6 +278,12 @@ class ParameterParser:
             if (n := (self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s))) is None:
                 return None
 
+            if (validation := get_or_default(s, "validation")) and not self.do_validate(s["registers"], n, validation):
+                if "default" in validation:
+                    n = validation["default"]
+                else:
+                    continue
+
             if "multiply" in s and (s_multiply := s["multiply"]):
                 if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
                     s_multiply["scale"] = s_scale
