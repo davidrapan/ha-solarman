@@ -219,7 +219,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            responses[start] = [quantity, await self.read_write(code, start, quantity)]
+                            responses[start] = (quantity, await self.read_write(code, start, quantity))
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} succeeded.")
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")

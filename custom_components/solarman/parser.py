@@ -226,10 +226,10 @@ class ParameterParser:
 
         if "lookup" not in definition:
             if "offset" in definition:
-                value = value - definition["offset"]
+                value -= definition["offset"]
 
             if "scale" in definition and (scale := definition["scale"]):
-                value = value * scale
+                value *= scale
 
             if "divide" in definition and (divide := definition["divide"]) and divide != 0:
                 value //= divide
@@ -255,13 +255,13 @@ class ParameterParser:
             return None
 
         if "offset" in definition:
-            value = value - definition["offset"]
+            value -= definition["offset"]
 
         if value > (maxint >> 1):
             value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
         if "scale" in definition and (scale := definition["scale"]):
-            value = value * scale
+            value *= scale
 
         if "divide" in definition and (divide := definition["divide"]) and divide != 0:
             value //= divide
@@ -304,13 +304,13 @@ class ParameterParser:
         return value
 
     def try_parse_unsigned(self, data, definition):
-        key = definition["name"]
-
         if (value := (self._read_registers(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition))) is None:
             return
 
         if "uint" in definition and value < 0:
             value = 0
+
+        key = definition["name"]
 
         if "lookup" in definition:
             self.set_state(key, self.lookup_value(value, definition["lookup"]))
@@ -329,13 +329,13 @@ class ParameterParser:
             self._result[key]["value"] = int(value)
 
     def try_parse_signed(self, data, definition):
-        key = definition["name"]
-
         if (value := (self._read_registers_signed(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition))) is None:
             return
 
         if "inverted" in definition and definition["inverted"]:
             value = -value
+
+        key = definition["name"]
 
         if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
             if not "default" in validation:
@@ -345,19 +345,17 @@ class ParameterParser:
         self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
     def try_parse_ascii(self, data, definition):
-        key = definition["name"]         
         value = ""
 
         for r in definition["registers"]:
             if (temp := get_addr_value(data, r)) is None:
                 return
 
-            value = value + chr(temp >> 8) + chr(temp & 0xFF)
+            value += chr(temp >> 8) + chr(temp & 0xFF)
 
-        self.set_state(key, value)
+        self.set_state(definition["name"], value)
 
     def try_parse_bits(self, data, definition):
-        key = definition["name"]         
         value = []
 
         for r in definition["registers"]:
@@ -366,25 +364,23 @@ class ParameterParser:
 
             value.append(hex(temp))
 
-        self.set_state(key, value)
+        self.set_state(definition["name"], value)
 
     def try_parse_version(self, data, definition):
-        key = definition["name"]
         value = ""
 
         for r in definition["registers"]:
             if (temp := get_addr_value(data, r)) is None:
                 return
 
-            value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
+            value += str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
 
         if "remove" in definition:
             value = value.replace(definition["remove"], "")
 
-        self.set_state(key, value)
+        self.set_state(definition["name"], value)
 
     def try_parse_datetime(self, data, definition):
-        key = definition["name"]
         value = ""
 
         registers_count = len(definition["registers"])
@@ -395,22 +391,22 @@ class ParameterParser:
 
             if registers_count == 3:
                 if i == 0:
-                    value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
+                    value += str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
                 elif i == 1:
-                    value = value + str(temp >> 8) + " " + str(temp & 0xFF) + ":"
+                    value += str(temp >> 8) + " " + str(temp & 0xFF) + ":"
                 elif i == 2:
-                    value = value + str(temp >> 8) + ":" + str(temp & 0xFF)
+                    value += str(temp >> 8) + ":" + str(temp & 0xFF)
                 else:
-                    value = value + str(temp >> 8) + str(temp & 0xFF)
+                    value += str(temp >> 8) + str(temp & 0xFF)
             elif registers_count == 6:
                 if i == 0 or i == 1:
-                    value = value + str(temp) + "/"
+                    value += str(temp) + "/"
                 elif i == 2:
-                    value = value + str(temp) + " "
+                    value += str(temp) + " "
                 elif i == 3 or i == 4:
-                    value = value + str(temp) + ":"
+                    value += str(temp) + ":"
                 else:
-                    value = value + str(temp)
+                    value += str(temp)
 
         if value.endswith(":"):
             value = value[:-1]
@@ -418,12 +414,11 @@ class ParameterParser:
         try:
             if not "platform" in definition:
                 value = datetime.strptime(value, DATETIME_FORMAT)
-            self.set_state(key, value)
+            self.set_state(definition["name"], value)
         except Exception as e:
             _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
 
     def try_parse_time(self, data, definition):
-        key = definition["name"]
         value = ""
 
         registers_count = len(definition["registers"])
@@ -435,14 +430,13 @@ class ParameterParser:
             if registers_count == 1:
                 value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
             else:
-                value = value + str("{:02d}".format(int(temp)))
+                value += str("{:02d}".format(int(temp)))
                 if i == 0 or (i == 1 and registers_count > 2):
-                    value = value + ":"
+                    value += ":"
 
-        self.set_state(key, value)
+        self.set_state(definition["name"], value)
 
     def try_parse_raw(self, data, definition):
-        key = definition["name"]
         value = []
 
         for r in definition["registers"]:
@@ -451,4 +445,4 @@ class ParameterParser:
 
             value.append(temp)
 
-        self.set_state(key, value)
+        self.set_state(definition["name"], value)
