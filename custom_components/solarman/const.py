@@ -44,6 +44,8 @@ DEFAULT_DIGITS = 6
 
 PROFILE_REDIRECT_TABLE = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
 
+STATE_SENSORS = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
+
 CONTROL_CODE = types.SimpleNamespace()
 CONTROL_CODE.REQUEST = struct.pack("<H", 0x4510)
 CONTROL_CODE.RESPONSE = struct.pack("<H", 0x1510)

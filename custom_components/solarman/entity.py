@@ -16,15 +16,15 @@ from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-def create_entity(creator, sensor):
+def create_entity(creator, description):
     try:
-        entity = creator(sensor)
+        entity = creator(description)
 
         entity.update()
 
         return entity
     except BaseException as e:
-        _LOGGER.error(f"Configuring {sensor} failed. [{format_exception(e)}]")
+        _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
         raise
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):

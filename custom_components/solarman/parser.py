@@ -69,9 +69,6 @@ class ParameterParser:
     def is_enabled(self, parameters):
         return not "disabled" in parameters
 
-    def is_sensor(self, parameters):
-        return self.is_valid(parameters) and not "attribute" in parameters
-
     def is_requestable(self, parameters):
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
@@ -85,13 +82,8 @@ class ParameterParser:
         self._result[key] = {}
         self._result[key]["state"] = value
 
-    def get_sensors(self):
-        result = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
-        for i in self._items:
-            if self.is_sensor(i):
-                result.append(i)
-
-        return result
+    def get_entity_descriptions(self):
+        return [i for i in self._items if self.is_valid(i) and not "attribute" in i]
 
     def schedule_requests(self, runtime = 0):
         self.flush_states()

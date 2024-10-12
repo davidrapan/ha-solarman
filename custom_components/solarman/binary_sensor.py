@@ -19,23 +19,23 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-def _create_sensor(coordinator, sensor):
-    if "artificial" in sensor:
-        match sensor["artificial"]:
+def _create_entity(coordinator, description):
+    if "artificial" in description:
+        match description["artificial"]:
             case "state":
-                return SolarmanConnectionSensor(coordinator, sensor)
+                return SolarmanConnectionSensor(coordinator, description)
 
-    return SolarmanBinarySensorEntity(coordinator, sensor)
+    return SolarmanBinarySensorEntity(coordinator, description)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
     coordinator = hass.data[DOMAIN][config.entry_id]
 
-    sensors = coordinator.inverter.get_sensors()
+    descriptions = coordinator.inverter.get_entity_descriptions()
 
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(create_entity(lambda s: _create_sensor(coordinator, s), sensor) for sensor in sensors if is_platform(sensor, _PLATFORM))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
 
     return True
 

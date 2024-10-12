@@ -124,8 +124,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         _LOGGER.debug(self.device_info)
 
-    def get_sensors(self):
-        return self.profile.get_sensors() if self.profile else []
+    def get_entity_descriptions(self):
+        return (STATE_SENSORS + self.profile.get_entity_descriptions()) if self.profile else []
 
     def available(self):
         return self.state > -1

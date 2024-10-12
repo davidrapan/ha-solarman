@@ -23,18 +23,18 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-def _create_sensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
-    if "artificial" in sensor:
-        match sensor["artificial"]:
+def _create_entity(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating):
+    if "artificial" in description:
+        match description["artificial"]:
             case "interval":
-                return SolarmanIntervalSensor(coordinator, sensor)
-    elif not "registers" in sensor and sensor["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
-        return SolarmanBatterySensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+                return SolarmanIntervalSensor(coordinator, description)
+    elif not "registers" in description and battery_nominal_voltage > 0 and battery_life_cycle_rating > 0 and description["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
+        return SolarmanBatterySensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
 
-    if "restore" in sensor or "ensure_increasing" in sensor:
-        return SolarmanRestoreSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+    if "restore" in description or "ensure_increasing" in description:
+        return SolarmanRestoreSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
 
-    return SolarmanSensor(coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+    return SolarmanSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
@@ -45,11 +45,11 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE)
     battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
 
-    sensors = coordinator.inverter.get_sensors()
+    descriptions = coordinator.inverter.get_entity_descriptions()
 
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(create_entity(lambda s: _create_sensor(coordinator, s, battery_nominal_voltage, battery_life_cycle_rating), sensor) for sensor in sensors if (is_platform(sensor, _PLATFORM) and not "configurable" in sensor))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, battery_nominal_voltage, battery_life_cycle_rating), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
 
     return True
 
@@ -83,7 +83,7 @@ class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._sensor_ensure_increasing = "ensure_increasing" in sensor
-        if "name" in sensor and sensor["name"] == "Battery":
+        if "name" in sensor and sensor["name"] == "Battery" and battery_nominal_voltage > 0 and battery_life_cycle_rating > 0:
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
