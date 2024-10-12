@@ -6,7 +6,7 @@
 # The source MODBUS document has been provided directly from CHINT support, there doesn't seems to be a public URL for it.
 #
 # Registers
-# The 0x1001 - 0x104C = 0x03 function code - Real Time Data: 
+# The 0x1001 - 0x104C = 0x03 function code - Real Time Data:
 # The 0x1080 - 0x1092 = 0x03 function code - Real Time Data
 # The 0x1300 - 0x1362 = 0x03 function code - Real Time Data
 # The 0x1A44 - 0x1A46 = 0x03 function code - Device Information
@@ -24,1307 +24,1331 @@ default:
   digits: 6
 
 parameters:
-
   - group: info
     update_interval: 300
     items:
-    - name: "Device"
-      rule: 5 # ASCII String
-      registers: [0x1A00, 0x1A01, 0x1A02, 0x1A03, 0x1A04, 0x1A05, 0x1A06, 0x1A07, 0x1A08, 0x1A09, 0x1A0A, 0x1A0B, 0x1A0C, 0x1A0D, 0x1A0E, 0x1A0F]
-      icon: 'mdi:information'
-      attributes:
-        [
-          "Device Protocol Version",
-          "Device Serial Number",
-          "Master Software Version",
-          "Master Software Build Date",
-          "Slave Software Version",
-          "Slave Software Build Date",
-          "Device MPPTs",
-          "Device Rated Voltage",
-          "Device Rated Frequency",
-          "Device Rated Power",
-          "Device Phases",
-          "Production Type",
-          "EMS firmware Version",
-          "EMS firmware Build Date",
-          "DCDC firmware Version",
-          "DCDC firmware Build Date",
-        ]
+      - name: "Device"
+        rule: 5 # ASCII String
+        registers:
+          [
+            0x1A00,
+            0x1A01,
+            0x1A02,
+            0x1A03,
+            0x1A04,
+            0x1A05,
+            0x1A06,
+            0x1A07,
+            0x1A08,
+            0x1A09,
+            0x1A0A,
+            0x1A0B,
+            0x1A0C,
+            0x1A0D,
+            0x1A0E,
+            0x1A0F,
+          ]
+        icon: "mdi:information"
+        attributes:
+          [
+            "Device Protocol Version",
+            "Device Serial Number",
+            "Master Software Version",
+            "Master Software Build Date",
+            "Slave Software Version",
+            "Slave Software Build Date",
+            "Device MPPTs",
+            "Device Rated Voltage",
+            "Device Rated Frequency",
+            "Device Rated Power",
+            "Device Phases",
+            "Production Type",
+            "EMS firmware Version",
+            "EMS firmware Build Date",
+            "DCDC firmware Version",
+            "DCDC firmware Build Date",
+          ]
 
-    - name: "Device Protocol Version"
-      attribute:
-      rule: 7 # version
-      remove: "0."
-      registers: [0x1A1C]  
-      icon: 'mdi:information'
+      - name: "Device Protocol Version"
+        attribute:
+        rule: 7 # version
+        remove: "0."
+        registers: [0x1A1C]
+        icon: "mdi:information"
 
-    - name: "Device Serial Number"
-      attribute:
-      rule: 5 # ASCII String
-      registers: [0x1A10, 0x1A11, 0x1A12, 0x1A13, 0x1A14, 0x1A15, 0x1A16, 0x1A17]
-      icon: 'mdi:information'
-      
-    - name: "Master Software Version"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A1C, 0x1A1D, 0x1A1E]
-      icon: 'mdi:information'
-      
-    - name: "Master Software Build Date"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A23, 0x1A24, 0x1A25]
-      icon: 'mdi:information'
-      
-    - name: "Slave Firmware Version"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A26, 0x1A27, 0x1A28]
-      icon: 'mdi:information'
-      
-    - name: "Slave Firmware Build Date"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A2D, 0x1A2E, 0x1A2F]
-      icon: 'mdi:information'
+      - name: "Device Serial Number"
+        attribute:
+        rule: 5 # ASCII String
+        registers:
+          [0x1A10, 0x1A11, 0x1A12, 0x1A13, 0x1A14, 0x1A15, 0x1A16, 0x1A17]
+        icon: "mdi:information"
 
-    - name: "Device MPPTs"
-      attribute:
-      rule: 1 # Unsigned data
-      registers: [0x1A3B]
-      icon: 'mdi:information'
+      - name: "Master Software Version"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A1C, 0x1A1D, 0x1A1E]
+        icon: "mdi:information"
 
-    - name: "Device Rated Voltage"
-      attribute:
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1A44]
-      icon: 'mdi:information'
-      
-    - name: "Device Rated Frequency"
-      attribute:
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1
-      registers: [0x1A45]
-      icon: 'mdi:information'
-      
-    - name: "Device Rated Power"
-      attribute:
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 1
-      rule: 1
-      registers: [0x1A46]
-      icon: 'mdi:information'
+      - name: "Master Software Build Date"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A23, 0x1A24, 0x1A25]
+        icon: "mdi:information"
 
-    - name: "Device Phases" # Grid Phase Number?
-      attribute:
-      rule: 1
-      registers: [0x1A48]
-      icon: 'mdi:information'
+      - name: "Slave Firmware Version"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A26, 0x1A27, 0x1A28]
+        icon: "mdi:information"
 
-    - name: "Production Type"
-      attribute:
-      class: "enum"
-      rule: 1
-      registers: [0x1A5A]
-      icon: "mdi:information"
-      lookup:
-        - key: 0x0000
-          value: "On grid"
-        - key: [0x0001]
-          value: "AC couple no smart load"
-        - key: [0x0002]
-          value: "Hybrid no smart load"
-        - key: [0x0003]
-          value: "Hybrid with smart load"
-        - key: [0x0004]
-          value: "AC couple with smart load"
+      - name: "Slave Firmware Build Date"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A2D, 0x1A2E, 0x1A2F]
+        icon: "mdi:information"
 
-    - name: "EMS firmware Version"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A60, 0x1A61, 0x1A62]
-      icon: 'mdi:information'
+      - name: "Device MPPTs"
+        attribute:
+        rule: 1 # Unsigned data
+        registers: [0x1A3B]
+        icon: "mdi:information"
 
-    - name: "EMS firmware Build Date"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A67, 0x1A68, 0x1A69, 0x1A6A, 0x1A6B, 0x1A6C, 0x1A6D]
-      icon: 'mdi:information'
+      - name: "Device Rated Voltage"
+        attribute:
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1A44]
+        icon: "mdi:information"
 
-    - name: "DCDC firmware Version"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A6F, 0x1A70, 0x1A71]
-      icon: 'mdi:information'
+      - name: "Device Rated Frequency"
+        attribute:
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x1A45]
+        icon: "mdi:information"
 
-    - name: "DCDC firmware Build Date"
-      attribute:
-      rule: 5 # String
-      registers: [0x1A76, 0x1A77, 0x1A78]
-      icon: 'mdi:information'
+      - name: "Device Rated Power"
+        attribute:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x1A46]
+        icon: "mdi:information"
 
+      - name: "Device Phases" # Grid Phase Number?
+        attribute:
+        rule: 1
+        registers: [0x1A48]
+        icon: "mdi:information"
+
+      - name: "Production Type"
+        attribute:
+        class: "enum"
+        rule: 1
+        registers: [0x1A5A]
+        icon: "mdi:information"
+        lookup:
+          - key: 0x0000
+            value: "On grid"
+          - key: [0x0001]
+            value: "AC couple no smart load"
+          - key: [0x0002]
+            value: "Hybrid no smart load"
+          - key: [0x0003]
+            value: "Hybrid with smart load"
+          - key: [0x0004]
+            value: "AC couple with smart load"
+
+      - name: "EMS firmware Version"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A60, 0x1A61, 0x1A62]
+        icon: "mdi:information"
+
+      - name: "EMS firmware Build Date"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A67, 0x1A68, 0x1A69, 0x1A6A, 0x1A6B, 0x1A6C, 0x1A6D]
+        icon: "mdi:information"
+
+      - name: "DCDC firmware Version"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A6F, 0x1A70, 0x1A71]
+        icon: "mdi:information"
+
+      - name: "DCDC firmware Build Date"
+        attribute:
+        rule: 5 # String
+        registers: [0x1A76, 0x1A77, 0x1A78]
+        icon: "mdi:information"
 
   - group: output
     update_interval: 60
     items:
-    - name: "Output L1 Voltage" # aka "Phase A Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1001]
+      - name: "Output L1 Voltage" # aka "Phase A Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1001]
 
-    - name: "Output L2 Voltage" # aka "Phase B Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1006]
+      - name: "Output L2 Voltage" # aka "Phase B Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1006]
 
-    - name: "Output L3 Voltage" # aka "Phase C Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x100B]
+      - name: "Output L3 Voltage" # aka "Phase C Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x100B]
 
-    - name: "Output L1 Current" # aka "Phase A Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1002]
+      - name: "Output L1 Current" # aka "Phase A Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1002]
 
-    - name: "Output L2 Current" # aka "Phase B Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1007]
+      - name: "Output L2 Current" # aka "Phase B Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1007]
 
-    - name: "Output L3 Current" # aka "Phase C Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x100C]
+      - name: "Output L3 Current" # aka "Phase C Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x100C]
 
-    - name: "Output L1 Power" # aka "Phase A Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1004, 0x1003]
+      - name: "Output L1 Power" # aka "Phase A Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1004, 0x1003]
 
-    - name: "Output L2 Power" # aka "Phase B Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1009, 0x1008]
+      - name: "Output L2 Power" # aka "Phase B Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1009, 0x1008]
 
-    - name: "Output L3 Power" # aka "Phase C Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x100E, 0x100D]
+      - name: "Output L3 Power" # aka "Phase C Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x100E, 0x100D]
 
-    - name: "Output L1 Frequencyr" # aka "Phase A Frequency"
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1 # unsigned 16
-      registers: [0x1005]
+      - name: "Output L1 Frequencyr" # aka "Phase A Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1 # unsigned 16
+        registers: [0x1005]
 
-    - name: "Output L2 Frequencyr" # aka "Phase B Frequency"
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1 # unsigned 16
-      registers: [0x100A]
+      - name: "Output L2 Frequencyr" # aka "Phase B Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1 # unsigned 16
+        registers: [0x100A]
 
-    - name: "Output L3 Frequencyr" # aka "Phase C Frequency"
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1 # unsigned 16
-      registers: [0x100F]
-
+      - name: "Output L3 Frequencyr" # aka "Phase C Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1 # unsigned 16
+        registers: [0x100F]
 
   - group: PV
     items:
-    - name: "PV Power" # aka "PV totally input power"
-      alt: "DC Power"
-      description: "Combined power of all inputs"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1049, 0x1048]
-      icon: "mdi:solar-power-variant"
+      - name: "PV Power" # aka "PV totally input power"
+        alt: "DC Power"
+        description: "Combined power of all inputs"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1049, 0x1048]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV1 Power" # aka "MPPT1 Power"
-      alt: "DC1 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1013, 0x1012]
-      icon: "mdi:solar-power-variant"
+      - name: "PV1 Power" # aka "MPPT1 Power"
+        alt: "DC1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1013, 0x1012]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV2 Power" # aka "MPPT2 Power"
-      alt: "DC2 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1017, 0x1016]
-      icon: "mdi:solar-power-variant"
+      - name: "PV2 Power" # aka "MPPT2 Power"
+        alt: "DC2 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1017, 0x1016]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV3 Power" # aka "MPPT3 Power"
-      alt: "DC3 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x101B, 0x101A]
-      icon: "mdi:solar-power-variant"
+      - name: "PV3 Power" # aka "MPPT3 Power"
+        alt: "DC3 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x101B, 0x101A]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV4 Power" # aka "MPPT4 Power"
-      alt: "DC4 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1041, 0x1040]
-      icon: "mdi:solar-power-variant"
+      - name: "PV4 Power" # aka "MPPT4 Power"
+        alt: "DC4 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1041, 0x1040]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV5 Power" # aka "MPPT5 Power"
-      alt: "DC5 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1083, 0x1082]
-      icon: "mdi:solar-power-variant"
+      - name: "PV5 Power" # aka "MPPT5 Power"
+        alt: "DC5 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1083, 0x1082]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV6 Power" # aka "MPPT6 Power"
-      alt: "DC6 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1087, 0x1086]
-      icon: "mdi:solar-power-variant"
+      - name: "PV6 Power" # aka "MPPT6 Power"
+        alt: "DC6 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1087, 0x1086]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV7 Power" # aka "MPPT7 Power"
-      alt: "DC7 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x108B, 0x108A]
-      icon: "mdi:solar-power-variant"
+      - name: "PV7 Power" # aka "MPPT7 Power"
+        alt: "DC7 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x108B, 0x108A]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV8 Power" # aka "MPPT8 Power"
-      alt: "DC8 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x108F, 0x108E]
-      icon: "mdi:solar-power-variant"
+      - name: "PV8 Power" # aka "MPPT8 Power"
+        alt: "DC8 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x108F, 0x108E]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV9 Power" # aka "MPPT9 Power"
-      alt: "DC9 Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x1093, 0x1092]
-      icon: "mdi:solar-power-variant"
+      - name: "PV9 Power" # aka "MPPT9 Power"
+        alt: "DC9 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1093, 0x1092]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV1 Voltage"
-      alt: "DC1 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1010]
-      icon: "mdi:solar-power-variant"
+      - name: "PV1 Voltage"
+        alt: "DC1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1010]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV2 Voltage"
-      alt: "DC2 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1014]
-      icon: "mdi:solar-power-variant"
+      - name: "PV2 Voltage"
+        alt: "DC2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1014]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV3 Voltage"
-      alt: "DC3 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1018]
-      icon: "mdi:solar-power-variant"
+      - name: "PV3 Voltage"
+        alt: "DC3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1018]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV4 Voltage"
-      alt: "DC4 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x103E]
-      icon: "mdi:solar-power-variant"
+      - name: "PV4 Voltage"
+        alt: "DC4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x103E]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV5 Voltage"
-      alt: "DC5 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1080]
-      icon: "mdi:solar-power-variant"
+      - name: "PV5 Voltage"
+        alt: "DC5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1080]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV6 Voltage"
-      alt: "DC6 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1084]
-      icon: "mdi:solar-power-variant"
+      - name: "PV6 Voltage"
+        alt: "DC6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1084]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV7 Voltage"
-      alt: "DC7 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1088]
-      icon: "mdi:solar-power-variant"
+      - name: "PV7 Voltage"
+        alt: "DC7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1088]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV8 Voltage"
-      alt: "DC8 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x108C]
-      icon: "mdi:solar-power-variant"
+      - name: "PV8 Voltage"
+        alt: "DC8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x108C]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV9 Voltage"
-      alt: "DC9 Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1090]
-      icon: "mdi:solar-power-variant"
+      - name: "PV9 Voltage"
+        alt: "DC9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1090]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV1 Current"
-      alt: "DC1 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1011]
-      icon: "mdi:solar-power-variant"
+      - name: "PV1 Current"
+        alt: "DC1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1011]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV2 Current"
-      alt: "DC2 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1015]
-      icon: "mdi:solar-power-variant"
+      - name: "PV2 Current"
+        alt: "DC2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1015]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV3 Current"
-      alt: "DC3 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1019]
-      icon: "mdi:solar-power-variant"
+      - name: "PV3 Current"
+        alt: "DC3 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1019]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV4 Current"
-      alt: "DC4 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x103F]
-      icon: "mdi:solar-power-variant"
+      - name: "PV4 Current"
+        alt: "DC4 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x103F]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV5 Current"
-      alt: "DC5 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1081]
-      icon: "mdi:solar-power-variant"
+      - name: "PV5 Current"
+        alt: "DC5 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1081]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV6 Current"
-      alt: "DC6 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1085]
-      icon: "mdi:solar-power-variant"
+      - name: "PV6 Current"
+        alt: "DC6 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1085]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV7 Current"
-      alt: "DC7 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1089]
-      icon: "mdi:solar-power-variant"
+      - name: "PV7 Current"
+        alt: "DC7 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1089]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV8 Current"
-      alt: "DC8 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x108D]
-      icon: "mdi:solar-power-variant"
+      - name: "PV8 Current"
+        alt: "DC8 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x108D]
+        icon: "mdi:solar-power-variant"
 
-    - name: "PV9 Current"
-      alt: "DC9 Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 1
-      registers: [0x1091]
-      icon: "mdi:solar-power-variant"
-
+      - name: "PV9 Current"
+        alt: "DC9 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1091]
+        icon: "mdi:solar-power-variant"
 
   - group: meter
     items:
-    - name: "DC Temperature" # aka "Inner Temperature"
-      hidden:
-      class: "temperature"
-      state_class: "measurement"
-      uom: "°C"
-      scale: 1
-      rule: 2 # signed 16
-      registers: [0x101C]
-      icon: "mdi:thermometer"
+      - name: "DC Temperature" # aka "Inner Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 1
+        rule: 2 # signed 16
+        registers: [0x101C]
+        icon: "mdi:thermometer"
 
-    - name: "Today Production" # aka "Today Energy"
-      alt: "Daily Production"
-      friendly_name: "Today's Production"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 1
-      rule: 3 # unsigned 32
-      registers: [0x1028, 0x1027]
-      icon: "mdi:solar-power"
+      - name: "Today Production" # aka "Today Energy"
+        alt: "Daily Production"
+        friendly_name: "Today's Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 1
+        rule: 3 # unsigned 32
+        registers: [0x1028, 0x1027]
+        icon: "mdi:solar-power"
 
-    - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "kWh"
-      rule: 3
-      registers: [0x1022, 0x1021, 0x104C]
-      icon: "mdi:solar-power"
-      sensors:
-        - registers: [0x1022, 0x1021]
-        - registers: [0x104C]
-          scale: 0.001
+      - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [0x1022, 0x1021, 0x104C]
+        icon: "mdi:solar-power"
+        sensors:
+          - registers: [0x1022, 0x1021]
+          - registers: [0x104C]
+            scale: 0.001
 
-    - name: "Generator Operating Time" # aka "Total Generation Time"
-      class: "duration"
-      state_class: "measurement"
-      uom: "h"
-      scale: 1
-      rule: 3 # unsigned 32
-      registers: [0x1024, 0x1023]
-      icon: "mdi:generator-stationary"
-      
-    - name: "Today Peak Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x103C, 0x103B]
-      icon: 'mdi:solar-power'
+      - name: "Generator Operating Time" # aka "Total Generation Time"
+        class: "duration"
+        state_class: "measurement"
+        uom: "h"
+        scale: 1
+        rule: 3 # unsigned 32
+        registers: [0x1024, 0x1023]
+        icon: "mdi:generator-stationary"
 
-    - name: "Today Energy Import" # aka "Today import Energy"
-      alt: "Today Energy Bought"
-      description: "Today energy imported from the grid"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1333, 0x1332]
-      icon: "mdi:transmission-tower-export"
+      - name: "Today Peak Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x103C, 0x103B]
+        icon: "mdi:solar-power"
 
-    - name: "Today Energy Export" # aka "Today export Energy"
-      alt: "Today Energy Sold"
-      description: "Today energy exported/returned to the grid"
-      class: "energy"
-      state_class: "total_increasing"    
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1335, 0x1334]
-      icon: "mdi:transmission-tower-import"
+      - name: "Today Energy Import" # aka "Today import Energy"
+        alt: "Today Energy Bought"
+        description: "Today energy imported from the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1333, 0x1332]
+        icon: "mdi:transmission-tower-export"
 
-    - name: "Today Load Consumption" # aka "Total load Energy"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1337, 0x1336]
+      - name: "Today Energy Export" # aka "Today export Energy"
+        alt: "Today Energy Sold"
+        description: "Today energy exported/returned to the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1335, 0x1334]
+        icon: "mdi:transmission-tower-import"
 
-    - name: "Total Energy Import" # aka "Accumulated energy of positive"
-      alt: "Total Energy Bought"
-      description: "Total energy imported from the grid"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "kWh"
-      scale: 0.01
-      digits: 2
-      rule: 3
-      registers: [0x1307, 0x1306]
-      icon: "mdi:transmission-tower-import"
-      
-    - name: "Total Energy Export" # aka "Accumulated energy of negative"
-      alt: "Total Energy Sold"
-      description: "Total energy exported/returnedto the grid"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "kWh"
-      scale: 0.01
-      digits: 2
-      rule: 3
-      registers: [0x1309, 0x1308]
-      icon: "mdi:transmission-tower-export"
+      - name: "Today Load Consumption" # aka "Total load Energy"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1337, 0x1336]
 
-    - name: "Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x1038, 0x1037]
-      icon: 'mdi:solar-power'
+      - name: "Total Energy Import" # aka "Accumulated energy of positive"
+        alt: "Total Energy Bought"
+        description: "Total energy imported from the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        digits: 2
+        rule: 3
+        registers: [0x1307, 0x1306]
+        icon: "mdi:transmission-tower-import"
 
-    - name: "Reactive Power"
-      class: "reactive_power"
-      state_class: "measurement"
-      uom: "var"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1040, 0x1039]
-      icon: 'mdi:solar-power'
+      - name: "Total Energy Export" # aka "Accumulated energy of negative"
+        alt: "Total Energy Sold"
+        description: "Total energy exported/returnedto the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        digits: 2
+        rule: 3
+        registers: [0x1309, 0x1308]
+        icon: "mdi:transmission-tower-export"
 
-    - name: "Power Factor"
-      class: "power_factor"
-      state_class: "measurement"
-      uom: "%"
-      scale: 0.001
-      rule: 2
-      registers: [0x103D]
-      icon: 'mdi:solar-power'
+      - name: "Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x1038, 0x1037]
+        icon: "mdi:solar-power"
 
-    - name: "Total Losses"
-      description: "Includes total consumption of the inverter device itself as well AC/DC conversion losses"
-      class: "energy"
-      state_class: "total_increasing"
-      ensure_increasing:
-      uom: "kWh"
-      rule: 3
-      digits: 1
-      scale: 0.1
-      registers:
-        [
-          0x1307,
-          0x1306,
-          0x1022,
-          0x1021,
-          0x104C,
-          0x2010,
-          0x200F,
-          0x1309,
-          0x1308,
-          0x1311,
-          0x1310,
-          0x200E,
-          0x200D,
-        ]
-      uint: enforce
-      sensors:
-        - registers: [0x1307, 0x1306]
-          scale: 0.01
-        - registers: [0x1022, 0x1021]
-        - registers: [0x104C]
-          scale: 0.001
-        - registers: [0x2010, 0x200F]
-          scale: 0.01
-        - operator: subtract
-          registers: [0x1309, 0x1308]
-          scale: 0.01
-        - operator: subtract
-          registers: [0x1311, 0x1310]
-          scale: 0.01
-        - operator: subtract
-          registers: [0x200E, 0x200D]
-          scale: 0.01
-      validation:
-        min: 1
-        
-    - name: "Power losses"
-      description: "Includes consumption of the inverter device itself as well AC/DC conversion losses"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3
-      registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
-      uint: enforce
-      sensors:
-        - registers: [0x1049, 0x1048]
-        - registers: [0x200A, 0x2009]
-        - operator: subtract
-          signed:
-          registers: [0x1038, 0x1037]
+      - name: "Reactive Power"
+        class: "reactive_power"
+        state_class: "measurement"
+        uom: "var"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1040, 0x1039]
+        icon: "mdi:solar-power"
 
-    - name: "Today Losses"
-      alt: "Daily Losses"
-      friendly_name: "Today's Losses"
-      description: "Includes today's consumption of the inverter device itself as well AC/DC conversion losses"
-      class: "energy"
-      state_class: "total_increasing"
-      ensure_increasing:
-      uom: "kWh"
-      rule: 1
-      scale: 0.01
-      digits: 1
-      registers: [0x1333, 0x1332, 0x1028, 0x1027, 0x2010, 0x200F, 0x1335, 0x1334, 0x1337, 0x1336, 0x200C, 0x200B]
-      uint: enforce
-      sensors:
-        - registers: [0x1333, 0x1332]
-        - registers: [0x1028, 0x1027]
-          scale: 0.001
-        - registers: [0x2010, 0x200F]
-        - operator: subtract
-          registers: [0x1335, 0x1334]
-        - operator: subtract
-          registers: [0x1337, 0x1336]
-        - operator: subtract
-          registers: [0x200C, 0x200B]
+      - name: "Power Factor"
+        class: "power_factor"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.001
+        rule: 2
+        registers: [0x103D]
+        icon: "mdi:solar-power"
 
+      - name: "Total Losses"
+        description: "Includes total consumption of the inverter device itself as well AC/DC conversion losses"
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        registers:
+          [
+            0x1307,
+            0x1306,
+            0x1022,
+            0x1021,
+            0x104C,
+            0x2010,
+            0x200F,
+            0x1309,
+            0x1308,
+            0x1311,
+            0x1310,
+            0x200E,
+            0x200D,
+          ]
+        uint: enforce
+        sensors:
+          - registers: [0x1307, 0x1306]
+            scale: 0.01
+          - registers: [0x1022, 0x1021]
+          - registers: [0x104C]
+            scale: 0.001
+          - registers: [0x2010, 0x200F]
+            scale: 0.01
+          - operator: subtract
+            registers: [0x1309, 0x1308]
+            scale: 0.01
+          - operator: subtract
+            registers: [0x1311, 0x1310]
+            scale: 0.01
+          - operator: subtract
+            registers: [0x200E, 0x200D]
+            scale: 0.01
+        validation:
+          min: 1
+
+      - name: "Power losses"
+        description: "Includes consumption of the inverter device itself as well AC/DC conversion losses"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3
+        registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
+        uint: enforce
+        sensors:
+          - registers: [0x1049, 0x1048]
+          - registers: [0x200A, 0x2009]
+          - operator: subtract
+            signed:
+            registers: [0x1038, 0x1037]
+
+      - name: "Today Losses"
+        alt: "Daily Losses"
+        friendly_name: "Today's Losses"
+        description: "Includes today's consumption of the inverter device itself as well AC/DC conversion losses"
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        scale: 0.01
+        digits: 1
+        registers:
+          [
+            0x1333,
+            0x1332,
+            0x1028,
+            0x1027,
+            0x2010,
+            0x200F,
+            0x1335,
+            0x1334,
+            0x1337,
+            0x1336,
+            0x200C,
+            0x200B,
+          ]
+        uint: enforce
+        sensors:
+          - registers: [0x1333, 0x1332]
+          - registers: [0x1028, 0x1027]
+            scale: 0.001
+          - registers: [0x2010, 0x200F]
+          - operator: subtract
+            registers: [0x1335, 0x1334]
+          - operator: subtract
+            registers: [0x1337, 0x1336]
+          - operator: subtract
+            registers: [0x200C, 0x200B]
 
   - group: grid
     items:
-    - name: "Internal CT1 Power" # aka "Phase R watt of grid"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1301, 0x1300]
-      icon: "mdi:transmission-tower"
+      - name: "Internal CT1 Power" # aka "Phase R watt of grid"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1301, 0x1300]
+        icon: "mdi:transmission-tower"
 
-    - name: "Internal CT2 Power" # aka "Phase S watt of grid"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1303, 0x1302]
-      icon: "mdi:transmission-tower"
+      - name: "Internal CT2 Power" # aka "Phase S watt of grid"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1303, 0x1302]
+        icon: "mdi:transmission-tower"
 
-    - name: "Internal CT3 Power" # aka "Phase T watt of grid"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x1305, 0x1304]
-      icon: "mdi:transmission-tower"
-      
-    - name: "Grid L1 Voltage" # aka "L1-N phase voltage of grid"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x131A]
-      icon: "mdi:transmission-tower"
+      - name: "Internal CT3 Power" # aka "Phase T watt of grid"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1305, 0x1304]
+        icon: "mdi:transmission-tower"
 
-    - name: "Grid L2 Voltage" # aka "L2-N phase voltage of grid"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x131B]
-      icon: "mdi:transmission-tower"
+      - name: "Grid L1 Voltage" # aka "L1-N phase voltage of grid"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x131A]
+        icon: "mdi:transmission-tower"
 
-    - name: "Grid L3 Voltage" # aka "L3-N phase voltage of grid"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x131C]
-      icon: "mdi:transmission-tower"
+      - name: "Grid L2 Voltage" # aka "L2-N phase voltage of grid"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x131B]
+        icon: "mdi:transmission-tower"
 
-    - name: "Grid L1 Current" # aka "L1  current of grid"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x131E, 0x131D]
-      icon: "mdi:transmission-tower"
+      - name: "Grid L3 Voltage" # aka "L3-N phase voltage of grid"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x131C]
+        icon: "mdi:transmission-tower"
 
-    - name: "Grid L2 Current" # aka "L2  current of grid"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x1320, 0x131F]
-      icon: "mdi:transmission-tower"
+      - name: "Grid L1 Current" # aka "L1  current of grid"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x131E, 0x131D]
+        icon: "mdi:transmission-tower"
 
-    - name: "Grid L3 Current" # aka "L3  current of grid"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x1322, 0x1321]
-      icon: "mdi:transmission-tower"
-      
-    - name: "Grid Frequency" # aka "Frequency of grid"
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1
-      registers: [0x1338]
-      icon: "mdi:transmission-tower"
+      - name: "Grid L2 Current" # aka "L2  current of grid"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x1320, 0x131F]
+        icon: "mdi:transmission-tower"
 
+      - name: "Grid L3 Current" # aka "L3  current of grid"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x1322, 0x1321]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency" # aka "Frequency of grid"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x1338]
+        icon: "mdi:transmission-tower"
 
   - group: load
     items:
-    - name: "Load L1 Power" # aka "Phase R watt of load"
-      hidden:
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x130B, 0x130A]
-      icon: "mdi:home-lightning-bolt"
+      - name: "Load L1 Power" # aka "Phase R watt of load"
+        hidden:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x130B, 0x130A]
+        icon: "mdi:home-lightning-bolt"
 
-    - name: "Load L2 Power" # aka "Phase S watt of load"
-      hidden:
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x130D, 0x130C]
-      icon: "mdi:home-lightning-bolt"
+      - name: "Load L2 Power" # aka "Phase S watt of load"
+        hidden:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x130D, 0x130C]
+        icon: "mdi:home-lightning-bolt"
 
-    - name: "Load L3 Power" # aka "Phase T watt of load"
-      hidden:
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4 # signed 32
-      registers: [0x130F, 0x130E]
-      icon: "mdi:home-lightning-bolt"
-      
-    - name: "Total Load Consumption" # aka "Accumulated energy of load"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3 # unsigned 32
-      registers: [0x1311, 0x1310]
+      - name: "Load L3 Power" # aka "Phase T watt of load"
+        hidden:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x130F, 0x130E]
+        icon: "mdi:home-lightning-bolt"
 
-    - name: "Load L1 Voltage" # aka "L1-N phase voltage of load"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1323]
-    
-    - name: "Load L2 Voltage" # aka "L2-N phase voltage of load"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1324]
+      - name: "Total Load Consumption" # aka "Accumulated energy of load"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3 # unsigned 32
+        registers: [0x1311, 0x1310]
 
-    - name: "Load L3 Voltage" # aka "L3-N phase voltage of load"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1325]
+      - name: "Load L1 Voltage" # aka "L1-N phase voltage of load"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1323]
 
-    - name: "Load L1 Current" # aka "L1 current of load"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x1327, 0x1326]
+      - name: "Load L2 Voltage" # aka "L2-N phase voltage of load"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1324]
 
-    - name: "Load L2 Current" # aka "L2 current of load"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x1329, 0x1328]
+      - name: "Load L3 Voltage" # aka "L3-N phase voltage of load"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1325]
 
-    - name: "Load L3 Current" # aka "L3 current of load"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x132B, 0x132A]
+      - name: "Load L1 Current" # aka "L1 current of load"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x1327, 0x1326]
 
+      - name: "Load L2 Current" # aka "L2 current of load"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x1329, 0x1328]
+
+      - name: "Load L3 Current" # aka "L3 current of load"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x132B, 0x132A]
 
   - group: EPS
     items:
-    - name: "EPS L1 Voltage" # aka "Phase R Voltage of EPS"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1350]
-      
-    - name: "EPS L2 Voltage" # aka "Phase S Voltage of EPS"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x1356]
-      
-    - name: "EPS L3 Voltage" # aka "Phase T Voltage of EPS"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x135B]
+      - name: "EPS L1 Voltage" # aka "Phase R Voltage of EPS"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1350]
 
-    - name: "EPS L1 Current" # aka "Phase R current of EPS"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4
-      registers: [0x1352, 0x1351]
-      
-    - name: "EPS L2 Current" # aka "Phase S current of EPS"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4
-      registers: [0x1358, 0x1357]
+      - name: "EPS L2 Voltage" # aka "Phase S Voltage of EPS"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1356]
 
-    - name: "EPS L3 Current" # aka "Phase T current of EPS"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4
-      registers: [0x135D, 0x135C]
+      - name: "EPS L3 Voltage" # aka "Phase T Voltage of EPS"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x135B]
 
-    - name: "EPS L1 Power" # aka "Phase R watt of EPS"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x1354, 0x1353]
+      - name: "EPS L1 Current" # aka "Phase R current of EPS"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4
+        registers: [0x1352, 0x1351]
 
-    - name: "EPS L2 Power" # aka "Phase S watt of EPS"
-    - name: "Phase S watt of EPS"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x135A, 0x1359]
+      - name: "EPS L2 Current" # aka "Phase S current of EPS"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4
+        registers: [0x1358, 0x1357]
 
-    - name: "EPS L3 Power" # aka "Phase T watt of EPS"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 4
-      registers: [0x135F, 0x135E]
+      - name: "EPS L3 Current" # aka "Phase T current of EPS"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4
+        registers: [0x135D, 0x135C]
 
-    - name: "EPS Frequency" # aka "Frequency of EPS"
-      class: "frequency"
-      state_class: "measurement"
-      uom: "Hz"
-      scale: 0.01
-      rule: 1
-      registers: [0x1355]
+      - name: "EPS L1 Power" # aka "Phase R watt of EPS"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x1354, 0x1353]
 
-    - name: "EPS Today Energy" # aka "Daily energy to EPS"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1361, 0x1360]
-      
-    - name: "EPS Total energy" # aka "Accumulated energy to EPS"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3
-      registers: [0x1363, 0x1362]
-      validation:
-        min: 0
-        max: 0xFFFFFFF9
+      - name: "EPS L2 Power" # aka "Phase S watt of EPS"
+      - name: "Phase S watt of EPS"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x135A, 0x1359]
 
+      - name: "EPS L3 Power" # aka "Phase T watt of EPS"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4
+        registers: [0x135F, 0x135E]
+
+      - name: "EPS Frequency" # aka "Frequency of EPS"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x1355]
+
+      - name: "EPS Today Energy" # aka "Daily energy to EPS"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1361, 0x1360]
+
+      - name: "EPS Total energy" # aka "Accumulated energy to EPS"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1363, 0x1362]
+        validation:
+          min: 0
+          max: 0xFFFFFFF9
 
   - group: Battery
     items:
-    - name: "Battery"
-      class: "battery"
-      state_class: "measurement"
-      uom: "%"
-      rule: 1 # unsigned 16
-      registers: [0x2000]
-      icon: "mdi:battery"
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1 # unsigned 16
+        registers: [0x2000]
+        icon: "mdi:battery"
 
-    - name: "Battery Temperature"
-      class: "temperature"
-      state_class: "measurement"
-      uom: "°C"
-      scale: 1
-      rule: 2 # signed 16
-      registers: [0x2001]
-      icon: "mdi:temperature-dc"
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 1
+        rule: 2 # signed 16
+        registers: [0x2001]
+        icon: "mdi:temperature-dc"
 
-    - name: "Battery Voltage"
-      class: "voltage"
-      state_class: "measurement"
-      uom: "V"
-      scale: 0.1
-      rule: 1
-      registers: [0x2006]
-      icon: "mdi:voltage-dc"
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2006]
+        icon: "mdi:voltage-dc"
 
-    - name: "Battery Current"
-      class: "current"
-      state_class: "measurement"
-      uom: "A"
-      scale: 0.01
-      rule: 4 # signed 32
-      registers: [0x2008, 0x2007]
-      icon: "mdi:current-dc"
-   
-    - name: "Battery Power"
-      class: "power"
-      state_class: "measurement"
-      uom: "W"
-      scale: 0.1
-      rule: 3 # unsigned 32
-      registers: [0x200A, 0x2009]
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32
+        registers: [0x2008, 0x2007]
+        icon: "mdi:current-dc"
 
-    - name: "Today Battery Charge"
-      alt: "Daily Battery Charge"
-      friendly_name: "Today's Battery Charge"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3 # unsigned 32
-      registers: [0x200C, 0x200B]
-      icon: "mdi:battery-plus"
-      validation:
-        min: 0
-        max: 0xFFFFFFF9
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x200A, 0x2009]
 
-    - name: "Total Battery Charge"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3 # unsigned 32
-      registers: [0x200E, 0x200D]
-      icon: "mdi:battery-plus"
-      validation:
-        min: 0
-        max: 0xFFFFFFF9
+      - name: "Today Battery Charge"
+        alt: "Daily Battery Charge"
+        friendly_name: "Today's Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3 # unsigned 32
+        registers: [0x200C, 0x200B]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0
+          max: 0xFFFFFFF9
 
-    - name: "Today Battery Discharge"
-      alt: "Daily Battery Discharge"
-      friendly_name: "Today's Battery Discharge"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3 # unsigned 32
-      registers: [0x2010, 0x200F]
-      icon: "mdi:battery-minus"
-      validation:
-        min: 0
-        max: 0xFFFFFFF9
-        
-    - name: "Total Battery Discharge"
-      class: "energy"
-      state_class: "total_increasing"
-      uom: "Wh"
-      scale: 10
-      rule: 3 # unsigned 32
-      registers: [0x2012, 0x2011]
-      icon: "mdi:battery-minus"
-      validation:
-        min: 0
-        max: 0xFFFFFFF9
-      
-      
+      - name: "Total Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3 # unsigned 32
+        registers: [0x200E, 0x200D]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0
+          max: 0xFFFFFFF9
+
+      - name: "Today Battery Discharge"
+        alt: "Daily Battery Discharge"
+        friendly_name: "Today's Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3 # unsigned 32
+        registers: [0x2010, 0x200F]
+        icon: "mdi:battery-minus"
+        validation:
+          min: 0
+          max: 0xFFFFFFF9
+
+      - name: "Total Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3 # unsigned 32
+        registers: [0x2012, 0x2011]
+        icon: "mdi:battery-minus"
+        validation:
+          min: 0
+          max: 0xFFFFFFF9
+
   - group: faults
     items:
-    - name: "Battery Fault"
-      class: "enum"
-      rule: 1 # unsigned 16
-      registers: [0x2013]
-      icon: "mdi:message-alert-outline"
-      lookup:
-        - key: 0x0000
-          value: "No Fault"
-        - key: 0x0001
-          value: "Battery Absent"
-        - key: 0x0002
-          value: "Battery over voltage"
-        - key: 0x0004
-          value: "Battery under voltage"
-        - key: 0x0008
-          value: "Battery discharge over current"
-        - key: 0x0010
-          value: "Battery over temperature"
-        - key: 0x0020
-          value: "Battery under temperature"
-        - key: 0x0040
-          value: "Neutral live wire reversed"
-        - key: 0x0080
-          value: "Back up output voltage abnormal"
-        - key: 0x0100
-          value: "Communication eror (inverter-BMS)"
-        - key: 0x0200
-          value: "Internal communication loss(E-M)"
-        - key: 0x0400
-          value: "Internal communication loss(M-D)"
-        - key: 0x0800
-          value: "DCDC abnormal"
-        - key: 0x1000
-          value: "Backup over dc-bias voltage"
-        - key: 0x2000
-          value: "Backup short circuit"
-        - key: 0x4000
-          value: "Backup over load"
-        - key: 0x8000
-          value: "Reserved"
-          
-    - name: "Inverter Fault"
-      class: "enum"
-      rule: 1 # unsigned 16
-      registers: [0x101E]
-      icon: "mdi:message-alert-outline"
-      lookup:
-        - key: 0x0000
-          value: "No Fault"
-        - key: 0x0001
-          value: "Inverter over dc-bias current"
-        - key: 0x0002
-          value: "Inverter relay abnormal"
-        - key: 0x0004
-          value: "Remote off"
-        - key: 0x0008
-          value: "Inverter over temperature"
-        - key: 0x0010
-          value: "GFCI abnormal"
-        - key: 0x0020
-          value: "PV string reverse"
-        - key: 0x0040
-          value: "System type error"
-        - key: 0x0080
-          value: "Fan abnormal"
-        - key: 0x0100
-          value: "Unbalance Dc-link voltage"
-        - key: 0x0200
-          value: "Dc-link over voltage"
-        - key: 0x0400
-          value: "Internal communication error"
-        - key: 0x0800
-          value: "Software incompatibility"
-        - key: 0x1000
-          value: "Internal storage error"
-        - key: 0x2000
-          value: "Data inconsistency"
-        - key: 0x4000
-          value: "Inverter abnormal"
-        - key: 0x8000
-          value: "Boost abnormal"
-          
-    - name: "Inverter Fault (2)"
-      class: "enum"
-      rule: 1 # unsigned 16
-      registers: [0x101F]
-      icon: "mdi:message-alert-outline"
-      lookup:
-        - key: 0x0000
-          value: "No Fault"
-        - key: 0x0001
-          value: "Grid over voltage"
-        - key: 0x0002
-          value: "Grid under voltage"
-        - key: 0x0004
-          value: "Grid absent"
-        - key: 0x0008
-          value: "Grid over frequency"
-        - key: 0x0010
-          value: "Grid under frequency"
-        - key: 0x0020
-          value: "PV over voltage"
-        - key: 0x0040
-          value: "PV insulation abnormal"
-        - key: 0x0080
-          value: "Leakage current abnormal"
-        - key: 0x0100
-          value: "Inverter in power limit state"
-        - key: 0x0200
-          value: "Internal power supply abnormal"
-        - key: 0x0400
-          value: "PV string abnormal"
-        - key: 0x0800
-          value: "PV under voltage"
-        - key: 0x1000
-          value: "PV Irradiation weak"
-        - key: 0x2000
-          value: "Grid abnormal"
-        - key: 0x4000
-          value: "Arc fault detection"
-        - key: 0x8000
-          value: "Grid over mean voltage"
+      - name: "Battery Fault"
+        class: "enum"
+        rule: 1 # unsigned 16
+        registers: [0x2013]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "No Fault"
+          - key: 0x0001
+            value: "Battery Absent"
+          - key: 0x0002
+            value: "Battery over voltage"
+          - key: 0x0004
+            value: "Battery under voltage"
+          - key: 0x0008
+            value: "Battery discharge over current"
+          - key: 0x0010
+            value: "Battery over temperature"
+          - key: 0x0020
+            value: "Battery under temperature"
+          - key: 0x0040
+            value: "Neutral live wire reversed"
+          - key: 0x0080
+            value: "Back up output voltage abnormal"
+          - key: 0x0100
+            value: "Communication eror (inverter-BMS)"
+          - key: 0x0200
+            value: "Internal communication loss(E-M)"
+          - key: 0x0400
+            value: "Internal communication loss(M-D)"
+          - key: 0x0800
+            value: "DCDC abnormal"
+          - key: 0x1000
+            value: "Backup over dc-bias voltage"
+          - key: 0x2000
+            value: "Backup short circuit"
+          - key: 0x4000
+            value: "Backup over load"
+          - key: 0x8000
+            value: "Reserved"
 
-    - name: "Inverter Fault (3)"
-      class: "enum"
-      rule: 1 # unsigned 16
-      registers: [0x1020]
-      icon: "mdi:message-alert-outline"
-      lookup:
-        - key: 0x0000
-          value: "No Fault"
-        - key: 0x0001
-          value: "Reserved"
-        - key: 0x0002
-          value: "Logger/E-display EEPROM fail"
-        - key: 0x0004
-          value: "Arc fault detection"
-        - key: 0x0008
-          value: "Single tracker detect warning(PID device abnormal)"
-        - key: 0x0010
-          value: "AFCI lost"
-        - key: 0x0020
-          value: "Data logger loste"
-        - key: 0x0040
-          value: "Meter lost"
-        - key: 0x0080
-          value: "Inverter lost"
-        - key: 0x0100
-          value: "Grid N abnormal"
-        - key: 0x0200
-          value: "Surge Protection Devices (SPD) defective"
-        - key: 0x0400
-          value: "Parallel ID warning"
-        - key: 0x0800
-          value: "Parallel SYN signal warning"
-        - key: 0x1000
-          value: "Parallel BAT abnormal"
-        - key: 0x2000
-          value: "Parallel GRID abnormal"
-        - key: 0x4000
-          value: "GEN voltage abnormal"
-        - key: 0x8000
-          value: "Reserved"
+      - name: "Inverter Fault"
+        class: "enum"
+        rule: 1 # unsigned 16
+        registers: [0x101E]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "No Fault"
+          - key: 0x0001
+            value: "Inverter over dc-bias current"
+          - key: 0x0002
+            value: "Inverter relay abnormal"
+          - key: 0x0004
+            value: "Remote off"
+          - key: 0x0008
+            value: "Inverter over temperature"
+          - key: 0x0010
+            value: "GFCI abnormal"
+          - key: 0x0020
+            value: "PV string reverse"
+          - key: 0x0040
+            value: "System type error"
+          - key: 0x0080
+            value: "Fan abnormal"
+          - key: 0x0100
+            value: "Unbalance Dc-link voltage"
+          - key: 0x0200
+            value: "Dc-link over voltage"
+          - key: 0x0400
+            value: "Internal communication error"
+          - key: 0x0800
+            value: "Software incompatibility"
+          - key: 0x1000
+            value: "Internal storage error"
+          - key: 0x2000
+            value: "Data inconsistency"
+          - key: 0x4000
+            value: "Inverter abnormal"
+          - key: 0x8000
+            value: "Boost abnormal"
+
+      - name: "Inverter Fault (2)"
+        class: "enum"
+        rule: 1 # unsigned 16
+        registers: [0x101F]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "No Fault"
+          - key: 0x0001
+            value: "Grid over voltage"
+          - key: 0x0002
+            value: "Grid under voltage"
+          - key: 0x0004
+            value: "Grid absent"
+          - key: 0x0008
+            value: "Grid over frequency"
+          - key: 0x0010
+            value: "Grid under frequency"
+          - key: 0x0020
+            value: "PV over voltage"
+          - key: 0x0040
+            value: "PV insulation abnormal"
+          - key: 0x0080
+            value: "Leakage current abnormal"
+          - key: 0x0100
+            value: "Inverter in power limit state"
+          - key: 0x0200
+            value: "Internal power supply abnormal"
+          - key: 0x0400
+            value: "PV string abnormal"
+          - key: 0x0800
+            value: "PV under voltage"
+          - key: 0x1000
+            value: "PV Irradiation weak"
+          - key: 0x2000
+            value: "Grid abnormal"
+          - key: 0x4000
+            value: "Arc fault detection"
+          - key: 0x8000
+            value: "Grid over mean voltage"
+
+      - name: "Inverter Fault (3)"
+        class: "enum"
+        rule: 1 # unsigned 16
+        registers: [0x1020]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "No Fault"
+          - key: 0x0001
+            value: "Reserved"
+          - key: 0x0002
+            value: "Logger/E-display EEPROM fail"
+          - key: 0x0004
+            value: "Arc fault detection"
+          - key: 0x0008
+            value: "Single tracker detect warning(PID device abnormal)"
+          - key: 0x0010
+            value: "AFCI lost"
+          - key: 0x0020
+            value: "Data logger loste"
+          - key: 0x0040
+            value: "Meter lost"
+          - key: 0x0080
+            value: "Inverter lost"
+          - key: 0x0100
+            value: "Grid N abnormal"
+          - key: 0x0200
+            value: "Surge Protection Devices (SPD) defective"
+          - key: 0x0400
+            value: "Parallel ID warning"
+          - key: 0x0800
+            value: "Parallel SYN signal warning"
+          - key: 0x1000
+            value: "Parallel BAT abnormal"
+          - key: 0x2000
+            value: "Parallel GRID abnormal"
+          - key: 0x4000
+            value: "GEN voltage abnormal"
+          - key: 0x8000
+            value: "Reserved"
