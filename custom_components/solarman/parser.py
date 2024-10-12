@@ -58,7 +58,7 @@ class ParameterParser:
         self._lambda = lambda x, y: y - x > self._min_span
         self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
 
-        self._items = [inherit(item, group) for group in self._profile["parameters"] for item in group["items"]]
+        self._items = [inherit_descriptions(item, group) for group in self._profile["parameters"] for item in group["items"]]
 
     def flush_states(self):
         self._result = {}
@@ -172,7 +172,7 @@ class ParameterParser:
                 continue
 
             # Check that the first register in the definition is within the register set in the raw data.
-            if select(data, registers[0]) is not None:
+            if get_start_addr(data, registers[0]) is not None:
                 self.try_parse(data, i)
 
     def try_parse(self, data, definition):
@@ -206,10 +206,10 @@ class ParameterParser:
         shift = 0
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return None
 
-            value += (data[start][1][r - start] & 0xFFFF) << shift
+            value += (temp & 0xFFFF) << shift
             shift += 16
 
         if not self.in_range(value, definition):
@@ -243,12 +243,12 @@ class ParameterParser:
         shift = 0
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return None
 
             maxint <<= 16
             maxint |= 0xFFFF
-            value += (data[start][1][r - start] & 0xFFFF) << shift
+            value += (temp & 0xFFFF) << shift
             shift += 16
 
         if not self.in_range(value, definition):
@@ -349,10 +349,9 @@ class ParameterParser:
         value = ""
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            temp = data[start][1][r - start]
             value = value + chr(temp >> 8) + chr(temp & 0xFF)
 
         self.set_state(key, value)
@@ -362,10 +361,10 @@ class ParameterParser:
         value = []
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            value.append(hex(data[start][1][r - start]))
+            value.append(hex(temp))
 
         self.set_state(key, value)
 
@@ -374,10 +373,9 @@ class ParameterParser:
         value = ""
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            temp = data[start][1][r - start]
             value = value + str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
 
         if "remove" in definition:
@@ -392,10 +390,9 @@ class ParameterParser:
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            temp = data[start][1][r - start]
             if registers_count == 3:
                 if i == 0:
                     value = value + str(temp >> 8) + "/" + str(temp & 0xFF) + "/"
@@ -432,10 +429,9 @@ class ParameterParser:
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            temp = data[start][1][r - start]
             if registers_count == 1:
                 value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
             else:
@@ -450,9 +446,9 @@ class ParameterParser:
         value = []
 
         for r in definition["registers"]:
-            if (start := select(data, r)) is None:
+            if (temp := get_addr_value(data, r)) is None:
                 return
 
-            value.append(data[start][1][r - start])
+            value.append(temp)
 
         self.set_state(key, value)
