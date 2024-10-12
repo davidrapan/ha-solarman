@@ -1,7 +1,7 @@
 #
 # CHINT Hybrid inverters | Three Phase | Hybrid Inverter | LV Battery Supported
 #
-# Tested directly on CPS SCE4.6 6KTL-120/EU (https://en.chintpower.com/upload/img/2024-01/65b0c042cfa4c.pdf)
+# Tested directly on CPS SCE4.6~6KTL-120/EU (https://en.chintpower.com/upload/img/2024-01/65b0c042cfa4c.pdf)
 #
 # The source MODBUS document has been provided directly from CHINT support, there doesn't seems to be a public URL for it.
 #
@@ -17,7 +17,7 @@
 
 info:
   manufacturer: CHINT
-  model: CPS-SCE4.6
+  model: CPS-SCETL
 
 default:
   update_interval: 60
@@ -266,7 +266,7 @@ parameters:
         rule: 4 # signed 32
         registers: [0x100E, 0x100D]
 
-      - name: "Output L1 Frequencyr" # aka "Phase A Frequency"
+      - name: "Output L1 Frequency" # aka "Phase A Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -274,7 +274,7 @@ parameters:
         rule: 1 # unsigned 16
         registers: [0x1005]
 
-      - name: "Output L2 Frequencyr" # aka "Phase B Frequency"
+      - name: "Output L2 Frequency" # aka "Phase B Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -282,7 +282,7 @@ parameters:
         rule: 1 # unsigned 16
         registers: [0x100A]
 
-      - name: "Output L3 Frequencyr" # aka "Phase C Frequency"
+      - name: "Output L3 Frequency" # aka "Phase C Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -607,6 +607,8 @@ parameters:
           - registers: [0x1022, 0x1021]
           - registers: [0x104C]
             scale: 0.001
+        validation:
+          min: 0.001
 
       - name: "Generator Operating Time" # aka "Total Generation Time"
         class: "duration"
@@ -667,6 +669,8 @@ parameters:
         rule: 3
         registers: [0x1307, 0x1306]
         icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.01
 
       - name: "Total Energy Export" # aka "Accumulated energy of negative"
         alt: "Total Energy Sold"
@@ -679,6 +683,18 @@ parameters:
         rule: 3
         registers: [0x1309, 0x1308]
         icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.01
+
+      - name: "Total Load Consumption" # aka "Accumulated energy of load"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 3 # unsigned 32
+        registers: [0x1311, 0x1310]
+        validation:
+          min: 0.01
 
       - name: "Power"
         class: "power"
@@ -688,6 +704,22 @@ parameters:
         rule: 4
         registers: [0x1038, 0x1037]
         icon: "mdi:solar-power"
+
+      - name: "Power losses"
+        description: "Includes consumption of the inverter device itself as well AC/DC conversion losses"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3
+        registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
+        uint: enforce
+        sensors:
+          - registers: [0x1049, 0x1048]
+          - registers: [0x200A, 0x2009]
+          - operator: subtract
+            signed:
+            registers: [0x1038, 0x1037]
 
       - name: "Reactive Power"
         class: "reactive_power"
@@ -714,8 +746,8 @@ parameters:
         ensure_increasing:
         uom: "kWh"
         rule: 3
-        digits: 1
-        scale: 0.1
+        digits: 2
+        scale: 0.01
         registers:
           [
             0x1307,
@@ -735,39 +767,25 @@ parameters:
         uint: enforce
         sensors:
           - registers: [0x1307, 0x1306]
-            scale: 0.01
           - registers: [0x1022, 0x1021]
+            scale: 1
           - registers: [0x104C]
             scale: 0.001
           - registers: [0x2010, 0x200F]
-            scale: 0.01
+            validation:
+              min: 0
+              max: 0xFFFFFFF9
           - operator: subtract
             registers: [0x1309, 0x1308]
-            scale: 0.01
           - operator: subtract
             registers: [0x1311, 0x1310]
-            scale: 0.01
           - operator: subtract
             registers: [0x200E, 0x200D]
-            scale: 0.01
+            validation:
+              min: 0
+              max: 0xFFFFFFF9
         validation:
           min: 1
-
-      - name: "Power losses"
-        description: "Includes consumption of the inverter device itself as well AC/DC conversion losses"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 0.1
-        rule: 3
-        registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
-        uint: enforce
-        sensors:
-          - registers: [0x1049, 0x1048]
-          - registers: [0x200A, 0x2009]
-          - operator: subtract
-            signed:
-            registers: [0x1038, 0x1037]
 
       - name: "Today Losses"
         alt: "Daily Losses"
@@ -932,14 +950,6 @@ parameters:
         registers: [0x130F, 0x130E]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Total Load Consumption" # aka "Accumulated energy of load"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "Wh"
-        scale: 10
-        rule: 3 # unsigned 32
-        registers: [0x1311, 0x1310]
-
       - name: "Load L1 Voltage" # aka "L1-N phase voltage of load"
         class: "voltage"
         state_class: "measurement"
@@ -1082,12 +1092,12 @@ parameters:
       - name: "EPS Total energy" # aka "Accumulated energy to EPS"
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
-        scale: 10
+        uom: "kWh"
+        scale: 0.01
         rule: 3
         registers: [0x1363, 0x1362]
         validation:
-          min: 0
+          min: 0.01
           max: 0xFFFFFFF9
 
   - group: Battery
@@ -1152,13 +1162,13 @@ parameters:
       - name: "Total Battery Charge"
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
-        scale: 10
+        uom: "kWh"
+        scale: 0.01
         rule: 3 # unsigned 32
         registers: [0x200E, 0x200D]
         icon: "mdi:battery-plus"
         validation:
-          min: 0
+          min: 0.01
           max: 0xFFFFFFF9
 
       - name: "Today Battery Discharge"
@@ -1178,13 +1188,13 @@ parameters:
       - name: "Total Battery Discharge"
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
-        scale: 10
+        uom: "kWh"
+        scale: 0.01
         rule: 3 # unsigned 32
         registers: [0x2012, 0x2011]
         icon: "mdi:battery-minus"
         validation:
-          min: 0
+          min: 0.01
           max: 0xFFFFFFF9
 
   - group: faults
