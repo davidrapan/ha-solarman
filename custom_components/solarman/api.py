@@ -168,19 +168,6 @@ class Inverter(PySolarmanV5AsyncWrapper):
             await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
         return self._is_busy == 1
 
-    def get_result(self, middleware = None):
-        result = middleware.get_result() if middleware else {}
-        result_count = len(result) if result else 0
-
-        if result_count > 0:
-            _LOGGER.debug(f"[{self.serial}] Returning {result_count} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
-            now = datetime.now()
-            self.state_interval = now - self.state_updated
-            self.state_updated = now
-            self.state = 1
-
-        return result
-
     async def get_failed(self):
         _LOGGER.debug(f"[{self.serial}] Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
 
@@ -191,7 +178,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return self.state == -1
 
     async def get(self, runtime = 0):
-        requests = self.profile.get_requests(runtime)
+        requests = self.profile.schedule_requests(runtime)
         requests_count = len(requests) if requests else 0
         responses = {}
 
@@ -232,7 +219,15 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
                             await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                self.profile.process(responses)
+                result = self.profile.process(responses)
+
+                if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
+                    _LOGGER.debug(f"[{self.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
+                    self.state_interval = now - self.state_updated
+                    self.state_updated = now
+                    self.state = 1
+
+                return result
 
         except TimeoutError:
             if await self.get_failed():
@@ -244,8 +239,6 @@ class Inverter(PySolarmanV5AsyncWrapper):
             _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
         finally:
             self._is_busy = 0
-
-        return self.get_result(self.profile)
 
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")

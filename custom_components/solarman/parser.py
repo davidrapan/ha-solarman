@@ -93,7 +93,7 @@ class ParameterParser:
 
         return result
 
-    def get_requests(self, runtime = 0):
+    def schedule_requests(self, runtime = 0):
         self.flush_states()
 
         if "requests" in self._profile and "requests_fine_control" in self._profile:
@@ -117,9 +117,6 @@ class ParameterParser:
         groups = group_when(registers, self._lambda if self._is_single_code or all_same([self._registers_table[r] for r in registers]) else self._lambda_code_aware)
 
         return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code if self._is_single_code else self._registers_table[r[0]] } for r in groups]
-
-    def get_result(self):
-        return self._result
 
     def in_range(self, value, definition):
         if "range" in definition:
@@ -174,6 +171,8 @@ class ParameterParser:
             # Check that the first register in the definition is within the register set in the raw data.
             if get_start_addr(data, registers[0]) is not None:
                 self.try_parse(data, i)
+
+        return self._result
 
     def try_parse(self, data, definition):
         try:
