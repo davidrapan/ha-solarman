@@ -773,8 +773,7 @@ parameters:
             scale: 0.001
           - registers: [0x2010, 0x200F]
             validation:
-              min: 0
-              max: 0xFFFFFFF9
+              max: 4294967
           - operator: subtract
             registers: [0x1309, 0x1308]
           - operator: subtract
@@ -782,8 +781,7 @@ parameters:
           - operator: subtract
             registers: [0x200E, 0x200D]
             validation:
-              min: 0
-              max: 0xFFFFFFF9
+              max: 4294967
         validation:
           min: 1
 
@@ -1096,9 +1094,10 @@ parameters:
         scale: 0.01
         rule: 3
         registers: [0x1363, 0x1362]
+        range:
+          max: 0xFFFFFFF9
         validation:
           min: 0.01
-          max: 0xFFFFFFF9
 
   - group: Battery
     items:
@@ -1155,8 +1154,7 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x200C, 0x200B]
         icon: "mdi:battery-plus"
-        validation:
-          min: 0
+        range:
           max: 0xFFFFFFF9
 
       - name: "Total Battery Charge"
@@ -1167,9 +1165,10 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x200E, 0x200D]
         icon: "mdi:battery-plus"
+        range:
+          max: 0xFFFFFFF9
         validation:
           min: 0.01
-          max: 0xFFFFFFF9
 
       - name: "Today Battery Discharge"
         alt: "Daily Battery Discharge"
@@ -1181,8 +1180,7 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x2010, 0x200F]
         icon: "mdi:battery-minus"
-        validation:
-          min: 0
+        range:
           max: 0xFFFFFFF9
 
       - name: "Total Battery Discharge"
@@ -1193,9 +1191,10 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x2012, 0x2011]
         icon: "mdi:battery-minus"
+        range:
+          max: 0xFFFFFFF9
         validation:
           min: 0.01
-          max: 0xFFFFFFF9
 
   - group: faults
     items:
