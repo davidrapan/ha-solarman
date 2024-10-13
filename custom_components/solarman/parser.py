@@ -152,17 +152,18 @@ class ParameterParser:
         return True
 
     def process(self, data):
-        for i in self._items:
-            if not (self.is_valid(i) and self.is_enabled(i)):
-                continue
+        if data:
+            for i in self._items:
+                if not (self.is_valid(i) and self.is_enabled(i)):
+                    continue
 
-            # Try parsing if the register is present.
-            if (registers := i.get("registers")) is None:
-                continue
+                # Try parsing if the register is present.
+                if (registers := i.get("registers")) is None:
+                    continue
 
-            # Check that the first register in the definition is within the register set in the raw data.
-            if get_start_addr(data, registers[0]) is not None:
-                self.try_parse(data, i)
+                # Check that the first register in the definition is within the register set in the raw data.
+                if get_start_addr(data, registers[0]) is not None:
+                    self.try_parse(data, i)
 
         return self._result
 
