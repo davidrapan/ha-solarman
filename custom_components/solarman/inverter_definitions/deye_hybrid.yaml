@@ -1274,6 +1274,23 @@ parameters:
           - key: 0x0002
             value: "Microinverter"
 
+      - name: "SmartLoad Off Voltage"
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00EC]
+        icon: "mdi:battery"
+        configurable:
+          min: 38
+          max: 63
+          step: 0.1
+        range:
+          min: 3800
+          max: 6300
+
       - name: "SmartLoad Off"
         platform: number
         state_class: "measurement"
@@ -1284,6 +1301,23 @@ parameters:
         range:
           min: 0
           max: 100
+
+      - name: "SmartLoad On Voltage"
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x00EE]
+        icon: "mdi:battery"
+        configurable:
+          min: 38
+          max: 63
+          step: 0.1
+        range:
+          min: 3800
+          max: 6300
 
       - name: "SmartLoad On"
         platform: number
