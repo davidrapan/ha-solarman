@@ -983,11 +983,11 @@ parameters:
         rule: 1
         registers: [0x00A0]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
@@ -1000,11 +1000,11 @@ parameters:
         rule: 1
         registers: [0x00A1]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
@@ -1017,11 +1017,11 @@ parameters:
         rule: 1
         registers: [0x00A2]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
@@ -1034,11 +1034,11 @@ parameters:
         rule: 1
         registers: [0x00A3]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
@@ -1051,11 +1051,11 @@ parameters:
         rule: 1
         registers: [0x00A4]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
@@ -1068,11 +1068,11 @@ parameters:
         rule: 1
         registers: [0x00A5]
         configurable:
-          min: 38
+          min: 00
           max: 61
           step: 0.1
         range:
-          min: 3800
+          min: 0000
           max: 6100
         icon: mdi:sun-clock
 
