@@ -1,33 +1,36 @@
----
-name: Bug Report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
-
----
-
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**Attach the debug log**
-As a file or using the 'code' formatting.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Metadata:**
-Version: [e.g. v24.08.14]
-
-**Additional context**
-Add any other context about the problem here.
+name: 🐞 Bug report
+description: Create a report to help us improve
+labels: [bug]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: Description
+      description: Please share a clear and concise description of the problem.
+      placeholder: Description
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction Steps
+      description: |
+        Please include minimal steps to reproduce the problem if possible. Attach or link a project if you have one, even if it is very simple. It helps to quickly evaluate and diagnose the issue and ensures any fix addresses your scenario. If you cannot attach a project, include the smallest possible code snippet, with steps to run it. If possible include text as text rather than screenshots (so it shows up in searches).
+      placeholder: Minimal Reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: Attach the debug log.
+      placeholder: As a file or using the 'code' formatting
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: v24.10.14
+    validations:
+      required: true
