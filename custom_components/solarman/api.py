@@ -181,6 +181,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         requests = self.profile.schedule_requests(runtime)
         requests_count = len(requests) if requests else 0
         responses = {}
+        result = {}
 
         _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
@@ -227,8 +228,6 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     self.state_updated = now
                     self.state = 1
 
-                return result
-
         except TimeoutError:
             if await self.get_failed():
                 raise
@@ -239,6 +238,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
             _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
         finally:
             self._is_busy = 0
+
+        return result
 
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
         _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
