@@ -29,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     options = config.options
     inverter_host = options.get(CONF_INVERTER_HOST)
     inverter_port = options.get(CONF_INVERTER_PORT)
-    mb_slave_id = options.get(CONF_MB_SLAVE_ID)
+    mb_slave_id = options.get(CONF_MB_SLAVE_ID, DEFAULT_MB_SLAVE_ID)
     inverter_mac = None
 
     lookup_file = options.get(CONF_LOOKUP_FILE)
@@ -55,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         elif device := get_or_default(discover, (s := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
             raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
 
-    inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id if mb_slave_id else DEFAULT_MB_SLAVE_ID)
+    inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id)
 
     await inverter.load(name, inverter_mac, lookup_path, lookup_file)
 

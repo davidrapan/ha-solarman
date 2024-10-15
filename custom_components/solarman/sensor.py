@@ -42,8 +42,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     options = config.options
 
-    battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE)
-    battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
+    battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE, 0)
+    battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING, 0)
 
     descriptions = coordinator.inverter.get_entity_descriptions()
 
