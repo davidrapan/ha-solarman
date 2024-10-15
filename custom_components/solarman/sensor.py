@@ -23,33 +23,37 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-def _create_entity(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating):
+def _create_entity(coordinator, description, options):
     if "artificial" in description:
         match description["artificial"]:
             case "interval":
                 return SolarmanIntervalSensor(coordinator, description)
-    elif not "registers" in description and battery_nominal_voltage > 0 and battery_life_cycle_rating > 0 and description["name"] in ("Battery SOH", "Battery State", "Today Battery Life Cycles", "Total Battery Life Cycles"):
-        return SolarmanBatterySensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+    elif (name := description["name"]) and "Battery" in name:
+        battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE, 0)
+        battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING, 0)
+        if "registers" in description:
+            if name == "Battery":
+                return SolarmanBatterySensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+        else:
+            if name == "Battery State":
+                return SolarmanBatteryCustomSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+            elif battery_nominal_voltage > 0 and battery_life_cycle_rating > 0 and name in ("Battery SOH", "Today Battery Life Cycles", "Total Battery Life Cycles"):
+                return SolarmanBatteryCustomSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
 
     if "restore" in description or "ensure_increasing" in description:
-        return SolarmanRestoreSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+        return SolarmanRestoreSensor(coordinator, description)
 
-    return SolarmanSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+    return SolarmanSensor(coordinator, description)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
     coordinator = hass.data[DOMAIN][config.entry_id]
 
-    options = config.options
-
-    battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE, 0)
-    battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING, 0)
-
     descriptions = coordinator.inverter.get_entity_descriptions()
 
     _LOGGER.debug(f"async_setup: async_add_entities")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, battery_nominal_voltage, battery_life_cycle_rating), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config.options), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
 
     return True
 
@@ -80,11 +84,9 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         self.set_state(self.coordinator.inverter.state_interval.total_seconds())
 
 class SolarmanSensor(SolarmanSensorEntity):
-    def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
+    def __init__(self, coordinator, sensor):
         super().__init__(coordinator, _PLATFORM, sensor)
         self._sensor_ensure_increasing = "ensure_increasing" in sensor
-        if "name" in sensor and sensor["name"] == "Battery" and battery_nominal_voltage > 0 and battery_life_cycle_rating > 0:
-            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:
@@ -103,7 +105,13 @@ class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
 
 class SolarmanBatterySensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
-        SolarmanSensor.__init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating)
+        super().__init__(coordinator, sensor)
+        if battery_nominal_voltage > 0 and battery_life_cycle_rating > 0:
+            self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
+
+class SolarmanBatteryCustomSensor(SolarmanSensor):
+    def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
+        super().__init__(coordinator, sensor)
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
         self._digits = sensor["digits"] if "digits" in sensor else DEFAULT_DIGITS
