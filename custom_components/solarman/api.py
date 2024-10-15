@@ -108,7 +108,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
 class Inverter(PySolarmanV5AsyncWrapper):
     _is_busy = 0
 
-    auto_reconnect = AUTO_RECONNECT
+    name = ""
     state = -1
     state_interval = 0
     state_updated = datetime.now()
@@ -131,15 +131,15 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return self.state > -1
 
     def get_connection_state(self):
-        if self.state > 0:
-            return "Connected"
-        return "Disconnected"
+        return "Connected" if self.state > 0 else "Disconnected"
 
     async def shutdown(self) -> None:
         self.state = -1
         await self.disconnect()
 
     async def read_write(self, code, start, arg):
+        if not self.reader_task:
+            self.state_updated = datetime.now()
         await self.connect()
 
         match code:
@@ -163,14 +163,16 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
     async def wait_for_done(self, attempts_left = ACTION_ATTEMPTS):
-        while self._is_busy == 1 and attempts_left > 0:
-            attempts_left -= 1
-            await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
-        return self._is_busy == 1
+        try:
+            while self._is_busy == 1 and attempts_left > 0:
+                attempts_left -= 1
+                await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
+            return self._is_busy == 1
+        finally:
+            self._is_busy = 1
 
     async def get_failed(self):
-        _LOGGER.debug(f"[{self.serial}] Request failed. [Previous State: {self.get_connection_state()} ({self.state})]")
-
+        _LOGGER.debug(f"[{self.serial}] Fetching failed. [Previous State: {self.get_connection_state()} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
 
         await self.disconnect()
@@ -185,13 +187,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
 
-        if await self.wait_for_done(ACTION_ATTEMPTS):
-            _LOGGER.debug(f"[{self.serial}] get: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Currently writing data to the device!")
-
-        self._is_busy = 1
-
         try:
+            if await self.wait_for_done(ACTION_ATTEMPTS):
+                _LOGGER.debug(f"[{self.serial}] Get: Timeout.")
+                raise TimeoutError(f"[{self.serial}] Currently writing data to the device!")
+
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                 for request in requests:
                     code = get_request_code(request)
@@ -212,7 +212,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                            if not self.auto_reconnect:
+                            if not self._needs_reconnect:
                                 await self.disconnect()
 
                             if not attempts_left > 0:
@@ -242,27 +242,26 @@ class Inverter(PySolarmanV5AsyncWrapper):
         return result
 
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
-        _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg}, wait_for_attempts: {wait_for_attempts}")
-
-        if await self.wait_for_done(wait_for_attempts):
-            _LOGGER.debug(f"[{self.serial}] call code {code}: Timeout.")
-            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
-
-        self._is_busy = 1
+        start_str = f"{start} | 0x{start:04X}, {arg}"
+        _LOGGER.debug(f"[{self.serial}] Call w/ {code}: {start_str} ...")
 
         try:
+            if await self.wait_for_done(wait_for_attempts):
+                _LOGGER.debug(f"[{self.serial}] Call w/ {code}: Timeout.")
+                raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
+
             attempts_left = ACTION_ATTEMPTS
             while attempts_left > 0:
                 attempts_left -= 1
 
                 try:
                     response = await self.read_write(code, start, arg)
-                    _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, response: {response}")
+                    _LOGGER.debug(f"[{self.serial}] Call w/ {code}: {start_str} succeeded, response: {response}")
                     return response
                 except Exception as e:
-                    _LOGGER.debug(f"[{self.serial}] call code {code}: {start} | 0x{start:04X}, arg: {arg} failed, attempts left: {attempts_left}. [{format_exception(e)}]")
+                    _LOGGER.debug(f"[{self.serial}] Call w/ {code}: {start_str} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                    if not self.auto_reconnect:
+                    if not self._needs_reconnect:
                         await self.disconnect()
 
                     if not attempts_left > 0:
