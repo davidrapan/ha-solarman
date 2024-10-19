@@ -199,6 +199,14 @@ parameters:
         rule: 1
         registers: [0x0589]
         icon: "mdi:solar-power"
+      - name: "PV Power"
+        class: "power"
+        state class: "measurement"
+        uom: "W"
+        scale: 100
+        rule: 1
+        registers: [0x05C4]
+        icon: "mdi:solar-power"
 
   - group: Battery
     items:
