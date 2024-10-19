@@ -802,6 +802,24 @@ parameters:
 
   - group: Time of Use
     items:
+      - name: Storage Control Mode
+        platform: select
+        rule: 1
+        registers: [43110]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Self Use"
+          - key: 0x0002
+            value: "Optimized Revenue"
+          - key: 0x0003
+            value: "Time of Use"
+          - key: 0x0004
+            value: "Off-Grid"
+          - key: 0x0008
+            value: "Battery Wake-Up"
+
       - name: "Timed Charge Current"
         plaform: number
         class: "current"
