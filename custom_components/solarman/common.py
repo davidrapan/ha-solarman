@@ -86,9 +86,6 @@ def is_ethernet_frame(frame):
 def format_exception(e):
     return f"{type(e).__name__}{f': {e}' if f'{e}' else ''}"
 
-def Raise(exception) -> None:
-    raise exception
-
 def inherit_descriptions(item, group):
     if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
         item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
@@ -105,6 +102,9 @@ def get_addr_value(data, register):
         return None
 
     return data[start][1][register - start]
+
+def ilen(object):
+    return len(object) if not isinstance(object, int) else 1
 
 def get_number(value, digits: int = -1):
     return int(value) if isinstance(value, int) or (isinstance(value, float) and value.is_integer()) else ((n if (n := round(value, digits)) and not n.is_integer() else int(n)) if digits > -1 else float(value))

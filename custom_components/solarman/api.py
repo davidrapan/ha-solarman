@@ -162,6 +162,11 @@ class Inverter(PySolarmanV5AsyncWrapper):
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
+    async def safe_read_write(self, code, start, arg):
+        if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else (len(arg) if code > CODE.WRITE_HOLDING_REGISTER else 1)) and length != expected:
+            raise Exception(f"[{self.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
+        return response
+
     async def wait_for_done(self, attempts_left = ACTION_ATTEMPTS):
         try:
             while self._is_busy == 1 and attempts_left > 0:
@@ -207,7 +212,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                         attempts_left -= 1
 
                         try:
-                            responses[start] = (quantity, await self.read_write(code, start, quantity))
+                            responses[start] = (quantity, await self.safe_read_write(code, start, quantity))
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} succeeded.")
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
@@ -255,7 +260,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 attempts_left -= 1
 
                 try:
-                    response = await self.read_write(code, start, arg)
+                    response = await self.safe_read_write(code, start, arg)
                     _LOGGER.debug(f"[{self.serial}] Call w/ {code}: {start_str} succeeded, response: {response}")
                     return response
                 except Exception as e:
