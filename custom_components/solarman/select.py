@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanEntity
+from .entity import create_entity, SolarmanWriteEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,11 +36,14 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanSelectEntity(SolarmanEntity, SelectEntity):
+class SolarmanSelectEntity(SolarmanWriteEntity, SelectEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
+
+        if "code" in sensor and (c := sensor["code"]) and not isinstance(c, int) and "write" in c and (c_w := c["write"]):
+            self.code = c_w
 
         if "lookup" in sensor:
             self.dictionary = sensor["lookup"]
@@ -69,6 +72,6 @@ class SolarmanSelectEntity(SolarmanEntity, SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self.get_key(option),], ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, self.get_key(option), ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(option)
             self.async_write_ha_state()

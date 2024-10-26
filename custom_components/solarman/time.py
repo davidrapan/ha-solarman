@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanEntity
+from .entity import create_entity, SolarmanWriteEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,9 +36,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
+class SolarmanTimeEntity(SolarmanWriteEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
 
@@ -65,6 +65,6 @@ class SolarmanTimeEntity(SolarmanEntity, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, get_t_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, get_t_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(value.strftime(TIME_FORMAT))
             self.async_write_ha_state()

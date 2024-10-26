@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanEntity
+from .entity import create_entity, SolarmanWriteEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,9 +36,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanNumberEntity(SolarmanEntity, NumberEntity):
+class SolarmanNumberEntity(SolarmanWriteEntity, NumberEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
 
@@ -81,7 +81,7 @@ class SolarmanNumberEntity(SolarmanEntity, NumberEntity):
         value_int = int(value if self.scale is None else value / self.scale)
         if self.offset is not None:
             value_int += self.offset
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [value_int,], ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, value_int, ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(get_number(value))
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))

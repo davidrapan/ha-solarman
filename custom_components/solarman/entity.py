@@ -117,3 +117,9 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if self.platform and (name_translation_key := self._name_translation_key) and (name := self.platform.platform_translations.get(name_translation_key)):
             return f"{self.coordinator.inverter.name} {self._substitute_name_placeholders(name)}"
         return super()._friendly_name_internal() if not hasattr(self, "_attr_friendly_name") else f"{self.coordinator.inverter.name} {self._attr_friendly_name}"
+
+class SolarmanWriteEntity(SolarmanEntity):
+    code = CODE.WRITE_MULTIPLE_HOLDING_REGISTERS
+
+    def __init__(self, coordinator, platform, sensor):
+        super().__init__(coordinator, platform, sensor)

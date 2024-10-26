@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanEntity
+from .entity import create_entity, SolarmanWriteEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,9 +36,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
+class SolarmanSwitchEntity(SolarmanWriteEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
         self._attr_device_class = SwitchDeviceClass.SWITCH
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
@@ -69,12 +69,12 @@ class SolarmanSwitchEntity(SolarmanEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_on,], ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, self._value_on, ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(1)
             self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
-        if await self.coordinator.inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, self.register, [self._value_off,], ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, self._value_off, ACTION_ATTEMPTS_MAX) > 0:
             self.set_state(0)
             self.async_write_ha_state()
