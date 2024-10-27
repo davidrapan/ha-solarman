@@ -13,6 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
     _update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
+    _is_single_code = DEFAULT_IS_SINGLE_CODE
     _code = DEFAULT_REGISTERS_CODE
     _min_span = DEFAULT_REGISTERS_MIN_SPAN
     _digits = DEFAULT_DIGITS
@@ -21,6 +22,7 @@ class ParameterParser:
 
     def __init__(self, profile):
         self._profile = profile
+        self._items = [inherit_descriptions(item, group) for group in self._profile["parameters"] for item in group["items"]]
 
         if "default" in self._profile:
             default = self._profile["default"]
@@ -42,26 +44,17 @@ class ParameterParser:
                 for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1):
                     requests_table[r] = get_request_code(pr)
 
-        for p in self._profile["parameters"]:
-            for i in p["items"]:
-                if "registers" in i:
-                    for r in i["registers"]:
-                        self._registers_table[r] = (i["code"] if isinstance(i["code"], int) else i["code"]["read"]) if "code" in i else (p["code"] if "code" in p else (requests_table[r] if r in requests_table else self._code))
+        for i in self._items:
+            if "registers" in i:
+                for r in i["registers"]:
+                    self._registers_table[r] = get_code(i, "read", requests_table[r] if r in requests_table else self._code)
 
-        registers_table_values = self._registers_table.values()
-
-        self._is_single_code = all_same(list(registers_table_values))
-
-        if self._is_single_code:
+        if (registers_table_values := self._registers_table.values()) and (is_single_code := all_same(list(registers_table_values))):
+            self._is_single_code = is_single_code
             self._code = next(iter(registers_table_values))
 
         self._lambda = lambda x, y: y - x > self._min_span
         self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
-
-        self._items = [inherit_descriptions(item, group) for group in self._profile["parameters"] for item in group["items"]]
-
-    def flush_states(self):
-        self._result = {}
 
     def is_valid(self, parameters):
         return "name" in parameters and "rule" in parameters  # and "registers" in parameters
@@ -86,7 +79,7 @@ class ParameterParser:
         return [i for i in self._items if self.is_valid(i) and not "attribute" in i]
 
     def schedule_requests(self, runtime = 0):
-        self.flush_states()
+        self._result = {}
 
         if "requests" in self._profile and "requests_fine_control" in self._profile:
             _LOGGER.debug("Fine control of request sets is enabled!")

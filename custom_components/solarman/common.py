@@ -89,7 +89,18 @@ def format_exception(e):
 def inherit_descriptions(item, group):
     if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
         item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
+    if not REQUEST_CODE in item and REQUEST_CODE in group:
+        item[REQUEST_CODE] = group[REQUEST_CODE]
     return item
+
+def get_code(item, type, default = None):
+    if REQUEST_CODE in item and (code := item[REQUEST_CODE]):
+        if isinstance(code, int):
+            if type == "read":
+                return code
+        elif type in code:
+            return code[type]
+    return default
 
 def get_start_addr(data, register):
     for d in data:
@@ -100,7 +111,6 @@ def get_start_addr(data, register):
 def get_addr_value(data, register):
     if (start := get_start_addr(data, register)) is None:
         return None
-
     return data[start][1][register - start]
 
 def ilen(object):
@@ -131,4 +141,4 @@ def get_dt_as_list_int(dt: datetime, long):
     return [(dt.year - 2000 << 8) + dt.month, (dt.day << 8) + dt.hour, (dt.minute << 8) + dt.second] if not long else [dt.year - 2000, dt.month, dt.day, dt.hour, dt.minute, dt.second]
 
 def get_t_as_list_int(t: time, long):
-    return [t.hour * 100 + t.minute,] if not long else [t.hour, t.minute]
+    return [t.hour * 100 + t.minute] if not long else [t.hour, t.minute]

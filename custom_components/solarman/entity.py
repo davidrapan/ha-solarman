@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from homeassistant.core import callback
+from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
@@ -119,7 +120,10 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         return super()._friendly_name_internal() if not hasattr(self, "_attr_friendly_name") else f"{self.coordinator.inverter.name} {self._attr_friendly_name}"
 
 class SolarmanWriteEntity(SolarmanEntity):
-    code = CODE.WRITE_MULTIPLE_HOLDING_REGISTERS
-
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator, platform, sensor)
+
+        if not "control" in sensor:
+            self._attr_entity_category = EntityCategory.CONFIG
+
+        self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)

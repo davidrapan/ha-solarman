@@ -6,7 +6,6 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.const import EntityCategory
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -39,11 +38,6 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanSelectEntity(SolarmanWriteEntity, SelectEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        if not "control" in sensor:
-            self._attr_entity_category = EntityCategory.CONFIG
-
-        if "code" in sensor and (c := sensor["code"]) and not isinstance(c, int) and "write" in c and (c_w := c["write"]):
-            self.code = c_w
 
         if "lookup" in sensor:
             self.dictionary = sensor["lookup"]

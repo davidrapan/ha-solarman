@@ -6,7 +6,6 @@ from datetime import datetime, time
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.const import EntityCategory
 from homeassistant.components.time import TimeEntity, TimeEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -39,8 +38,6 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanTimeEntity(SolarmanWriteEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        if not "control" in sensor:
-            self._attr_entity_category = EntityCategory.CONFIG
 
         self._multiple_registers = False
 

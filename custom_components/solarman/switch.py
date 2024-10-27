@@ -6,7 +6,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.const import STATE_OFF, STATE_ON, EntityCategory
+from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -40,8 +40,6 @@ class SolarmanSwitchEntity(SolarmanWriteEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
         self._attr_device_class = SwitchDeviceClass.SWITCH
-        if not "control" in sensor:
-            self._attr_entity_category = EntityCategory.CONFIG
 
         self._value_on = 1
         self._value_off = 0

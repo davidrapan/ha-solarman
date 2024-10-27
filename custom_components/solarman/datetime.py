@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.const import EntityCategory
 from homeassistant.components.datetime import DateTimeEntity, DateTimeEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -40,8 +39,6 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 class SolarmanDateTimeEntity(SolarmanWriteEntity, DateTimeEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
-        if not "control" in sensor:
-            self._attr_entity_category = EntityCategory.CONFIG
 
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
         self._multiple_registers = False
