@@ -342,7 +342,7 @@ parameters:
         registers: [3066]
         icon: "mdi:battery"
 
-        - name: "Battery 1"
+      - name: "Battery 1"
         update_interval: 5
         state_class: "measurement"
         uom: "%"
@@ -350,7 +350,7 @@ parameters:
         registers: [3450]
         icon: "mdi:battery"
 
-        - name: "Battery 2"
+      - name: "Battery 2"
         update_interval: 5
         state_class: "measurement"
         uom: "%"
@@ -358,7 +358,7 @@ parameters:
         registers: [3494]
         icon: "mdi:battery"
 
-        - name: "Battery 3"
+      - name: "Battery 3"
         update_interval: 5
         state_class: "measurement"
         uom: "%"
