@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanWriteEntity
+from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,9 +36,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanSwitchEntity(SolarmanWriteEntity, SwitchEntity):
+class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
         self._attr_device_class = SwitchDeviceClass.SWITCH
 
         self._value_on = 1
@@ -53,12 +53,8 @@ class SolarmanSwitchEntity(SolarmanWriteEntity, SwitchEntity):
             if "off" in value:
                 self._value_off = value["off"]
 
-        registers = sensor["registers"]
-        registers_length = len(registers)
-        if registers_length > 0:
-            self.register = sensor["registers"][0]
-        if registers_length > 1:
-            _LOGGER.warning(f"SolarmanSwitchEntity.__init__: Contains more than 1 register!")
+        if self.registers_length > 1:
+            _LOGGER.warning(f"SolarmanSwitchEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
 
     @property
     def is_on(self) -> bool | None:
@@ -67,12 +63,8 @@ class SolarmanSwitchEntity(SolarmanWriteEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        if await self.coordinator.inverter.call(self.code, self.register, self._value_on, ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(1)
-            self.async_write_ha_state()
+        await self.write(self._value_on, 1)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
-        if await self.coordinator.inverter.call(self.code, self.register, self._value_off, ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(0)
-            self.async_write_ha_state()
+        await self.write(self._value_off, 0)

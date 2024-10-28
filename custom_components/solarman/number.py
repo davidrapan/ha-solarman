@@ -12,7 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanWriteEntity
+from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,9 +35,9 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanNumberEntity(SolarmanWriteEntity, NumberEntity):
+class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
 
         if "mode" in sensor and (mode := sensor["mode"]):
             self._attr_mode = mode
@@ -50,12 +50,8 @@ class SolarmanNumberEntity(SolarmanWriteEntity, NumberEntity):
         if "offset" in sensor:
             self.offset = get_number(sensor["offset"])
 
-        registers = sensor["registers"]
-        registers_length = len(registers)
-        if registers_length > 0:
-            self.register = sensor["registers"][0]
-        if registers_length > 1:
-            _LOGGER.warning(f"SolarmanNumberEntity.__init__: Contains more than 1 register!")
+        if self.registers_length > 1:
+            _LOGGER.warning(f"SolarmanNumberEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
 
         if "configurable" in sensor and (configurable := sensor["configurable"]):
             if "mode" in configurable:
@@ -78,8 +74,4 @@ class SolarmanNumberEntity(SolarmanWriteEntity, NumberEntity):
         value_int = int(value if self.scale is None else value / self.scale)
         if self.offset is not None:
             value_int += self.offset
-        if await self.coordinator.inverter.call(self.code, self.register, value_int, ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(get_number(value))
-            self.async_write_ha_state()
-            #await self.entity_description.update_fn(self.coordinator., int(value))
-            #await self.coordinator.async_request_refresh()
+        await self.write(value_int if value_int < 0xFFFF else 0xFFFF, get_number(value))

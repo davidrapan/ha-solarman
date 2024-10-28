@@ -119,11 +119,26 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
             return f"{self.coordinator.inverter.name} {self._substitute_name_placeholders(name)}"
         return super()._friendly_name_internal() if not hasattr(self, "_attr_friendly_name") else f"{self.coordinator.inverter.name} {self._attr_friendly_name}"
 
-class SolarmanWriteEntity(SolarmanEntity):
+class SolarmanWritableEntity(SolarmanEntity):
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator, platform, sensor)
+
+        #self._write_lock = "locked" in sensor
 
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
 
         self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)
+
+        self.registers = sensor["registers"]
+        self.registers_length = len(self.registers)
+        if self.registers_length > 0:
+            self.register = self.registers[0]
+
+    async def write(self, value, state):
+        #self.coordinator.inverter.check(self._write_lock)
+        if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0:
+            self.set_state(state)
+            self.async_write_ha_state()
+            #await self.entity_description.update_fn(self.coordinator., int(value))
+            #await self.coordinator.async_request_refresh() 

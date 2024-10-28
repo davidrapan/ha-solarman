@@ -12,7 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanWriteEntity
+from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,18 +35,11 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanTimeEntity(SolarmanWriteEntity, TimeEntity):
+class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
 
-        self._multiple_registers = False
-
-        registers = sensor["registers"]
-        registers_length = len(registers)
-        if registers_length > 0:
-            self.register = registers[0]
-        if registers_length > 1 and registers[1] == registers[0] + 1:
-            self._multiple_registers = True
+        self._multiple_registers = self.registers_length > 1 and self.registers[1] == self.registers[0] + 1
 
     @property
     def native_value(self) -> time | None:
@@ -62,6 +55,4 @@ class SolarmanTimeEntity(SolarmanWriteEntity, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
-        if await self.coordinator.inverter.call(self.code, self.register, get_t_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(value.strftime(TIME_FORMAT))
-            self.async_write_ha_state()
+        await self.write(get_t_as_list_int(value, self._multiple_registers), value.strftime(TIME_FORMAT))

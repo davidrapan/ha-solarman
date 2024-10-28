@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanWriteEntity
+from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,19 +36,12 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return True
 
-class SolarmanDateTimeEntity(SolarmanWriteEntity, DateTimeEntity):
+class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWriteEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
 
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
-        self._multiple_registers = False
-
-        registers = sensor["registers"]
-        registers_length = len(registers)
-        if registers_length > 0:
-            self.register = registers[0]
-        if registers_length > 3 and registers[3] == registers[0] + 3:
-            self._multiple_registers = True
+        self._multiple_registers = self.registers_length > 3 and self.registers[3] == self.registers[0] + 3
 
     @property
     def native_value(self) -> datetime | None:
@@ -65,6 +58,4 @@ class SolarmanDateTimeEntity(SolarmanWriteEntity, DateTimeEntity):
         # Value set from the device detail page does not have correct tzinfo (set using ACTIONS works as expected)
         if value.tzinfo == timezone.utc:
             value = value.astimezone(ZoneInfo(self.coordinator.hass.config.time_zone))
-        if await self.coordinator.inverter.call(self.code, self.register, get_dt_as_list_int(value, self._multiple_registers), ACTION_ATTEMPTS_MAX) > 0:
-            self.set_state(value.strftime(DATETIME_FORMAT))
-            self.async_write_ha_state()
+        await self.write(get_dt_as_list_int(value, self._multiple_registers), value.strftime(DATETIME_FORMAT))
