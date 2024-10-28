@@ -1375,7 +1375,7 @@ parameters:
           - key: 1
             value: "Time of Use"
           - key: 2
-            value: "Timed Charging and Discharging"
+            value: "Optimized Revenue"
           - key: 3
             value: "Passive"
           - key: 4

@@ -330,17 +330,21 @@ parameters:
         registers: [33132]
         icon: "mdi:battery-clock"
         lookup:
-          - key: 0x21
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0021
             value: "Self Use"
-          - key: 0x22
+          - key: 0x0022
             value: "Optimized Revenue"
-          - key: 0x23
+          - key: 0x0023
             value: "Time of Use"
-          - key: 0x24
-            value: "Off-Grid Storage"
-          - key: 0x28
+          - key: 0x0024
+            value: "Off-Grid"
+          - key: 0x0028
             value: "Battery Wake-Up"
-          - key: 0x60
+          - key: 0x0031
+            value: "Backup"
+          - key: 0x0060
             value: "Feed-In Priority"
 
   - group: InverterDC
@@ -809,16 +813,20 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Disabled"
-          - key: 0x0001
+          - key: 0x0021
             value: "Self Use"
-          - key: 0x0002
+          - key: 0x0022
             value: "Optimized Revenue"
-          - key: 0x0003
+          - key: 0x0023
             value: "Time of Use"
-          - key: 0x0004
+          - key: 0x0024
             value: "Off-Grid"
-          - key: 0x0008
+          - key: 0x0028
             value: "Battery Wake-Up"
+          - key: 0x0031
+            value: "Backup"
+          - key: 0x0060
+            value: "Feed-In Priority"
 
       - name: "Timed Charge Current"
         plaform: number
