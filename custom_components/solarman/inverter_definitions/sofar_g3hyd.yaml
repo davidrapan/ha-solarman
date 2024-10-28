@@ -11,25 +11,6 @@ default:
 parameters:
   - group: Inverter
     items:
-      - name: "Energy_Storage_Mode_Control"
-        rule: 1
-        registers: [0x1110]
-        lookup:
-          - key: 0
-            value: "self-generation and self-consumption mode"
-          - key: 1
-            value: "time-sharing tariff mode"
-          - key: 2
-            value: "Timed charging and discharging mode"
-          - key: 3
-            value: "Passive mode"
-          - key: 4
-            value: "Peak shaving mode"
-          - key: 5
-            value: "Off-grid mode"
-          - key: 6
-            value: "Generator mode"
-        icon: "mdi:power-settings"
       - name: "Inverter status"
         rule: 1
         registers: [0x0404]
@@ -1384,3 +1365,23 @@ parameters:
             value: "ID191 PID repair failed"
           - key: 32768
             value: "ID192 PLC module heartbeat loss"
+      - name: "Storage Control Mode"
+        platform: select
+        rule: 1
+        registers: [0x1110]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Time of Use"
+          - key: 2
+            value: "Timed Charging and Discharging"
+          - key: 3
+            value: "Passive"
+          - key: 4
+            value: "Peak Shaving"
+          - key: 5
+            value: "Off-Grid"
+          - key: 6
+            value: "Generator"
+        icon: "mdi:power-settings"
