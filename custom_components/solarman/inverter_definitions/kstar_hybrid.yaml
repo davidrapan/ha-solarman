@@ -340,7 +340,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [3066]
-        icon: "mdi:battery"
 
       - name: "Battery 1"
         update_interval: 5
