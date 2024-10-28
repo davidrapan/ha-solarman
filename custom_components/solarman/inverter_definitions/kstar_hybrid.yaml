@@ -933,5 +933,5 @@ parameters:
         uom: "%"
         scale: 0.1
         rule: 1
-        registers: [3638]
+        registers: [3538]
         icon: "mdi:battery"
