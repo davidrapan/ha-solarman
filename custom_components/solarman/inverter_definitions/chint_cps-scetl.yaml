@@ -1,9 +1,8 @@
 #
-# CHINT Hybrid inverters | Three Phase | Hybrid Inverter | LV Battery Supported
+# CHINT | Hybrid Inverter | Three Phase | LV Battery Supported
 #
-# Tested directly on CPS SCE4.6~6KTL-120/EU (https://en.chintpower.com/upload/img/2024-01/65b0c042cfa4c.pdf)
-#
-# The source MODBUS document has been provided directly from CHINT support, there doesn't seems to be a public URL for it.
+# Reference: https://github.com/user-attachments/files/17295986/Hybrid.Modbus.Protocol.per.inverter.ibridi.pdf
+# - MODBUS document has been provided directly from CHINT support
 #
 # Registers
 # The 0x1001 - 0x104C = 0x03 function code - Real Time Data:
@@ -13,6 +12,8 @@
 # The 0x2000 - 0x2013 = 0x03 function code - Battery Data
 #
 # Note: the inverter seems to reply with inverted endianess on all the 32-bit responses.
+#
+# Tested with CPS SCE4.6~6KTL-120/EU, link: https://en.chintpower.com/upload/img/2024-01/65b0c042cfa4c.pdf
 #
 
 info:

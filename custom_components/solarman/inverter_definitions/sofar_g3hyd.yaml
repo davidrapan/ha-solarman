@@ -1,5 +1,8 @@
 #
 # Sofar G3 also HYD 5-20KTL-3PH
+#
+# Reference: https://github.com/user-attachments/files/17180102/SOFAR-G3.External.Modbus.Protocol-EN-V1.10.20220622.xlsx
+#
 # This works also for rebranded ZCS Azzurro 3-Phase inverters such as the 3PH HYD6000 ZSS, or single phase such as 1PH HY6000 ZSS HP
 # Note that this won't work if your ZCS inverter is connected via Connext, you have to be using a Wi-Fi or Ethernet Kit such as ZSM-WIFI-USB.
 #

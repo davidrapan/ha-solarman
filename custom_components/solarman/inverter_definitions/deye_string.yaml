@@ -1,3 +1,11 @@
+#
+# Deye | String Inverter | 2 MPPT
+#
+# Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+#
+# Tested with SUN-9K-G03 and LSW3_15_FFFF_1.0.9E
+#
+
 default:
   update_interval: 5
   digits: 6

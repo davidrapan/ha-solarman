@@ -1,9 +1,10 @@
-# Microinverter TSUN TSOL-MS300~800
-# From https://github.com/davidrapan/ha-solarman/issues/153
-## 2x MPPT, 1x Device
-## 1x Logger, 2x Module
-## First version: 10.09.2024
-## Tested with TSUN TSOL-MS800 (Serial: Y47E...) FW: LSW5BLE_17_02B0_1.08-D1
+#
+# TSUN TSOL-MS300~800 | 2 MPPT | Microinverter
+#
+# Reference: https://github.com/davidrapan/ha-solarman/issues/153
+#
+# Tested with TSUN TSOL-MS800 (Serial: Y47E...) FW: LSW5BLE_17_02B0_1.08-D1
+#
 
 default:
   update_interval: 5

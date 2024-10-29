@@ -1,6 +1,8 @@
 #
 # Solarman Smart Meter DTSD422-D3
 #
+# Reference: ???
+#
 
 default:
   update_interval: 5

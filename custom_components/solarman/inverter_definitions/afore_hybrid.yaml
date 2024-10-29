@@ -1,5 +1,10 @@
-# Afore Hybrid Single Phase
-# Tested on AF5K-SL
+#
+# Afore | Hybrid Inverter | Three Phase | LV Battery Supported
+#
+# Reference: https://github.com/user-attachments/files/17139137/211208.-.Afore.T6.communication.protocol.V1.0-211109.xlsx
+#
+# Tested with AF5K-SL
+#
 
 default:
   update_interval: 10

@@ -1,8 +1,9 @@
 #
-# Three Phase Hybrid Inverters:
-# - ZCS Azzurro HYD 3000~6000 ZSS HP
-# - Sofar HYD 3000~6000-EP
-# with LSW-3 WiFi logger with SN 27xxxxxxxx and FW LSW3_15_270A_1.53:
+# ZCS Azzurro & Sofar HYD 3000~6000 | 3~6kW | Three Phase | Hybrid Inverter
+#
+# Reference: https://github.com/user-attachments/files/17180102/SOFAR-G3.External.Modbus.Protocol-EN-V1.10.20220622.xlsx
+#
+# Tested with ZCS Azzurro HYD 3000~6000 ZSS HP and Sofar HYD 3000~6000-EP, FW: LSW3_15_270A_1.53
 #
 
 default:

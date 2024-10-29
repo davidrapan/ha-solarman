@@ -1,8 +1,12 @@
 #
+# Sofar 
+#
+# Reference: https://github.com/user-attachments/files/16641716/SOFARSOLAR.ModBus-RTU.Communication.Protocol.pdf
+#
 # Tested with Solarman ME3000-SP with an embedded
 # "wifikit" logger. Might work for other devices
 # too.
-
+#
 # The ME3000-SP is basically a glorified battery
 # charger - it is not directly connected to any
 # production infrastructure, but can calculate

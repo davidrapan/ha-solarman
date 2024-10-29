@@ -1,3 +1,9 @@
+#
+# Sofar
+#
+# Reference: ???
+#
+
 default:
   update_interval: 5
   digits: 6

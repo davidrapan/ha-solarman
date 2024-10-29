@@ -1,11 +1,14 @@
 #
-# KSTAR Hybrid Inverter
-# Modbus information taken from "MODBUS RS485 Communication Protocol V2.5" document provided by KSTAR
+# KSTAR | Hybrid Inverter
 #
-# This inverter exposes its data in the following registers (although not all of them are used by this definition file):
+# Reference: https://github.com/user-attachments/files/17555061/KSTAR.Hybrid.Inverter.Modbus.V2.9.1_2024.07.21.pdf
+# - MODBUS document has been provided directly from KSTAR support
 #
-#  - INPUT_REGISTERS   3000 - 3792 decimal, 0x0BB8 - 0x0ED0 hexadecimal, 0x04 function code
-#  - HOLDING_REGISTERS 3200 - 3246 decimal. 0x0C80 - 0x0CAE  hexadecimal, 0x03 function code
+# Registers
+# INPUT_REGISTERS   3000 - 3792 decimal, 0x0BB8 - 0x0ED0 hexadecimal, 0x04 function code
+# HOLDING_REGISTERS 3200 - 3246 decimal, 0x0C80 - 0x0CAE hexadecimal, 0x03 function code
+#
+# Note: not all of them are used by this definition file
 #
 
 info:

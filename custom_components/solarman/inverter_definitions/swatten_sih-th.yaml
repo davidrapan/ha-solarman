@@ -1,6 +1,10 @@
-# Swatten SiH-5/6/8/10kW-TH
-# Three Phase Hybrid Inverter（HV）- Residential Storage Inverter ~ https://www.swatten.com/show-3-5.html
-# From https://github.com/davidrapan/ha-solarman/discussions/166
+#
+# Swatten SiH-5/6/8/10kW-TH | Three Phase Hybrid Inverter | HV Battery Supported
+#
+# Reference: https://github.com/user-attachments/files/17558047/Swatten.inverter.Modbus.table.xlsx
+#
+# Tested: https://github.com/davidrapan/ha-solarman/discussions/166, link: https://www.swatten.com/show-3-5.html
+#
 
 default:
   update_interval: 10

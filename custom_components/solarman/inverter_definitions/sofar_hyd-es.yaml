@@ -1,5 +1,7 @@
 #
-# Configuration file for Sofar HYD3000/4000/5000/6000-ES inverter family.
+# Sofar HYD3000/4000/5000/6000-ES
+#
+# Reference: https://github.com/user-attachments/files/16641716/SOFARSOLAR.ModBus-RTU.Communication.Protocol.pdf
 #
 
 default:

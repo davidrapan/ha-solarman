@@ -1,3 +1,11 @@
+#
+# Deye | Hybrid Inverter
+#
+# Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+#
+# Tested
+#
+
 default:
   update_interval: 10
   digits: 6

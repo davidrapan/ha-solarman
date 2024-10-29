@@ -1,6 +1,15 @@
 #
 # SUN-5/6/8/10/12/15/20/25K-SG01HP3-EU-AM2 | 5-25kW | Three Phase | 2 MPPT | Hybrid Inverter | HV Battery Supported
 #
+# Reference: https://github.com/user-attachments/files/16597916/MODBUSRTU.V104.3.1.1111_SG01-HP3-AM2.pdf
+#
+# Registers
+# The 0-59 register address is a readable register type, 0x03 function code.
+# The 60-499 register address is a read-write register type 0x10 function code.
+# The 500-2000 register address is a readable register type 0x03 function code.
+#
+# Tested with 25K
+#
 
 info:
   manufacturer: Deye

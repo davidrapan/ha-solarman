@@ -1,8 +1,10 @@
+#
 # Pylontech Force H2/H3
-# Modbus information retrieved from:
-# https://gist.github.com/nagisa/435bdf783e4b13b8e810106b0852081e
-# Tested Firmware Version: 0.1.0.1
-# cryptocake August 2024
+#
+# Reference: https://gist.github.com/nagisa/435bdf783e4b13b8e810106b0852081e
+# 
+# Tested Firmware Version: 0.1.0.1 - cryptocake August 2024
+#
 
 default:
   update_interval: 10

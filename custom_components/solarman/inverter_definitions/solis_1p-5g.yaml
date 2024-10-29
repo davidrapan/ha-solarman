@@ -1,7 +1,10 @@
-# Solis Single Phase Inverter
-# Model: 1P8K-5G (2 MPTT, 8kWh)
-# Modbus information derived by test and comparing to Solis Cloud
-# Gedger V.0.5 July 2024
+#
+# Solis 1P8K-5G | 8kW | 2 MPPT | Single Phase Inverter
+#
+# Reference: ???
+# - Modbus information derived by test and comparing to Solis Cloud
+# 
+# Tested by Gedger in July 2024
 #
 
 default:

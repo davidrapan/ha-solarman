@@ -1,21 +1,11 @@
 #
-# ZCS Azzurro 3 Phase non-hybrid inverters
-# with LSW-3 WiFi logger with SN 23xxxxxxxx and FW LSW3_15_270A_1.53:
-# 3PH 3.3KTL-V3
-# 3PH 4.4KTL-V3
-# 3PH 5.5KTL-V3
-# 3PH 6.6KTL-V3
+# ZCS Azzurro | Three Phase Inverter
 #
-# Not tested, but could probably work:
-# ZCS Azzurro 3PH 8.8KTL-V3
-# ZCS Azzurro 3PH 11KTL-V3
-# ZCS Azzurro 3PH 12KTL-V3
-# SOFAR Solar 4.4KTLX-G3
-# SOFAR Solar 5.5KTLX-G3
-# SOFAR Solar 6.6KTLX-G3
-# SOFAR Solar 8.8KTLX-G3
-# SOFAR Solar 11KTLX-G3
-# SOFAR Solar 12KTLX-G3
+# Reference: https://github.com/user-attachments/files/17180102/SOFAR-G3.External.Modbus.Protocol-EN-V1.10.20220622.xlsx
+#
+# Tested with 3PH 3.3~6.6KTL-V3 LSW-3 WiFi logger with SN 23xxxxxxxx and FW LSW3_15_270A_1.53:
+#
+# Not tested, but could work with ZCS Azzurro 3PH 8.8~12KTL-V3 and SOFAR Solar 4.4~12KTLX-G3
 #
 
 default:

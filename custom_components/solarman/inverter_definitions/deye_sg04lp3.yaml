@@ -1,11 +1,14 @@
 #
 # SUN-5/6/8/10/12K-SG04LP3 | 5-12kW | Three Phase | 2 MPPT | Hybrid Inverter | LV Battery Supported
-# - tested with 12KW and LSW3_15_FFFF_1.0.91R Stick Logger
+#
+# Reference: https://github.com/user-attachments/files/16798469/MODBUS.RTU.V105.1-20231006.pdf
 #
 # Registers
 # The 0-59 register address is a readable register type, 0x03 function code.
 # The 60-499 register address is a read-write register type 0x10 function code.
 # The 500-2000 register address is a readable register type 0x03 function code.
+#
+# Tested with 12KW and LSW3_15_FFFF_1.0.91R Stick Logger
 #
 
 info:

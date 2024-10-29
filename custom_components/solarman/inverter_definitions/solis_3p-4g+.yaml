@@ -1,8 +1,9 @@
 #
-# Solis 4G Three Phase Inverter
-# Solis-3P(5-10)K-4G
-# refering to https://ginlongsolis.freshdesk.com/support/solutions/articles/36000340158-modbus-communication-for-solis-inverters
-# agirilovich June 2023
+# Solis 3P5~10K-4G | 5~10kW | 4 MPPT | Three Phase Inverter
+#
+# Reference: https://ginlongsolis.freshdesk.com/support/solutions/articles/36000340158-modbus-communication-for-solis-inverters
+#
+# Tested by agirilovich in June 2023
 #
 
 default:

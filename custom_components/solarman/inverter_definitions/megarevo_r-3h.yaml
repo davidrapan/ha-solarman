@@ -1,11 +1,13 @@
-# Three-phase Hybrid Inverter Series R6-15KH3 - 6.6~16.5 kW
-# Version: V0.1
+#
+# Megarevo R6-15KH3 | 6.6~16.5kW | Three Phase | Hybrid Inverter
+#
+# Reference: ???
+#
 # Megarevo Inverters using Solarman v5 via Solarman App pcap - Full Register Map Not Complete Yet
 # Expected to Work with most of the Megarevo Inverters (including EG4 8k)
-# Tested with Megarevo R15K3H (3 Phase Hybird) with FW v0.01 and v1.0.13, some fields yet to be validated.
 #
-# First: Aug 5, 2024 by wolfmon
-# Last: Aug 16, 2024 by davidrapan
+# Tested with Megarevo R15K3H (3 Phase Hybird) with FW v0.01 and v1.0.13, some fields yet to be validated - wolfmon
+#
 
 default:
   update_interval: 60

@@ -1,7 +1,12 @@
-# Tested for ZCS Azzurro 1PH2200TL-V3
+#
+# ZCS Azzurro 1PH2200TL-V3
+#
+# Reference: sofar_lsw3.yaml w/ fewer metrics
+#
 # Note: no modbus energy meter connected
-# Based on the Sofar LSW3 model but has fewer metrics
-# From: https://github.com/81ondo
+#
+# Tested by https://github.com/81ondo
+#
 
 default:
   update_interval: 5

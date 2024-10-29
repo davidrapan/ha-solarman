@@ -1,19 +1,9 @@
 #
-# First version: 08.05.2022
-# Latest update: 17.09.2024
-# Microinverter SUN2000G3 (DEYE/VESDAS)
-# v0.1  Added all the cool registers from Deye_Modbus.-.-.V118.pdf
-# 4x MPPT, 4x inverter
-# 1x Logger, 4x Module,
+# Deye | Microinverter | 4 MPPT
 #
+# Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
 #
-#
-#
-#
-#
-#
-#
-#
+# Tested with SUN2000G3
 #
 
 default:
