@@ -213,6 +213,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         icon: "mdi:battery"
         range:
           min: 3800
@@ -230,6 +231,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         icon: "mdi:battery"
         range:
           min: 3800
@@ -247,6 +249,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         icon: "mdi:battery"
         range:
           min: 3800
@@ -259,6 +262,8 @@ parameters:
         rule: 1
         registers: [0x0066]
         icon: "mdi:battery"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 2000
@@ -275,6 +280,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         icon: "mdi:battery"
 
       - name: "Zero Export power"
@@ -297,6 +303,8 @@ parameters:
         rule: 1
         registers: [0x0069]
         icon: "mdi:battery"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 90
@@ -312,6 +320,7 @@ parameters:
         configurable:
           min: 0
           max: 10
+          mode: box
         icon: "mdi:battery"
         range:
           min: 0
@@ -340,6 +349,8 @@ parameters:
         rule: 1
         registers: [0x006C]
         icon: "mdi:current-dc"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 240
@@ -352,6 +363,8 @@ parameters:
         rule: 1
         registers: [0x006D]
         icon: "mdi:current-dc"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 240
@@ -396,6 +409,8 @@ parameters:
         rule: 1
         registers: [0x0072]
         icon: mdi:battery
+        configurable:
+          mode: box
         range:
           min: 0
           max: 1000
@@ -410,6 +425,8 @@ parameters:
         rule: 1
         registers: [0x0073]
         icon: mdi:battery
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -421,6 +438,8 @@ parameters:
         rule: 1
         registers: [0x0074]
         icon: mdi:battery
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -432,6 +451,8 @@ parameters:
         rule: 1
         registers: [0x0075]
         icon: mdi:battery
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -449,6 +470,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 3800
           max: 6100
@@ -466,6 +488,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 3800
           max: 6100
@@ -483,6 +506,7 @@ parameters:
           min: 38
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 3800
           max: 6100
@@ -499,6 +523,7 @@ parameters:
         configurable:
           min: 0
           max: 24
+          mode: box
         range:
           min: 0
           max: 240
@@ -515,6 +540,7 @@ parameters:
         configurable:
           min: 0
           max: 24
+          mode: box
         range:
           min: 0
           max: 240
@@ -532,6 +558,7 @@ parameters:
           min: 00
           max: 63
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6300
@@ -543,6 +570,8 @@ parameters:
         rule: 1
         registers: [0x007C]
         icon: mdi:battery
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -555,6 +584,8 @@ parameters:
         rule: 1
         registers: [0x007D]
         icon: "mdi:current-dc"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 240
@@ -572,6 +603,7 @@ parameters:
           min: 00
           max: 63
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6300
@@ -583,6 +615,8 @@ parameters:
         rule: 1
         registers: [0x007F]
         icon: "mdi:battery"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -595,6 +629,8 @@ parameters:
         rule: 1
         registers: [0x0080]
         icon: "mdi:current-dc"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 240
@@ -654,6 +690,8 @@ parameters:
         rule: 1
         registers: [0x0087]
         icon: "mdi:lightning-bolt-circle"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -671,6 +709,7 @@ parameters:
           min: 38
           max: 63
           step: 0.1
+          mode: box
         range:
           min: 3800
           max: 6300
@@ -682,6 +721,8 @@ parameters:
         rule: 1
         registers: [0x0089]
         icon: "mdi:lightning-bolt-circle"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -963,6 +1004,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -980,6 +1022,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -997,6 +1040,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -1014,6 +1058,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -1031,6 +1076,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -1048,6 +1094,7 @@ parameters:
           min: 00
           max: 61
           step: 0.1
+          mode: box
         range:
           min: 0000
           max: 6100
@@ -1059,6 +1106,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00A6]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -1070,6 +1119,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00A7]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -1081,6 +1132,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00A8]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -1092,6 +1145,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00A9]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -1103,6 +1158,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00AA]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
@@ -1114,6 +1171,8 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00AB]
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100

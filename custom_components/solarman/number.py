@@ -62,7 +62,8 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
                 self._attr_native_max_value = configurable["max"]
             if "step" in configurable:
                 self._attr_native_step = configurable["step"]
-        elif "range" in sensor and (range := sensor["range"]):
+
+        if self._attr_native_min_value is None and self._attr_native_max_value is None and "range" in sensor and (range := sensor["range"]):
             self._attr_native_min_value = range["min"]
             self._attr_native_max_value = range["max"]
             if self.scale is not None:
