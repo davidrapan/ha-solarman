@@ -422,6 +422,7 @@ parameters:
         uom: "W"
         rule: 2
         registers: [0x00BE]
+        attributes: [inverse]
 
       - name: "Battery Current"
         class: "current"
@@ -529,6 +530,7 @@ parameters:
         rule: 2
         registers: [0x00A9]
         icon: "mdi:transmission-tower"
+        attributes: [inverse]
 
       - name: "External CT1 Power"
         class: "power"

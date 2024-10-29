@@ -679,6 +679,7 @@ parameters:
           min: 38
           max: 63
           step: 0.1
+          mode: box
         range:
           min: 3800
           max: 6300
@@ -1901,6 +1902,7 @@ parameters:
         scale: 10
         rule: 2
         registers: [0x024E]
+        attributes: [inverse]
 
       # Battery - The state of health
       - name: "Battery SOH"
@@ -2152,6 +2154,7 @@ parameters:
         rule: 4
         registers: [0x0271, 0x02B2]
         icon: "mdi:transmission-tower"
+        attributes: [inverse]
 
   - group: Output
     update_interval: 5
