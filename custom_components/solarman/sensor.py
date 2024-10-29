@@ -40,6 +40,9 @@ def _create_entity(coordinator, description, options):
             elif battery_nominal_voltage > 0 and battery_life_cycle_rating > 0 and name in ("Battery SOH", "Today Battery Life Cycles", "Total Battery Life Cycles"):
                 return SolarmanBatteryCustomSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
 
+    if "persistent" in description:
+        return SolarmanPersistentSensor(coordinator, description)
+
     if "restore" in description or "ensure_increasing" in description:
         return SolarmanRestoreSensor(coordinator, description)
 
@@ -102,6 +105,11 @@ class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
             return
 
         self._attr_state = self._attr_native_value = state
+
+class SolarmanPersistentSensor(SolarmanRestoreSensor):
+    @property
+    def available(self) -> bool:
+        return True
 
 class SolarmanBatterySensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):

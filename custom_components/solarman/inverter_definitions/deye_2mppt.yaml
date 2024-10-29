@@ -289,6 +289,7 @@ parameters:
         icon: "mdi:solar-power"
 
       - name: "Total Production"
+        persistent:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -300,6 +301,7 @@ parameters:
           min: 0.1
 
       - name: "Total Production 1"
+        persistent:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -311,6 +313,7 @@ parameters:
           min: 0.1
 
       - name: "Total Production 2"
+        persistent:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
