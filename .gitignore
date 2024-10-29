@@ -1,1 +1,7 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# HACS
 custom_components/solarman/inverter_definitions/custom/
