@@ -63,7 +63,7 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
             if "step" in configurable:
                 self._attr_native_step = configurable["step"]
 
-        if self._attr_native_min_value is None and self._attr_native_max_value is None and "range" in sensor and (range := sensor["range"]):
+        if not hasattr(self, "_attr_native_min_value") and not hasattr(self, "_attr_native_max_value") and "range" in sensor and (range := sensor["range"]):
             self._attr_native_min_value = range["min"]
             self._attr_native_max_value = range["max"]
             if self.scale is not None:
