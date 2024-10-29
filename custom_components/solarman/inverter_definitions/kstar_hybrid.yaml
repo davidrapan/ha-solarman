@@ -345,6 +345,7 @@ parameters:
         registers: [3066]
 
       - name: "Battery 1"
+        hidden:
         update_interval: 5
         state_class: "measurement"
         uom: "%"
@@ -353,6 +354,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Battery 2"
+        hidden:
         update_interval: 5
         state_class: "measurement"
         uom: "%"
@@ -361,6 +363,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Battery 3"
+        hidden:
         update_interval: 5
         state_class: "measurement"
         uom: "%"
@@ -407,6 +410,45 @@ parameters:
         digits: 2
         registers: [3075]
         icon: "mdi:battery-heart"
+
+      - name: "Battery Discharging Power"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3078]
+        range:
+          min: 0
+          max: 100
+
+      - name: "Battery Charging Power"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3079]
+        range:
+          min: 0
+          max: 100
+
+      - name: "Battery Grid Max Charge"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3260]
+        range:
+          min: 20
+          max: 100
 
       - name: Total Battery Discharge
         alt: Battery Total Discharge
@@ -455,6 +497,38 @@ parameters:
         rule: 1
         registers: [3301]
         icon: "mdi:battery-plus-variant"
+
+      - name: "Battery Grid Charging"
+        platform: switch
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3314]
+
+      - name: "Battery Grid Charging Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3317]
+        range:
+          min: 0000
+          max: 2359
+
+      - name: "Battery Grid Charging End"
+        platform: time
+        state_class: measurement
+        rule: 9
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3318]
+        range:
+          min: 0000
+          max: 2359
 
   - group: Losses
     update_interval: 30
@@ -525,6 +599,22 @@ parameters:
 
   - group: Inverter Information
     items:
+      - name: Work Mode
+        update_interval: 300
+        platform: "select"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3044]
+        lookup:
+          - key: 0x0000
+            value: "Self Use"
+          - key: 0x0001
+            value: "Time of Use"
+          - key: 0x0002
+            value: "Battery Priority"
+
       - name: "Inverter Working Mode"
         update_interval: 300
         class: "enum"
@@ -931,3 +1021,62 @@ parameters:
           - operator: subtract
             signed:
             registers: [3126]
+
+  - group: Timed
+    update_interval: 300
+    items:
+      - name: "Timed Charge 1 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [3160, 3161]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 1 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3162, 3163]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 1 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3164, 3165]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 1 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3166, 3167]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [3168, 3169]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3170, 3171]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3172, 3173]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3174, 3175]
+        icon: "mdi:wrench-clock"
