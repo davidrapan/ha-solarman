@@ -24,7 +24,7 @@ requests:
   - start: 43011
     end: 43025
     mb_functioncode: 0x03
-  - start: 43141
+  - start: 43110
     end: 43150
     mb_functioncode: 0x03
 
@@ -809,6 +809,9 @@ parameters:
       - name: Storage Control Mode
         platform: select
         rule: 1
+        code:
+          read: 0x03
+          write: 0x06
         registers: [43110]
         lookup:
           - key: 0x0000
