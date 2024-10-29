@@ -893,3 +893,59 @@ parameters:
         rule: 9
         registers: [43149, 43150]
         icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [43153, 43154]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43155, 43156]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43157, 43158]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43159, 43160]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 3 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [43163, 43164]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 3 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43165, 43166]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 3 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43167, 43168]
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 3 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [43169, 43170]
+        icon: "mdi:wrench-clock"
