@@ -31,11 +31,11 @@ def get_code(item, type, default = None):
 def all_same(values):
     return all(i == values[0] for i in values)
 
-def group_when(iterable, predicate, max_size = 125):
+def group_when(iterable, predicate):
     i, x, size = 0, 0, len(iterable)
     while i < size - 1:
-        #print(f"{iterable[i]} and {iterable[i + 1]} = {predicate(iterable[i], iterable[i + 1])} or {iterable[i + 1] - iterable[x]}")
-        if predicate(iterable[i], iterable[i + 1]) or iterable[i + 1] - iterable[x] >= max_size:
+        #print(f"{iterable[i]} and {iterable[i + 1]} = {predicate(iterable[i], iterable[i + 1], iterable[x])} or {iterable[i + 1] - iterable[x]}")
+        if predicate(iterable[i], iterable[i + 1], iterable[x]):
             yield iterable[x:i + 1]
             x = i + 1
         i += 1
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         print("File does not exist!")
         sys.exit()
 
-    span = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isnumeric() else 25
+    span = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].lstrip('-').isnumeric() else 25
 
     runtime = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3].isnumeric() else 0
 
@@ -94,8 +94,10 @@ if __name__ == '__main__':
         _is_single_code = is_single_code
         _code = next(iter(registers_table_values))
 
-    _lambda = lambda x, y: y - x > span
-    _lambda_code_aware = lambda x, y: registers_table[x] != registers_table[y] or y - x > span
+    l = (lambda x, y: y - x > span) if span > -1 else (lambda x, y: False)
+
+    _lambda = lambda x, y, z: l(x, y) or y - z >= 125
+    _lambda_code_aware = lambda x, y, z: registers_table[x] != registers_table[y] or _lambda(x, y, z)
 
     groups = group_when(registers, _lambda if _is_single_code or all_same([registers_table[r] for r in registers]) else _lambda_code_aware)
 

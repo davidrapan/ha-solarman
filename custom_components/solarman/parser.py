@@ -16,6 +16,7 @@ class ParameterParser:
     _is_single_code = DEFAULT_IS_SINGLE_CODE
     _code = DEFAULT_REGISTERS_CODE
     _min_span = DEFAULT_REGISTERS_MIN_SPAN
+    _max_size = DEFAULT_REGISTERS_MAX_SIZE
     _digits = DEFAULT_DIGITS
     _registers_table = {}
     _result = {}
@@ -32,10 +33,12 @@ class ParameterParser:
                 self._code = default[REQUEST_CODE]
             if REQUEST_MIN_SPAN in default:
                 self._min_span = default[REQUEST_MIN_SPAN]
+            if REQUEST_MAX_SIZE in default:
+                self._max_size = default[REQUEST_MAX_SIZE]
             if "digits" in default:
                 self._digits = default["digits"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in self._profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, digits: {self._digits}")
+        _LOGGER.debug(f"{'Defaults' if 'default' in self._profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}")
 
         requests_table = {}
 
@@ -53,11 +56,13 @@ class ParameterParser:
             self._is_single_code = is_single_code
             self._code = next(iter(registers_table_values))
 
-        self._lambda = lambda x, y: y - x > self._min_span
-        self._lambda_code_aware = lambda x, y: self._registers_table[x] != self._registers_table[y] or y - x > self._min_span
+        l = (lambda x, y: y - x > self._min_span) if self._min_span > -1 else (lambda x, y: False)
+
+        self._lambda = lambda x, y, z: l(x, y) or y - z >= self._max_size
+        self._lambda_code_aware = lambda x, y, z: self._registers_table[x] != self._registers_table[y] or self._lambda(x, y, z)
 
     def is_valid(self, parameters):
-        return "name" in parameters and "rule" in parameters  # and "registers" in parameters
+        return "name" in parameters and "rule" in parameters # and "registers" in parameters
 
     def is_enabled(self, parameters):
         return not "disabled" in parameters

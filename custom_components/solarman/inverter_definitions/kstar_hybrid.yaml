@@ -18,6 +18,7 @@ info:
 default:
   update_interval: 60
   code: 0x04
+  min_span: -1
   digits: 6
 
 parameters:

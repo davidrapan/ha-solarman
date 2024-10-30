@@ -9,19 +9,11 @@
 default:
   update_interval: 10
   code: 0x04
+  min_span: -1
+  max_size: 100
   digits: 6
 
-requests_fine_control:
 requests:
-  - start: 33022
-    end: 33095
-    mb_functioncode: 0x04
-  - start: 33116
-    end: 33179
-    mb_functioncode: 0x04
-  - start: 33206
-    end: 33282
-    mb_functioncode: 0x04
   - start: 43011
     end: 43025
     mb_functioncode: 0x03

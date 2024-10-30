@@ -41,6 +41,7 @@ DEFAULT_REGISTERS_UPDATE_INTERVAL = 60
 DEFAULT_IS_SINGLE_CODE = False
 DEFAULT_REGISTERS_CODE = 0x03
 DEFAULT_REGISTERS_MIN_SPAN = 25
+DEFAULT_REGISTERS_MAX_SIZE = 125
 DEFAULT_DIGITS = 6
 
 PROFILE_REDIRECT_TABLE = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
@@ -79,8 +80,8 @@ ACTION_ATTEMPTS_MAX = ACTION_ATTEMPTS * 6
 ATTR_FRIENDLY_NAME = "friendly_name"
 
 REQUEST_UPDATE_INTERVAL = "update_interval"
-REQUEST_MAX_SIZE = 125
 REQUEST_MIN_SPAN = "min_span"
+REQUEST_MAX_SIZE = "max_size"
 REQUEST_CODE = "code"
 REQUEST_CODE_ALT = "mb_functioncode"
 REQUEST_START = "start"
