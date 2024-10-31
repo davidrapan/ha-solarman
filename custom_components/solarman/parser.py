@@ -413,6 +413,8 @@ class ParameterParser:
 
     def try_parse_time(self, data, definition):
         code = get_code(definition, "read")
+        f, d = ("{:02d}", 100) if not "hex" in definition else ("{:02x}", 0x100)
+        offset = definition["hex"] if "hex" in definition else None
         value = ""
 
         registers_count = len(definition["registers"])
@@ -422,9 +424,15 @@ class ParameterParser:
                 return
 
             if registers_count == 1:
-                value = str("{:02d}".format(int(temp / 100))) + ":" + str("{:02d}".format(int(temp % 100)))
+                high, low = divmod(temp, d)
+                value = str(f.format(int(high))) + ":" + str(f.format(int(low)))
             else:
-                value += str("{:02d}".format(int(temp)))
+                if temp >= 0x100:
+                    if offset:
+                        temp -= offset
+                    high, low = divmod(temp, 0x100)
+                    temp = f"{high}{low}"
+                value += str(f.format(int(temp)))
                 if i == 0 or (i == 1 and registers_count > 2):
                     value += ":"
 

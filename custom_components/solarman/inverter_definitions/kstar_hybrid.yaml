@@ -515,9 +515,7 @@ parameters:
           read: 0x04
           write: 0x06
         registers: [3317]
-        range:
-          min: 0000
-          max: 2359
+        hex:
 
       - name: "Battery Grid Charging End"
         platform: time
@@ -527,9 +525,7 @@ parameters:
           read: 0x04
           write: 0x06
         registers: [3318]
-        range:
-          min: 0000
-          max: 2359
+        hex:
 
   - group: Losses
     update_interval: 30
@@ -1031,6 +1027,7 @@ parameters:
         state_class: measurement
         rule: 9
         registers: [3160, 3161]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Charge 1 End"
@@ -1038,6 +1035,7 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3162, 3163]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge 1 Start"
@@ -1045,6 +1043,7 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3164, 3165]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge 1 End"
@@ -1052,6 +1051,7 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3166, 3167]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Charge 2 Start"
@@ -1059,6 +1059,7 @@ parameters:
         state_class: measurement
         rule: 9
         registers: [3168, 3169]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Charge 2 End"
@@ -1066,6 +1067,7 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3170, 3171]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge 2 Start"
@@ -1073,6 +1075,7 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3172, 3173]
+        hex: 0x3030
         icon: "mdi:wrench-clock"
 
       - name: "Timed Discharge 2 End"
@@ -1080,4 +1083,5 @@ parameters:
         state_class: "measurement"
         rule: 9
         registers: [3174, 3175]
+        hex: 0x3030
         icon: "mdi:wrench-clock"

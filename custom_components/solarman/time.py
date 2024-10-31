@@ -41,6 +41,17 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
 
         self._multiple_registers = self.registers_length > 1 and self.registers[1] == self.registers[0] + 1
 
+        self._hex = "hex" in sensor
+
+        self._offset = sensor["hex"] if self._hex else 0
+
+    def _to_native_value(self, value: time):
+        if self._hex:
+            if self._offset >= 0x100:
+                return [per_digit_hex(value.hour // 10, value.hour % 10) + self._offset, per_digit_hex(value.minute // 10, value.minute % 10) + self._offset]
+            return [per_digit_hex(value.hour, value.minute)]
+        return [value.hour * 100 + value.minute] if not self._multiple_registers else [value.hour, value.minute]
+
     @property
     def native_value(self) -> time | None:
         """Return the state of the setting entity."""
@@ -55,4 +66,4 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Change the time."""
-        await self.write(get_t_as_list_int(value, self._multiple_registers), value.strftime(TIME_FORMAT))
+        await self.write(self._to_native_value(value), value.strftime(TIME_FORMAT))
