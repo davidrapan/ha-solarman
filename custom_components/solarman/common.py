@@ -139,8 +139,11 @@ def get_battery_power_capacity(capacity, voltage):
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
 
+def div_mod(dividend, divisor):
+    return (dividend // divisor, dividend % divisor)
+
 def get_dt_as_list_int(dt: datetime, long):
     return [(dt.year - 2000 << 8) + dt.month, (dt.day << 8) + dt.hour, (dt.minute << 8) + dt.second] if not long else [dt.year - 2000, dt.month, dt.day, dt.hour, dt.minute, dt.second]
 
-def per_digit_hex(f, s):
-    return int(f"0x{f:02}{s:02}", 16)
+def per_digit_hex(value):
+    return int(f"0x{value[0]:02}{value[1]:02}", 16)

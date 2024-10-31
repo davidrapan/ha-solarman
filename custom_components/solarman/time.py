@@ -47,9 +47,9 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
 
     def _to_native_value(self, value: time):
         if self._hex:
-            if self._offset >= 0x100:
-                return [per_digit_hex(value.hour // 10, value.hour % 10) + self._offset, per_digit_hex(value.minute // 10, value.minute % 10) + self._offset]
-            return [per_digit_hex(value.hour, value.minute)]
+            if self._offset >= 0x100: 
+                return [per_digit_hex(div_mod(value.hour, 10)) + self._offset, per_digit_hex(div_mod(value.minute, 10)) + self._offset]
+            return [per_digit_hex((value.hour, value.minute))]
         return [value.hour * 100 + value.minute] if not self._multiple_registers else [value.hour, value.minute]
 
     @property
