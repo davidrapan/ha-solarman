@@ -1,8 +1,7 @@
 #
-# Tested with Afore ATON BNT004KTL inverter, HW version is 1.01, inverter connected to WiFi by LSW3_15_1E20_1.14
-# Inverter serial number begins ftom T6
-# Setup of registers according to this document: https://docs.google.com/spreadsheets/d/19k1awt5TboVH9NZVhSO8JnN8G81JF6_9/edit?gid=953109797#gid=953109797
-# from this document additional parameters may be added
+# To use modbus function in Afore BNTxxxKTL inverters, You first need to change protocol from RS485 to MODBUS in inverter menu
+# Tested with Afore ATON BNT004KTL inverter with serial number started from T6
+# For older models of BNTxxxKTL configuration for T4 protocol is needed - the same config without T6 suffix 
 #
 
 default:
@@ -13,61 +12,9 @@ default:
 parameters:
   - group: PV
     items:
-      - name: "PV1 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022B]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022E]
-        icon: "mdi:solar-power"
-
-      - name: "PV1 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x0022C]
-        icon: "mdi:solar-power"
-
-      - name: "PV2 Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [0x022F]
-        icon: "mdi:solar-power"
-
-      - name: "Daily Production kWh"
-        class: "energy"
-        state_class: "total"
-        uom: "kWh"
-        scale: 0.1
-        rule: 1
-        registers: [0x03E8]
-        icon: "mdi:solar-power"
-
-      - name: "Total Production kWh"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.1
-        rule: 1
-        registers: [0x03F7, 0x03F6]
-        icon: "mdi:solar-power"
-
-      - name: "PV total power"
+      - name: PV Power
+        alt: DC Power
+        description: Combined power of all inputs
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -76,26 +23,90 @@ parameters:
         registers: [0x022A, 0x0229]
         icon: "mdi:home-lightning-bolt"
 
-  - group: Grid
-    items:
-      - name: "Total active power"
+      - name: PV1 Power
+        alt: DC1 Power
         class: "power"
         state_class: "measurement"
         uom: "W"
+        rule: 1
+        digits: 3
         scale: 1
-        rule: 2
-        registers: [0x020B, 0x020A]
-        icon: "mdi:home-lightning-bolt"
+        registers: [0x022D]
+        icon: "mdi:solar-power-variant"
 
-      - name: "R Grid frequency"
-        class: "frequency"
+      - name: "PV1 Voltage"
+        alt: DC1 Voltage
+        class: "voltage"
         state_class: "measurement"
-        uom: "Hz"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022B]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        alt: DC1 Current
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
         scale: 0.01
         rule: 1
-        registers: [0x0201]
+        registers: [0x022C]
+        icon: "mdi:solar-power"
 
-      - name: "R Voltage"
+      - name: PV2 Power
+        alt: DC2 Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 1
+        registers: [0x022C]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        alt: DC2 Voltage
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022E]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Current"
+        alt: DC2 Current
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x022F]
+        icon: "mdi:solar-power"
+
+      - name: "Today Production"
+        friendly_name: Today's Production
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 0.1
+        rule: 1
+        registers: [0x03E8]
+        icon: "mdi:solar-power"
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 0.1
+        rule: 1
+        registers: [0x03F7, 0x03F6]
+        icon: "mdi:solar-power"
+
+  - group: Output
+    items:
+      - name: "L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -103,23 +114,7 @@ parameters:
         rule: 1
         registers: [0x01FB]
 
-      - name: "R Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x01FE]
-
-      - name: "S Grid frequency"
-        class: "frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x0202]
-
-      - name: "S Voltage"
+      - name: "L2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -127,23 +122,7 @@ parameters:
         rule: 1
         registers: [0x01FC]
 
-      - name: "S Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 2
-        registers: [0x01FF]
-
-      - name: "T Grid frequency"
-        class: "frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x0203]
-
-      - name: "T Voltage"
+      - name: "L3 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -151,32 +130,79 @@ parameters:
         rule: 1
         registers: [0x01FD]
 
-      - name: "T Current"
+      - name: "L1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x01FE]
+
+      - name: "L2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x01FF]
+
+      - name: "L3 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.01
         rule: 2
         registers: [0x0200]
+      
+      - name: "L1 Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0201]
+        
+      - name: "L2 Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0202]
+        
+      - name: "L3 Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0203]
 
-  - group: Inverter
-    items:
-      - name: "Transformer temperature"
+      - name: "Temperature"
         class: "temperature"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x09D2]
+        icon: "mdi:thermometer"
+
+      - name: "DC Temperature"
+        class: "temperature"
+        state_class: "measurement"
         uom: "°C"
         scale: 0.1
         rule: 2
         registers: [0x09D3]
         icon: "mdi:thermometer"
 
-      - name: "Inverter inner temperature"
-        class: "temperature"
+      - name: Power
+        class: "power"
         state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
+        uom: "W"
+        scale: 1
         rule: 2
-        registers: [0x09D2]
-        icon: "mdi:thermometer"
+        registers: [0x020B, 0x020A]
+        icon: "mdi:home-lightning-bolt"
 
       - name: "Device State"
         rule: 1
