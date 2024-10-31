@@ -45,7 +45,7 @@ class ParameterParser:
                 for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1):
                     requests_table[r] = get_request_code(pr)
 
-        self._items = sorted([process_descriptions(item, group, requests_table, self._code) for group in self._profile["parameters"] for item in group["items"]], key = lambda x: min(x["registers"]) if "registers" in x else -1)
+        self._items = sorted([process_descriptions(item, group, requests_table, self._code) for group in self._profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read"), max(x["registers"])) if "registers" in x else (-1, -1))
 
         if (items_codes := [get_code(i, "read") for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -91,8 +91,9 @@ class ParameterParser:
             if self.is_requestable(i) and self.is_scheduled(i, runtime):
                 self.set_state(i["name"], self.default_from_unit_of_measurement(i))
                 if "registers" in i:
-                    for r in i["registers"]:
-                        registers.append((get_code(i, "read"), r))
+                    for r in sorted(i["registers"]):
+                        if (register := (get_code(i, "read"), r)) and not register in registers:
+                            registers.append(register)
 
         if len(registers) == 0:
             return {}

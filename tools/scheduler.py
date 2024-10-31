@@ -37,7 +37,7 @@ def all_same(values):
 def group_when(iterable, predicate):
     i, x, size = 0, 0, len(iterable)
     while i < size - 1:
-        #print(f"{iterable[i]} and {iterable[i + 1]} = {predicate(iterable[i], iterable[i + 1], iterable[x])} or {iterable[i + 1] - iterable[x]}")
+        #print(f"{iterable[i]} and {iterable[i + 1]} = {predicate(iterable[i], iterable[i + 1], iterable[x])}")
         if predicate(iterable[i], iterable[i + 1], iterable[x]):
             yield iterable[x:i + 1]
             x = i + 1
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             for r in range(pr["start"], pr["end"] + 1):
                 requests_table[r] = get_request_code(pr)
 
-    items = sorted([process_descriptions(item, group, requests_table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: min(x["registers"]) if "registers" in x else -1)
+    items = sorted([process_descriptions(item, group, requests_table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read"), max(x["registers"])) if "registers" in x else (-1, -1))
 
     _is_single_code = False
     if (items_codes := [get_code(i, "read") for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
@@ -89,11 +89,12 @@ if __name__ == '__main__':
     registers = []
 
     for i in items:
-        if "registers" in i:
-            for r in sorted(i["registers"]):
-                if "name" in i and "rule" in i and not "disabled" in i and i["rule"] > 0:
-                    if "realtime" in i or (runtime % (i["update_interval"] if "update_interval" in i else _update_interval) == 0):
-                        registers.append((get_code(i, "read"), r))
+        if "name" in i and "rule" in i and not "disabled" in i and i["rule"] > 0:
+            if "realtime" in i or (runtime % (i["update_interval"] if "update_interval" in i else _update_interval) == 0):
+                if "registers" in i:
+                    for r in sorted(i["registers"]):
+                        if (register := (get_code(i, "read"), r)) and not register in registers:
+                            registers.append(register)
 
     #print(registers)
 
