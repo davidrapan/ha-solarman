@@ -14,12 +14,9 @@ default:
   digits: 6
 
 requests:
-  - start: 43011
-    end: 43025
-    mb_functioncode: 0x03
-  - start: 43100
-    end: 43170
-    mb_functioncode: 0x03
+  - start: 43000
+    end: 43300
+    code: 0x03
 
 parameters:
   - group: InverterStatus

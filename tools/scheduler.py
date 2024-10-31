@@ -12,11 +12,14 @@ import yaml
 def get_request_code(request):
     return request["code"] if "code" in request else request["mb_functioncode"]
 
-def inherit_descriptions(item, group):
+def process_descriptions(item, group, table, code):
     if not "update_interval" in item and "update_interval" in group:
         item["update_interval"] = group["update_interval"]
-    if not "code" in item and "code" in group:
-        item["code"] = group["code"]
+    if not "code" in item:
+        if "code" in group:
+            item["code"] = group["code"]
+        elif "registers" in item and (addr := min(item["registers"])) is not None:
+            item["code"] = table[addr] if addr in table else code
     return item
 
 def get_code(item, type, default = None):
@@ -59,15 +62,15 @@ if __name__ == '__main__':
 
     with open(file) as f:
         profile = yaml.safe_load(f)
-    
-    items = [inherit_descriptions(item, group) for group in profile["parameters"] for item in group["items"]]
 
     _update_interval = 60
     _code = 0x00
+    _max_size = 0
     if "default" in profile:
         default = profile["default"]
         _update_interval = default["update_interval"] if "update_interval" in default else 60
         _code = default["code"] if "code" in default else 0x03
+        _max_size = default["max_size"] if "max_size" in default else 125
 
     requests_table = {}
 
@@ -76,36 +79,40 @@ if __name__ == '__main__':
             for r in range(pr["start"], pr["end"] + 1):
                 requests_table[r] = get_request_code(pr)
 
+    items = sorted([process_descriptions(item, group, requests_table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: min(x["registers"]) if "registers" in x else -1)
+
+    _is_single_code = False
+    if (items_codes := [get_code(i, "read") for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
+        _is_single_code = is_single_code
+        _code = items_codes[0]
+
     registers = []
-    registers_table = {}
 
     for i in items:
         if "registers" in i:
-            for r in i["registers"]:
+            for r in sorted(i["registers"]):
                 if "name" in i and "rule" in i and not "disabled" in i and i["rule"] > 0:
                     if "realtime" in i or (runtime % (i["update_interval"] if "update_interval" in i else _update_interval) == 0):
-                        registers.append(r)
-                registers_table[r] = get_code(i, "read", requests_table[r] if r in requests_table else _code)
+                        registers.append((get_code(i, "read"), r))
 
-    registers.sort()
-
-    _is_single_code = False
-    if (registers_table_values := registers_table.values()) and (is_single_code := all_same(list(registers_table_values))):
-        _is_single_code = is_single_code
-        _code = next(iter(registers_table_values))
+    #print(registers)
 
     l = (lambda x, y: y - x > span) if span > -1 else (lambda x, y: False)
 
-    _lambda = lambda x, y, z: l(x, y) or y - z >= 125
-    _lambda_code_aware = lambda x, y, z: registers_table[x] != registers_table[y] or _lambda(x, y, z)
+    _lambda = lambda x, y, z: l(x[1], y[1]) or y[1] - z[1] >= _max_size
+    _lambda_code_aware = lambda x, y, z: x[0] != y[0] or _lambda(x, y, z)
 
-    groups = group_when(registers, _lambda if _is_single_code or all_same([registers_table[r] for r in registers]) else _lambda_code_aware)
+    groups = group_when(registers, _lambda if _is_single_code or all_same([r[0] for r in registers]) else _lambda_code_aware)
 
     msg = ''
 
     for r in groups:
         if len(r) > 0:
-            dict = { "start": r[0], "end": r[-1], "code": _code if _is_single_code else registers_table[r[0]] }
+            start = r[0][1]
+            end = r[-1][1]
+            dict = { "code": _code if _is_single_code else r[0][0], "start": start, "end": end, "len": end - start + 1 }
             msg += f'{dict}\n'
+
+    print("")
 
     print(msg)

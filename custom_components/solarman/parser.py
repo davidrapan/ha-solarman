@@ -18,12 +18,10 @@ class ParameterParser:
     _min_span = DEFAULT_REGISTERS_MIN_SPAN
     _max_size = DEFAULT_REGISTERS_MAX_SIZE
     _digits = DEFAULT_DIGITS
-    _registers_table = {}
     _result = {}
 
     def __init__(self, profile):
         self._profile = profile
-        self._items = [inherit_descriptions(item, group) for group in self._profile["parameters"] for item in group["items"]]
 
         if "default" in self._profile:
             default = self._profile["default"]
@@ -47,19 +45,16 @@ class ParameterParser:
                 for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1):
                     requests_table[r] = get_request_code(pr)
 
-        for i in self._items:
-            if "registers" in i:
-                for r in i["registers"]:
-                    self._registers_table[r] = get_code(i, "read", requests_table[r] if r in requests_table else self._code)
+        self._items = sorted([process_descriptions(item, group, requests_table, self._code) for group in self._profile["parameters"] for item in group["items"]], key = lambda x: min(x["registers"]) if "registers" in x else -1)
 
-        if (registers_table_values := self._registers_table.values()) and (is_single_code := all_same(list(registers_table_values))):
+        if (items_codes := [get_code(i, "read") for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
-            self._code = next(iter(registers_table_values))
+            self._code = items_codes[0]
 
         l = (lambda x, y: y - x > self._min_span) if self._min_span > -1 else (lambda x, y: False)
 
-        self._lambda = lambda x, y, z: l(x, y) or y - z >= self._max_size
-        self._lambda_code_aware = lambda x, y, z: self._registers_table[x] != self._registers_table[y] or self._lambda(x, y, z)
+        self._lambda = lambda x, y, z: l(x[1], y[1]) or y[1] - z[1] >= self._max_size
+        self._lambda_code_aware = lambda x, y, z: x[0] != y[0] or self._lambda(x, y, z)
 
     def is_valid(self, parameters):
         return "name" in parameters and "rule" in parameters # and "registers" in parameters
@@ -97,16 +92,14 @@ class ParameterParser:
                 self.set_state(i["name"], self.default_from_unit_of_measurement(i))
                 if "registers" in i:
                     for r in i["registers"]:
-                        registers.append(r)
+                        registers.append((get_code(i, "read"), r))
 
         if len(registers) == 0:
             return {}
 
-        registers.sort()
+        groups = group_when(registers, self._lambda if self._is_single_code or all_same([r[0] for r in registers]) else self._lambda_code_aware)
 
-        groups = group_when(registers, self._lambda if self._is_single_code or all_same([self._registers_table[r] for r in registers]) else self._lambda_code_aware)
-
-        return [{ REQUEST_START: r[0], REQUEST_END: r[-1], REQUEST_CODE: self._code if self._is_single_code else self._registers_table[r[0]] } for r in groups]
+        return [{ REQUEST_CODE: self._code if self._is_single_code else r[0][0], REQUEST_START: r[0][1], REQUEST_END: r[-1][1] } for r in groups]
 
     def in_range(self, value, definition):
         if "range" in definition:
@@ -160,7 +153,7 @@ class ParameterParser:
                     continue
 
                 # Check that the first register in the definition is within the register set in the raw data.
-                if get_start_addr(data, registers[0]) is not None:
+                if get_start_addr(data, get_code(i, "read"), registers[0]) is not None:
                     self.try_parse(data, i)
 
         return self._result
@@ -192,11 +185,12 @@ class ParameterParser:
                 self.try_parse_raw(data, definition)
 
     def _read_registers(self, data, definition):
+        code = get_code(definition, "read")
         value = 0
         shift = 0
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return None
 
             value += (temp & 0xFFFF) << shift
@@ -227,13 +221,14 @@ class ParameterParser:
         return value
 
     def _read_registers_signed(self, data, definition):
+        code = get_code(definition, "read")
         magnitude = definition["magnitude"] if "magnitude" in definition else False
         maxint = 0
         value = 0
         shift = 0
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return None
 
             maxint <<= 16
@@ -262,6 +257,9 @@ class ParameterParser:
         value = 0
 
         for s in definition["sensors"]:
+            if not REQUEST_CODE in s and REQUEST_CODE in definition and (code := definition[REQUEST_CODE]):
+                s[REQUEST_CODE] = code
+
             if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
                 s["scale"] = scale
 
@@ -335,10 +333,11 @@ class ParameterParser:
         self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
     def try_parse_ascii(self, data, definition):
+        code = get_code(definition, "read")
         value = ""
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             value += chr(temp >> 8) + chr(temp & 0xFF)
@@ -346,10 +345,11 @@ class ParameterParser:
         self.set_state(definition["name"], value)
 
     def try_parse_bits(self, data, definition):
+        code = get_code(definition, "read")
         value = []
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             value.append(hex(temp))
@@ -357,10 +357,11 @@ class ParameterParser:
         self.set_state(definition["name"], value)
 
     def try_parse_version(self, data, definition):
+        code = get_code(definition, "read")
         value = ""
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             value += str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
@@ -371,12 +372,13 @@ class ParameterParser:
         self.set_state(definition["name"], value)
 
     def try_parse_datetime(self, data, definition):
+        code = get_code(definition, "read")
         value = ""
 
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             if registers_count == 3:
@@ -409,12 +411,13 @@ class ParameterParser:
             _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
 
     def try_parse_time(self, data, definition):
+        code = get_code(definition, "read")
         value = ""
 
         registers_count = len(definition["registers"])
 
         for i, r in enumerate(definition["registers"]):
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             if registers_count == 1:
@@ -427,10 +430,11 @@ class ParameterParser:
         self.set_state(definition["name"], value)
 
     def try_parse_raw(self, data, definition):
+        code = get_code(definition, "read")
         value = []
 
         for r in definition["registers"]:
-            if (temp := get_addr_value(data, r)) is None:
+            if (temp := get_addr_value(data, code, r)) is None:
                 return
 
             value.append(temp)

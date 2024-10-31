@@ -86,11 +86,14 @@ def is_ethernet_frame(frame):
 def format_exception(e):
     return f"{type(e).__name__}{f': {e}' if f'{e}' else ''}"
 
-def inherit_descriptions(item, group):
+def process_descriptions(item, group, table, code):
     if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
         item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
-    if not REQUEST_CODE in item and REQUEST_CODE in group:
-        item[REQUEST_CODE] = group[REQUEST_CODE]
+    if not REQUEST_CODE in item:
+        if REQUEST_CODE in group:
+            item[REQUEST_CODE] = group[REQUEST_CODE]
+        elif "registers" in item and (addr := min(item["registers"])) is not None:
+            item[REQUEST_CODE] = table[addr] if addr in table else code
     return item
 
 def get_code(item, type, default = None):
@@ -102,16 +105,16 @@ def get_code(item, type, default = None):
             return code[type]
     return default
 
-def get_start_addr(data, register):
+def get_start_addr(data, code, register):
     for d in data:
-        if d <= register < d + data[d][0]:
+        if (i := data[d]) and i[0] == code and d <= register < d + i[1]:
             return d
     return None
 
-def get_addr_value(data, register):
-    if (start := get_start_addr(data, register)) is None:
+def get_addr_value(data, code, register):
+    if (start := get_start_addr(data, code, register)) is None:
         return None
-    return data[start][1][register - start]
+    return data[start][2][register - start]
 
 def ilen(object):
     return len(object) if not isinstance(object, int) else 1

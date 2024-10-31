@@ -363,6 +363,34 @@ parameters:
           - key: 14
             value: "Sampling calibration"
 
+      - name: "Work Mode"
+        update_interval: 300
+        platform: select
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0x09C4]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Charging First"
+          - key: 2
+            value: "Export First"
+          - key: 3
+            value: "Battery Maintenance"
+          - key: 4
+            value: "Command"
+          - key: 5
+            value: "EMS"
+          - key: 6
+            value: "Time of Use"
+          - key: 7
+            value: "Imbalance Compensation"
+          - key: 8
+            value: "Q Compensation"
+
       - name: "DC Temperature"
         class: "temperature"
         state_class: "measurement"
