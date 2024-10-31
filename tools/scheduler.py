@@ -8,6 +8,7 @@
 import os
 import sys
 import yaml
+import bisect
 
 def get_request_code(request):
     return request["code"] if "code" in request else request["mb_functioncode"]
@@ -94,9 +95,7 @@ if __name__ == '__main__':
                 if "registers" in i:
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
-                            registers.append(register)
-
-    #print(registers)
+                            bisect.insort(registers, register)
 
     l = (lambda x, y: y - x > span) if span > -1 else (lambda x, y: False)
 
@@ -108,11 +107,10 @@ if __name__ == '__main__':
     msg = ''
 
     for r in groups:
-        if len(r) > 0:
-            start = r[0][1]
-            end = r[-1][1]
-            dict = { "code": _code if _is_single_code else r[0][0], "start": start, "end": end, "len": end - start + 1 }
-            msg += f'{dict}\n'
+        start = r[0][1]
+        end = r[-1][1]
+        dict = { "code": _code if _is_single_code else r[0][0], "start": start, "end": end, "len": end - start + 1 }
+        msg += f'{dict}\n'
 
     print("")
 

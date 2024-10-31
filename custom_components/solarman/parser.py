@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-import struct
+import bisect
 import logging
 
 from datetime import datetime
@@ -93,7 +93,7 @@ class ParameterParser:
                 if "registers" in i:
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
-                            registers.append(register)
+                            bisect.insort(registers, register)
 
         if len(registers) == 0:
             return {}
