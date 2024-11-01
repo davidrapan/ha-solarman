@@ -106,14 +106,14 @@ def get_code(item, type, default = None):
 
 def get_start_addr(data, code, addr):
     for d in data:
-        if d[0] == code and d[1] <= addr < d[1] + data[d][0]:
+        if d[0] == code and d[1] <= addr < d[1] + len(data[d]):
             return d
     return None
 
 def get_addr_value(data, code, addr):
     if (start := get_start_addr(data, code, addr)) is None:
         return None
-    return data[start][1][addr - start[1]]
+    return data[start][addr - start[1]]
 
 def ilen(object):
     return len(object) if not isinstance(object, int) else 1

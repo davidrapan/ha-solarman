@@ -41,14 +41,14 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
 
         self._multiple_registers = self.registers_length > 1 and self.registers[1] == self.registers[0] + 1
         self._hex = "hex" in sensor
-        self._offset = sensor["hex"] if self._hex else 0
+        self._offset = sensor["hex"] if self._hex else None
 
     def _to_native_value(self, value: time) -> list:
         if self._hex:
-            if self._multiple_registers and self._offset >= 0x100: 
+            if self._multiple_registers and self._offset and self._offset >= 0x100: 
                 return [concat_hex(div_mod(value.hour, 10)) + self._offset, concat_hex(div_mod(value.minute, 10)) + self._offset]
-            return [concat_hex((value.hour, value.minute))]
-        return [value.hour * 100 + value.minute] if not self._multiple_registers else [value.hour, value.minute]
+            return concat_hex((value.hour, value.minute))
+        return value.hour * 100 + value.minute if not self._multiple_registers else [value.hour, value.minute]
 
     @property
     def native_value(self) -> time | None:

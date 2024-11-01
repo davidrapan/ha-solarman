@@ -422,10 +422,11 @@ class ParameterParser:
                 high, low = div_mod(temp, d)
                 value = str(f.format(int(high))) + ":" + str(f.format(int(low)))
             else:
-                if temp >= 0x100:
+                if temp >= d:
+                    f = "{:02d}"
                     if offset:
                         temp -= offset
-                    high, low = div_mod(temp, 0x100)
+                    high, low = div_mod(temp, d)
                     temp = f"{high}{low}"
                 value += str(f.format(int(temp)))
                 if i == 0 or (i == 1 and registers_count > 2):

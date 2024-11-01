@@ -422,7 +422,7 @@ parameters:
           write: 0x06
         registers: [3078]
         range:
-          min: 0
+          min: 1
           max: 100
 
       - name: "Battery Charging Power"
@@ -435,7 +435,7 @@ parameters:
           write: 0x06
         registers: [3079]
         range:
-          min: 0
+          min: 1
           max: 100
 
       - name: "Battery Grid Max Charge"
