@@ -21,7 +21,7 @@ default:
 
 parameters:
   - group: Info
-    update_interval: 300
+    update_interval: 3600
     items:
       - name: "Device"
         class: "enum"
@@ -173,9 +173,32 @@ parameters:
           min: 257
           max: 2051
 
+      - name: Device Self-check
+        attribute:
+        class: "enum"
+        rule: 1
+        registers: [0x0024]
+        range:
+          min: 0
+          max: 1
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Enabled"
+
   - group: Control
     update_interval: 300
     items:
+      - name: "Self-check time"
+        platform: number
+        uom: "s"
+        rule: 1
+        registers: [0x003D]
+        range:
+          min: 0
+          max: 1000
+
       - name: "Date & Time"
         platform: datetime
         update_interval: 60

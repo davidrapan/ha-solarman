@@ -12,7 +12,7 @@ default:
 
 parameters:
   - group: Info
-    update_interval: 300
+    update_interval: 3600
     items:
       - name: "Device"
         class: "enum"
