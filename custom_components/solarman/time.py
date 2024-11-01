@@ -59,7 +59,7 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
                     return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", TIME_FORMAT).time()
                 return datetime.strptime(self._attr_native_value, TIME_FORMAT).time()
         except Exception as e:
-            _LOGGER.debug(f"SolarmanTimeEntity.native_value: {format_exception(e)}")
+            _LOGGER.debug(f"SolarmanTimeEntity.native_value of {self._attr_name}: {format_exception(e)}")
         return None
 
     async def async_set_value(self, value: time) -> None:

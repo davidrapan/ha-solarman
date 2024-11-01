@@ -16,10 +16,10 @@ def get_request_code(request):
 def process_descriptions(item, group, table, code):
     if not "update_interval" in item and "update_interval" in group:
         item["update_interval"] = group["update_interval"]
-    if not "code" in item:
+    if not "code" in item and "registers" in item:
         if "code" in group:
             item["code"] = group["code"]
-        elif "registers" in item and (addr := min(item["registers"])) is not None:
+        elif (addr := min(item["registers"])) is not None:
             item["code"] = table[addr] if addr in table else code
     return item
 
@@ -73,17 +73,12 @@ if __name__ == '__main__':
         _code = default["code"] if "code" in default else 0x03
         _max_size = default["max_size"] if "max_size" in default else 125
 
-    requests_table = {}
+    table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr["start"], pr["end"] + 1)} if "requests" in profile else {}
 
-    if "requests" in profile:
-        for pr in profile["requests"]:
-            for r in range(pr["start"], pr["end"] + 1):
-                requests_table[r] = get_request_code(pr)
-
-    items = sorted([process_descriptions(item, group, requests_table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read"), max(x["registers"])) if "registers" in x else (-1, -1))
+    items = sorted([process_descriptions(item, group, table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1))
 
     _is_single_code = False
-    if (items_codes := [get_code(i, "read") for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
+    if (items_codes := [get_code(i, "read", _code) for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
         _is_single_code = is_single_code
         _code = items_codes[0]
 
@@ -107,10 +102,11 @@ if __name__ == '__main__':
     msg = ''
 
     for r in groups:
-        start = r[0][1]
-        end = r[-1][1]
-        dict = { "code": _code if _is_single_code else r[0][0], "start": start, "end": end, "len": end - start + 1 }
-        msg += f'{dict}\n'
+        if len(r) > 0:
+            start = r[0][1]
+            end = r[-1][1]
+            dict = { "code": _code if _is_single_code else r[0][0], "start": start, "end": end, "len": end - start + 1 }
+            msg += f'{dict}\n'
 
     print("")
 

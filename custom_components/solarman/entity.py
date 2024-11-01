@@ -135,9 +135,9 @@ class SolarmanWritableEntity(SolarmanEntity):
         if self.registers_length > 0:
             self.register = self.registers[0]
 
-    async def write(self, value, state):
+    async def write(self, value, state = None):
         #self.coordinator.inverter.check(self._write_lock)
-        if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0:
+        if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0 and state:
             self.set_state(state)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))

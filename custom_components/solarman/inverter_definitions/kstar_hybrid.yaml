@@ -888,6 +888,14 @@ parameters:
         registers: [3057]
         icon: "mdi:battery-heart-outline"
 
+      - name: Restart
+        platform: button
+        class: restart
+        rule: 0
+        code:
+          write: 0x06
+        registers: [3243]
+
   # Different phases for 3-phase inverters. Only some models have 3 phases, see "Inverter Model" item
   # - R: Referent
   # - S: Secondary
