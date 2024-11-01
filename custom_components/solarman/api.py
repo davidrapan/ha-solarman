@@ -1,6 +1,5 @@
 import time
 import errno
-import struct
 import socket
 import logging
 import asyncio
@@ -203,16 +202,16 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     start = get_request_start(request)
                     end = get_request_end(request)
                     quantity = end - start + 1
-
+                    code_start = (code, start)
                     start_end = f"{start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
                     _LOGGER.debug(f"[{self.serial}] Querying {start_end} ...")
 
                     attempts_left = ACTION_ATTEMPTS
-                    while attempts_left > 0 and not start in responses:
+                    while attempts_left > 0 and not code_start in responses:
                         attempts_left -= 1
 
                         try:
-                            responses[start] = (code, quantity, await self.safe_read_write(code, start, quantity))
+                            responses[code_start] = (quantity, await self.safe_read_write(code, start, quantity))
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} succeeded.")
                         except (V5FrameError, TimeoutError, Exception) as e:
                             _LOGGER.debug(f"[{self.serial}] Querying {start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
