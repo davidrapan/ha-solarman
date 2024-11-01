@@ -43,6 +43,14 @@ class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
         self._multiple_registers = self.registers_length > 3 and self.registers[3] == self.registers[0] + 3
 
+    def _to_native_value(self, value: datetime) -> list:
+        # Bug in HA: value set from the device detail page does not have correct tzinfo (set using AUTOMATIONS/ACTIONS works as expected)
+        if value.tzinfo == timezone.utc:
+            value = value.astimezone(ZoneInfo(self.coordinator.hass.config.time_zone))
+        if self._multiple_registers:
+            return [value.year - 2000, value.month, value.day, value.hour, value.minute, value.second]
+        return [(value.year - 2000 << 8) + value.month, (value.day << 8) + value.hour, (value.minute << 8) + value.second]
+
     @property
     def native_value(self) -> datetime | None:
         """Return the value reported by the datetime."""
@@ -55,7 +63,4 @@ class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
 
     async def async_set_value(self, value: datetime) -> None:
         """Change the date/time."""
-        # Value set from the device detail page does not have correct tzinfo (set using ACTIONS works as expected)
-        if value.tzinfo == timezone.utc:
-            value = value.astimezone(ZoneInfo(self.coordinator.hass.config.time_zone))
-        await self.write(get_dt_as_list_int(value, self._multiple_registers), value.strftime(DATETIME_FORMAT))
+        await self.write(self._to_native_value(value), value.strftime(DATETIME_FORMAT))

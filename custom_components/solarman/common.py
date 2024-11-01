@@ -88,10 +88,10 @@ def format_exception(e):
 def process_descriptions(item, group, table, code):
     if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
         item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
-    if not REQUEST_CODE in item:
+    if not REQUEST_CODE in item and "registers" in item:
         if REQUEST_CODE in group:
             item[REQUEST_CODE] = group[REQUEST_CODE]
-        elif "registers" in item and (addr := min(item["registers"])) is not None:
+        elif (addr := min(item["registers"])) is not None:
             item[REQUEST_CODE] = table[addr] if addr in table else code
     return item
 
@@ -142,8 +142,5 @@ def get_battery_cycles(charge, capacity, voltage):
 def div_mod(dividend, divisor):
     return (dividend // divisor, dividend % divisor)
 
-def get_dt_as_list_int(dt: datetime, long):
-    return [(dt.year - 2000 << 8) + dt.month, (dt.day << 8) + dt.hour, (dt.minute << 8) + dt.second] if not long else [dt.year - 2000, dt.month, dt.day, dt.hour, dt.minute, dt.second]
-
-def per_digit_hex(value):
+def concat_hex(value):
     return int(f"0x{value[0]:02}{value[1]:02}", 16)
