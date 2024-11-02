@@ -139,8 +139,8 @@ class SolarmanWritableEntity(SolarmanEntity):
         if isinstance(value, int):
             if value > 0xFFFF:
                 value = list(split_p16b(value))
-            if len(self.registers) > 1 and not isinstance(value, list):
-                value = list(value)
+            if len(self.registers) > 1:
+                value = ensure_list(value)
         if isinstance(value, list):
             while len(self.registers) - len(value) > 0:
                 value.append(0)
