@@ -47,9 +47,16 @@ class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
             if "on" in value:
                 self._value = value["on"]
 
+        self._value_bit = None if not "bit" in sensor else sensor["bit"]
+
         if self.registers_length > 1:
             _LOGGER.warning(f"SolarmanButtonEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
 
+    def _to_native_value(self, value: int) -> int:
+        if self._value_bit:
+            return (self._attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 
+        return value
+
     async def async_press(self) -> None:
         """Handle the button press."""
-        await self.write(self._value)
+        await self.write(self._to_native_value(self._value))
