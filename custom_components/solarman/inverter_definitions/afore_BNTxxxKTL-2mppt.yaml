@@ -1,6 +1,5 @@
 #
 # To use modbus function in Afore BNTxxxKTL inverters, You first need to change protocol from RS485 to MODBUS in inverter menu.
-# For newer models of BNTxxxKTL (serial namber from T6xxx) configuration for T6 protocol is needed. 
 #
 
 default:
