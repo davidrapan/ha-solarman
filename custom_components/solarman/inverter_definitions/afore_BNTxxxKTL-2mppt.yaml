@@ -1,8 +1,9 @@
 #
-# Afore BNTxxxKTL
+# Afore BNT-TL T4 | 2 MPPT
 #
-# Reference: ???
+# Reference: https://github.com/user-attachments/files/17586963/MODBUS.RTU.for.3.phase.inverters.AFORE.T4.protcol.pdf
 #
+# For newer models of BNTxxxKTL profile w/ T6 protocol is needed
 # To use modbus function you first need to change protocol from RS485 to MODBUS in inverter menu
 #
 

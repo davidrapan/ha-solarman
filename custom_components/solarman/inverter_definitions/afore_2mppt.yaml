@@ -1,9 +1,9 @@
 #
-# Afore BNT-TL | 2 MPPT
+# Afore BNT-TL T6 | 2 MPPT
 #
 # Reference: https://github.com/user-attachments/files/17139137/211208.-.Afore.T6.communication.protocol.V1.0-211109.xlsx
 #
-# For older models of BNTxxxTL profile w/ T4 protocol is needed
+# For older models of BNTxxxKTL profile w/ T4 protocol is needed
 # To use modbus function in Afore BNTxxxKTL inverters, You first need to change protocol from RS485 to MODBUS in inverter menu
 #
 # Tested with Afore ATON BNT004KTL inverter w/ serial number starting from T6
