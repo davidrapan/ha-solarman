@@ -136,10 +136,16 @@ class SolarmanWritableEntity(SolarmanEntity):
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.inverter.check(self._write_lock)
-        if isinstance(value, int) and value > 0xFFFF:
-            value = list(split_p16b(value))
-        if isinstance(value, list) and self.reversed:
-            value.reverse()
+        if isinstance(value, int):
+            if value > 0xFFFF:
+                value = list(split_p16b(value))
+            if len(self.registers) > 1 and not isinstance(value, list):
+                value = list(value)
+        if isinstance(value, list):
+            while len(self.registers) - len(value) > 0:
+                value.append(0)
+            if not self.reversed:
+                value.reverse()
         if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0 and state:
             self.set_state(state)
             self.async_write_ha_state()

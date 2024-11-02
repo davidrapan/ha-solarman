@@ -42,7 +42,7 @@ class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
 
         self._value = 1
         self._value_bit = None
-        if "value" in sensor and (value := sensor["value"]):
+        if "value" in sensor and (value := sensor["value"]) and not isinstance(value, int):
             if True in value:
                 self._value = value[True]
             if "on" in value:

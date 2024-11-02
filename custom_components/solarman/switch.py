@@ -44,7 +44,7 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
         self._value_on = 1
         self._value_off = 0
         self._value_bit = None
-        if "value" in sensor and (value := sensor["value"]):
+        if "value" in sensor and (value := sensor["value"]) and not isinstance(value, int):
             if True in value:
                 self._value_on = value[True]
             if "on" in value:
