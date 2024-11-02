@@ -1,7 +1,7 @@
 #
 # Solarman Smart Meter DTSD422-D3
 #
-# Reference: ???
+# Reference: https://github.com/user-attachments/files/17587006/Solarman.DTSD422-D3_modbus_1730182189251_mwaox_CN.xlsx
 #
 
 default:
@@ -390,7 +390,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x1029]
-        
+
   - group: Energy
     items:
       - name: CT1-3 Total Positive Energy
@@ -400,7 +400,7 @@ parameters:
         scale: 0.01
         rule: 4
         registers: [0x002B, 0x002A]
-        
+
       - name: CT1-3 Total Negative Energy
         class: energy
         state_class: total_increasing
@@ -416,7 +416,7 @@ parameters:
         scale: 0.01
         rule: 4
         registers: [0x102B, 0x102A]
-        
+
       - name: CT4-6 Total Negative Energy
         class: energy
         state_class: total_increasing
@@ -424,4 +424,3 @@ parameters:
         scale: 0.01
         rule: 4
         registers: [0x1035, 0x1034]
-      
