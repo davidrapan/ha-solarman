@@ -132,7 +132,6 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
-        self.reversed = self.registers.index(self.register) > 0
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.inverter.check(self._write_lock)
@@ -142,12 +141,10 @@ class SolarmanWritableEntity(SolarmanEntity):
             if len(self.registers) > 1:
                 value = ensure_list(value)
         if isinstance(value, list):
-            while len(self.registers) - len(value) > 0:
-                value.append(0)
-            if not self.reversed:
-                value.reverse()
+            while len(self.registers) > len(value):
+                value.insert(0, 0)
         if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0 and state:
             self.set_state(state)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))
-            #await self.coordinator.async_request_refresh() 
+            #await self.coordinator.async_request_refresh()
