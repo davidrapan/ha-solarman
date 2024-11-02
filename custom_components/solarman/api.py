@@ -106,6 +106,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
 
 class Inverter(PySolarmanV5AsyncWrapper):
     _is_busy = 0
+    _write_lock = True
 
     name = ""
     state = -1
@@ -196,64 +197,72 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 _LOGGER.debug(f"[{self.serial}] Get: Timeout.")
                 raise TimeoutError(f"[{self.serial}] Currently writing data to the device!")
 
-            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                for request in requests:
-                    code = get_request_code(request)
-                    start = get_request_start(request)
-                    end = get_request_end(request)
-                    quantity = end - start + 1
-                    code_start = (code, start)
-                    code_start_end = f"{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
-                    _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} ...")
+            try:
+                async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+                    for request in requests:
+                        code = get_request_code(request)
+                        start = get_request_start(request)
+                        end = get_request_end(request)
+                        quantity = end - start + 1
+                        code_start = (code, start)
+                        code_start_end = f"{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
+                        _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} ...")
 
-                    attempts_left = ACTION_ATTEMPTS
-                    while attempts_left > 0 and not code_start in responses:
-                        attempts_left -= 1
+                        attempts_left = ACTION_ATTEMPTS
+                        while attempts_left > 0 and not code_start in responses:
+                            attempts_left -= 1
 
-                        try:
-                            responses[code_start] = await self.safe_read_write(code, start, quantity)
-                            _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} succeeded.")
-                        except (V5FrameError, TimeoutError, Exception) as e:
-                            _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
+                            try:
+                                responses[code_start] = await self.safe_read_write(code, start, quantity)
+                                _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} succeeded.")
+                            except (V5FrameError, TimeoutError, Exception) as e:
+                                _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                            if not self._needs_reconnect:
-                                await self.disconnect()
+                                if not self._needs_reconnect:
+                                    await self.disconnect()
 
-                            if not attempts_left > 0:
-                                raise
+                                if not attempts_left > 0:
+                                    raise
 
-                            await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
+                                await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                result = self.profile.process(responses)
+                    result = self.profile.process(responses)
 
-                if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
-                    _LOGGER.debug(f"[{self.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
-                    self.state_interval = now - self.state_updated
-                    self.state_updated = now
-                    self.state = 1
+                    if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
+                        _LOGGER.debug(f"[{self.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
+                        self.state_interval = now - self.state_updated
+                        self.state_updated = now
+                        self.state = 1
+
+            except TimeoutError:
+                raise
+            except Exception as e:
+                if await self.get_failed():
+                    raise UpdateFailed(f"[{self.serial}] {format_exception(e)}") from e
+                _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
+            finally:
+                self._is_busy = 0
 
         except TimeoutError:
             if await self.get_failed():
                 raise
             _LOGGER.debug(f"[{self.serial}] Timeout fetching {self.name} data")
-        except Exception as e:
-            if await self.get_failed():
-                raise UpdateFailed(f"[{self.serial}] {format_exception(e)}") from e
-            _LOGGER.debug(f"[{self.serial}] Error fetching {self.name} data: {e}")
-        finally:
-            self._is_busy = 0
 
         return result
+
+    def check(self, lock):
+        if lock and self._write_lock:
+            raise UserWarning("Entity is locked!")
 
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
         code_start_arg = f"{code:02X} ~ {start} | 0x{start:04X}: {arg}"
         _LOGGER.debug(f"[{self.serial}] Call {code_start_arg} ...")
 
-        try:
-            if await self.wait_for_done(wait_for_attempts):
-                _LOGGER.debug(f"[{self.serial}] Call {code}: Timeout.")
-                raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
+        if await self.wait_for_done(wait_for_attempts):
+            _LOGGER.debug(f"[{self.serial}] Call {code}: Timeout.")
+            raise TimeoutError(f"[{self.serial}] Coordinator is currently reading data from the device!")
 
+        try:
             attempts_left = ACTION_ATTEMPTS
             while attempts_left > 0:
                 attempts_left -= 1
