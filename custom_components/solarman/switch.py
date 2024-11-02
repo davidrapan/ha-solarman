@@ -53,18 +53,32 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
             if "off" in value:
                 self._value_off = value["off"]
 
+        self._value_bit = None if not "bit" in sensor else sensor["bit"]
+
         if self.registers_length > 1:
             _LOGGER.warning(f"SolarmanSwitchEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
+
+    def _to_native_value(self, value: int) -> int:
+        if self._value_bit:
+            return (self._attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 
+        return value
+
+    def _native_value(self) -> int:
+        if self._value_bit:
+            return (self._attr_native_value >> self._value_bit) & 1
+        return self._attr_native_value
 
     @property
     def is_on(self) -> bool | None:
         """Return True if entity is on."""
-        return self._attr_state != self._value_off
+        return self._native_value() != self._value_off
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
-        await self.write(self._value_on, 1)
+        value = self._to_native_value(self._value_on)
+        await self.write(value, value)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
-        await self.write(self._value_off, 0)
+        value = self._to_native_value(self._value_off)
+        await self.write(value, value)
