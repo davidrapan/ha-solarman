@@ -55,9 +55,6 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
 
         self._value_bit = None if not "bit" in sensor else sensor["bit"]
 
-        if self.registers_length > 1:
-            _LOGGER.warning(f"SolarmanSwitchEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
-
     def _to_native_value(self, value: int) -> int:
         if self._value_bit:
             return (self._attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 

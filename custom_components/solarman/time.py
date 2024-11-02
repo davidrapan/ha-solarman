@@ -39,7 +39,7 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
 
-        self._multiple_registers = self.registers_length > 1 and self.registers[1] == self.registers[0] + 1
+        self._multiple_registers = len(self.registers) > 1 and self.registers[1] == self.registers[0] + 1
         self._hex = "hex" in sensor
         self._offset = sensor["hex"] if self._hex else None
 

@@ -130,8 +130,7 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)
         self.registers = sensor["registers"]
-        self.registers_length = len(self.registers)
-        self.register = min(self.registers) if self.registers_length > 0 else None
+        self.register = min(self.registers) if len(self.registers) > 0 else None
 
     async def write(self, value, state = None):
         #self.coordinator.inverter.check(self._write_lock)

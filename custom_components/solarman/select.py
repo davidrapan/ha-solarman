@@ -42,8 +42,8 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
         if "lookup" in sensor:
             self.dictionary = sensor["lookup"]
 
-        if self.registers_length > 1:
-            _LOGGER.warning(f"SolarmanSelectEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
+        if len(self.registers) > 1:
+            _LOGGER.warning(f"SolarmanSelectEntity.__init__: {self._attr_name} contains {len(self.registers)} registers!")
 
     def get_key(self, value: str):
         if self.dictionary:

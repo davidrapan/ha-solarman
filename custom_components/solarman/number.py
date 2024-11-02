@@ -50,9 +50,6 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
         if "offset" in sensor:
             self.offset = get_number(sensor["offset"])
 
-        if self.registers_length > 1:
-            _LOGGER.warning(f"SolarmanNumberEntity.__init__: {self._attr_name} contains {self.registers_length} registers!")
-
         if "configurable" in sensor and (configurable := sensor["configurable"]):
             if "mode" in configurable:
                 self._attr_mode = configurable["mode"]

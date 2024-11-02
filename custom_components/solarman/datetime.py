@@ -41,7 +41,7 @@ class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
         SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
 
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
-        self._multiple_registers = self.registers_length > 3 and self.registers[3] == self.registers[0] + 3
+        self._multiple_registers = len(self.registers) > 3 and self.registers[3] == self.registers[0] + 3
 
     def _to_native_value(self, value: datetime) -> list:
         # Bug in HA: value set from the device detail page does not have correct tzinfo (set using AUTOMATIONS/ACTIONS works as expected)
