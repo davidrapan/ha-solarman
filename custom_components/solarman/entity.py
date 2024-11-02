@@ -59,7 +59,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         self._attr_state = self._attr_native_value = state
 
     def update(self):
-        if self.sensor_name in self.coordinator.data and (data := self.coordinator.data[self.sensor_name]):
+        if self.description_name in self.coordinator.data and (data := self.coordinator.data[self.description_name]):
             self.set_state(data["state"])
             if "value" in data:
                 self._attr_extra_state_attributes["value"] = data["value"]
@@ -67,28 +67,28 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
                 if "inverse" in self.attributes and self._attr_native_value:
                     self._attr_extra_state_attributes["−x"] = -self._attr_native_value
                 for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
-                    self._attr_extra_state_attributes[attr.replace(f"{self.sensor_name} ", "")] = self.get_data_state(attr)
+                    self._attr_extra_state_attributes[attr.replace(f"{self.description_name} ", "")] = self.get_data_state(attr)
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator)
-        self.sensor_name = sensor["name"]
-        self.sensor_entity_id = sensor["entity_id"] if "entity_id" in sensor else None
-        self.sensor_unique_id = self.sensor_entity_id if self.sensor_entity_id else self.sensor_name
+        self.description_name = sensor["name"]
+        self.description_entity_id = sensor.get("entity_id")
+        self.description_unique_id = self.description_entity_id if self.description_entity_id else self.description_name
 
         #self._attr_has_entity_name = True
 
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
 
-        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
-        #elf._attr_name = "{}".format(self.sensor_name) if self.sensor_name else self.coordinator.inverter.name
+        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.description_name) if self.description_name else self.coordinator.inverter.name
+        #elf._attr_name = "{}".format(self.description_name) if self.description_name else self.coordinator.inverter.name
 
-        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.sensor_unique_id) if self.sensor_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
+        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.description_unique_id) if self.description_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
 
-        if self.sensor_entity_id:
-            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.sensor_entity_id)
-        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.sensor_name.lower().replace(" ", "_")):
+        if self.description_entity_id:
+            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.description_entity_id)
+        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.description_name.lower().replace(" ", "_")):
             self._attr_translation_key = translation_key
         if entity_category := get_attr(sensor, "category") or (entity_category := get_attr(sensor, "entity_category")):
             self._attr_entity_category = entity_category
@@ -112,7 +112,9 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if icon := get_attr(sensor, "icon"):
             self._attr_icon = icon
 
-        self.attributes = sensor["attributes"] if "attributes" in sensor else None
+        self.attributes = sensor.get("attributes")
+
+        self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
         if self.platform and (name_translation_key := self._name_translation_key) and (name := self.platform.platform_translations.get(name_translation_key)):
@@ -129,15 +131,14 @@ class SolarmanWritableEntity(SolarmanEntity):
             self._attr_entity_category = EntityCategory.CONFIG
 
         self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)
-        self.registers = sensor["registers"]
         self.register = min(self.registers) if len(self.registers) > 0 else None
-        self.reverse = self.registers.index(self.register) > 0
+        self.reversed = self.registers.index(self.register) > 0
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.inverter.check(self._write_lock)
         if isinstance(value, int) and value > 0xFFFF:
             value = list(split_p16b(value))
-        if isinstance(value, list) and self.reverse:
+        if isinstance(value, list) and self.reversed:
             value.reverse()
         if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0 and state:
             self.set_state(state)

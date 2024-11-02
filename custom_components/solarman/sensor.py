@@ -127,8 +127,8 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
     def update(self):
         #super().update()
         c = len(self.coordinator.data)
-        if c > 1 or (c == 1 and self.sensor_name in self.coordinator.data):
-            match self.sensor_name:
+        if c > 1 or (c == 1 and self.description_name in self.coordinator.data):
+            match self.description_name:
                 case "Battery SOH":
                     total_battery_charge = self.get_data("Total Battery Charge", None)
                     if total_battery_charge == 0:
