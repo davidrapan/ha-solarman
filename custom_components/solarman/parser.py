@@ -255,7 +255,6 @@ class ParameterParser:
         for s in definition["sensors"]:
             if not REQUEST_CODE in s and REQUEST_CODE in definition and (code := definition[REQUEST_CODE]):
                 s[REQUEST_CODE] = code
-
             if not "scale" in s and "scale" in definition and (scale := definition["scale"]):
                 s["scale"] = scale
 
@@ -268,10 +267,14 @@ class ParameterParser:
                 n = validation["default"]
 
             if "multiply" in s and (s_multiply := s["multiply"]):
+                if not REQUEST_CODE in s_multiply and REQUEST_CODE in s and (s_code := s[REQUEST_CODE]):
+                    s_multiply[REQUEST_CODE] = s_code
                 if not "scale" in s_multiply and "scale" in s and (s_scale := s["scale"]):
                     s_multiply["scale"] = s_scale
+
                 if (c := self._read_registers(data, s_multiply)) is not None:
                     n *= c
+
             if not "operator" in s:
                 value += n
             else:
