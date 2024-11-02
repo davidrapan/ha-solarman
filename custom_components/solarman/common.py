@@ -1,4 +1,5 @@
 import os
+import re
 import yaml
 import asyncio
 import aiofiles
@@ -83,7 +84,7 @@ def is_ethernet_frame(frame):
     return False
 
 def format_exception(e):
-    return f"{type(e).__name__}{f': {e}' if f'{e}' else ''}"
+    return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
 def process_descriptions(item, group, table, code):
     if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
