@@ -48,7 +48,7 @@ class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
             if "on" in value:
                 self._value = value["on"]
             if "bit" in value:
-                self._value_bit = sensor["bit"]
+                self._value_bit = value["bit"]
 
     def _to_native_value(self, value: int) -> int:
         if self._value_bit:

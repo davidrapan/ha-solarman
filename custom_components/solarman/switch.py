@@ -54,7 +54,7 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
             if "off" in value:
                 self._value_off = value["off"]
             if "bit" in value:
-                self._value_bit = sensor["bit"]
+                self._value_bit = value["bit"]
 
     def _to_native_value(self, value: int) -> int:
         if self._value_bit:
