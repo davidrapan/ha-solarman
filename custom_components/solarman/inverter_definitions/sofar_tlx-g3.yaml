@@ -127,8 +127,7 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
-        class: "none"
-        uom: "kohm"
+        uom: "kΩ"
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
