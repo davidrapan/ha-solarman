@@ -1,0 +1,91 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Пристрій вже сконфігуровано"
+    },
+    "error": {
+      "cannot_connect": "Не вдалося підключитися",
+      "invalid_host": "Не коректний хостнейм або  IP-адреса",
+      "unknown": "Неочікувана помилка"
+    },
+    "step": {
+      "user": {
+        "title": "Конфігурація інвертора",
+        "data": {
+          "name": "Назва пристрою",
+          "inverter_discovery": "Ввімкнути пошук пристрою",
+          "inverter_host": "Хост чи IP адреса",
+          "inverter_serial": "Серійний номер пристрою (отримайте через веб інтерфейс логгера)",
+          "inverter_port": "Порт",
+          "inverter_mb_slave_id": "Modbus Slave ID (зазвичай 1)",
+          "inverter_passthrough": "Solarman protocol passthrough mode",
+          "lookup_file": "yaml файл з визначеннями параметрів інвертора",
+          "battery_nominal_voltage": "Номінальний вольтаж літієвої батареї",
+          "battery_life_cycle_rating": "Очікувана кількість циклів заряду/розряду літієвої батареї"
+        },
+        "data_description": {
+          "name": "Це ім'я буде використане як префікс до всіх сенсорів (змінюйте на свій розсуд)",
+          "inverter_host": "Ім'я хоста або IP-адреса пристрою для підключення",
+          "inverter_port": "TCP порт (8899) пристрою для підключення"
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Не вдалося підключитися",
+      "invalid_host": "Не коректний хостнейм або  IP-адреса",
+      "unknown": "Неочікувана помилка"
+    },
+    "step": {
+      "init": {
+        "title": "Конфігурація інвертора",
+        "data": {
+          "name": "Назва пристрою",
+          "inverter_discovery": "Ввімкнути виявлення пристрою",
+          "inverter_host": "Хост чи IP адреса",
+          "inverter_serial": "Серійний номер пристрою (отримайте через веб інтерфейс логгера)",
+          "inverter_port": "Порт",
+          "inverter_mb_slave_id": "Modbus Slave ID (usually 1)",
+          "inverter_passthrough": "Solarman protocol passthrough mode",
+          "lookup_file": "yaml файл з визначеннями параметрів інвертора",
+          "battery_nominal_voltage": "Номінальний вольтаж літієвої батареї",
+          "battery_life_cycle_rating": "Очікувана кількість циклів заряду/розряду літієвої батареї"
+        },
+        "data_description": {
+          "name": "Це ім'я буде використане як префікс до всіх сенсорів (змінюйте на свій розсуд)",
+          "inverter_host": "Ім'я хоста або IP-адреса пристрою для підключення",
+          "inverter_port": "TCP порт (8899) пристрою для підключення"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Заряд батареї за сьогодні"
+      },
+      "today_battery_discharge": {
+        "name": "Розряд батареї за сьогодні"
+      },
+      "today_battery_life_cycles": {
+        "name": "Кількість циклів заряду/розряду батареї за сьогодні"
+      },
+      "today_energy_export": {
+        "name": "Експорт енергії за сьогодні"
+      },
+      "today_energy_import": {
+        "name": "Імпорт енергії за сьогодні"
+      },
+      "today_load_consumption": {
+        "name": "Споживання енергії за сьогодні"
+      },
+      "today_losses": {
+        "name": "Втрати енергії за сьогодні"
+      },
+      "today_production": {
+        "name": "Виробництво енергії за сьогодні"
+      }
+    }
+  }
+}
