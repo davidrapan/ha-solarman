@@ -37,7 +37,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         if frame[5] != self.sequence_number and is_ethernet_frame(frame):
             self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
             self._passthrough = True
-            return False
+            return True
         if frame[5] != self.sequence_number:
             self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
