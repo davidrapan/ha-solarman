@@ -49,6 +49,8 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
         if self.dictionary:
             for o in self.dictionary:
                 if o["value"] == value:
+                    if "bit" in o:
+                        return 1 << o["bit"]
                     return o["key"]
 
         return self.options.index(value)
@@ -63,4 +65,3 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         await self.write(self.get_key(option), option)
-
