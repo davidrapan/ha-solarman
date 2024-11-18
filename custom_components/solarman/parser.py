@@ -411,8 +411,8 @@ class ParameterParser:
 
     def try_parse_time(self, data, definition):
         code = get_code(definition, "read")
-        f, d = ("{:02d}", 100) if not "hex" in definition else ("{:02x}", 0x100)
-        offset = definition["hex"] if "hex" in definition else None
+        f, d = ("{:02d}", 100 if not "dec" in definition else definition["dec"]) if not "hex" in definition else ("{:02x}", 0x100 if definition["hex"] is None else definition["hex"])
+        offset = definition["offset"] if "offset" in definition else None
         value = ""
 
         registers_count = len(definition["registers"])
