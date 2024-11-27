@@ -292,7 +292,6 @@ parameters:
     items:
       - name: "Device State"
         class: "enum"
-        state_class: "measurement"
         rule: 1
         registers: [0x3806]
         lookup:
@@ -390,7 +389,7 @@ parameters:
       - name: "Battery Temperature"
         class: "temperature"
         state_class: "measurement"
-        uom: "ºC"
+        uom: "°C"
         scale: 0.1
         rule: 1
         registers: [0x394D]
@@ -461,7 +460,6 @@ parameters:
 
       - name: "Battery State"
         class: "enum"
-        state_class: "measurement"
         rule: 1
         registers: [0x3924]
         icon: "mdi:battery"
