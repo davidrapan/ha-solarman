@@ -360,7 +360,6 @@ parameters:
         registers: [0x00CF, 0x00CE]
         code:
           read: 0x03
-          write: 0x06
         rule: 1
         lookup:
           - key: 0
