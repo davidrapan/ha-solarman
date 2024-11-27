@@ -110,7 +110,7 @@ class ParameterParser:
     def lookup_value(self, value, keyvaluepairs):
         for o in keyvaluepairs:
             if "bit" in o:
-                if 1 << o["bit"] == value or "default":
+                if 1 << o["bit"] == value or "default" in o:
                     return o["value"]
             else:
                 key = o["key"]
