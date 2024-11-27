@@ -50,7 +50,7 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
             for o in self.dictionary:
                 if o["value"] == value:
                     if "bit" in o:
-                        return 1 << o["bit"]
+                        return from_bit_index(o["bit"])
                     return o["key"]
 
         return self.options.index(value)

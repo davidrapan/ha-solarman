@@ -140,6 +140,11 @@ def get_battery_power_capacity(capacity, voltage):
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
 
+def from_bit_index(value):
+    if isinstance(value, list):
+        return sum(1 << i for i in value)
+    return 1 << value
+
 def split_p16b(value):
     while value:
         yield value & 0xFFFF
