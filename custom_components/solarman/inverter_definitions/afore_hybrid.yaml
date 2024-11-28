@@ -460,6 +460,16 @@ parameters:
       read: 0x03
       write: 0x06
     items:
+      - name: "Meter"
+        platform: select
+        rule: 1
+        registers: [0x00D3]
+        lookup:
+          - key: 0
+            value: "No Meter"
+          - key: 1
+            value: "Current Transformer"
+
       - name: "Battery Control Mode"
         platform: "select"
         rule: 1
