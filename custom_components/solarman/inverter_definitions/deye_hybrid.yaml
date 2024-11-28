@@ -321,6 +321,17 @@ parameters:
         registers: [0x004C]
         icon: "mdi:transmission-tower-export"
 
+      - name: Today Energy Export
+        alt: Today Energy Sold
+        friendly_name: Today's Energy Export
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x004D]
+        icon: "mdi:transmission-tower-import"
+
       - name: Total Energy Import
         alt: Total Energy Bought
         class: "energy"
@@ -332,17 +343,6 @@ parameters:
         icon: "mdi:transmission-tower-export"
         validation:
           min: 0.1
-
-      - name: Today Energy Export
-        alt: Today Energy Sold
-        friendly_name: Today's Energy Export
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.1
-        rule: 1
-        registers: [0x004D]
-        icon: "mdi:transmission-tower-import"
 
       - name: Total Energy Export
         alt: Total Energy Sold
@@ -548,6 +548,14 @@ parameters:
 
   - group: Grid
     items:
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x004F]
+
       - name: "Grid L1 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -617,6 +625,24 @@ parameters:
         registers: [0x00A9]
         icon: "mdi:transmission-tower"
         attributes: [inverse]
+
+      - name: "External CT1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x00A2]
+        icon: "mdi:transmission-tower"
+
+      - name: "External CT2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x00A3]
+        icon: "mdi:transmission-tower"
 
       - name: "External CT1 Power"
         class: "power"
@@ -697,6 +723,13 @@ parameters:
         rule: 2
         registers: [0x00B4]
 
+      - name: "Load Frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x00C0]
+
       - name: "SmartLoad"
         update_interval: 30
         platform: "binary_sensor"
@@ -732,13 +765,12 @@ parameters:
         registers: [0x0067, 0x0068, 0x0069, 0x006A]
         icon: "mdi:message-alert-outline"
 
-      - name: "Grid Frequency"
-        class: "frequency"
+      - name: "Output Frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
-        registers: [0x004F]
+        registers: [0x00C1]
 
       - name: "Output L1 Voltage"
         class: "voltage"
@@ -821,20 +853,6 @@ parameters:
             signed:
             registers: [0x00AF]
 
-      - name: "Load Frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x00C0]
-
-      - name: "Output Frequency"
-        state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
-        rule: 1
-        registers: [0x00C1]
-
       - name: "DC Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -876,6 +894,13 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x00A6]
+
+      - name: "Generator Frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x00C4]
 
   - group: Settings
     update_interval: 300
