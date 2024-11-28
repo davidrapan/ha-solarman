@@ -370,6 +370,7 @@ parameters:
           - key: 0
             value: "Off"
           - bit: 0
+            default:
             value: "On"
           - bit: [0, 4]
             value: "Time of Use"
