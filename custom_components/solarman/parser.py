@@ -127,13 +127,13 @@ class ParameterParser:
         return default if default else keyvaluepairs[0]["value"]
 
     def do_validate(self, key, value, rule):
-        if "min" in rule and (min := rule["min"]) and min > value:
+        if "min" in rule and (min := rule["min"]) is not None and min > value:
             _LOGGER.debug(f"do_validate {key}: {value} < {min}")
             if "invalidate_all" in rule:
                 raise ValueError(f"Invalidate complete dataset - {key}: {value} < {min}")
             return False
 
-        if "max" in rule and (max := rule["max"]) and max < value:
+        if "max" in rule and (max := rule["max"]) is not None and max < value:
             _LOGGER.debug(f"do_validate {key}: {value} > {max}")
             if "invalidate_all" in rule:
                 raise ValueError(f"Invalidate complete dataset - {key}: {value} > {max}")
@@ -214,7 +214,7 @@ class ParameterParser:
             if "scale" in definition and (scale := definition["scale"]):
                 value *= scale
 
-            if "divide" in definition and (divide := definition["divide"]) and divide != 0:
+            if "divide" in definition and (divide := definition["divide"]):
                 value //= divide
 
         return value
@@ -247,7 +247,7 @@ class ParameterParser:
         if "scale" in definition and (scale := definition["scale"]):
             value *= scale
 
-        if "divide" in definition and (divide := definition["divide"]) and divide != 0:
+        if "divide" in definition and (divide := definition["divide"]):
             value //= divide
 
         return value

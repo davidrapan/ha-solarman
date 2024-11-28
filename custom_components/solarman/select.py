@@ -58,8 +58,6 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
     @property
     def current_option(self):
         """Return the current option of this select."""
-        if not self._attr_state:
-            return None
         return self._attr_state
 
     async def async_select_option(self, option: str) -> None:
