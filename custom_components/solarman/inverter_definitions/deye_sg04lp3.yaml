@@ -2098,6 +2098,21 @@ parameters:
         registers: [0x026B, 0x02C4]
         icon: "mdi:transmission-tower"
 
+      - name: "Grid Power Factor"
+        platform: number
+        class: "power_factor"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x026D]
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 1000
+        icon: "mdi:transmission-tower"
+
       # The following three (four) registers change according to the built-in and external settings
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L1 Power"

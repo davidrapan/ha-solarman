@@ -363,6 +363,8 @@ parameters:
         update_interval: 300
         platform: select
         registers: [0x00CF, 0x00CE]
+        display:
+          mask: 0x11
         code:
           read: 0x03
         rule: 1
