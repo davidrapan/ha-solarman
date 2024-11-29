@@ -107,24 +107,19 @@ class ParameterParser:
 
         return True
 
-    def lookup_value(self, value, keyvaluepairs):
-        default = None
+    def lookup_value(self, value, dictionary):
+        default = dictionary[0]["value"]
 
-        for o in keyvaluepairs:
-            if "default" in o:
+        for o in dictionary:
+            key = from_bit_index(o["bit"]) if "bit" in o else o["key"]
+
+            if "default" in o or key == "default":
                 default = o["value"]
-            if "bit" in o and from_bit_index(o["bit"]) == value:
-                return o["value"]
-            if "key" in o and (key := o["key"]) is not None:
-                if key == "default":
-                    default = o["value"]
-                if isinstance(key, list):
-                    if value in key:
-                        return o["value"]
-                elif key == value:
-                    return o["value"]
 
-        return default if default else keyvaluepairs[0]["value"]
+            if key == value if not isinstance(key, list) else value in key:
+                return o["value"]
+
+        return default
 
     def do_validate(self, key, value, rule):
         if "min" in rule and (min := rule["min"]) is not None and min > value:
