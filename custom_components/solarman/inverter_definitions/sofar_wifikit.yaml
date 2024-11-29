@@ -361,6 +361,9 @@ parameters:
         registers: [0x10BC]
         icon: "mdi:battery"
 
+  - group: Info
+    update_interval: 300
+    items:
       - name: "Battery Type"
         class: "enum"
         rule: 1
@@ -383,8 +386,10 @@ parameters:
             default:
             value: "DEFAULT"
 
-      - name: Working Mode
-        update_interval: 300
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: Work Mode
         platform: select
         rule: 1
         registers: [0x1200]
@@ -394,9 +399,132 @@ parameters:
           - key: 0x0001
             value: "Time of Use"
           - key: 0x0002
-            value: "Timing"
+            value: "Timed"
           - key: 0x0003
             value: "Passive"
+
+      - name: Timed Charge Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1201]
+
+      - name: Timed Charge End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1202]
+
+      - name: Timed Discharge Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1203]
+
+      - name: Timed Discharge End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1204]
+
+      - name: "Timed Charge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x1205]
+        range:
+          min: 0
+          max: 3000
+
+      - name: "Timed Discharge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x1206]
+        range:
+          min: 0
+          max: 3000
+
+      - name: "Program"
+        platform: number
+        rule: 1
+        registers: [0x1207]
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 3
+
+      - name: Program Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1208]
+
+      - name: Program End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x1209]
+
+      - name: "Program SOC"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x120A]
+        range:
+          min: 30
+          max: 100
+
+      - name: "Program Charge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x120B]
+        range:
+          min: 0
+          max: 3000
+
+      - name: Time of Use
+        platform: select
+        rule: 1
+        registers: [0x120E]
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - bit: 0
+            value: "Monday"
+          - bit: 1
+            value: "Tuesday"
+          - bit: 2
+            value: "Wednesday"
+          - bit: 3
+            value: "Thursday"
+          - bit: 4
+            value: "Friday"
+          - bit: 5
+            value: "Saturday"
+          - bit: 6
+            value: "Sunday"
+          - bit: 7
+            value: "Weekdays"
+          - bit: [6, 7]
+            value: "Weekend"
+          - key: 0x007F
+            default:
+            value: "Enabled"
+
+      - name: "Program"
+        platform: "switch"
+        rule: 1
+        registers: [0x120F]
 
   - group: InverterStatus
     items:
