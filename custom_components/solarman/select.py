@@ -51,14 +51,14 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
         if self.dictionary:
             for o in self.dictionary:
                 if o["value"] == value and (key := from_bit_index(o["bit"]) if "bit" in o else o["key"]) is not None:
-                    return key if not self.mask else self._attr_state & (0xFFFFFFFF - self.mask) | key
+                    return key if not self.mask else self._attr_value & (0xFFFFFFFF - self.mask) | key
 
         return self.options.index(value)
 
     @property
     def current_option(self):
         """Return the current option of this select."""
-        return self._attr_state if not self.mask else self._attr_state & self.mask
+        return self._attr_state if not self.mask else lookup_value(self._attr_value & self.mask, self.dictionary)
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""

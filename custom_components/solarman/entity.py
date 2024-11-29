@@ -29,6 +29,9 @@ def create_entity(creator, description):
         raise
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
+
+    _attr_value: None = None
+
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.inverter.device_info
@@ -43,31 +46,18 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         self.update()
         self.async_write_ha_state()
 
-    def get_data_state(self, name):
-        return self.coordinator.data[name]["state"]
-
-    def get_data_value(self, name):
-        return self.coordinator.data[name]["value"]
-
-    def get_data(self, name, default):
-        if name in self.coordinator.data:
-                return self.get_data_state(name)
-
-        return default
-
-    def set_state(self, state):
-        self._attr_state = self._attr_native_value = state
+    def set_state(self, state, value = None) -> bool:
+        self._attr_native_value = self._attr_state = state
+        if value is not None:
+            self._attr_extra_state_attributes["value"] = self._attr_value = value
+        return True
 
     def update(self):
-        if self.description_name in self.coordinator.data and (data := self.coordinator.data[self.description_name]):
-            self.set_state(data["state"])
-            if "value" in data:
-                self._attr_extra_state_attributes["value"] = data["value"]
-            if self.attributes:
-                if "inverse" in self.attributes and self._attr_native_value:
-                    self._attr_extra_state_attributes["−x"] = -self._attr_native_value
-                for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
-                    self._attr_extra_state_attributes[attr.replace(f"{self.description_name} ", "")] = self.get_data_state(attr)
+        if (data := self.coordinator.data.get(self.description_name)) and self.set_state(*data) and self.attributes:
+            if "inverse" in self.attributes and self._attr_native_value:
+                self._attr_extra_state_attributes["−x"] = -self._attr_native_value
+            for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
+                self._attr_extra_state_attributes[attr.replace(f"{self.description_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
@@ -144,7 +134,7 @@ class SolarmanWritableEntity(SolarmanEntity):
             while len(self.registers) > len(value):
                 value.insert(0, 0)
         if await self.coordinator.inverter.call(self.code, self.register, value, ACTION_ATTEMPTS_MAX) > 0 and state:
-            self.set_state(state)
+            self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))
             #await self.coordinator.async_request_refresh()

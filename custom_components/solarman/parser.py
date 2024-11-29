@@ -66,9 +66,8 @@ class ParameterParser:
     def default_from_unit_of_measurement(self, parameters):
         return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
 
-    def set_state(self, key, value):
-        self._result[key] = {}
-        self._result[key]["state"] = value
+    def set_state(self, key, state, value = None):
+        self._result[key] = (state, value)
 
     def get_entity_descriptions(self):
         return [i for i in self._items if self.is_valid(i) and not "attribute" in i]
@@ -106,20 +105,6 @@ class ParameterParser:
                     return False
 
         return True
-
-    def lookup_value(self, value, dictionary):
-        default = dictionary[0]["value"]
-
-        for o in dictionary:
-            key = from_bit_index(o["bit"]) if "bit" in o else o["key"]
-
-            if "default" in o or key == "default":
-                default = o["value"]
-
-            if key == value if not isinstance(key, list) else value in key:
-                return o["value"]
-
-        return default
 
     def do_validate(self, key, value, rule):
         if "min" in rule and (min := rule["min"]) is not None and min > value:
@@ -298,9 +283,7 @@ class ParameterParser:
         key = definition["name"]
 
         if "lookup" in definition:
-            self.set_state(key, self.lookup_value(value, definition["lookup"]))
-            self._result[key]["value"] = int(value)
-
+            self.set_state(key, lookup_value(value, definition["lookup"]), int(value))
             return
 
         if (validation := get_or_default(definition, "validation")) and not self.do_validate(key, value, validation):
@@ -311,7 +294,7 @@ class ParameterParser:
         self.set_state(key, get_number(value, definition["digits"] if "digits" in definition else self._digits))
 
         if "attributes" in definition and "value" in definition["attributes"]:
-            self._result[key]["value"] = int(value)
+            self.set_state(key, self._result[key][0], int(value))
 
     def try_parse_signed(self, data, definition):
         if (value := (self._read_registers_signed(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition))) is None:

@@ -100,11 +100,10 @@ class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
             self._attr_native_value = last_sensor_data.native_value
             self._attr_native_unit_of_measurement = last_sensor_data.native_unit_of_measurement
 
-    def set_state(self, state):
+    def set_state(self, state, value = None) -> bool:
         if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
-            return
-
-        self._attr_state = self._attr_native_value = state
+            return False
+        return super().set_state(state, value)
 
 class SolarmanPersistentSensor(SolarmanRestoreSensor):
     @property
@@ -130,12 +129,12 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
         if c > 1 or (c == 1 and self.description_name in self.coordinator.data):
             match self.description_name:
                 case "Battery SOH":
-                    total_battery_charge = self.get_data("Total Battery Charge", None)
+                    total_battery_charge = get_tuple(self.coordinator.data.get("Total Battery Charge"))
                     if total_battery_charge == 0:
                         self.set_state(100)
                         return
-                    battery_capacity = self.get_data("Battery Capacity", None)
-                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
@@ -143,16 +142,16 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage and self._battery_life_cycle_rating:
                         self.set_state(get_number(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits))
                 case "Battery State":
-                    battery_power = self.get_data("Battery Power", None)
+                    battery_power = get_tuple(self.coordinator.data.get("Battery Power"))
                     if battery_power:
                         self.set_state("discharging" if battery_power > 50 else "charging" if battery_power < -50 else "idle")
                 case "Today Battery Life Cycles":
-                    today_battery_charge = self.get_data("Today Battery Charge", None)
+                    today_battery_charge = get_tuple(self.coordinator.data.get("Today Battery Charge"))
                     if today_battery_charge == 0:
                         self.set_state(0)
                         return
-                    battery_capacity = self.get_data("Battery Capacity", None)
-                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
@@ -160,12 +159,12 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
                     if today_battery_charge and battery_capacity and self._battery_nominal_voltage:
                         self.set_state(get_number(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits))
                 case "Total Battery Life Cycles":
-                    total_battery_charge = self.get_data("Total Battery Charge", None)
+                    total_battery_charge = get_tuple(self.coordinator.data.get("Total Battery Charge"))
                     if total_battery_charge == 0:
                         self.set_state(0)
                         return
-                    battery_capacity = self.get_data("Battery Capacity", None)
-                    battery_corrected_capacity = self.get_data("Battery Corrected Capacity", None)
+                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
