@@ -66,14 +66,14 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     return True
 
 class SolarmanSensorEntity(SolarmanEntity, SensorEntity):
-    def __init__(self, coordinator, platform, sensor):
-        super().__init__(coordinator, platform, sensor)
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
         if "state_class" in sensor and (state_class := sensor["state_class"]):
             self._attr_state_class = state_class
 
 class SolarmanIntervalSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, _PLATFORM, sensor)
+        super().__init__(coordinator, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_native_unit_of_measurement = "s"
         self._attr_state_class = "duration"
@@ -88,7 +88,7 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
 
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, _PLATFORM, sensor)
+        super().__init__(coordinator, sensor)
         self._sensor_ensure_increasing = "ensure_increasing" in sensor
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):

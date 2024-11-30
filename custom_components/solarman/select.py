@@ -37,7 +37,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
         self.mask = display.get("mask") if (display := sensor.get("display")) else None
 

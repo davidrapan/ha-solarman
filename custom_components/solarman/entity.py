@@ -61,7 +61,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
                 self._attr_extra_state_attributes[attr.replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, platform, sensor):
+    def __init__(self, coordinator, sensor):
         super().__init__(coordinator)
 
         self._attr_name = sensor["name"]
@@ -110,8 +110,8 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         return f"{device_name} {name}"
 
 class SolarmanWritableEntity(SolarmanEntity):
-    def __init__(self, coordinator, platform, sensor):
-        super().__init__(coordinator, platform, sensor)
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
 
         #self._write_lock = "locked" in sensor
 

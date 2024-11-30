@@ -46,7 +46,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanEntity.__init__(self, coordinator, sensor)
         self._sensor_inverted = False
         if "inverted" in sensor and (inverted := sensor["inverted"]):
             self._sensor_inverted = inverted
