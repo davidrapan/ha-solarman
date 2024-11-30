@@ -4,6 +4,7 @@ import logging
 
 from typing import Any
 
+from homeassistant.util import slugify
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity import EntityDescription
@@ -53,35 +54,28 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         return True
 
     def update(self):
-        if (data := self.coordinator.data.get(self.description_name)) and self.set_state(*data) and self.attributes:
+        if (data := self.coordinator.data.get(self._attr_name)) and self.set_state(*data) and self.attributes:
             if "inverse" in self.attributes and self._attr_native_value:
                 self._attr_extra_state_attributes["−x"] = -self._attr_native_value
             for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
-                self._attr_extra_state_attributes[attr.replace(f"{self.description_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
+                self._attr_extra_state_attributes[attr.replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator)
 
-        self.description_name = sensor["name"]
-        self.description_entity_id = sensor.get("entity_id")
-        self.description_unique_id = (self.description_entity_id if self.description_entity_id else self.description_name)#.lower().replace(' ', '_')
-
+        self._attr_name = sensor["name"]
         self._attr_has_entity_name = True
-        self._attr_name = self.description_name
-        self._attr_unique_id = '_'.join(filter(None, (self.coordinator.inverter.name, str(self.coordinator.inverter.serial), self.description_unique_id)))
+        self._attr_translation_key = get_attr(sensor, "translation_key") or slugify(self._attr_name)
+        self._attr_unique_id = '_'.join(filter(None, (self.coordinator.inverter.name, str(self.coordinator.inverter.serial), self._attr_name)))
 
-        if self.description_entity_id:
-            self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.description_entity_id)
-        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.description_name.lower().replace(' ', '_')):
-            self._attr_translation_key = translation_key
-        if entity_category := get_attr(sensor, "category") or (entity_category := get_attr(sensor, "entity_category")):
+        if (entity_category := get_attr(sensor, "category") or get_attr(sensor, "entity_category")):
             self._attr_entity_category = entity_category
-        if device_class := get_attr(sensor, "class") or (device_class := get_attr(sensor, "device_class")):
+        if (device_class := get_attr(sensor, "class") or get_attr(sensor, "device_class")):
             self._attr_device_class = device_class
-        if unit_of_measurement := get_attr(sensor, "uom") or (unit_of_measurement := get_attr(sensor, "unit_of_measurement")):
+        if (unit_of_measurement := get_attr(sensor, "uom") or get_attr(sensor, "unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
-        if options := get_attr(sensor, "options"):
+        if (options := get_attr(sensor, "options")):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
         elif "lookup" in sensor and "rule" in sensor and 0 < sensor["rule"] < 5 and (options := [s["value"] for s in sensor["lookup"]]):
