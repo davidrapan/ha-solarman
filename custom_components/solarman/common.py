@@ -145,9 +145,6 @@ def get_request_start(request):
 def get_request_end(request):
     return request[REQUEST_END]
 
-def get_attr(dict, key, default = None):
-    return value if key in dict and (value := dict[key]) else default
-
 def get_tuple(tuple, index = 0):
     return tuple[index] if tuple else None
 

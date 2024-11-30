@@ -32,11 +32,15 @@ def create_entity(creator, description):
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
     _attr_value: None = None
+    _attr_extra_state_attributes: dict[str, Any] = {}
 
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.inverter.device_info
-        self._attr_extra_state_attributes = {}
+
+    @property
+    def device_name(self) -> str:
+        return (device_entry.name_by_user or device_entry.name) if (device_entry := self.device_entry) else self.coordinator.inverter.name
 
     @property
     def available(self) -> bool:
@@ -66,33 +70,28 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
         self._attr_name = sensor["name"]
         self._attr_has_entity_name = True
-        self._attr_translation_key = get_attr(sensor, "translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = '_'.join(filter(None, (self.coordinator.inverter.name, str(self.coordinator.inverter.serial), self._attr_name)))
+        self._attr_device_class = sensor.get("class") or sensor.get("device_class")
+        self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
+        self._attr_unique_id = '_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name)))
+        self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
+        self._attr_entity_registry_enabled_default = not "disabled" in sensor
+        self._attr_entity_registry_visible_default = not "hidden" in sensor
+        self._attr_friendly_name = sensor.get(ATTR_FRIENDLY_NAME)
+        self._attr_icon = sensor.get("icon")
 
-        if (entity_category := get_attr(sensor, "category") or get_attr(sensor, "entity_category")):
-            self._attr_entity_category = entity_category
-        if (device_class := get_attr(sensor, "class") or get_attr(sensor, "device_class")):
-            self._attr_device_class = device_class
-        if (unit_of_measurement := get_attr(sensor, "uom") or get_attr(sensor, "unit_of_measurement")):
+        if (unit_of_measurement := sensor.get("uom") or sensor.get("unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
-        if (options := get_attr(sensor, "options")):
+        if (options := sensor.get("options")):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
         elif "lookup" in sensor and "rule" in sensor and 0 < sensor["rule"] < 5 and (options := [s["value"] for s in sensor["lookup"]]):
             self._attr_device_class = "enum"
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
-        if alt := get_attr(sensor, "alt"):
+        if alt := sensor.get("alt"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Alt Name": alt }
-        if description := get_attr(sensor, "description"):
+        if description := sensor.get("description"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
-        if friendly_name := get_attr(sensor, ATTR_FRIENDLY_NAME):
-            self._attr_friendly_name = friendly_name
-        if icon := get_attr(sensor, "icon"):
-            self._attr_icon = icon
-
-        self._attr_entity_registry_enabled_default = not "disabled" in sensor
-        self._attr_entity_registry_visible_default = not "hidden" in sensor
 
         self.attributes = sensor.get("attributes")
         self.registers = sensor.get("registers")
@@ -101,9 +100,9 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         name = self.name
         if self.platform and (name_translation_key := self._name_translation_key) and (n := self.platform.platform_translations.get(name_translation_key)):
             name = self._substitute_name_placeholders(n)
-        elif hasattr(self, "_attr_friendly_name"):
+        elif self._attr_friendly_name:
             name = self._attr_friendly_name
-        if not self.has_entity_name or not (device_entry := self.device_entry) or not (device_name := device_entry.name_by_user or device_entry.name):
+        if not self.has_entity_name or not (device_name := self.device_name):
             return name
         if name is None and self.use_device_name:
             return device_name
