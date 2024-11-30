@@ -62,23 +62,18 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, platform, sensor):
         super().__init__(coordinator)
+
         self.description_name = sensor["name"]
         self.description_entity_id = sensor.get("entity_id")
-        self.description_unique_id = self.description_entity_id if self.description_entity_id else self.description_name
+        self.description_unique_id = (self.description_entity_id if self.description_entity_id else self.description_name)#.lower().replace(' ', '_')
 
-        #self._attr_has_entity_name = True
-
-        self._attr_entity_registry_enabled_default = not "disabled" in sensor
-        self._attr_entity_registry_visible_default = not "hidden" in sensor
-
-        self._attr_name = "{} {}".format(self.coordinator.inverter.name, self.description_name) if self.description_name else self.coordinator.inverter.name
-        #elf._attr_name = "{}".format(self.description_name) if self.description_name else self.coordinator.inverter.name
-
-        self._attr_unique_id = "{}_{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial, self.description_unique_id) if self.description_unique_id else "{}_{}".format(self.coordinator.inverter.name, self.coordinator.inverter.serial)
+        self._attr_has_entity_name = True
+        self._attr_name = self.description_name
+        self._attr_unique_id = '_'.join(filter(None, (self.coordinator.inverter.name, str(self.coordinator.inverter.serial), self.description_unique_id)))
 
         if self.description_entity_id:
             self.entity_id = "{}.{}_{}".format(platform, self.coordinator.inverter.name, self.description_entity_id)
-        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.description_name.lower().replace(" ", "_")):
+        if translation_key := get_attr(sensor, "translation_key") or (translation_key := self.description_name.lower().replace(' ', '_')):
             self._attr_translation_key = translation_key
         if entity_category := get_attr(sensor, "category") or (entity_category := get_attr(sensor, "entity_category")):
             self._attr_entity_category = entity_category
@@ -102,14 +97,23 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if icon := get_attr(sensor, "icon"):
             self._attr_icon = icon
 
-        self.attributes = sensor.get("attributes")
+        self._attr_entity_registry_enabled_default = not "disabled" in sensor
+        self._attr_entity_registry_visible_default = not "hidden" in sensor
 
+        self.attributes = sensor.get("attributes")
         self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
-        if self.platform and (name_translation_key := self._name_translation_key) and (name := self.platform.platform_translations.get(name_translation_key)):
-            return f"{self.coordinator.inverter.name} {self._substitute_name_placeholders(name)}"
-        return super()._friendly_name_internal() if not hasattr(self, "_attr_friendly_name") else f"{self.coordinator.inverter.name} {self._attr_friendly_name}"
+        name = self.name
+        if self.platform and (name_translation_key := self._name_translation_key) and (n := self.platform.platform_translations.get(name_translation_key)):
+            name = self._substitute_name_placeholders(n)
+        elif hasattr(self, "_attr_friendly_name"):
+            name = self._attr_friendly_name
+        if not self.has_entity_name or not (device_entry := self.device_entry) or not (device_name := device_entry.name_by_user or device_entry.name):
+            return name
+        if name is None and self.use_device_name:
+            return device_name
+        return f"{device_name} {name}"
 
 class SolarmanWritableEntity(SolarmanEntity):
     def __init__(self, coordinator, platform, sensor):
