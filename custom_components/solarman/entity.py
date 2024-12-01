@@ -3,11 +3,15 @@ from __future__ import annotations
 import logging
 
 from typing import Any
+from functools import partial
 
 from homeassistant.util import slugify
-from homeassistant.core import callback
-from homeassistant.const import EntityCategory
+from homeassistant.core import split_entity_id, callback
+from homeassistant.const import EntityCategory, CONF_NAME
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import EntityDescription
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_registry import RegistryEntry, async_migrate_entries
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
@@ -17,6 +21,28 @@ from .services import *
 from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+@callback
+def async_migrate_unique_ids(name: str, serial: str, entity_entry: RegistryEntry) -> dict[str, Any] | None:
+
+    entity_name = entity_entry.name or entity_entry.original_name
+    old_unique_id = '_'.join(filter(None, (name, serial, entity_name)))
+
+    if entity_entry.unique_id == old_unique_id and (new_unique_id := slugify(old_unique_id if entity_name else f"{old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}")):
+        _LOGGER.debug("Migrating unique_id for %s entity from [%s] to [%s]", entity_entry.entity_id, old_unique_id, new_unique_id)
+        return { "new_unique_id": entity_entry.unique_id.replace(old_unique_id, new_unique_id) }
+
+    return None
+
+async def async_add_migrated_entities(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback, entities: list) -> bool:
+
+    data = config.data
+
+    await async_migrate_entries(hass, config.entry_id, partial(async_migrate_unique_ids, data.get(CONF_NAME), str(data.get(CONF_SERIAL))))
+
+    async_add_entities(entities)
+
+    return True
 
 def create_entity(creator, description):
     try:
@@ -30,13 +56,11 @@ def create_entity(creator, description):
         raise
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
-
-    _attr_value: None = None
-    _attr_extra_state_attributes: dict[str, Any] = {}
-
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.inverter.device_info
+        self._attr_extra_state_attributes: dict[str, Any] = {}
+        self._attr_value: None = None
 
     @property
     def device_name(self) -> str:
@@ -65,14 +89,14 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
                 self._attr_extra_state_attributes[attr.replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, sensor):
+    def __init__(self, coordinator, sensor, platform):
         super().__init__(coordinator)
 
         self._attr_name = sensor["name"]
         self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = '_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name)))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name or platform))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
@@ -97,7 +121,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
-        name = self.name
+        name = self.name if self.name is not UNDEFINED else None
         if self.platform and (name_translation_key := self._name_translation_key) and (n := self.platform.platform_translations.get(name_translation_key)):
             name = self._substitute_name_placeholders(n)
         elif self._attr_friendly_name:
@@ -109,8 +133,8 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         return f"{device_name} {name}"
 
 class SolarmanWritableEntity(SolarmanEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+    def __init__(self, coordinator, sensor, platform):
+        super().__init__(coordinator, sensor, platform)
 
         #self._write_lock = "locked" in sensor
 

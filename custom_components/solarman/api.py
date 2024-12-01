@@ -20,10 +20,9 @@ from .parser import ParameterParser
 _LOGGER = logging.getLogger(__name__)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
-    _passthrough = False
-
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+        self._passthrough = False
 
     async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
@@ -105,15 +104,17 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
-    _is_busy = 0
-    _write_lock = True
+    def __init__(self, address, serial, port, mb_slave_id):
+        super().__init__(address, serial, port, mb_slave_id)
+        self._is_busy = 0
+        self._write_lock = True
 
-    name = ""
-    state = -1
-    state_interval = 0
-    state_updated = datetime.now()
-    device_info = {}
-    profile = None
+        self.name = ""
+        self.state = -1
+        self.state_interval = 0
+        self.state_updated = datetime.now()
+        self.device_info = {}
+        self.profile = None
 
     async def load(self, name, mac, path, file):
         self.name = name

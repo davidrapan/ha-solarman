@@ -12,16 +12,15 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
-    _update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
-    _is_single_code = DEFAULT_IS_SINGLE_CODE
-    _code = DEFAULT_REGISTERS_CODE
-    _min_span = DEFAULT_REGISTERS_MIN_SPAN
-    _max_size = DEFAULT_REGISTERS_MAX_SIZE
-    _digits = DEFAULT_DIGITS
-    _result = {}
-
     def __init__(self, profile):
+        self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
+        self._is_single_code = DEFAULT_IS_SINGLE_CODE
+        self._code = DEFAULT_REGISTERS_CODE
+        self._min_span = DEFAULT_REGISTERS_MIN_SPAN
+        self._max_size = DEFAULT_REGISTERS_MAX_SIZE
+        self._digits = DEFAULT_DIGITS
         self._profile = profile
+        self._result = {}
 
         if "default" in self._profile:
             default = self._profile["default"]

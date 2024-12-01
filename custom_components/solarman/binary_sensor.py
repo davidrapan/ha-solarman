@@ -13,7 +13,7 @@ from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySen
 from .const import *
 from .common import *
 from .services import *
-from .entity import create_entity, SolarmanEntity
+from .entity import async_add_migrated_entities, create_entity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,15 +29,13 @@ def _create_entity(coordinator, description):
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
-    coordinator = hass.data[DOMAIN][config.entry_id]
 
+    coordinator = hass.data[DOMAIN][config.entry_id]
     descriptions = coordinator.inverter.get_entity_descriptions()
 
-    _LOGGER.debug(f"async_setup: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_migrated_entities")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
-
-    return True
+    return await async_add_migrated_entities(hass, config, async_add_entities, (create_entity(lambda x: _create_entity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM)))
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")
@@ -46,7 +44,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanEntity.__init__(self, coordinator, sensor)
+        SolarmanEntity.__init__(self, coordinator, sensor, _PLATFORM)
         self._sensor_inverted = False
         if "inverted" in sensor and (inverted := sensor["inverted"]):
             self._sensor_inverted = inverted
