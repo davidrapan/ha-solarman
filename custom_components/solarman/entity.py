@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 @callback
 def async_migrate_unique_ids(name: str, serial: str, entity_entry: RegistryEntry) -> dict[str, Any] | None:
 
-    entity_name = entity_entry.name or entity_entry.original_name
+    entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(name, '').strip()
     old_unique_id = '_'.join(filter(None, (name, serial, entity_name)))
 
     if entity_entry.unique_id == old_unique_id and (new_unique_id := slugify(old_unique_id if entity_name else f"{old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}")):
