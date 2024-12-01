@@ -3,6 +3,7 @@ from __future__ import annotations
 import socket
 import logging
 
+from functools import partial
 from ipaddress import IPv4Address, AddressValueError
 
 from homeassistant.const import CONF_NAME
@@ -56,10 +57,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
             raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
 
     inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id)
-
-    await inverter.load(name, inverter_mac, lookup_path, lookup_file)
-
-    coordinator = InverterCoordinator(hass, inverter)
+    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, inverter_mac, lookup_path, lookup_file))
 
     hass.data.setdefault(DOMAIN, {})[config.entry_id] = coordinator
 

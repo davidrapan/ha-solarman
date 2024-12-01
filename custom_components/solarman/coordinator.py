@@ -3,17 +3,19 @@ from __future__ import annotations
 import logging
 
 from typing import Any
+from collections.abc import Awaitable, Callable
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import *
+from .api import Inverter
 
 _LOGGER = logging.getLogger(__name__)
 
 class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, inverter):
-        super().__init__(hass, _LOGGER, name = inverter.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
+    def __init__(self, hass: HomeAssistant, inverter: Inverter, setup_method: Callable[[], Awaitable[None]] | None = None):
+        super().__init__(hass, _LOGGER, name = inverter.name, setup_method = setup_method, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
         self.inverter = inverter
         self._counter = 0
 

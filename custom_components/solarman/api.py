@@ -119,7 +119,24 @@ class Inverter(PySolarmanV5AsyncWrapper):
     async def load(self, name, mac, path, file):
         self.name = name
 
-        if (n := process_profile(file if file else "deye_hybrid.yaml")) and (p := await yaml_open(path + n)):
+        if file == DEFAULT_LOOKUP_FILE:
+            try:
+                if (r := await self.get(requests = [{ REQUEST_CODE: 0x03, REQUEST_START: 0x00, REQUEST_END: 0x16 }])) and (d := get_addr_value(r, 0x03, 0)):
+                    match d:
+                        case 0x0002 | 0x0200:
+                            file = "deye_string.yaml"
+                        case 0x0003 | 0x0300:
+                            file = "deye_hybrid.yaml"
+                        case 0x0004 | 0x0400:
+                            file = "deye_4mppt.yaml" if (get_addr_value(r, 0x03, 18) & 0x0F00) // 256 > 2 else "deye_2mppt.yaml"
+                        case 0x0005 | 0x0500:
+                            file = "deye_sg04lp3.yaml"
+                        case 0x0006 | 0x0007 | 0x0600 | 0x0008 | 0x0601:
+                            file = "deye_sg01hp3.yaml"
+            except BaseException as e:
+                _LOGGER.error(f"Device autodetection failed. [{format_exception(e)}]")
+
+        if (n := process_profile(file if file and file != DEFAULT_LOOKUP_FILE else "deye_hybrid.yaml")) and (p := await yaml_open(path + n)):
             self.device_info = build_device_info(self.serial, mac, name, p["info"] if "info" in p else None, n)
             self.profile = ParameterParser(p)
 
@@ -185,8 +202,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return self.state == -1
 
-    async def get(self, runtime = 0):
-        requests = self.profile.schedule_requests(runtime)
+    async def get(self, runtime = 0, requests = None):
+        requests = self.profile.schedule_requests(runtime) if not requests else requests
         requests_count = len(requests) if requests else 0
         responses = {}
         result = {}
@@ -227,7 +244,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
                                 await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                    result = self.profile.process(responses)
+                    result = self.profile.process(responses) if self.profile else responses
 
                     if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
                         _LOGGER.debug(f"[{self.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
