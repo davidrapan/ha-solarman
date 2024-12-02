@@ -3,11 +3,11 @@
 #
 # Reference: https://github.com/user-attachments/files/17139137/211208.-.Afore.T6.communication.protocol.V1.0-211109.xlsx
 #
-# Tested with AF5K-SL
+# Tested with Afore F5K-SL and BLUESUN BSE15KH3
 #
 
 default:
-  update_interval: 10
+  update_interval: 5
   code: 0x04
   digits: 6
 
@@ -105,6 +105,13 @@ parameters:
         rule: 1
         registers: [0x07D2]
 
+      - name: "Battery SOH"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x07D3]
+        icon: "mdi:battery-heart"
+
       - name: "Battery Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -129,6 +136,9 @@ parameters:
         rule: 2
         registers: [0x07D8]
 
+  - group: Battery Meter
+    update_interval: 300
+    items:
       - name: "Today Battery Charge"
         friendly_name: "Today's Battery Charge"
         class: "energy"
@@ -318,6 +328,27 @@ parameters:
         rule: 2
         registers: [0x0218, 0x0217]
 
+      - name: "Load L1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x021E, 0x021D]
+
+      - name: "Load L2 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x0220, 0x021F]
+
+      - name: "Load L3 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x0222, 0x0221]
+
       - name: "Load Power"
         class: "power"
         state_class: "measurement"
@@ -326,7 +357,26 @@ parameters:
         registers: [0x0224, 0x0223]
 
   - group: Device
+    update_interval: 10
     items:
+      - name: Work Mode
+        update_interval: 300
+        platform: select
+        registers: [0x00CF, 0x00CE]
+        display:
+          mask: 0x11
+        code:
+          read: 0x03
+        rule: 1
+        lookup:
+          - key: 0
+            value: "Off"
+          - bit: 0
+            default:
+            value: "On"
+          - bit: [0, 4]
+            value: "Time of Use"
+
       - name: "Device State"
         rule: 1
         registers: [0x09C4]
@@ -363,7 +413,7 @@ parameters:
           - key: 14
             value: "Sampling calibration"
 
-      - name: "Work Mode"
+      - name: "EMS Mode"
         update_interval: 300
         platform: select
         rule: 1
@@ -407,7 +457,144 @@ parameters:
         rule: 1
         registers: [0x09D3]
 
-  - group: Total
+  - group: Settings
+    update_interval: 300
+    code:
+      read: 0x03
+      write: 0x06
+    items:
+      - name: "Meter"
+        platform: select
+        rule: 1
+        registers: [0x00D3]
+        lookup:
+          - key: 0
+            value: "No Meter"
+          - key: 1
+            value: "Current Transformer"
+
+      - name: "Battery Control Mode"
+        platform: "select"
+        rule: 1
+        registers: [0x0BB8]
+        icon: "mdi:battery"
+        lookup:
+          - key: 0x0000
+            value: "No Battery"
+          - key: 0x0001
+            value: "Lithium"
+          - key: 0x0001
+            value: "Lead-Battery"
+          - key: 0x0001
+            value: "Simulated"
+
+      - name: Restart
+        platform: button
+        rule: 1
+        registers: [0x0210, 0x020F]
+        value:
+          bit: 3
+
+      - name: Factory reset
+        platform: button
+        rule: 1
+        registers: [0x0210, 0x020F]
+        value:
+          bit: 4
+
+      - name: Clear records
+        platform: button
+        rule: 1
+        registers: [0x0210, 0x020F]
+        value:
+          bit: 5
+
+      - name: Battery Charge & Discharge
+        platform: switch
+        rule: 1
+        registers: [0x09C5]
+        value:
+          on: 0xAA
+          off: 0xBB
+
+      - name: Timed Charging Power
+        platform: number
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x09C8]
+        configurable:
+          min: 0
+          max: 100
+          step: 5
+        range:
+          min: 0
+          max: 1000
+
+      - name: Timed Max Charge
+        platform: number
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x09C9]
+        configurable:
+          min: 0
+          max: 100
+          step: 5
+        range:
+          min: 0
+          max: 1000
+
+      - name: Timed Charge 1 Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09CD]
+
+      - name: Timed Charge 1 End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09CE]
+
+      - name: Timed Charge 2 Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09CF]
+
+      - name: Timed Charge 2 End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09D0]
+
+      - name: Timed Charge 3 Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09D1]
+
+      - name: Timed Charge 3 End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09D2]
+
+      - name: Timed Charge 4 Start
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09D3]
+
+      - name: Timed Charge 4 End
+        platform: time
+        rule: 9
+        dec: 0x100
+        registers: [0x09D4]
+
+  - group: Meter
+    update_interval: 30
     items:
       - name: "Today Energy Export"
         friendly_name: "Today's Energy Export"
@@ -449,6 +636,17 @@ parameters:
         icon: mdi:solar-power
 
       - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x0403, 0x0402]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: "Total Production B"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -527,8 +725,8 @@ parameters:
           [
             0x03FD,
             0x03FC,
-            0x03F7,
-            0x03F6,
+            0x0403,
+            0x0402,
             0x07DE,
             0x07DD,
             0x03FB,
@@ -541,7 +739,7 @@ parameters:
         uint: enforce
         sensors:
           - registers: [0x03FD, 0x03FC]
-          - registers: [0x03F7, 0x03F6]
+          - registers: [0x0403, 0x0402]
           - registers: [0x07DE, 0x07DD]
           - operator: subtract
             registers: [0x03FB, 0x03FA]

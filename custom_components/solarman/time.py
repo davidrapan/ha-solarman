@@ -20,11 +20,11 @@ _PLATFORM = get_current_file_name(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
-    coordinator = hass.data[DOMAIN][config.entry_id]
 
+    coordinator = hass.data[DOMAIN][config.entry_id]
     descriptions = coordinator.inverter.get_entity_descriptions()
 
-    _LOGGER.debug(f"async_setup: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
     async_add_entities(create_entity(lambda x: SolarmanTimeEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
 
@@ -37,18 +37,19 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
 
         self._multiple_registers = len(self.registers) > 1 and self.registers[1] == self.registers[0] + 1
         self._hex = "hex" in sensor
-        self._offset = sensor["hex"] if self._hex else None
+        self._d = (100 if not "dec" in sensor else sensor["dec"]) if not self._hex else (0x100 if sensor["hex"] is None else sensor["hex"])
+        self._offset = sensor["offset"] if "offset" in sensor else None
 
     def _to_native_value(self, value: time) -> int | list:
         if self._hex:
-            if self._multiple_registers and self._offset and self._offset >= 0x100: 
+            if self._multiple_registers and self._offset and self._offset >= 0x100:
                 return [concat_hex(div_mod(value.hour, 10)) + self._offset, concat_hex(div_mod(value.minute, 10)) + self._offset]
             return concat_hex((value.hour, value.minute))
-        return value.hour * 100 + value.minute if not self._multiple_registers else [value.hour, value.minute]
+        return value.hour * self._d + value.minute if not self._multiple_registers else [value.hour, value.minute]
 
     @property
     def native_value(self) -> time | None:

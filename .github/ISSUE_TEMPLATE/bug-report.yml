@@ -23,14 +23,14 @@ body:
     id: log
     attributes:
       label: Log
-      description: Attach the debug log.
-      placeholder: As a file or using the 'code' formatting
+      description: Please don't submit issue w/o debug log, and preferably from the time the problem occurred!
+      placeholder: Attach the debug log as a file or using the 'code' formatting
     validations:
       required: true
   - type: input
     id: version
     attributes:
       label: Version
-      placeholder: v24.10.14
+      placeholder: v24.11.02
     validations:
       required: true

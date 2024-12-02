@@ -1930,6 +1930,7 @@ parameters:
     items:
       # Grid side - The voltage of phase A
       - name: "Grid L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1940,6 +1941,7 @@ parameters:
 
       # Grid side - The voltage of phase B
       - name: "Grid L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1950,6 +1952,7 @@ parameters:
 
       # Grid side - The voltage of phase C
       - name: "Grid L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1960,6 +1963,7 @@ parameters:
 
       # Grid internal - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1969,6 +1973,7 @@ parameters:
 
       # Grid internal - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1978,6 +1983,7 @@ parameters:
 
       # Grid internal - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal CT3 Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1987,6 +1993,7 @@ parameters:
 
       # Grid internal - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Internal Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1995,6 +2002,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -2004,6 +2012,7 @@ parameters:
 
       # Grid internal - The current of phase A is S16bit (low 16 bits)
       - name: "Internal CT1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2014,6 +2023,7 @@ parameters:
 
       # Grid internal - The current of phase B is S16bit (low 16 bits)
       - name: "Internal CT2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2024,6 +2034,7 @@ parameters:
 
       # Grid internal - The current of phase C is S16bit (low 16 bits)
       - name: "Internal CT3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2034,6 +2045,7 @@ parameters:
 
       # Grid external - The current of phase A is S16bit (low 16 bits)
       - name: "External CT1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2044,6 +2056,7 @@ parameters:
 
       # Grid external - The current of phase B is S16bit (low 16 bits)
       - name: "External CT2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2054,6 +2067,7 @@ parameters:
 
       # Grid external - The current of phase C is S16bit (low 16 bits)
       - name: "External CT3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2064,6 +2078,7 @@ parameters:
 
       # Grid external - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2073,6 +2088,7 @@ parameters:
 
       # Grid external - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2082,6 +2098,7 @@ parameters:
 
       # Grid external - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External CT3 Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2091,6 +2108,7 @@ parameters:
 
       # Grid external - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "External Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2098,9 +2116,25 @@ parameters:
         registers: [0x026B, 0x02C4]
         icon: "mdi:transmission-tower"
 
+      - name: "Grid Power Factor"
+        platform: number
+        class: "power_factor"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x026D]
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 1000
+        icon: "mdi:transmission-tower"
+
       # The following three (four) registers change according to the built-in and external settings
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L1 Power"
+        l: 1
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -2110,6 +2144,7 @@ parameters:
 
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L2 Power"
+        l: 2
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -2119,6 +2154,7 @@ parameters:
 
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L3 Power"
+        l: 3
         class: "measurement"
         state_class: "measurement"
         uom: "W"
@@ -2128,6 +2164,7 @@ parameters:
 
       # Grid - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid Power"
+        l: 1
         description: Combined power of all three phases
         class: "measurement"
         state_class: "measurement"
@@ -2142,6 +2179,7 @@ parameters:
     items:
       # Output - The voltage of phase A
       - name: "Output L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2151,6 +2189,7 @@ parameters:
 
       # Output - The voltage of phase B
       - name: "Output L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2160,6 +2199,7 @@ parameters:
 
       # Output - The voltage of phase C
       - name: "Output L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2169,6 +2209,7 @@ parameters:
 
       # Output - The current of phase A is S16bit (low 16 bits)
       - name: "Output L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2178,6 +2219,7 @@ parameters:
 
       # Output - The current of phase B is S16bit (low 16 bits)
       - name: "Output L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2187,6 +2229,7 @@ parameters:
 
       # Output - The current of phase C is S16bit (low 16 bits)
       - name: "Output L3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2196,6 +2239,7 @@ parameters:
 
       # Output - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Output L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2204,6 +2248,7 @@ parameters:
 
       # Output - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Output L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2212,6 +2257,7 @@ parameters:
 
       # Output - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Output L3 Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2248,6 +2294,7 @@ parameters:
             registers: [0x027C, 0x02B6]
 
       - name: "Output Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -2260,6 +2307,7 @@ parameters:
     items:
       # Load UPS output - The power of phase A is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L1 Power"
+        l: 1
         hidden:
         class: "power"
         state_class: "measurement"
@@ -2270,6 +2318,7 @@ parameters:
 
       # Load UPS output - The power of phase B is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L2 Power"
+        l: 2
         hidden:
         class: "power"
         state_class: "measurement"
@@ -2280,6 +2329,7 @@ parameters:
 
       # Load UPS output - The power of phase C is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS L3 Power"
+        l: 3
         hidden:
         class: "power"
         state_class: "measurement"
@@ -2290,6 +2340,7 @@ parameters:
 
       # Load UPS output - The power is U16bit (low 16 bits) + U16bit (high 16 bits)
       - name: "Load UPS Power"
+        l: 1
         hidden:
         class: "power"
         state_class: "measurement"
@@ -2303,6 +2354,7 @@ parameters:
     items:
       # Load output - The voltage of phase A
       - name: "Load L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2312,6 +2364,7 @@ parameters:
 
       # Load output - The voltage of phase B
       - name: "Load L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2321,6 +2374,7 @@ parameters:
 
       # Load output - The voltage of phase C
       - name: "Load L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2330,6 +2384,7 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2338,6 +2393,7 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2346,6 +2402,7 @@ parameters:
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L3 Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2354,6 +2411,7 @@ parameters:
 
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load Power"
+        l: 1
         description: Combined power of all three phases
         class: "power"
         state_class: "measurement"
@@ -2362,6 +2420,7 @@ parameters:
         registers: [0x028D, 0x0293]
 
       - name: "Load Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -2374,6 +2433,7 @@ parameters:
     items:
       # SmartLoad/Generator - The voltage of phase A
       - name: "SmartLoad L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2383,6 +2443,7 @@ parameters:
 
       # SmartLoad/Generator - The voltage of phase B
       - name: "SmartLoad L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2392,6 +2453,7 @@ parameters:
 
       # SmartLoad/Generator - The voltage of phase C
       - name: "SmartLoad L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2401,6 +2463,7 @@ parameters:
 
       # Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2409,6 +2472,7 @@ parameters:
 
       # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2417,6 +2481,7 @@ parameters:
 
       # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad L3 Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2425,6 +2490,7 @@ parameters:
 
       # SmartLoad/Generator - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "SmartLoad Power"
+        l: 1
         description: Combined power of all three phases
         class: "power"
         state_class: "measurement"
@@ -2438,6 +2504,7 @@ parameters:
       # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
       - name: "PV Power"
         alt: DC Power
+        mppt: 1
         description: Combined power of all inputs
         class: "power"
         state_class: "measurement"
@@ -2455,6 +2522,7 @@ parameters:
       # PV - The power of Input 1 (L:1W, H:10W)
       - name: "PV1 Power"
         alt: DC1 Power
+        mppt: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2465,6 +2533,7 @@ parameters:
       # PV - The power of Input 2 (L:1W, H:10W)
       - name: "PV2 Power"
         alt: DC2 Power
+        mppt: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2475,7 +2544,7 @@ parameters:
       # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         alt: DC3 Power
-        hidden:
+        mppt: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2486,7 +2555,7 @@ parameters:
       # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         alt: DC4 Power
-        hidden:
+        mppt: 4
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -2496,6 +2565,7 @@ parameters:
 
       - name: "PV1 Voltage"
         alt: DC1 Voltage
+        mppt: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2509,6 +2579,7 @@ parameters:
 
       - name: "PV1 Current"
         alt: DC1 Current
+        mppt: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2522,6 +2593,7 @@ parameters:
 
       - name: "PV2 Voltage"
         alt: DC2 Voltage
+        mppt: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2535,6 +2607,7 @@ parameters:
 
       - name: "PV2 Current"
         alt: DC2 Current
+        mppt: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2548,7 +2621,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: DC3 Voltage
-        hidden:
+        mppt: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2562,7 +2635,7 @@ parameters:
 
       - name: "PV3 Current"
         alt: DC3 Current
-        hidden:
+        mppt: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -2576,7 +2649,7 @@ parameters:
 
       - name: "PV4 Voltage"
         alt: DC4 Voltage
-        hidden:
+        mppt: 4
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -2590,7 +2663,7 @@ parameters:
 
       - name: "PV4 Current"
         alt: DC4 Current
-        hidden:
+        mppt: 4
         class: "current"
         state_class: "measurement"
         uom: "A"

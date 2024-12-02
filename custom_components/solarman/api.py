@@ -20,10 +20,9 @@ from .parser import ParameterParser
 _LOGGER = logging.getLogger(__name__)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
-    _passthrough = False
-
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+        self._passthrough = False
 
     async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
@@ -37,7 +36,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         if frame[5] != self.sequence_number and is_ethernet_frame(frame):
             self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
             self._passthrough = True
-            return False
+            return True
         if frame[5] != self.sequence_number:
             self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
@@ -105,22 +104,30 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class Inverter(PySolarmanV5AsyncWrapper):
-    _is_busy = 0
-    _write_lock = True
+    def __init__(self, address, serial, port, mb_slave_id):
+        super().__init__(address, serial, port, mb_slave_id)
+        self._is_busy = 0
+        self._write_lock = True
 
-    name = ""
-    state = -1
-    state_interval = 0
-    state_updated = datetime.now()
-    device_info = {}
-    profile = None
+        self.name = ""
+        self.state = -1
+        self.state_interval = 0
+        self.state_updated = datetime.now()
+        self.device_info = {}
+        self.profile = None
 
-    async def load(self, name, mac, path, file):
+    async def load(self, name, mac, path, file, attr):
         self.name = name
 
-        if (n := process_profile(file if file else "deye_hybrid.yaml")) and (p := await yaml_open(path + n)):
+        try:
+            if not file or file == DEFAULT_LOOKUP_FILE:
+                file, attr[ATTR_MPPT], attr[ATTR_PHASE] = lookup_profile(await self.get(requests = [set_request(*AUTODETECTION_REQUEST_DEYE)]), attr[ATTR_MPPT], attr[ATTR_PHASE]) 
+        except BaseException as e:
+            raise UpdateFailed(f"[{self.serial}] Device autodetection failed. [{format_exception(e)}]") from e
+
+        if file and file != DEFAULT_LOOKUP_FILE and (n := process_profile(file)) and (p := await yaml_open(path + n)):
             self.device_info = build_device_info(self.serial, mac, name, p["info"] if "info" in p else None, n)
-            self.profile = ParameterParser(p)
+            self.profile = ParameterParser(p, attr)
 
         _LOGGER.debug(self.device_info)
 
@@ -184,13 +191,12 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
         return self.state == -1
 
-    async def get(self, runtime = 0):
-        requests = self.profile.schedule_requests(runtime)
-        requests_count = len(requests) if requests else 0
-        responses = {}
-        result = {}
+    async def get(self, runtime = 0, requests = None):
+        scheduled = self.profile.schedule_requests(runtime) if not requests else requests
+        scheduled_count = len(scheduled) if scheduled else 0
+        responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.serial}] Scheduling {requests_count} query request{'' if requests_count == 1 else 's'}. #{runtime}")
+        _LOGGER.debug(f"[{self.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. #{runtime}")
 
         try:
             if await self.wait_for_done(ACTION_ATTEMPTS):
@@ -199,12 +205,9 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
             try:
                 async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                    for request in requests:
-                        code = get_request_code(request)
-                        start = get_request_start(request)
-                        end = get_request_end(request)
-                        quantity = end - start + 1
-                        code_start = (code, start)
+                    for request in scheduled:
+                        code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
+                        quantity, code_start = end - start + 1, (code, start)
                         code_start_end = f"{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
                         _LOGGER.debug(f"[{self.serial}] Querying {code_start_end} ...")
 
@@ -226,7 +229,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
 
                                 await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
-                    result = self.profile.process(responses)
+                    result = self.profile.process(responses) if not requests else responses
 
                     if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
                         _LOGGER.debug(f"[{self.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")

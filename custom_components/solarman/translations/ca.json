@@ -1,0 +1,91 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "El dispositiu ja s'ha configurat"
+    },
+    "error": {
+      "cannot_connect": "No s'ha pogut connectar",
+      "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "unknown": "Error inesperat"
+    },
+    "step": {
+      "user": {
+        "title": "Configuració de l'inversor",
+        "data": {
+          "name": "Nom del dispositiu",
+          "inverter_discovery": "Habilita el descobriment",
+          "inverter_host": "Amfitrió o adreça IP",
+          "inverter_serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
+          "inverter_port": "Port",
+          "inverter_mb_slave_id": "ID de l'esclau Modbus (normalment 1)",
+          "inverter_passthrough": "Protocol de mode de pas directe de Solarman",
+          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor",
+          "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
+          "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti"
+        },
+        "data_description": {
+          "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius.",
+          "inverter_host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
+          "inverter_port": "El port TCP (8899) del dispositiu, per a connectar-s'hi."
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "No s'ha pogut connectar",
+      "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "unknown": "Error inesperat"
+    },
+    "step": {
+      "init": {
+        "title": "Configuració de l'inversor",
+        "data": {
+          "name": "Nom del dispositiu",
+          "inverter_discovery": "Habilita el descobriment",
+          "inverter_host": "Amfitrió o adreça IP",
+          "inverter_serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
+          "inverter_port": "Port",
+          "inverter_mb_slave_id": "ID de l'esclau Modbus (normalment 1)",
+          "inverter_passthrough": "Protocol de mode de pas directe de Solarman",
+          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor",
+          "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
+          "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti"
+        },
+        "data_description": {
+          "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius.",
+          "inverter_host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
+          "inverter_port": "El port TCP (8899) del dispositiu, per a connectar-s'hi."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Càrrega de la bateria d'avui"
+      },
+      "today_battery_discharge": {
+        "name": "Descàrrega de la bateria d'avui"
+      },
+      "today_battery_life_cycles": {
+        "name": "Cicles de càrrega de la bateria d'avui"
+      },
+      "today_energy_export": {
+        "name": "Exportació d'energia d'avui"
+      },
+      "today_energy_import": {
+        "name": "Importació d'energia d'avui"
+      },
+      "today_load_consumption": {
+        "name": "Consum de càrrega d'avui"
+      },
+      "today_losses": {
+        "name": "Pèrdues d'avui"
+      },
+      "today_production": {
+        "name": "Producció d'avui"
+      }
+    }
+  }
+}

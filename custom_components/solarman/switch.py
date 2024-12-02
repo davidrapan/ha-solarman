@@ -21,11 +21,11 @@ _PLATFORM = get_current_file_name(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config.options}")
-    coordinator = hass.data[DOMAIN][config.entry_id]
 
+    coordinator = hass.data[DOMAIN][config.entry_id]
     descriptions = coordinator.inverter.get_entity_descriptions()
 
-    _LOGGER.debug(f"async_setup: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
     async_add_entities(create_entity(lambda x: SolarmanSwitchEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
 
@@ -38,7 +38,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
 class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, _PLATFORM, sensor)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
         self._attr_device_class = SwitchDeviceClass.SWITCH
 
         self._value_on = 1

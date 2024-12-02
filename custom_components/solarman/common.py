@@ -33,6 +33,16 @@ def ensure_list(value):
 def get_or_default(dict, key, default = None):
     return dict[key] if dict and key in dict else default
 
+def set_request(code, start, end):
+    return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
+
+def lookup_profile(responses, _mppt, _phas):
+    if responses and (device_type := get_addr_value(responses, *AUTODETECTION_TYPE_DEYE)):
+        file, mpph = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]), None)
+        mppt, phas = ((v & 0x0F00) // 0x100, v & 0x000F) if (v := get_addr_value(responses, AUTODETECTION_CODE_DEYE, mpph)) else (_mppt, _phas)
+        return file, mppt if mppt < _mppt else _mppt, phas if phas < _phas else _phas
+    raise Exception("Unable to read Device Type at Modbus register address: 0x0000")
+
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())
@@ -119,6 +129,20 @@ def get_addr_value(data, code, addr):
 def ilen(object):
     return len(object) if not isinstance(object, int) else 1
 
+def lookup_value(value, dictionary):
+    default = dictionary[0]["value"]
+
+    for o in dictionary:
+        key = from_bit_index(o["bit"]) if "bit" in o else o["key"]
+
+        if "default" in o or key == "default":
+            default = o["value"]
+
+        if key == value if not isinstance(key, list) else value in key:
+            return o["value"]
+
+    return default
+
 def get_number(value, digits: int = -1):
     return int(value) if isinstance(value, int) or (isinstance(value, float) and value.is_integer()) else ((n if (n := round(value, digits)) and not n.is_integer() else int(n)) if digits > -1 else float(value))
 
@@ -131,14 +155,19 @@ def get_request_start(request):
 def get_request_end(request):
     return request[REQUEST_END]
 
-def get_attr(dict, key, default = None):
-    return value if key in dict and (value := dict[key]) else default
+def get_tuple(tuple, index = 0):
+    return tuple[index] if tuple else None
 
 def get_battery_power_capacity(capacity, voltage):
     return capacity * voltage / 1000
 
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
+
+def from_bit_index(value):
+    if isinstance(value, list):
+        return sum(1 << i for i in value)
+    return 1 << value
 
 def split_p16b(value):
     while value:

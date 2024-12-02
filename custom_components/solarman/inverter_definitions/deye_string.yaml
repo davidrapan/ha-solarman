@@ -206,6 +206,7 @@ parameters:
     items:
       - name: PV Power
         alt: DC Power
+        mppt: 1
         description: Combined power of all inputs
         class: "power"
         state_class: "measurement"
@@ -225,6 +226,7 @@ parameters:
 
       - name: PV1 Power
         alt: DC1 Power
+        mppt: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -240,6 +242,7 @@ parameters:
 
       - name: "PV1 Voltage"
         alt: DC1 Voltage
+        mppt: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -250,6 +253,7 @@ parameters:
 
       - name: "PV1 Current"
         alt: DC1 Current
+        mppt: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -260,6 +264,7 @@ parameters:
 
       - name: PV2 Power
         alt: DC2 Power
+        mppt: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -271,9 +276,11 @@ parameters:
           - registers: [0x006F]
             multiply:
               registers: [0x0070]
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
         alt: DC2 Voltage
+        mppt: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -284,6 +291,7 @@ parameters:
 
       - name: "PV2 Current"
         alt: DC2 Current
+        mppt: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -292,6 +300,9 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
+  - group: Meter
+    update_interval: 30
+    items:
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
@@ -314,9 +325,145 @@ parameters:
         validation:
           min: 0.1
 
+      - name: "Today Load Consumption"
+        friendly_name: Today's Load Consumption
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x00C8]
+
+      - name: "Total Load Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x00C9, 0x00CA]
+        validation:
+          min: 0.1
+
+      - name: Today Energy Export
+        alt: Today Energy Sold
+        friendly_name: Today's Energy Export
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x00CD]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Total Energy Export
+        alt: Total Energy Sold
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x00CE, 0x00CF]
+        icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
+
+      - name: Today Energy Import
+        alt: Today Energy Bought
+        friendly_name: Today's Energy Import
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x00D0]
+        icon: "mdi:transmission-tower-export"
+
+      - name: Total Energy Import
+        alt: Total Energy Bought
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x00D1, 0x00D2]
+        icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
+
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.1
+        registers: [0x00D0, 0x003C, 0x00CD, 0x00C8]
+        uint: enforce
+        sensors:
+          - registers: [0x00D0]
+          - registers: [0x003C]
+          - operator: subtract
+            registers: [0x00CD]
+          - operator: subtract
+            registers: [0x00C8]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        registers:
+          [0x00D1, 0x00D2, 0x003F, 0x0040, 0x00CE, 0x00CF, 0x00C9, 0x00CA]
+        uint: enforce
+        sensors:
+          - registers: [0x00D1, 0x00D2]
+          - registers: [0x003F, 0x0040]
+          - operator: subtract
+            registers: [0x00CE, 0x00CF]
+          - operator: subtract
+            registers: [0x00C9, 0x00CA]
+        validation:
+          min: 1
+
   - group: Grid
     items:
+      - name: "Grid L12 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0046]
+
+      - name: "Grid L23 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0047]
+
+      - name: "Grid L31 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0048]
+
       - name: "Grid L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -325,6 +472,7 @@ parameters:
         registers: [0x0049]
 
       - name: "Grid L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -333,6 +481,7 @@ parameters:
         registers: [0x004A]
 
       - name: "Grid L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -341,6 +490,7 @@ parameters:
         registers: [0x004B]
 
       - name: "Grid L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -349,6 +499,7 @@ parameters:
         registers: [0x004C]
 
       - name: "Grid L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -357,6 +508,7 @@ parameters:
         registers: [0x004D]
 
       - name: "Grid L3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -365,6 +517,7 @@ parameters:
         registers: [0x004E]
 
       - name: "Grid Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -431,3 +584,18 @@ parameters:
         rule: 3
         scale: 0.1
         registers: [0x0058, 0x0059]
+
+      - name: "Load Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00C6, 0x00C7]
+
+      - name: "Grid Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x00CB, 0x00CC]
