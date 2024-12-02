@@ -33,6 +33,16 @@ def ensure_list(value):
 def get_or_default(dict, key, default = None):
     return dict[key] if dict and key in dict else default
 
+def set_request(code, start, end):
+    return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
+
+def lookup_profile(responses, _mppt, _phas):
+    if responses and (device_type := get_addr_value(responses, *AUTODETECTION_TYPE_DEYE)):
+        file, mpph = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]), None)
+        mppt, phas = ((v & 0x0F00) // 0x100, v & 0x000F) if (v := get_addr_value(responses, AUTODETECTION_CODE_DEYE, mpph)) else (_mppt, _phas)
+        return file, mppt if mppt < _mppt else _mppt, phas if phas < _phas else _phas
+    raise Exception("Unable to read Device Type at Modbus register address: 0x0000")
+
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())

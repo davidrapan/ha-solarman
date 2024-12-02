@@ -27,6 +27,8 @@ CONF_INVERTER_HOST = "inverter_host"
 CONF_INVERTER_PORT = "inverter_port"
 CONF_MB_SLAVE_ID = "inverter_mb_slave_id"
 CONF_LOOKUP_FILE = "lookup_file"
+CONF_MPPT = "mppt"
+CONF_PHASE = "phase"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 
@@ -34,6 +36,8 @@ DEFAULT_NAME = "Inverter"
 DEFAULT_INVERTER_PORT = 8899
 DEFAULT_MB_SLAVE_ID = 1
 DEFAULT_LOOKUP_FILE = "Auto"
+DEFAULT_MPPT = 4
+DEFAULT_PHASE = 3
 DEFAULT_BATTERY_NOMINAL_VOLTAGE = 48
 DEFAULT_BATTERY_LIFE_CYCLE_RATING = 6000
 
@@ -43,6 +47,11 @@ DEFAULT_REGISTERS_CODE = 0x03
 DEFAULT_REGISTERS_MIN_SPAN = 25
 DEFAULT_REGISTERS_MAX_SIZE = 125
 DEFAULT_DIGITS = 6
+
+AUTODETECTION_CODE_DEYE = 0x03
+AUTODETECTION_REQUEST_DEYE = (AUTODETECTION_CODE_DEYE, 0x00, 0x16)
+AUTODETECTION_TYPE_DEYE = (AUTODETECTION_CODE_DEYE, 0x00)
+AUTODETECTION_TABLE_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 18), (0x0004, 0x0400): ("deye_micro.yaml", 18), (0x0005, 0x0500): ("deye_sg04lp3.yaml", 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_sg01hp3.yaml", 0x16) }
 
 PROFILE_REDIRECT_TABLE = { "deye_4mppt.yaml": "deye_micro.yaml", "deye_2mppt.yaml": "deye_micro.yaml", "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
 
@@ -78,6 +87,8 @@ ACTION_ATTEMPTS = 5
 ACTION_ATTEMPTS_MAX = ACTION_ATTEMPTS * 6
 
 ATTR_FRIENDLY_NAME = "friendly_name"
+ATTR_MPPT = "mppt"
+ATTR_PHASE = "l"
 
 REQUEST_UPDATE_INTERVAL = "update_interval"
 REQUEST_MIN_SPAN = "min_span"

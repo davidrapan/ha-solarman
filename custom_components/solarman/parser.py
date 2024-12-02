@@ -12,18 +12,18 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
-    def __init__(self, profile):
+    def __init__(self, profile, attr):
         self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
         self._is_single_code = DEFAULT_IS_SINGLE_CODE
         self._code = DEFAULT_REGISTERS_CODE
         self._min_span = DEFAULT_REGISTERS_MIN_SPAN
         self._max_size = DEFAULT_REGISTERS_MAX_SIZE
         self._digits = DEFAULT_DIGITS
-        self._profile = profile
+        self._requests = None
         self._result = {}
 
-        if "default" in self._profile:
-            default = self._profile["default"]
+        if "default" in profile:
+            default = profile["default"]
             if REQUEST_UPDATE_INTERVAL in default:
                 self._update_interval = default[REQUEST_UPDATE_INTERVAL]
             if REQUEST_CODE in default:
@@ -35,11 +35,15 @@ class ParameterParser:
             if "digits" in default:
                 self._digits = default["digits"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in self._profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}")
+        if "requests" in profile and "requests_fine_control" in profile:
+            _LOGGER.debug("Fine control of request sets is enabled!")
+            self._requests = profile["requests"]
 
-        table = {r: get_request_code(pr) for pr in self._profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in self._profile and not "requests_fine_control" in self._profile else {}
+        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}")
 
-        self._items = sorted([process_descriptions(item, group, table, self._code) for group in self._profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1))
+        table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
+
+        self._items = sorted([process_descriptions(item, group, table, self._code) for group in profile["parameters"] for item in group["items"] if len((a := item.keys() & attr.keys())) == 0 or ((k := next(iter(a))) and item[k] <= attr[k])], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1))
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -74,9 +78,8 @@ class ParameterParser:
     def schedule_requests(self, runtime = 0):
         self._result = {}
 
-        if "requests" in self._profile and "requests_fine_control" in self._profile:
-            _LOGGER.debug("Fine control of request sets is enabled!")
-            return self._profile["requests"]
+        if self._requests:
+            return self._requests
 
         registers = []
 
@@ -93,7 +96,7 @@ class ParameterParser:
 
         groups = group_when(registers, self._lambda if self._is_single_code or all_same([r[0] for r in registers]) else self._lambda_code_aware)
 
-        return [{ REQUEST_CODE: self._code if self._is_single_code else r[0][0], REQUEST_START: r[0][1], REQUEST_END: r[-1][1] } for r in groups]
+        return [set_request(self._code if self._is_single_code else r[0][0], r[0][1], r[-1][1]) for r in groups]
 
     def in_range(self, value, definition):
         if "range" in definition:

@@ -34,6 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     inverter_mac = None
 
     lookup_file = options.get(CONF_LOOKUP_FILE)
+    lookup_attr = {ATTR_MPPT: options.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: options.get(CONF_PHASE, DEFAULT_PHASE)}
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
 
     if serial is None:
@@ -42,8 +43,6 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
         raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
     if inverter_port is None:
         raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
-    if lookup_file is None:
-        raise vol.Invalid("Configuration parameter [lookup_file] does not have a value")
 
     try:
         ipaddr = IPv4Address(inverter_host)
@@ -57,7 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
             raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
 
     inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id)
-    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, inverter_mac, lookup_path, lookup_file))
+    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, inverter_mac, lookup_path, lookup_file, lookup_attr))
 
     hass.data.setdefault(DOMAIN, {})[config.entry_id] = coordinator
 
