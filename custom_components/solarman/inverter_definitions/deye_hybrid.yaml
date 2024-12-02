@@ -174,6 +174,7 @@ parameters:
     items:
       - name: "PV Power"
         alt: DC Power
+        mppt: 1
         description: Combined power of all inputs
         class: "power"
         state_class: "measurement"
@@ -188,6 +189,7 @@ parameters:
 
       - name: "PV1 Power"
         alt: DC1 Power
+        mppt: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -197,6 +199,7 @@ parameters:
 
       - name: "PV1 Voltage"
         alt: DC1 Voltage
+        mppt: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -207,6 +210,7 @@ parameters:
 
       - name: "PV1 Current"
         alt: DC1 Current
+        mppt: 1
         class: "current"
         uom: "A"
         scale: 0.1
@@ -216,6 +220,7 @@ parameters:
 
       - name: "PV2 Power"
         alt: DC2 Power
+        mppt: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -225,6 +230,7 @@ parameters:
 
       - name: "PV2 Voltage"
         alt: DC2 Voltage
+        mppt: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -235,6 +241,7 @@ parameters:
 
       - name: "PV2 Current"
         alt: DC2 Current
+        mppt: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -557,6 +564,7 @@ parameters:
         registers: [0x004F]
 
       - name: "Grid L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -566,6 +574,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -575,6 +584,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -584,6 +594,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -593,6 +604,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -602,6 +614,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -610,6 +623,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -618,6 +632,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -671,6 +686,7 @@ parameters:
   - group: Load
     items:
       - name: "Load L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -679,6 +695,7 @@ parameters:
         registers: [0x009D]
 
       - name: "Load L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -687,6 +704,7 @@ parameters:
         registers: [0x009E]
 
       - name: "Load L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -694,6 +712,7 @@ parameters:
         registers: [0x00B0]
 
       - name: "Load L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -701,6 +720,7 @@ parameters:
         registers: [0x00B1]
 
       - name: "Load Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -708,6 +728,7 @@ parameters:
         registers: [0x00B2]
 
       - name: "Load L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -716,6 +737,7 @@ parameters:
         registers: [0x00B3]
 
       - name: "Load L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -724,6 +746,7 @@ parameters:
         registers: [0x00B4]
 
       - name: "Load Frequency"
+        l: 1
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
@@ -773,6 +796,7 @@ parameters:
         registers: [0x00C1]
 
       - name: "Output L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -782,6 +806,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Output L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -791,6 +816,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Output Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -800,6 +826,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Output L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -808,6 +835,7 @@ parameters:
         registers: [0x00A4]
 
       - name: "Output L2 Current"
+        l: 2
         class: "current"
         uom: "A"
         scale: 0.01
@@ -815,6 +843,7 @@ parameters:
         registers: [0x00A5]
 
       - name: "Output L1 Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -822,6 +851,7 @@ parameters:
         registers: [0x00AD]
 
       - name: "Output L2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
