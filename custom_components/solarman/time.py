@@ -12,7 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import async_add_migrated_entities, create_entity, SolarmanWritableEntity
+from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,9 +24,11 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     coordinator = hass.data[DOMAIN][config.entry_id]
     descriptions = coordinator.inverter.get_entity_descriptions()
 
-    _LOGGER.debug(f"async_setup_entry: async_add_migrated_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
-    return await async_add_migrated_entities(hass, config, async_add_entities, (create_entity(lambda x: SolarmanTimeEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM)))
+    async_add_entities(create_entity(lambda x: SolarmanTimeEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
+
+    return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config.options}")

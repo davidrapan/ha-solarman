@@ -5,15 +5,12 @@ import logging
 from typing import Any
 from datetime import date
 from decimal import Decimal
-from functools import partial
 
 from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
-from homeassistant.const import EntityCategory, CONF_NAME, STATE_UNKNOWN
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory, STATE_UNKNOWN
 from homeassistant.helpers.entity import EntityDescription
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.entity_registry import RegistryEntry, async_migrate_entries
+from homeassistant.helpers.entity_registry import RegistryEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
@@ -25,26 +22,16 @@ from .coordinator import InverterCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 @callback
-def async_migrate_unique_ids(name: str, serial: str, entity_entry: RegistryEntry) -> dict[str, Any] | None:
+def async_migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:
 
     entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(name, '').strip()
-    old_unique_id = '_'.join(filter(None, (name, serial, entity_name)))
+    old_unique_id = '_'.join(filter(None, (name, str(serial), entity_name)))
 
     if entity_entry.unique_id == old_unique_id and (new_unique_id := slugify(old_unique_id if entity_name else f"{old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}")):
         _LOGGER.debug("Migrating unique_id for %s entity from [%s] to [%s]", entity_entry.entity_id, old_unique_id, new_unique_id)
         return { "new_unique_id": entity_entry.unique_id.replace(old_unique_id, new_unique_id) }
 
     return None
-
-async def async_add_migrated_entities(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback, entities: list) -> bool:
-
-    data = config.data
-
-    await async_migrate_entries(hass, config.entry_id, partial(async_migrate_unique_ids, data.get(CONF_NAME), str(data.get(CONF_SERIAL))))
-
-    async_add_entities(entities)
-
-    return True
 
 def create_entity(creator, description):
     try:
