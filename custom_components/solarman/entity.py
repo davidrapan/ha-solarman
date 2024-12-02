@@ -3,11 +3,13 @@ from __future__ import annotations
 import logging
 
 from typing import Any
+from datetime import date
+from decimal import Decimal
 from functools import partial
 
 from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
-from homeassistant.const import EntityCategory, CONF_NAME
+from homeassistant.const import EntityCategory, CONF_NAME, STATE_UNKNOWN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -59,6 +61,8 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
     def __init__(self, coordinator: InverterCoordinator):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.inverter.device_info
+        self._attr_state: StateType = STATE_UNKNOWN
+        self._attr_native_value: StateType | str | date | datetime | time | float | Decimal = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
         self._attr_value: None = None
 
