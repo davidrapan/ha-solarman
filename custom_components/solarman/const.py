@@ -44,7 +44,7 @@ DEFAULT_REGISTERS_MIN_SPAN = 25
 DEFAULT_REGISTERS_MAX_SIZE = 125
 DEFAULT_DIGITS = 6
 
-PROFILE_REDIRECT_TABLE = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
+PROFILE_REDIRECT_TABLE = { "deye_4mppt.yaml": "deye_micro.yaml", "deye_2mppt.yaml": "deye_micro.yaml", "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
 
 STATE_SENSORS = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
 
