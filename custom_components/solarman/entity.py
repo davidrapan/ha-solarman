@@ -22,7 +22,7 @@ from .coordinator import InverterCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 @callback
-def async_migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:
+def migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:
 
     entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(name, '').strip()
     old_unique_id = '_'.join(filter(None, (name, str(serial), entity_name)))
