@@ -30,9 +30,6 @@ def execute_async(x):
 def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
-def get_or_default(dict, key, default = None):
-    return dict[key] if dict and key in dict else default
-
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
 
@@ -97,13 +94,20 @@ def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
 def process_descriptions(item, group, table, code):
-    if not REQUEST_UPDATE_INTERVAL in item and REQUEST_UPDATE_INTERVAL in group:
-        item[REQUEST_UPDATE_INTERVAL] = group[REQUEST_UPDATE_INTERVAL]
-    if not REQUEST_CODE in item and "registers" in item:
-        if REQUEST_CODE in group:
-            item[REQUEST_CODE] = group[REQUEST_CODE]
-        elif (addr := min(item["registers"])) is not None:
-            item[REQUEST_CODE] = table[addr] if addr in table else code
+    def inherit(target, source, *properties):
+        for p in properties:
+            if not p in target and (v := source.get(p)) is not None:
+                target[p] = v
+        return target
+
+    inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
+    if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+        item[REQUEST_CODE] = table.get(addr, code)
+    if (sensors := item.get("sensors")) is not None:
+        for s in sensors:
+            inherit(s, item, REQUEST_CODE, "scale")
+            if (m := item.get("multiply")) is not None:
+                inherit(m, s, REQUEST_CODE, "scale")
     return item
 
 def get_code(item, type, default = None):
@@ -128,6 +132,9 @@ def get_addr_value(data, code, addr):
 
 def ilen(object):
     return len(object) if not isinstance(object, int) else 1
+
+def get_or_def(o, k, d):
+    return o.get(k, d) or d
 
 def lookup_value(value, dictionary):
     default = dictionary[0]["value"]

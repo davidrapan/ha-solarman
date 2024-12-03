@@ -16,7 +16,7 @@ from .common import *
 from .api import Inverter
 from .discovery import InverterDiscovery
 from .coordinator import InverterCoordinator
-from .entity import async_migrate_unique_ids
+from .entity import migrate_unique_ids
 from .config_flow import async_update_listener
 from .services import *
 
@@ -51,10 +51,10 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     except AddressValueError:
         ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
     if ipaddr.is_private and (discover := await InverterDiscovery(hass, inverter_host, serial).discover()):
-        if device := get_or_default(discover, serial):
+        if (device := discover.get(serial)) is not None:
             inverter_host = device["ip"]
             inverter_mac = device["mac"]
-        elif device := get_or_default(discover, (s := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None))):
+        elif (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None)))):
             raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
 
     inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id)
@@ -78,7 +78,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     #
     _LOGGER.debug(f"async_setup: async_migrate_entries")
 
-    await async_migrate_entries(hass, config.entry_id, partial(async_migrate_unique_ids, name, serial))
+    await async_migrate_entries(hass, config.entry_id, partial(migrate_unique_ids, name, serial))
 
     # Forward setup
     #
