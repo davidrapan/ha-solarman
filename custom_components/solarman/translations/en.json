@@ -13,20 +13,29 @@
         "title": "Inverter configuration",
         "data": {
           "name": "Device name",
-          "inverter_discovery": "Enable discovery",
-          "inverter_host": "Host or IP address",
-          "inverter_serial": "Device Serial Number (retrieve from the web interface)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "Modbus Slave ID (usually 1)",
-          "inverter_passthrough": "Solarman protocol passthrough mode",
-          "lookup_file": "The yaml file containing inverter parameter definitions",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "serial": "Serial Number",
+          "host": "Host or IP address",
+          "port": "Port",
+          "lookup_file": "Profile"
         },
         "data_description": {
-          "name": "This name will be prefixed to all sensors (change as you like).",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "name": "This name will be prefixed to all sensors (change as you like)",
+          "serial": "Device Serial Number (retrieve from the web interface)",
+          "host": "The hostname or IP address of the device to connect to",
+          "port": "The TCP port (8899) of the device to connect to",
+          "lookup_file": "The yaml file containing inverter parameter definitions"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Additional options",
+            "data": {
+              "mppt": "Number of MPPTs",
+              "phase": "Number of Phases",
+              "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
+              "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
+              "mb_slave_id": "Modbus Slave ID (usually 1)"
+            }
+          }
         }
       }
     }
@@ -41,21 +50,26 @@
       "init": {
         "title": "Inverter configuration",
         "data": {
-          "name": "Device name",
-          "inverter_discovery": "Enable discovery",
-          "inverter_host": "Host or IP address",
-          "inverter_serial": "Device Serial Number (retrieve from the web interface)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "Modbus Slave ID (usually 1)",
-          "inverter_passthrough": "Solarman protocol passthrough mode",
-          "lookup_file": "The yaml file containing inverter parameter definitions",
-          "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
-          "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating"
+          "host": "Host or IP address",
+          "port": "Port",
+          "lookup_file": "Profile"
         },
         "data_description": {
-          "name": "This name will be prefixed to all sensors (change as you like).",
-          "inverter_host": "The hostname or IP address of the device to connect to.",
-          "inverter_port": "The TCP port (8899) of the device to connect to."
+          "host": "The hostname or IP address of the device to connect to",
+          "port": "The TCP port (8899) of the device to connect to",
+          "lookup_file": "The yaml file containing inverter parameter definitions"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Additional options",
+            "data": {
+              "mppt": "Number of MPPTs",
+              "phase": "Number of Phases",
+              "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
+              "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
+              "mb_slave_id": "Modbus Slave ID (usually 1)"
+            }
+          }
         }
       }
     }

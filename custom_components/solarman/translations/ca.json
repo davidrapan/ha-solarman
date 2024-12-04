@@ -13,20 +13,29 @@
         "title": "Configuració de l'inversor",
         "data": {
           "name": "Nom del dispositiu",
-          "inverter_discovery": "Habilita el descobriment",
-          "inverter_host": "Amfitrió o adreça IP",
-          "inverter_serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "ID de l'esclau Modbus (normalment 1)",
-          "inverter_passthrough": "Protocol de mode de pas directe de Solarman",
-          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor",
-          "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
-          "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti"
+          "serial": "Número de sèrie",
+          "host": "Amfitrió o adreça IP",
+          "port": "Port",
+          "lookup_file": "Perfil"
         },
         "data_description": {
-          "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius.",
-          "inverter_host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "inverter_port": "El port TCP (8899) del dispositiu, per a connectar-s'hi."
+          "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius",
+          "serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
+          "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
+          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opcions addicionals",
+            "data": {
+              "mppt": "Nombre de MPPTs",
+              "phase": "Nombre de fases",
+              "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
+              "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti",
+              "mb_slave_id": "ID de l'esclau Modbus (normalment 1)"
+            }
+          }
         }
       }
     }
@@ -41,21 +50,26 @@
       "init": {
         "title": "Configuració de l'inversor",
         "data": {
-          "name": "Nom del dispositiu",
-          "inverter_discovery": "Habilita el descobriment",
-          "inverter_host": "Amfitrió o adreça IP",
-          "inverter_serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "ID de l'esclau Modbus (normalment 1)",
-          "inverter_passthrough": "Protocol de mode de pas directe de Solarman",
-          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor",
-          "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
-          "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti"
+          "host": "Amfitrió o adreça IP",
+          "port": "Port",
+          "lookup_file": "Perfil"
         },
         "data_description": {
-          "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius.",
-          "inverter_host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "inverter_port": "El port TCP (8899) del dispositiu, per a connectar-s'hi."
+          "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
+          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opcions addicionals",
+            "data": {
+              "mppt": "Nombre de MPPTs",
+              "phase": "Nombre de fases",
+              "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
+              "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti",
+              "mb_slave_id": "ID de l'esclau Modbus (normalment 1)"
+            }
+          }
         }
       }
     }

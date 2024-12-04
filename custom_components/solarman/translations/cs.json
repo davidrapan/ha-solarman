@@ -13,49 +13,29 @@
         "title": "Konfigurace měniče",
         "data": {
           "name": "Název",
-          "inverter_discovery": "Povolit discovery",
-          "inverter_host": "Hostitel nebo IP adresa",
-          "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
-          "inverter_passthrough": "Solarman protokol passthrough mód",
-          "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
-          "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
-          "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"
+          "serial": "Sériové číslo",
+          "host": "Hostitel nebo IP adresa",
+          "port": "Port",
+          "lookup_file": "Profil"
         },
         "data_description": {
-          "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete).",
-          "inverter_host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit.",
-          "inverter_port": "TCP port (8899) zařízení, ke kterému se chcete připojit."
-        }
-      }
-    }
-  },
-  "options": {
-    "error": {
-      "cannot_connect": "Nepodařilo se připojit",
-      "invalid_host": "Neplatný název hostitele nebo IP adresa",
-      "unknown": "Neočekávaná chyba"
-    },
-    "step": {
-      "init": {
-        "title": "Konfigurace měniče",
-        "data": {
-          "name": "Název",
-          "inverter_discovery": "Povolit discovery",
-          "inverter_host": "Hostitel nebo IP adresa",
-          "inverter_serial": "Sériové číslo zařízení (z webového rozhraní)",
-          "inverter_port": "Port",
-          "inverter_mb_slave_id": "Modbus Slave ID (obvykle 1)",
-          "inverter_passthrough": "Solarman protokol passthrough mód",
-          "lookup_file": "Soubor yaml obsahující definice parametrů měniče",
-          "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
-          "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie"
+          "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete)",
+          "serial": "Sériové číslo zařízení (z webového rozhraní)",
+          "host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit",
+          "port": "TCP port (8899) zařízení, ke kterému se chcete připojit",
+          "lookup_file": "Soubor yaml obsahující definice parametrů měniče"
         },
-        "data_description": {
-          "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete).",
-          "inverter_host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit.",
-          "inverter_port": "TCP port (8899) zařízení, ke kterému se chcete připojit."
+        "sections": {
+          "additional_options": {
+            "name": "Další možnosti",
+            "data": {
+              "mppt": "Počet MPPT",
+              "phase": "Počet fází",
+              "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
+              "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie",
+              "mb_slave_id": "Modbus Slave ID (obvykle 1)"
+            }
+          }
         }
       }
     }

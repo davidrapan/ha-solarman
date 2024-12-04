@@ -28,9 +28,9 @@ def _create_entity(coordinator, description, options):
         match description["artificial"]:
             case "interval":
                 return SolarmanIntervalSensor(coordinator, description)
-    elif (name := description["name"]) and "Battery" in name:
-        battery_nominal_voltage = options.get(CONF_BATTERY_NOMINAL_VOLTAGE, 0)
-        battery_life_cycle_rating = options.get(CONF_BATTERY_LIFE_CYCLE_RATING, 0)
+    elif (name := description["name"]) and "Battery" in name and (additional := options.get(CONF_ADDITIONAL_OPTIONS, {})) is not None:
+        battery_nominal_voltage = additional.get(CONF_BATTERY_NOMINAL_VOLTAGE, 0)
+        battery_life_cycle_rating = additional.get(CONF_BATTERY_LIFE_CYCLE_RATING, 0)
         if "registers" in description:
             if name == "Battery":
                 return SolarmanBatterySensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)

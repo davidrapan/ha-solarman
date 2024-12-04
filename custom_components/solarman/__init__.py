@@ -30,35 +30,37 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     serial = data.get(CONF_SERIAL)
 
     options = config.options
-    inverter_host = options.get(CONF_INVERTER_HOST)
-    inverter_port = options.get(CONF_INVERTER_PORT)
-    mb_slave_id = options.get(CONF_MB_SLAVE_ID, DEFAULT_MB_SLAVE_ID)
-    inverter_mac = None
+    host = options.get(CONF_HOST)
+    port = options.get(CONF_PORT)
+    mac = None
 
-    lookup_file = options.get(CONF_LOOKUP_FILE)
-    lookup_attr = {ATTR_MPPT: options.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: options.get(CONF_PHASE, DEFAULT_PHASE)}
+    lookup_file = options.get(CONF_LOOKUP_FILE, DEFAULT_LOOKUP_FILE)
     lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
 
+    additional = options.get(CONF_ADDITIONAL_OPTIONS, {})
+    lookup_attr = {ATTR_MPPT: additional.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: additional.get(CONF_PHASE, DEFAULT_PHASE)}
+    mb_slave_id = additional.get(CONF_MB_SLAVE_ID, DEFAULT_MB_SLAVE_ID)
+
     if serial is None:
-        raise vol.Invalid("Configuration parameter [inverter_serial] does not have a value")
-    if inverter_host is None:
-        raise vol.Invalid("Configuration parameter [inverter_host] does not have a value")
-    if inverter_port is None:
-        raise vol.Invalid("Configuration parameter [inverter_port] does not have a value")
+        raise vol.Invalid("Configuration parameter [serial] does not have a value")
+    if host is None:
+        raise vol.Invalid("Configuration parameter [host] does not have a value")
+    if port is None:
+        raise vol.Invalid("Configuration parameter [port] does not have a value")
 
     try:
-        ipaddr = IPv4Address(inverter_host)
+        ipaddr = IPv4Address(host)
     except AddressValueError:
-        ipaddr = IPv4Address(socket.gethostbyname(inverter_host))
-    if ipaddr.is_private and (discover := await InverterDiscovery(hass, inverter_host, serial).discover()):
+        ipaddr = IPv4Address(socket.gethostbyname(host))
+    if ipaddr.is_private and (discover := await InverterDiscovery(hass, host, serial).discover()):
         if (device := discover.get(serial)) is not None:
-            inverter_host = device["ip"]
-            inverter_mac = device["mac"]
-        elif (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == inverter_host]), None)))):
-            raise vol.Invalid(f"Host {inverter_host} has serial number {s} but is configured with {serial}.")
+            host = device["ip"]
+            mac = device["mac"]
+        elif (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == host]), None)))):
+            raise vol.Invalid(f"Host {host} has serial number {s} but is configured with {serial}.")
 
-    inverter = Inverter(inverter_host, serial, inverter_port, mb_slave_id)
-    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, inverter_mac, lookup_path, lookup_file, lookup_attr))
+    inverter = Inverter(host, serial, port, mb_slave_id)
+    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, mac, lookup_path, lookup_file, lookup_attr))
 
     hass.data.setdefault(DOMAIN, {})[config.entry_id] = coordinator
 
@@ -100,3 +102,31 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     remove_services(hass)
 
     return unload_ok
+
+async def async_migrate_entry(hass, config_entry: ConfigEntry):
+    _LOGGER.debug("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
+
+    if config_entry.minor_version > 1:
+        return False
+
+    if config_entry.minor_version == 1 and (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
+        new_data[CONF_SERIAL] = new_data["inverter_serial"]
+        new_options[CONF_HOST] = new_options["inverter_host"]
+        new_options[CONF_PORT] = new_options["inverter_port"]
+        new_options[CONF_ADDITIONAL_OPTIONS] = {
+            CONF_BATTERY_NOMINAL_VOLTAGE: new_options.get(CONF_BATTERY_NOMINAL_VOLTAGE),
+            CONF_BATTERY_LIFE_CYCLE_RATING: new_options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
+        }
+
+        del new_data["inverter_serial"]
+        del new_options["inverter_serial"]
+        del new_options["inverter_host"]
+        del new_options["inverter_port"]
+        del new_options[CONF_BATTERY_NOMINAL_VOLTAGE]
+        del new_options[CONF_BATTERY_LIFE_CYCLE_RATING]
+
+        hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = 3, version = 1)
+
+    _LOGGER.debug("Migration to configuration version %s.%s successful", config_entry.version, config_entry.minor_version)
+
+    return True

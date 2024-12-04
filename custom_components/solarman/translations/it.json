@@ -13,20 +13,29 @@
         "title": "Configurazione della connessione inverter",
         "data": {
           "name": "Nome del dispositivo",
-          "inverter_discovery": "Abilita la scoperta",
-          "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
-          "inverter_serial": "Numero seriale del logger (da interfaccia web)",
-          "inverter_port": "Porta (solitamente 8899)",
-          "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
-          "inverter_passthrough": "Modalità passthrough del protocollo Solarman",
-          "lookup_file": "File YAML contenente la definizione Inverter",
-          "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
-          "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio"
+          "serial": "Numero di serie",
+          "host": "Inverter (nome di dominio o indirizzo IP)",
+          "port": "Porta (solitamente 8899)",
+          "lookup_file": "Profilo"
         },
         "data_description": {
           "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
-          "inverter_host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi.",
-          "inverter_port": "La porta TCP (8899) del dispositivo a cui connettersi."
+          "serial": "Numero seriale del logger (da interfaccia web)",
+          "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
+          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "lookup_file": "File YAML contenente la definizione Inverter"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opzioni aggiuntive",
+            "data": {
+              "mppt": "Numero di MPPT",
+              "phase": "Numero di fasi",
+              "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
+              "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio",
+              "mb_slave_id": "Slave ID di Modbus (solitamente 1)"
+            }
+          }
         }
       }
     }
@@ -41,21 +50,26 @@
       "init": {
         "title": "Configurazione della connessione inverter",
         "data": {
-          "name": "Nome del dispositivo",
-          "inverter_discovery": "Abilita la scoperta",
-          "inverter_host": "Inverter (nome di dominio o indirizzo IP)",
-          "inverter_serial": "Numero seriale del logger (da interfaccia web)",
-          "inverter_port": "Porta (solitamente 8899)",
-          "inverter_mb_slave_id": "Slave ID di Modbus (solitamente 1)",
-          "inverter_passthrough": "Modalità passthrough del protocollo Solarman",
-          "lookup_file": "File YAML contenente la definizione Inverter",
-          "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
-          "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio"
+          "host": "Inverter (nome di dominio o indirizzo IP)",
+          "port": "Porta (solitamente 8899)",
+          "lookup_file": "Profilo"
         },
         "data_description": {
-          "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
-          "inverter_host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi.",
-          "inverter_port": "La porta TCP (8899) del dispositivo a cui connettersi."
+          "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
+          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "lookup_file": "File YAML contenente la definizione Inverter"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opzioni aggiuntive",
+            "data": {
+              "mppt": "Numero di MPPT",
+              "phase": "Numero di fasi",
+              "battery_nominal_voltage": "Voltaggio nominale della batteria agli ioni di litio",
+              "battery_life_cycle_rating": "Ciclo di vita previsto della batteria agli ioni di litio",
+              "mb_slave_id": "Slave ID di Modbus (solitamente 1)"
+            }
+          }
         }
       }
     }

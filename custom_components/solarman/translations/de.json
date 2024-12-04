@@ -13,49 +13,29 @@
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
           "name": "Gerätename",
-          "inverter_discovery": "Erkennung aktivieren",
-          "inverter_host": "Host (IP-Adresse oder Hostname)",
-          "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
-          "inverter_port": "Port (normalerweise 8899)",
-          "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
-          "inverter_passthrough": "Solarman Protokoll-Passthrough Modus",
-          "lookup_file": "YAML-Datei mit der Parameter-Definition",
-          "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
-          "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie"
+          "serial": "Seriennummer",
+          "host": "Host (IP-Adresse oder Hostname)",
+          "port": "Port (normalerweise 8899)",
+          "lookup_file": "Profil"
         },
         "data_description": {
           "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
-          "inverter_host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll.",
-          "inverter_port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll."
-        }
-      }
-    }
-  },
-  "options": {
-    "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "invalid_host": "Ungültiger Hostname oder ungültige IP-Adresse",
-      "unknown": "Unerwarteter Fehler"
-    },
-    "step": {
-      "init": {
-        "title": "Konfiguration der Verbindung zum Wechselrichter",
-        "data": {
-          "name": "Gerätename",
-          "inverter_discovery": "Erkennung aktivieren",
-          "inverter_host": "Host (IP-Adresse oder Hostname)",
-          "inverter_serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
-          "inverter_port": "Port (normalerweise 8899)",
-          "inverter_mb_slave_id": "Modbus-Slave-ID (normalerweise 1)",
-          "inverter_passthrough": "Solarman Protokoll-Passthrough Modus",
-          "lookup_file": "YAML-Datei mit der Parameter-Definition",
-          "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
-          "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie"
+          "serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
+          "host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll",
+          "port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll",
+          "lookup_file": "YAML-Datei mit der Parameter-Definition"
         },
-        "data_description": {
-          "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
-          "inverter_host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll.",
-          "inverter_port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll."
+        "sections": {
+          "additional_options": {
+            "name": "Zusätzliche Optionen",
+            "data": {
+              "mppt": "Anzahl der MPPTs",
+              "phase": "Anzahl der Phasen",
+              "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
+              "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie",
+              "mb_slave_id": "Modbus-Slave-ID (normalerweise 1)"
+            }
+          }
         }
       }
     }
