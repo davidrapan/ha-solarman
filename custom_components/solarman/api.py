@@ -120,7 +120,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.name = name
 
         try:
-            if not file or file == DEFAULT_LOOKUP_FILE:
+            if not file or file == DEFAULT_LOOKUP_FILE or file in AUTODETECTION_REDIRECT_TABLE:
                 file, attr[ATTR_MPPT], attr[ATTR_PHASE] = lookup_profile(await self.get(requests = [set_request(*AUTODETECTION_REQUEST_DEYE)]), attr[ATTR_MPPT], attr[ATTR_PHASE]) 
         except BaseException as e:
             raise UpdateFailed(f"[{self.serial}] Device autodetection failed. [{format_exception(e)}]") from e
