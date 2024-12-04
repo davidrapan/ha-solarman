@@ -73,5 +73,33 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Carica della batteria odierna"
+      },
+      "today_battery_discharge": {
+        "name": "Scarica della batteria odierna"
+      },
+      "today_battery_life_cycles": {
+        "name": "Cicli di vita della batteria odierni"
+      },
+      "today_energy_export": {
+        "name": "Energia esportata odierna"
+      },
+      "today_energy_import": {
+        "name": "Energia importata odierna"
+      },
+      "today_load_consumption": {
+        "name": "Consumo del carico odierno"
+      },
+      "today_losses": {
+        "name": "Perdite odierne"
+      },
+      "today_production": {
+        "name": "Produzione odierna"
+      }
+    }
   }
 }
