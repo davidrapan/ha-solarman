@@ -181,20 +181,12 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x00BA, 0x00BB]
+        registers: [0x00BA, 0x00BB, 0x00BC, 0x00BD]
         sensors:
           - registers: [0x00BA]
           - registers: [0x00BB]
-        icon: "mdi:solar-power-variant"
-
-      - name: "PV1 Power"
-        alt: DC1 Power
-        mppt: 1
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x00BA]
+          - registers: [0x00BC]
+          - registers: [0x00BD]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
@@ -218,16 +210,6 @@ parameters:
         registers: [0x006E]
         icon: "mdi:solar-power-variant"
 
-      - name: "PV2 Power"
-        alt: DC2 Power
-        mppt: 2
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x00BB]
-        icon: "mdi:solar-power-variant"
-
       - name: "PV2 Voltage"
         alt: DC2 Voltage
         mppt: 2
@@ -248,6 +230,90 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0070]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Voltage"
+        alt: DC3 Voltage
+        mppt: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0071]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Current"
+        alt: DC3 Current
+        mppt: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0072]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Voltage"
+        alt: DC4 Voltage
+        mppt: 4
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0073]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Current"
+        alt: "DC4 Current"
+        mppt: 4
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0074]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        alt: DC1 Power
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00BA]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        alt: DC2 Power
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00BB]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Power"
+        alt: DC3 Power
+        mppt: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00BC]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Power"
+        alt: DC4 Power
+        mppt: 4
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x00BD]
         icon: "mdi:solar-power-variant"
 
   - group: Meter
@@ -517,32 +583,6 @@ parameters:
         rule: 2
         registers: [0x00BF]
         icon: "mdi:current-dc"
-
-      - name: "Battery Grid Charging Current"
-        platform: number
-        class: "current"
-        uom: "A"
-        rule: 1
-        registers: [0x00E6]
-        icon: "mdi:current-dc"
-        configurable:
-          mode: box
-        range:
-          min: 000
-          max: 240
-
-      - name: "Battery Generator Charging Current"
-        platform: number
-        class: "current"
-        uom: "A"
-        rule: 1
-        registers: [0x00E3]
-        icon: "mdi:current-dc"
-        configurable:
-          mode: box
-        range:
-          min: 000
-          max: 240
 
       - name: "Generator"
         platform: switch
