@@ -17,6 +17,7 @@ parameters:
     items:
       - name: PV Power
         alt: DC Power
+        mppt: 1
         description: Combined power of all inputs
         class: "power"
         state_class: "measurement"
@@ -36,6 +37,7 @@ parameters:
 
       - name: PV1 Power
         alt: DC1 Power
+        mppt: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -51,6 +53,7 @@ parameters:
 
       - name: "PV1 Voltage"
         alt: DC1 Voltage
+        mppt: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -61,6 +64,7 @@ parameters:
 
       - name: "PV1 Current"
         alt: DC1 Current
+        mppt: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -71,6 +75,7 @@ parameters:
 
       - name: PV2 Power
         alt: DC2 Power
+        mppt: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -86,6 +91,7 @@ parameters:
 
       - name: "PV2 Voltage"
         alt: DC2 Voltage
+        mppt: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -96,6 +102,7 @@ parameters:
 
       - name: "PV2 Current"
         alt: DC2 Current
+        mppt: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -133,6 +140,7 @@ parameters:
   - group: Output
     items:
       - name: "L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -142,6 +150,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -151,6 +160,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -160,6 +170,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -169,6 +180,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -178,6 +190,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"

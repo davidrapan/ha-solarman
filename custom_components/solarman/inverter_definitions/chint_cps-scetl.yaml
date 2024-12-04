@@ -196,6 +196,7 @@ parameters:
     update_interval: 60
     items:
       - name: "Output L1 Voltage" # aka "Phase A Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -204,6 +205,7 @@ parameters:
         registers: [0x1001]
 
       - name: "Output L2 Voltage" # aka "Phase B Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -212,6 +214,7 @@ parameters:
         registers: [0x1006]
 
       - name: "Output L3 Voltage" # aka "Phase C Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -220,6 +223,7 @@ parameters:
         registers: [0x100B]
 
       - name: "Output L1 Current" # aka "Phase A Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -228,6 +232,7 @@ parameters:
         registers: [0x1002]
 
       - name: "Output L2 Current" # aka "Phase B Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -236,6 +241,7 @@ parameters:
         registers: [0x1007]
 
       - name: "Output L3 Current" # aka "Phase C Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -244,6 +250,7 @@ parameters:
         registers: [0x100C]
 
       - name: "Output L1 Power" # aka "Phase A Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -252,6 +259,7 @@ parameters:
         registers: [0x1004, 0x1003]
 
       - name: "Output L2 Power" # aka "Phase B Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -260,6 +268,7 @@ parameters:
         registers: [0x1009, 0x1008]
 
       - name: "Output L3 Power" # aka "Phase C Power"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -268,6 +277,7 @@ parameters:
         registers: [0x100E, 0x100D]
 
       - name: "Output L1 Frequency" # aka "Phase A Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -276,6 +286,7 @@ parameters:
         registers: [0x1005]
 
       - name: "Output L2 Frequency" # aka "Phase B Frequency"
+        l: 2
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -284,6 +295,7 @@ parameters:
         registers: [0x100A]
 
       - name: "Output L3 Frequency" # aka "Phase C Frequency"
+        l: 3
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -295,6 +307,7 @@ parameters:
     items:
       - name: "PV Power" # aka "PV totally input power"
         alt: "DC Power"
+        mppt: 1
         description: "Combined power of all inputs"
         class: "power"
         state_class: "measurement"
@@ -306,6 +319,7 @@ parameters:
 
       - name: "PV1 Power" # aka "MPPT1 Power"
         alt: "DC1 Power"
+        mppt: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -316,6 +330,7 @@ parameters:
 
       - name: "PV2 Power" # aka "MPPT2 Power"
         alt: "DC2 Power"
+        mppt: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -326,6 +341,7 @@ parameters:
 
       - name: "PV3 Power" # aka "MPPT3 Power"
         alt: "DC3 Power"
+        mppt: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -336,6 +352,7 @@ parameters:
 
       - name: "PV4 Power" # aka "MPPT4 Power"
         alt: "DC4 Power"
+        mppt: 4
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -346,6 +363,7 @@ parameters:
 
       - name: "PV5 Power" # aka "MPPT5 Power"
         alt: "DC5 Power"
+        mppt: 5
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -356,6 +374,7 @@ parameters:
 
       - name: "PV6 Power" # aka "MPPT6 Power"
         alt: "DC6 Power"
+        mppt: 6
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -366,6 +385,7 @@ parameters:
 
       - name: "PV7 Power" # aka "MPPT7 Power"
         alt: "DC7 Power"
+        mppt: 7
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -376,6 +396,7 @@ parameters:
 
       - name: "PV8 Power" # aka "MPPT8 Power"
         alt: "DC8 Power"
+        mppt: 8
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -386,6 +407,7 @@ parameters:
 
       - name: "PV9 Power" # aka "MPPT9 Power"
         alt: "DC9 Power"
+        mppt: 9
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -396,6 +418,7 @@ parameters:
 
       - name: "PV1 Voltage"
         alt: "DC1 Voltage"
+        mppt: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -406,6 +429,7 @@ parameters:
 
       - name: "PV2 Voltage"
         alt: "DC2 Voltage"
+        mppt: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -416,6 +440,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: "DC3 Voltage"
+        mppt: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -426,6 +451,7 @@ parameters:
 
       - name: "PV4 Voltage"
         alt: "DC4 Voltage"
+        mppt: 4
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -436,6 +462,7 @@ parameters:
 
       - name: "PV5 Voltage"
         alt: "DC5 Voltage"
+        mppt: 5
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -446,6 +473,7 @@ parameters:
 
       - name: "PV6 Voltage"
         alt: "DC6 Voltage"
+        mppt: 6
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -456,6 +484,7 @@ parameters:
 
       - name: "PV7 Voltage"
         alt: "DC7 Voltage"
+        mppt: 7
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -466,6 +495,7 @@ parameters:
 
       - name: "PV8 Voltage"
         alt: "DC8 Voltage"
+        mppt: 8
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -476,6 +506,7 @@ parameters:
 
       - name: "PV9 Voltage"
         alt: "DC9 Voltage"
+        mppt: 9
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -486,6 +517,7 @@ parameters:
 
       - name: "PV1 Current"
         alt: "DC1 Current"
+        mppt: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -496,6 +528,7 @@ parameters:
 
       - name: "PV2 Current"
         alt: "DC2 Current"
+        mppt: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -506,6 +539,7 @@ parameters:
 
       - name: "PV3 Current"
         alt: "DC3 Current"
+        mppt: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -516,6 +550,7 @@ parameters:
 
       - name: "PV4 Current"
         alt: "DC4 Current"
+        mppt: 4
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -526,6 +561,7 @@ parameters:
 
       - name: "PV5 Current"
         alt: "DC5 Current"
+        mppt: 5
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -536,6 +572,7 @@ parameters:
 
       - name: "PV6 Current"
         alt: "DC6 Current"
+        mppt: 6
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -546,6 +583,7 @@ parameters:
 
       - name: "PV7 Current"
         alt: "DC7 Current"
+        mppt: 7
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -556,6 +594,7 @@ parameters:
 
       - name: "PV8 Current"
         alt: "DC8 Current"
+        mppt: 8
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -566,6 +605,7 @@ parameters:
 
       - name: "PV9 Current"
         alt: "DC9 Current"
+        mppt: 9
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -828,6 +868,7 @@ parameters:
   - group: grid
     items:
       - name: "Internal CT1 Power" # aka "Phase R watt of grid"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -837,6 +878,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Internal CT2 Power" # aka "Phase S watt of grid"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -846,6 +888,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Internal CT3 Power" # aka "Phase T watt of grid"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -855,6 +898,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Voltage" # aka "L1-N phase voltage of grid"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -864,6 +908,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Voltage" # aka "L2-N phase voltage of grid"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -873,6 +918,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L3 Voltage" # aka "L3-N phase voltage of grid"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -882,6 +928,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Current" # aka "L1  current of grid"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -891,6 +938,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Current" # aka "L2  current of grid"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -900,6 +948,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L3 Current" # aka "L3  current of grid"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -920,6 +969,7 @@ parameters:
   - group: load
     items:
       - name: "Load L1 Power" # aka "Phase R watt of load"
+        l: 1
         hidden:
         class: "power"
         state_class: "measurement"
@@ -930,6 +980,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Load L2 Power" # aka "Phase S watt of load"
+        l: 2
         hidden:
         class: "power"
         state_class: "measurement"
@@ -940,6 +991,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Load L3 Power" # aka "Phase T watt of load"
+        l: 3
         hidden:
         class: "power"
         state_class: "measurement"
@@ -950,6 +1002,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Load L1 Voltage" # aka "L1-N phase voltage of load"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -958,6 +1011,7 @@ parameters:
         registers: [0x1323]
 
       - name: "Load L2 Voltage" # aka "L2-N phase voltage of load"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -966,6 +1020,7 @@ parameters:
         registers: [0x1324]
 
       - name: "Load L3 Voltage" # aka "L3-N phase voltage of load"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -974,6 +1029,7 @@ parameters:
         registers: [0x1325]
 
       - name: "Load L1 Current" # aka "L1 current of load"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -982,6 +1038,7 @@ parameters:
         registers: [0x1327, 0x1326]
 
       - name: "Load L2 Current" # aka "L2 current of load"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -990,6 +1047,7 @@ parameters:
         registers: [0x1329, 0x1328]
 
       - name: "Load L3 Current" # aka "L3 current of load"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -1000,6 +1058,7 @@ parameters:
   - group: EPS
     items:
       - name: "EPS L1 Voltage" # aka "Phase R Voltage of EPS"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1008,6 +1067,7 @@ parameters:
         registers: [0x1350]
 
       - name: "EPS L2 Voltage" # aka "Phase S Voltage of EPS"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1016,6 +1076,7 @@ parameters:
         registers: [0x1356]
 
       - name: "EPS L3 Voltage" # aka "Phase T Voltage of EPS"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -1024,6 +1085,7 @@ parameters:
         registers: [0x135B]
 
       - name: "EPS L1 Current" # aka "Phase R current of EPS"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -1032,6 +1094,7 @@ parameters:
         registers: [0x1352, 0x1351]
 
       - name: "EPS L2 Current" # aka "Phase S current of EPS"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -1040,6 +1103,7 @@ parameters:
         registers: [0x1358, 0x1357]
 
       - name: "EPS L3 Current" # aka "Phase T current of EPS"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -1048,6 +1112,7 @@ parameters:
         registers: [0x135D, 0x135C]
 
       - name: "EPS L1 Power" # aka "Phase R watt of EPS"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1056,6 +1121,7 @@ parameters:
         registers: [0x1354, 0x1353]
 
       - name: "EPS L2 Power" # aka "Phase S watt of EPS"
+        l: 2
       - name: "Phase S watt of EPS"
         class: "power"
         state_class: "measurement"
@@ -1065,6 +1131,7 @@ parameters:
         registers: [0x135A, 0x1359]
 
       - name: "EPS L3 Power" # aka "Phase T watt of EPS"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"

@@ -77,6 +77,7 @@ parameters:
     items:
       - name: "PV Power"
         class: "power"
+        mppt: 1
         state_class: "measurement"
         uom: "kW"
         scale: 0.001
@@ -86,6 +87,7 @@ parameters:
 
       - name: "PV1 Voltage"
         class: "voltage"
+        mppt: 1
         state_class: "measurement"
         uom: "V"
         scale: 0.1
@@ -95,6 +97,7 @@ parameters:
 
       - name: "PV1 Current"
         class: "current"
+        mppt: 1
         state_class: "measurement"
         uom: "A"
         scale: 0.1
@@ -104,6 +107,7 @@ parameters:
 
       - name: "PV1 Power"
         class: "power"
+        mppt: 1
         state_class: "measurement"
         uom: "kW"
         rule: 1
@@ -118,6 +122,7 @@ parameters:
 
       - name: "PV2 Voltage"
         class: "voltage"
+        mppt: 2
         state_class: "measurement"
         uom: "V"
         scale: 0.1
@@ -127,6 +132,7 @@ parameters:
 
       - name: "PV2 Current"
         class: "current"
+        mppt: 2
         state_class: "measurement"
         uom: "A"
         scale: 0.1
@@ -136,6 +142,7 @@ parameters:
 
       - name: "PV2 Power"
         class: "power"
+        mppt: 2
         state_class: "measurement"
         uom: "kW"
         rule: 1
@@ -159,6 +166,7 @@ parameters:
         registers: [3005, 3004]
 
       - name: "Load L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -168,6 +176,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Load L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -177,6 +186,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Load L3 voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -186,6 +196,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Load L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -195,6 +206,7 @@ parameters:
         icon: "mdi:current-ac"
 
       - name: "Load L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -204,6 +216,7 @@ parameters:
         icon: "mdi:current-ac"
 
       - name: "Load L3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"

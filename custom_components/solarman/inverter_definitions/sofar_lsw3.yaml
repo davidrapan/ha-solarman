@@ -13,6 +13,7 @@ parameters:
     items:
       - name: "PV1 Power"
         class: "power"
+        mppt: 1
         state_class: "measurement"
         uom: "W"
         scale: 10
@@ -22,6 +23,7 @@ parameters:
 
       - name: "PV2 Power"
         class: "power"
+        mppt: 2
         state_class: "measurement"
         uom: "W"
         scale: 10
@@ -31,6 +33,7 @@ parameters:
 
       - name: "PV1 Voltage"
         class: "voltage"
+        mppt: 1
         state_class: "measurement"
         uom: "V"
         scale: 0.1
@@ -40,6 +43,7 @@ parameters:
 
       - name: "PV2 Voltage"
         class: "voltage"
+        mppt: 2
         state_class: "measurement"
         uom: "V"
         scale: 0.1
@@ -49,6 +53,7 @@ parameters:
 
       - name: "PV1 Current"
         class: "current"
+        mppt: 1
         state_class: "measurement"
         uom: "A"
         scale: 0.01
@@ -58,6 +63,7 @@ parameters:
 
       - name: "PV2 Current"
         class: "current"
+        mppt: 2
         state_class: "measurement"
         uom: "A"
         scale: 0.01
@@ -128,6 +134,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L1 Voltage"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -137,6 +144,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -146,6 +154,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Voltage"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -155,6 +164,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -164,6 +174,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L3 Voltage"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -173,6 +184,7 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "L3 Current"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -226,6 +238,7 @@ parameters:
 
       - name: "PV1 voltage sample by slave CPU"
         class: "voltage"
+        mppt: 1
         state_class: "measurement"
         uom: "V"
         scale: 0.1
@@ -235,6 +248,7 @@ parameters:
 
       - name: "PV1 current sample by slave CPU"
         class: "current"
+        mppt: 1
         state_class: "measurement"
         uom: "A"
         scale: 0.1
@@ -266,18 +280,21 @@ parameters:
 
       - name: "Insulation of PV1+ to ground"
         state_class: "measurement"
+        mppt: 1
         rule: 1
         registers: [0x0024]
         icon: ""
 
       - name: "Insulation of PV2+ to ground"
         state_class: "measurement"
+        mppt: 2
         rule: 1
         registers: [0x0025]
         icon: ""
 
       - name: "Insulation of PV- to ground"
         state_class: "measurement"
+        mppt: 1
         rule: 1
         registers: [0x0026]
         icon: ""

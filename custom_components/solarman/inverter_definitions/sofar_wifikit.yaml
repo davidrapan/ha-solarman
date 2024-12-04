@@ -35,6 +35,7 @@ parameters:
     items:
       - name: "PV Power"
         class: "power"
+        mppt: 1
         state_class: "measurement"
         uom: "kW"
         scale: 0.01
