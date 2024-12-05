@@ -783,10 +783,10 @@ parameters:
           - key: "default"
             value: "Error"
 
-      - name: "Device Fault 1"
+      - name: "Device Fault"
         class: "enum"
         rule: 3
-        registers: [0x0067]
+        registers: [0x0067, 0x0068, 0x0069, 0x006A]
         icon: "mdi:message-alert-outline"
         lookup:
           - key: 0x0000
@@ -819,18 +819,7 @@ parameters:
             value: "Arc Fault Reservation"
           - key: 0x2000
             value: "Grid Current Sample Abnormality"
-          - key: "default"
-            value: "Error"
-
-      - name: "Device Fault 2"
-        class: "enum"
-        rule: 3
-        registers: [0x0068]
-        icon: "mdi:message-alert-outline"
-        lookup:
-          - key: 0x0000
-            value: "OK"
-          - key: 0x191
+          - key: 0x2030000
             value: "Grid phase failure or No Relay Connection"
           - key: "default"
             value: "Error"
