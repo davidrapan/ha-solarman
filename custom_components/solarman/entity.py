@@ -26,10 +26,12 @@ def migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> d
 
     entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(name, '').strip()
     old_unique_id = '_'.join(filter(None, (name, str(serial), entity_name)))
+    slugified_old_unique_id = slugify(old_unique_id)
 
-    if entity_entry.unique_id == old_unique_id and (new_unique_id := slugify(old_unique_id if entity_name else f"{old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}")):
-        _LOGGER.debug("Migrating unique_id for %s entity from [%s] to [%s]", entity_entry.entity_id, old_unique_id, new_unique_id)
-        return { "new_unique_id": entity_entry.unique_id.replace(old_unique_id, new_unique_id) }
+    for old_unique_id in (old_unique_id, slugified_old_unique_id):
+        if entity_entry.unique_id == old_unique_id and (new_unique_id := f"{slugified_old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}"):
+            _LOGGER.debug("Migrating unique_id for %s entity from [%s] to [%s]", entity_entry.entity_id, old_unique_id, new_unique_id)
+            return { "new_unique_id": entity_entry.unique_id.replace(old_unique_id, new_unique_id) }
 
     return None
 
@@ -87,7 +89,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name or platform))))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name, platform))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
