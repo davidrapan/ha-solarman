@@ -828,9 +828,31 @@ parameters:
             value: "Error"
 
       - name: "Device Fault"
-        rule: 6
-        registers: [0x0067, 0x0068, 0x0069, 0x006A]
+        class: "enum"
+        rule: 3
+        registers: [0x22B, 0x022C, 0x022D, 0x022E]
         icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 6
+            value: "DC/DC Soft Start failure"
+          - bit: 9
+            value: "Auxiliary power supply failure"
+          - bit: 12
+            value: "Working mode changed"
+          - bit: 17
+            value: "AC Over-current failure"
+          - bit: 18
+            value: "Tz_Integ_Fault failure"
+          - bit: 19
+            value: "DC Over-current failure"
+          - bit: 22
+            value: "AC current leakage failure"
+          - bit: 63
+            value: "Temperature is too high"
+          - key: "default"
+            value: "Error"
 
       - name: "Output Frequency"
         l: 1
