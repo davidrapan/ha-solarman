@@ -33,7 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     options = config.options
     host = options.get(CONF_HOST, IP_ANY)
-    port = options.get(CONF_PORT)
+    port = options.get(CONF_PORT, DEFAULT_INVERTER_PORT)
     mac = None
 
     additional = options.get(CONF_ADDITIONAL_OPTIONS, {})
@@ -111,22 +111,13 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
         return False
 
     if config_entry.minor_version == 1 and (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
-        new_data[CONF_SERIAL] = new_data["inverter_serial"]
-        new_options[CONF_HOST] = new_options["inverter_host"]
-        new_options[CONF_PORT] = new_options["inverter_port"]
-        new_options[CONF_ADDITIONAL_OPTIONS] = {
-            CONF_BATTERY_NOMINAL_VOLTAGE: new_options.get(CONF_BATTERY_NOMINAL_VOLTAGE),
-            CONF_BATTERY_LIFE_CYCLE_RATING: new_options.get(CONF_BATTERY_LIFE_CYCLE_RATING)
-        }
+        bulk_inherit(new_data, new_data, "inverter_serial")
+        bulk_inherit(new_options, new_options, "inverter_serial", "inverter_host", "inverter_port")
+        bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
+        bulk_delete(new_data, "inverter_serial")
+        bulk_delete(new_options, "inverter_serial", "inverter_host", "inverter_port", CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
 
-        del new_data["inverter_serial"]
-        del new_options["inverter_serial"]
-        del new_options["inverter_host"]
-        del new_options["inverter_port"]
-        del new_options[CONF_BATTERY_NOMINAL_VOLTAGE]
-        del new_options[CONF_BATTERY_LIFE_CYCLE_RATING]
-
-        hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = 3, version = 1)
+        hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = 2, version = 1)
 
     _LOGGER.debug("Migration to configuration version %s.%s successful", config_entry.version, config_entry.minor_version)
 

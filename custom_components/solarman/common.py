@@ -3,6 +3,7 @@ import re
 import yaml
 import asyncio
 import aiofiles
+import collections
 
 from typing import Any
 from dataclasses import dataclass
@@ -47,6 +48,16 @@ def execute_async(x):
 def filter_by_keys(source: dict, keys: dict | list) -> dict:
     return {k: source[k] for k in source.keys() if k in keys}
 
+def bulk_inherit(target, source, *keys):
+    for k in source.keys() & keys:
+        if not k in target and (v := source.get(k)) is not None:
+            target[k] = v
+    return target
+
+def bulk_delete(source: dict[Any, Any], *keys: list[Any]):
+    for k in source.keys() & keys:
+        del source[k]
+
 def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
@@ -90,6 +101,9 @@ def build_device_info(serial, mac, name, info, filename):
 def is_platform(description, value):
     return (description["platform"] if "platform" in description else "sensor") == value
 
+def all_equals(values, value):
+    return all(i == value for i in values)
+
 def all_same(values):
     return all(i == values[0] for i in values)
 
@@ -114,20 +128,14 @@ def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
 def process_descriptions(item, group, table, code):
-    def inherit(target, source, *properties):
-        for p in properties:
-            if not p in target and (v := source.get(p)) is not None:
-                target[p] = v
-        return target
-
-    inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
+    bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
     if (sensors := item.get("sensors")) is not None:
         for s in sensors:
-            inherit(s, item, REQUEST_CODE, "scale")
+            bulk_inherit(s, item, REQUEST_CODE, "scale")
             if (m := item.get("multiply")) is not None:
-                inherit(m, s, REQUEST_CODE, "scale")
+                bulk_inherit(m, s, REQUEST_CODE, "scale")
     return item
 
 def get_code(item, type, default = None):
