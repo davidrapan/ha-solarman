@@ -6,6 +6,7 @@ import asyncio
 import threading
 import concurrent.futures
 
+from functools import partial
 from datetime import datetime
 
 from pysolarmanv5 import PySolarmanV5Async, V5FrameError
@@ -24,8 +25,11 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
         self._passthrough = False
 
+    async def _tcp_send_receive_frame(self, mb_request_frame):
+        return mb_response_adu if not len(mb_response_adu := await self._send_receive_v5_frame(mb_request_frame)) == 10 else mb_response_adu + b'\x00\x01'
+
     async def _tcp_parse_response_adu(self, mb_request_frame):
-        return parse_response_adu(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
+        return parse_response_adu(await self._tcp_send_receive_frame(mb_request_frame), mb_request_frame)
 
     def _received_frame_is_valid(self, frame):
         if self._passthrough:
