@@ -22,7 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 DATA_SCHEMA = { vol.Required(CONF_NAME, default = DEFAULT_NAME): str, vol.Required(CONF_SERIAL, default = None): cv.positive_int }
 
 OPTS_SCHEMA = {
-    vol.Required(CONF_HOST): str,
+    vol.Optional(CONF_HOST, default = None): str,
     vol.Optional(CONF_PORT, default = DEFAULT_INVERTER_PORT): cv.port,
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_LOOKUP_FILE): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
@@ -53,11 +53,6 @@ async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.S
     return vol.Schema(data_schema)
 
 def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, Any]:
-    """
-    Validate the user input allows us to connect.
-
-    Data has the keys from data_schema with values provided by the user.
-    """
     _LOGGER.debug(f"validate_connection: {user_input}")
 
     try:
@@ -76,16 +71,14 @@ def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, A
     return False
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    """Handle a solarman stick logger config flow."""
     MINOR_VERSION = 2
     VERSION = 1
 
-    async def _async_try_and_abort_if_unique_id(self, unique_id):
-        await self.async_set_unique_id(unique_id)
+    async def _async_set_and_abort_if_unique_id_configured(self, suffix: str):
+        await self.async_set_unique_id(f"solarman_{suffix}") # self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
         self._abort_if_unique_id_configured()
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        """Handle a flow initiated by the DHCP client."""
         _LOGGER.debug(f"ConfigFlowHandler.async_step_dhcp: {discovery_info}")
         #await self.async_set_unique_id(format_mac(discovery_info.macaddress))
         discovery_input = { CONF_NAME: DEFAULT_NAME, CONF_HOST: discovery_info.ip, CONF_PORT: DEFAULT_INVERTER_PORT }
@@ -93,51 +86,49 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         return await self.async_step_user(user_input = discovery_input)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Handle the initial step."""
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None:
-            ip = None
+            name = None
             serial = None
+            ip = None
             if (discovered := await InverterDiscovery(self.hass).discover()):
                 for s in discovered:
                     try:
-                        await self.async_set_unique_id(f"solarman_{s}")
-                        self._abort_if_unique_id_configured()
+                        self._async_abort_entries_match({ CONF_SERIAL: s })
                         ip = discovered[(serial := s)]["ip"]
                         break
                     except:
                         continue
-            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_HOST: ip, CONF_SERIAL: serial}))
+                for i in range(0, 1000):
+                    try:
+                        self._async_abort_entries_match({ CONF_NAME: (name := ' '.join(filter(None, (DEFAULT_NAME, None if not i else str(i if i != 1 else 2))))) })
+                        break
+                    except:
+                        continue
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_SERIAL: serial, CONF_HOST: ip}))
 
         errors = {}
 
         if validate_connection(user_input, errors):
-            await self.async_set_unique_id(f"solarman_{user_input[CONF_SERIAL]}")
-            self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
-            user_input_items = user_input.items()
-            return self.async_create_entry(title = user_input[CONF_NAME], data = {k: v for k, v in user_input_items if k in DATA_SCHEMA}, options = {k: v for k, v in user_input_items if k in OPTS_SCHEMA})
+            await self._async_set_and_abort_if_unique_id_configured(user_input[CONF_SERIAL])
+            return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = filter_by_keys(user_input, OPTS_SCHEMA))
 
-        _LOGGER.debug(f"ConfigFlowHandler.async_step_user: validation failed: {user_input}")
+        _LOGGER.debug(f"ConfigFlowHandler.async_step_user: connection validation failed: {user_input}")
 
         return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
 
     @staticmethod
     @callback
     def async_get_options_flow(entry: ConfigEntry) -> OptionsFlowHandler:
-        """Get the options flow for this handler."""
         _LOGGER.debug(f"ConfigFlowHandler.async_get_options_flow: {entry}")
         return OptionsFlowHandler(entry)
 
 class OptionsFlowHandler(OptionsFlow):
-    """Handle a solarman stick logger options flow."""
-
     def __init__(self, entry: ConfigEntry) -> None:
-        """Initialize options flow."""
         _LOGGER.debug(f"OptionsFlowHandler.__init__: {entry}")
         self.entry = entry
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Handle options flow."""
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: user_input: {user_input}, current: {self.entry.options}")
         if user_input is None:
             return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), self.entry.options))
@@ -146,5 +137,7 @@ class OptionsFlowHandler(OptionsFlow):
 
         if validate_connection(user_input, errors):
             return self.async_create_entry(title = self.entry.data[CONF_NAME], data = user_input)
+
+        _LOGGER.debug(f"OptionsFlowHandler.async_step_init: connection validation failed: {user_input}")
 
         return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)

@@ -6,7 +6,7 @@ import logging
 from functools import partial
 from ipaddress import IPv4Address, AddressValueError
 
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_registry import async_migrate_entries
@@ -22,6 +22,8 @@ from .services import *
 
 _LOGGER = logging.getLogger(__name__)
 
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.DATETIME, Platform.TIME, Platform.BUTTON]
+
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_setup_entry({config.as_dict()})")
 
@@ -30,16 +32,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     serial = data.get(CONF_SERIAL)
 
     options = config.options
-    host = options.get(CONF_HOST)
+    host = options.get(CONF_HOST, IP_ANY)
     port = options.get(CONF_PORT)
     mac = None
 
-    lookup_file = options.get(CONF_LOOKUP_FILE, DEFAULT_LOOKUP_FILE)
-    lookup_path = hass.config.path(LOOKUP_DIRECTORY_PATH)
-
     additional = options.get(CONF_ADDITIONAL_OPTIONS, {})
-    lookup_attr = {ATTR_MPPT: additional.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: additional.get(CONF_PHASE, DEFAULT_PHASE)}
     mb_slave_id = additional.get(CONF_MB_SLAVE_ID, DEFAULT_MB_SLAVE_ID)
+
+    profile = Profile(hass.config.path(LOOKUP_DIRECTORY_PATH), options, additional)
 
     if serial is None:
         raise vol.Invalid("Configuration parameter [serial] does not have a value")
@@ -60,7 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
             raise vol.Invalid(f"Host {host} has serial number {s} but is configured with {serial}.")
 
     inverter = Inverter(host, serial, port, mb_slave_id)
-    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, mac, lookup_path, lookup_file, lookup_attr))
+    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, mac, profile))
 
     hass.data.setdefault(DOMAIN, {})[config.entry_id] = coordinator
 
@@ -87,6 +87,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_setup: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
 
     await hass.config_entries.async_forward_entry_setups(config, PLATFORMS)
+
     config.async_on_unload(config.add_update_listener(async_update_listener))
 
     register_services(hass)
@@ -96,10 +97,10 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry({config.as_dict()})")
 
+    remove_services(hass)
+
     if unload_ok := await hass.config_entries.async_unload_platforms(config, PLATFORMS):
         _ = hass.data[DOMAIN].pop(config.entry_id)
-
-    remove_services(hass)
 
     return unload_ok
 

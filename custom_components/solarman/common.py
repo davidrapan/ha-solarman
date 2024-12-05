@@ -4,11 +4,28 @@ import yaml
 import asyncio
 import aiofiles
 
-from datetime import datetime, time
+from typing import Any
+from dataclasses import dataclass
+from propcache import cached_property
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
+
+@dataclass
+class Profile:
+    path: str
+    options: dict[str, Any]
+    additional: dict[str, Any]
+
+    @cached_property
+    def filename(self) -> str:
+        return self.options.get(CONF_LOOKUP_FILE, DEFAULT_LOOKUP_FILE)
+    
+    @cached_property
+    def attributes(self) -> str:
+        #return {k: v for k, v in self.additional if k in XXX}
+        return {ATTR_MPPT: self.additional.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: self.additional.get(CONF_PHASE, DEFAULT_PHASE)}
 
 def get_current_file_name(value):
     result = value.rsplit('.', 1)
@@ -26,6 +43,9 @@ async def async_listdir(path, prefix = ""):
 def execute_async(x):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(x)
+
+def filter_by_keys(source: dict, keys: dict | list) -> dict:
+    return {k: source[k] for k in source.keys() if k in keys}
 
 def ensure_list(value):
     return value if isinstance(value, list) else [value]

@@ -116,8 +116,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
         self.device_info = {}
         self.profile = None
 
-    async def load(self, name, mac, path, file, attr):
+    async def load(self, name, mac, profile: Profile):
         self.name = name
+
+        file, attr = profile.filename, profile.attributes
 
         try:
             if not file or file == DEFAULT_LOOKUP_FILE or file in AUTODETECTION_REDIRECT_TABLE:
@@ -125,7 +127,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         except BaseException as e:
             raise UpdateFailed(f"[{self.serial}] Device autodetection failed. [{format_exception(e)}]") from e
 
-        if file and file != DEFAULT_LOOKUP_FILE and (n := process_profile(file)) and (p := await yaml_open(path + n)):
+        if file and file != DEFAULT_LOOKUP_FILE and (n := process_profile(file)) and (p := await yaml_open(profile.path + n)):
             self.device_info = build_device_info(self.serial, mac, name, p["info"] if "info" in p else None, n)
             self.profile = ParameterParser(p, attr)
 
