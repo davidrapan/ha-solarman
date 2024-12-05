@@ -1,4 +1,5 @@
 {
     "name": "Solarman",
+    "homeassistant": "2024.7.0",
     "persistent_directory": "inverter_definitions/custom"
 }
