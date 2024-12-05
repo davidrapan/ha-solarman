@@ -328,7 +328,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x003C]
-        icon: "mdi:transmission-tower"
 
       - name: "Total Energy"
         class: "energy"
@@ -337,7 +336,6 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x003F, 0x0040]
-        icon: "mdi:transmission-tower"
         validation:
           min: 0.1
 
@@ -596,6 +594,7 @@ parameters:
   - group: Grid
     items:
       - name: "Grid Frequency"
+        l: 1
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -654,7 +653,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Power"
-        l: 1
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -682,6 +681,7 @@ parameters:
         attributes: [inverse]
 
       - name: "External CT1 Current"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -691,6 +691,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT2 Current"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -700,6 +701,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT1 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -708,6 +710,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT2 Power"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -716,6 +719,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -744,7 +748,7 @@ parameters:
         registers: [0x009E]
 
       - name: "Load L1 Power"
-        l: 1
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -829,6 +833,7 @@ parameters:
         icon: "mdi:message-alert-outline"
 
       - name: "Output Frequency"
+        l: 1
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
@@ -883,7 +888,7 @@ parameters:
         registers: [0x00A5]
 
       - name: "Output L1 Power"
-        l: 1
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"

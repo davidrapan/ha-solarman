@@ -758,7 +758,7 @@ parameters:
         scale: 0.01
         rule: 1
         offset: 1000
-        registers: [0x005a]
+        registers: [0x005A]
 
   - group: Alert
     items:

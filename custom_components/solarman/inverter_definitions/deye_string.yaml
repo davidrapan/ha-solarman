@@ -586,6 +586,7 @@ parameters:
         registers: [0x0058, 0x0059]
 
       - name: "Load Power"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
