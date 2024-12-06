@@ -32,6 +32,8 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
+CONF_OLD_SERIAL = "inverter_serial"
+
 UPDATE_INTERVAL = "update_interval"
 IS_SINGLE_CODE = "is_single_code"
 REGISTERS_CODE = "registers_code"

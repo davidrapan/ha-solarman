@@ -87,7 +87,7 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 2
+    MINOR_VERSION = 3
     VERSION = 1
 
     async def _async_set_and_abort_if_unique_id_configured(self, suffix: str):

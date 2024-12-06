@@ -15,7 +15,7 @@ from .provider import *
 from .api import Inverter
 from .coordinator import InverterCoordinator
 from .entity import migrate_unique_ids
-from .config_flow import async_update_listener
+from .config_flow import async_update_listener, ConfigFlowHandler
 from .services import *
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,13 +79,13 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
     #    return False
 
     if (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
-        bulk_migrate(new_data, new_data, { CONF_SERIAL: "inverter_serial" })
-        bulk_migrate(new_options, new_options, { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" })
+        bulk_migrate(new_data, new_data, { CONF_SERIAL: CONF_OLD_SERIAL })
+        bulk_migrate(new_options, new_options, { CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" })
         bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
-        bulk_delete(new_data, "inverter_serial")
-        bulk_delete(new_options, "inverter_serial", "inverter_host", "inverter_port", CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
+        bulk_delete(new_data, CONF_OLD_SERIAL)
+        bulk_delete(new_options, CONF_OLD_SERIAL, "inverter_host", "inverter_port", CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
 
-        hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = 2, version = 1)
+        hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
 
     _LOGGER.debug("Migration to configuration version %s.%s successful", config_entry.version, config_entry.minor_version)
 
