@@ -32,6 +32,13 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
+UPDATE_INTERVAL = "update_interval"
+IS_SINGLE_CODE = "is_single_code"
+REGISTERS_CODE = "registers_code"
+REGISTERS_MIN_SPAN = "registers_min_span"
+REGISTERS_MAX_SIZE = "registers_max_size"
+DIGITS = "digits"
+
 DEFAULT_TABLE = {
     "name": "Inverter",
     CONF_HOST: "",
@@ -42,12 +49,12 @@ DEFAULT_TABLE = {
     CONF_PHASE: 3,
     CONF_BATTERY_NOMINAL_VOLTAGE: 48,
     CONF_BATTERY_LIFE_CYCLE_RATING: 6000,
-    "register_update_interval": 60,
-    "is_single_code": False,
-    "registers_code": 0x03,
-    "registers_min_span": 25,
-    "registers_max_size": 125,
-    "digits": 6
+    UPDATE_INTERVAL: 60,
+    IS_SINGLE_CODE: False,
+    REGISTERS_CODE: 0x03,
+    REGISTERS_MIN_SPAN: 25,
+    REGISTERS_MAX_SIZE: 125,
+    DIGITS: 6
 }
 
 AUTODETECTION_REDIRECT_TABLE = ["deye_string.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
@@ -93,7 +100,7 @@ ATTR_FRIENDLY_NAME = "friendly_name"
 ATTR_MPPT = "mppt"
 ATTR_PHASE = "l"
 
-REQUEST_UPDATE_INTERVAL = "update_interval"
+REQUEST_UPDATE_INTERVAL = UPDATE_INTERVAL
 REQUEST_MIN_SPAN = "min_span"
 REQUEST_MAX_SIZE = "max_size"
 REQUEST_CODE = "code"

@@ -13,12 +13,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
     def __init__(self, profile, attr):
-        self._update_interval = DEFAULT_TABLE["register_update_interval"]
-        self._is_single_code = DEFAULT_TABLE["is_single_code"]
-        self._code = DEFAULT_TABLE["registers_code"]
-        self._min_span = DEFAULT_TABLE["registers_min_span"]
-        self._max_size = DEFAULT_TABLE["registers_max_size"]
-        self._digits = DEFAULT_TABLE["digits"]
+        self._update_interval = DEFAULT_TABLE[UPDATE_INTERVAL]
+        self._is_single_code = DEFAULT_TABLE[IS_SINGLE_CODE]
+        self._code = DEFAULT_TABLE[REGISTERS_CODE]
+        self._min_span = DEFAULT_TABLE[REGISTERS_MIN_SPAN]
+        self._max_size = DEFAULT_TABLE[REGISTERS_MAX_SIZE]
+        self._digits = DEFAULT_TABLE[DIGITS]
         self._requests = None
         self._result = {}
 
@@ -32,8 +32,8 @@ class ParameterParser:
                 self._min_span = default[REQUEST_MIN_SPAN]
             if REQUEST_MAX_SIZE in default:
                 self._max_size = default[REQUEST_MAX_SIZE]
-            if "digits" in default:
-                self._digits = default["digits"]
+            if DIGITS in default:
+                self._digits = default[DIGITS]
 
         if "requests" in profile and "requests_fine_control" in profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
@@ -281,7 +281,7 @@ class ParameterParser:
                 return
             value = validation["default"]
 
-        self.set_state(key, get_number(value, get_or_def(definition, "digits", self._digits)))
+        self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
         if (a := definition.get("attributes")) is not None and "value" in a:
             self.set_state(key, self._result[key][0], int(value))
@@ -300,7 +300,7 @@ class ParameterParser:
                 return
             value = validation["default"]
 
-        self.set_state(key, get_number(value, get_or_def(definition, "digits", self._digits)))
+        self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
     def try_parse_ascii(self, data, definition):
         code = get_code(definition, "read")

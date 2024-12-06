@@ -80,10 +80,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
 
     if (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
         bulk_migrate(new_data, new_data, { CONF_SERIAL: "inverter_serial" })
-
         bulk_migrate(new_options, new_options, { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" })
-        bulk_migrate(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
-
+        bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
         bulk_delete(new_data, "inverter_serial")
         bulk_delete(new_options, "inverter_serial", "inverter_host", "inverter_port", CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
 

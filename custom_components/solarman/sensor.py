@@ -121,7 +121,7 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
         super().__init__(coordinator, sensor)
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
-        self._digits = sensor["digits"] if "digits" in sensor else DEFAULT_TABLE["digits"]
+        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_TABLE[DIGITS]
 
     def update(self):
         #super().update()
