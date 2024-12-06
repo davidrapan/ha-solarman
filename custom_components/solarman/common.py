@@ -1,38 +1,29 @@
+from __future__ import annotations
+
 import os
 import re
 import yaml
+import logging
 import asyncio
 import aiofiles
-import collections
+
+import voluptuous as vol
 
 from typing import Any
-from dataclasses import dataclass
-from propcache import cached_property
 
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
 
-@dataclass
-class Profile:
-    path: str
-    options: dict[str, Any]
-    additional: dict[str, Any]
+_LOGGER = logging.getLogger(__name__)
 
-    @cached_property
-    def filename(self) -> str:
-        return self.options.get(CONF_LOOKUP_FILE, DEFAULT_LOOKUP_FILE)
-    
-    @cached_property
-    def attributes(self) -> str:
-        #return {k: v for k, v in self.additional if k in XXX}
-        return {ATTR_MPPT: self.additional.get(CONF_MPPT, DEFAULT_MPPT), ATTR_PHASE: self.additional.get(CONF_PHASE, DEFAULT_PHASE)}
+def protected(value, error):
+    if value is None or not value:
+        raise vol.Invalid(error)
+    return value
 
 def get_current_file_name(value):
-    result = value.rsplit('.', 1)
-    if len(result) > 0:
-        return result[-1]
-    return ""
+    return result[-1] if len(result := value.rsplit('.', 1)) > 0 else ""
 
 async def async_execute(x):
     loop = asyncio.get_running_loop()
@@ -48,7 +39,7 @@ def execute_async(x):
 def filter_by_keys(source: dict, keys: dict | list) -> dict:
     return {k: source[k] for k in source.keys() if k in keys}
 
-def bulk_inherit(target, source, *keys):
+def bulk_inherit(target: dict, source: dict, *keys: list):
     for k in source.keys() & keys:
         if not k in target and (v := source.get(k)) is not None:
             target[k] = v
@@ -70,11 +61,12 @@ def ensure_list(value):
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
 
-def lookup_profile(responses, _mppt, _phas):
-    if responses and (device_type := get_addr_value(responses, *AUTODETECTION_TYPE_DEYE)):
-        file, mpph = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]), None)
-        mppt, phas = ((v & 0x0F00) // 0x100, v & 0x000F) if (v := get_addr_value(responses, AUTODETECTION_CODE_DEYE, mpph)) else (_mppt, _phas)
-        return file, mppt if mppt < _mppt else _mppt, phas if phas < _phas else _phas
+def lookup_profile(response, attr):
+    if response and (device_type := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)):
+        file, conf = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]))
+        if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, conf)) and (m := (v & 0x0F00) // 0x100) and (p := v & 0x000F):
+            attr[ATTR_MPPT], attr[ATTR_PHASE] = min(m, attr[ATTR_MPPT]), min(p, attr[ATTR_PHASE])
+        return file
     raise Exception("Unable to read Device Type at Modbus register address: 0x0000")
 
 async def yaml_open(file):
@@ -170,6 +162,11 @@ def ilen(object):
 def get_or_def(o, k, d):
     return o.get(k, d) or d
 
+def from_bit_index(value):
+    if isinstance(value, list):
+        return sum(1 << i for i in value)
+    return 1 << value
+
 def lookup_value(value, dictionary):
     default = dictionary[0]["value"]
 
@@ -204,11 +201,6 @@ def get_battery_power_capacity(capacity, voltage):
 
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
-
-def from_bit_index(value):
-    if isinstance(value, list):
-        return sum(1 << i for i in value)
-    return 1 << value
 
 def split_p16b(value):
     while value:

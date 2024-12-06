@@ -32,21 +32,23 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
-DEFAULT_NAME = "Inverter"
-DEFAULT_INVERTER_PORT = 8899
-DEFAULT_MB_SLAVE_ID = 1
-DEFAULT_LOOKUP_FILE = "Auto"
-DEFAULT_MPPT = 4
-DEFAULT_PHASE = 3
-DEFAULT_BATTERY_NOMINAL_VOLTAGE = 48
-DEFAULT_BATTERY_LIFE_CYCLE_RATING = 6000
-
-DEFAULT_REGISTERS_UPDATE_INTERVAL = 60
-DEFAULT_IS_SINGLE_CODE = False
-DEFAULT_REGISTERS_CODE = 0x03
-DEFAULT_REGISTERS_MIN_SPAN = 25
-DEFAULT_REGISTERS_MAX_SIZE = 125
-DEFAULT_DIGITS = 6
+DEFAULT_TABLE = {
+    "name": "Inverter",
+    CONF_HOST: "",
+    CONF_PORT: 8899, 
+    CONF_MB_SLAVE_ID: 1,
+    CONF_LOOKUP_FILE: "Auto",
+    CONF_MPPT: 4,
+    CONF_PHASE: 3,
+    CONF_BATTERY_NOMINAL_VOLTAGE: 48,
+    CONF_BATTERY_LIFE_CYCLE_RATING: 6000,
+    "register_update_interval": 60,
+    "is_single_code": False,
+    "registers_code": 0x03,
+    "registers_min_span": 25,
+    "registers_max_size": 125,
+    "digits": 6
+}
 
 AUTODETECTION_REDIRECT_TABLE = ["deye_string.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
 AUTODETECTION_CODE_DEYE = 0x03

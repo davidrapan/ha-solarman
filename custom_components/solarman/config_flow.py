@@ -19,34 +19,37 @@ from .discovery import InverterDiscovery
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = { vol.Required(CONF_NAME, default = DEFAULT_NAME): str, vol.Required(CONF_SERIAL, default = None): cv.positive_int }
+DATA_SCHEMA = {
+    vol.Required(CONF_NAME, default = DEFAULT_TABLE[CONF_NAME]): str,
+    vol.Required(CONF_SERIAL, default = None): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 4294967295))
+}
 
 OPTS_SCHEMA = {
-    vol.Optional(CONF_HOST, default = None): str,
-    vol.Optional(CONF_PORT, default = DEFAULT_INVERTER_PORT): cv.port,
-    vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_LOOKUP_FILE): str,
+    vol.Optional(CONF_HOST, default = DEFAULT_TABLE[CONF_HOST], description = {"suggested_value": DEFAULT_TABLE[CONF_HOST]}): str,
+    vol.Optional(CONF_PORT, default = DEFAULT_TABLE[CONF_PORT], description = {"suggested_value": DEFAULT_TABLE[CONF_PORT]}): cv.port,
+    vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_TABLE[CONF_LOOKUP_FILE], description = {"suggested_value": DEFAULT_TABLE[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema(
             {
-                vol.Optional(CONF_MPPT, default = DEFAULT_MPPT): vol.All(vol.Coerce(int), vol.Range(min=1, max=12)),
-                vol.Optional(CONF_PHASE, default = DEFAULT_PHASE): vol.All(vol.Coerce(int), vol.Range(min=1, max=3)),
-                vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_BATTERY_NOMINAL_VOLTAGE): cv.positive_int,
-                vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_BATTERY_LIFE_CYCLE_RATING): cv.positive_int,
-                vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_MB_SLAVE_ID): cv.positive_int
+                vol.Optional(CONF_MPPT, default = DEFAULT_TABLE[CONF_MPPT], description = {"suggested_value": DEFAULT_TABLE[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
+                vol.Optional(CONF_PHASE, default = DEFAULT_TABLE[CONF_PHASE], description = {"suggested_value": DEFAULT_TABLE[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
+                vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_TABLE[CONF_BATTERY_NOMINAL_VOLTAGE], description = {"suggested_value": DEFAULT_TABLE[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
+                vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_TABLE[CONF_BATTERY_LIFE_CYCLE_RATING], description = {"suggested_value": DEFAULT_TABLE[CONF_BATTERY_LIFE_CYCLE_RATING]}): cv.positive_int,
+                vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_TABLE[CONF_MB_SLAVE_ID], description = {"suggested_value": DEFAULT_TABLE[CONF_MB_SLAVE_ID]}): cv.positive_int
             }
         ),
         {"collapsed": True}
     )
 }
 
-async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    _LOGGER.debug(f"async_update_listener: entry: {entry.as_dict()}")
+async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    _LOGGER.debug(f"async_update_listener: entry: {config_entry.as_dict()}")
     #hass.data[DOMAIN][entry.entry_id].config(entry)
     #entry.title = entry.options[CONF_NAME]
-    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.config_entries.async_reload(config_entry.entry_id)
 
 async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.Schema:
-    lookup_files = [DEFAULT_LOOKUP_FILE] + await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
+    lookup_files = [DEFAULT_TABLE[CONF_LOOKUP_FILE]] + await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
     _LOGGER.debug(f"step_user_data_schema: {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
     data_schema[CONF_LOOKUP_FILE] = vol.In(lookup_files)
     _LOGGER.debug(f"step_user_data_schema: data_schema: {data_schema}")
@@ -56,7 +59,8 @@ def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, A
     _LOGGER.debug(f"validate_connection: {user_input}")
 
     try:
-        getaddrinfo(user_input[CONF_HOST], user_input[CONF_PORT], family = 0, type = 0, proto = 0, flags = 0)
+        if host := user_input.get(CONF_HOST, IP_ANY):
+            getaddrinfo(host, user_input.get(CONF_PORT, DEFAULT_TABLE[CONF_PORT]), family = 0, type = 0, proto = 0, flags = 0)
     except herror:
         errors["base"] = "invalid_host"
     except (gaierror, timeout):
@@ -70,6 +74,18 @@ def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, A
 
     return False
 
+def remove_defaults(user_input: dict[str, Any]):
+    for k in list(user_input.keys()):
+        if k == CONF_ADDITIONAL_OPTIONS:
+            for l in list(user_input[k].keys()):
+                if user_input[k][l] == DEFAULT_TABLE.get(l):
+                    del user_input[k][l]
+            if not user_input[k]:
+                del user_input[k]
+        elif user_input[k] == DEFAULT_TABLE.get(k):
+            del user_input[k]
+    return user_input
+
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     MINOR_VERSION = 2
     VERSION = 1
@@ -81,7 +97,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_dhcp: {discovery_info}")
         #await self.async_set_unique_id(format_mac(discovery_info.macaddress))
-        discovery_input = { CONF_NAME: DEFAULT_NAME, CONF_HOST: discovery_info.ip, CONF_PORT: DEFAULT_INVERTER_PORT }
+        discovery_input = { CONF_NAME: DEFAULT_TABLE[CONF_NAME], CONF_HOST: discovery_info.ip, CONF_PORT: DEFAULT_TABLE[CONF_PORT] }
         self._async_abort_entries_match(discovery_input)
         return await self.async_step_user(user_input = discovery_input)
 
@@ -101,7 +117,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                         continue
                 for i in range(0, 1000):
                     try:
-                        self._async_abort_entries_match({ CONF_NAME: (name := ' '.join(filter(None, (DEFAULT_NAME, None if not i else str(i if i != 1 else 2))))) })
+                        self._async_abort_entries_match({ CONF_NAME: (name := ' '.join(filter(None, (DEFAULT_TABLE[CONF_NAME], None if not i else str(i if i != 1 else 2))))) })
                         break
                     except:
                         continue
@@ -111,7 +127,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
 
         if validate_connection(user_input, errors):
             await self._async_set_and_abort_if_unique_id_configured(user_input[CONF_SERIAL])
-            return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = filter_by_keys(user_input, OPTS_SCHEMA))
+            return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
 
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: connection validation failed: {user_input}")
 
@@ -136,7 +152,7 @@ class OptionsFlowHandler(OptionsFlow):
         errors = {}
 
         if validate_connection(user_input, errors):
-            return self.async_create_entry(title = self.entry.data[CONF_NAME], data = user_input)
+            return self.async_create_entry(title = self.entry.data[CONF_NAME], data = remove_defaults(user_input))
 
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: connection validation failed: {user_input}")
 

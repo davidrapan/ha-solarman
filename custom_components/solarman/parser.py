@@ -13,12 +13,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
     def __init__(self, profile, attr):
-        self._update_interval = DEFAULT_REGISTERS_UPDATE_INTERVAL
-        self._is_single_code = DEFAULT_IS_SINGLE_CODE
-        self._code = DEFAULT_REGISTERS_CODE
-        self._min_span = DEFAULT_REGISTERS_MIN_SPAN
-        self._max_size = DEFAULT_REGISTERS_MAX_SIZE
-        self._digits = DEFAULT_DIGITS
+        self._update_interval = DEFAULT_TABLE["register_update_interval"]
+        self._is_single_code = DEFAULT_TABLE["is_single_code"]
+        self._code = DEFAULT_TABLE["registers_code"]
+        self._min_span = DEFAULT_TABLE["registers_min_span"]
+        self._max_size = DEFAULT_TABLE["registers_max_size"]
+        self._digits = DEFAULT_TABLE["digits"]
         self._requests = None
         self._result = {}
 

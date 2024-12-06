@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-import socket
 import logging
 
 from functools import partial
-from ipaddress import IPv4Address, AddressValueError
 
-from homeassistant.const import CONF_NAME, Platform
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
+from .provider import *
 from .api import Inverter
-from .discovery import InverterDiscovery
 from .coordinator import InverterCoordinator
 from .entity import migrate_unique_ids
 from .config_flow import async_update_listener
@@ -24,45 +22,15 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.DATETIME, Platform.TIME, Platform.BUTTON]
 
-async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
-    _LOGGER.debug(f"async_setup_entry({config.as_dict()})")
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
-    data = config.data
-    name = data.get(CONF_NAME)
-    serial = data.get(CONF_SERIAL)
+    config = ConfigurationProvider(hass, config_entry)
+    coordinator = InverterCoordinator(hass, Inverter(config, await EndPointProvider(config).discover()))
+    # TODO: Move construction of EndPointProvider (w/ discover() flow within Inverter.Load())
+    #       into construction of Inverter after separation of PySolarmanV5AsyncWrapper
 
-    options = config.options
-    host = options.get(CONF_HOST, IP_ANY)
-    port = options.get(CONF_PORT, DEFAULT_INVERTER_PORT)
-    mac = None
-
-    additional = options.get(CONF_ADDITIONAL_OPTIONS, {})
-    mb_slave_id = additional.get(CONF_MB_SLAVE_ID, DEFAULT_MB_SLAVE_ID)
-
-    profile = Profile(hass.config.path(LOOKUP_DIRECTORY_PATH), options, additional)
-
-    if serial is None:
-        raise vol.Invalid("Configuration parameter [serial] does not have a value")
-    if host is None:
-        raise vol.Invalid("Configuration parameter [host] does not have a value")
-    if port is None:
-        raise vol.Invalid("Configuration parameter [port] does not have a value")
-
-    try:
-        ipaddr = IPv4Address(host)
-    except AddressValueError:
-        ipaddr = IPv4Address(socket.gethostbyname(host))
-    if ipaddr.is_private and (discover := await InverterDiscovery(hass, host, serial).discover()):
-        if (device := discover.get(serial)) is not None:
-            host = device["ip"]
-            mac = device["mac"]
-        elif (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == host]), None)))):
-            raise vol.Invalid(f"Host {host} has serial number {s} but is configured with {serial}.")
-
-    inverter = Inverter(host, serial, port, mb_slave_id)
-    coordinator = InverterCoordinator(hass, inverter, partial(inverter.load, name, mac, profile))
-
-    hass.data.setdefault(DOMAIN, {})[config.entry_id] = coordinator
+    hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = coordinator
 
     # Fetch initial data so we have data when entities subscribe.
     #
@@ -80,15 +48,15 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     #
     _LOGGER.debug(f"async_setup: async_migrate_entries")
 
-    await async_migrate_entries(hass, config.entry_id, partial(migrate_unique_ids, name, serial))
+    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config.name, config.serial))
 
     # Forward setup
     #
     _LOGGER.debug(f"async_setup: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
 
-    await hass.config_entries.async_forward_entry_setups(config, PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
-    config.async_on_unload(config.add_update_listener(async_update_listener))
+    config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
 
     register_services(hass)
 
@@ -104,7 +72,7 @@ async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
 
     return unload_ok
 
-async def async_migrate_entry(hass, config_entry: ConfigEntry):
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     _LOGGER.debug("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
 
     #if config_entry.minor_version > 1:
