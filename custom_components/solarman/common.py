@@ -54,6 +54,12 @@ def bulk_inherit(target, source, *keys):
             target[k] = v
     return target
 
+def bulk_migrate(target: dict, source: dict, redirect: dict):
+    for k in redirect:
+        if not k in target and (v := source.get(redirect[k])) is not None:
+            target[k] = v
+    return target
+
 def bulk_delete(source: dict[Any, Any], *keys: list[Any]):
     for k in source.keys() & keys:
         del source[k]
