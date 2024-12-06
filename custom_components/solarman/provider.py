@@ -109,7 +109,11 @@ class ProfileProvider:
     @cached_property
     def attributes(self) -> str:
         #return {k: v for k, v in self.additional if k in XXX}
-        return {ATTR_MPPT: self._additional_options.get(CONF_MPPT, DEFAULT_TABLE[CONF_MPPT]), ATTR_PHASE: self._additional_options.get(CONF_PHASE, DEFAULT_TABLE[CONF_PHASE])}
+        return {
+            CONF_MOD: int(self._additional_options.get(CONF_MOD, DEFAULT_TABLE[CONF_MOD])),
+            ATTR_MPPT: self._additional_options.get(CONF_MPPT, DEFAULT_TABLE[CONF_MPPT]),
+            ATTR_PHASE: self._additional_options.get(CONF_PHASE, DEFAULT_TABLE[CONF_PHASE])
+        }
 
     async def resolve(self, request: Callable[[], Awaitable[None]] | None = None):
         _LOGGER.debug(f"Device autodetection is {"enabled" if self.auto and request else f"disabled. Selected profile: {self.filename}"}")

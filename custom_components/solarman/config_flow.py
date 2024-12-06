@@ -31,6 +31,7 @@ OPTS_SCHEMA = {
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema(
             {
+                vol.Optional(CONF_MOD, default = DEFAULT_TABLE[CONF_MOD], description = {"suggested_value": DEFAULT_TABLE[CONF_MOD]}): bool,
                 vol.Optional(CONF_MPPT, default = DEFAULT_TABLE[CONF_MPPT], description = {"suggested_value": DEFAULT_TABLE[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
                 vol.Optional(CONF_PHASE, default = DEFAULT_TABLE[CONF_PHASE], description = {"suggested_value": DEFAULT_TABLE[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
                 vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_TABLE[CONF_BATTERY_NOMINAL_VOLTAGE], description = {"suggested_value": DEFAULT_TABLE[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
@@ -87,7 +88,7 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 3
+    MINOR_VERSION = 4
     VERSION = 1
 
     async def _async_set_and_abort_if_unique_id_configured(self, suffix: str):

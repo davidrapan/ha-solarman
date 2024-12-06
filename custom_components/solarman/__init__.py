@@ -85,6 +85,9 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         bulk_delete(new_data, CONF_OLD_SERIAL)
         bulk_delete(new_options, CONF_OLD_SERIAL, "inverter_host", "inverter_port", CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
 
+        if not new_options.get(CONF_ADDITIONAL_OPTIONS):
+            del new_options[CONF_ADDITIONAL_OPTIONS]
+
         hass.config_entries.async_update_entry(config_entry, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
 
     _LOGGER.debug("Migration to configuration version %s.%s successful", config_entry.version, config_entry.minor_version)

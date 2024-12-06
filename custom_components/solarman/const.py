@@ -28,6 +28,7 @@ CONF_LOOKUP_FILE = "lookup_file"
 CONF_ADDITIONAL_OPTIONS = "additional_options"
 CONF_MPPT = "mppt"
 CONF_PHASE = "phase"
+CONF_MOD = "mod"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
@@ -49,6 +50,7 @@ DEFAULT_TABLE = {
     CONF_LOOKUP_FILE: "Auto",
     CONF_MPPT: 4,
     CONF_PHASE: 3,
+    CONF_MOD: False,
     CONF_BATTERY_NOMINAL_VOLTAGE: 48,
     CONF_BATTERY_LIFE_CYCLE_RATING: 6000,
     UPDATE_INTERVAL: 60,
