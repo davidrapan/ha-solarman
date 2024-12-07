@@ -104,13 +104,13 @@ class ProfileProvider:
 
     @cached_property
     def auto(self) -> bool:
-        return not self.filename or self.filename == DEFAULT_TABLE[CONF_LOOKUP_FILE] or self.filename in AUTODETECTION_REDIRECT_TABLE
+        return not self.filename or self.filename in AUTODETECTION_REDIRECT_TABLE
 
     @cached_property
     def attributes(self) -> str:
         #return {k: v for k, v in self.additional if k in XXX}
         return {
-            CONF_MOD: int(self._additional_options.get(CONF_MOD, DEFAULT_TABLE[CONF_MOD])),
+            ATTR_MOD: int(self._additional_options.get(CONF_MOD, DEFAULT_TABLE[CONF_MOD])),
             ATTR_MPPT: self._additional_options.get(CONF_MPPT, DEFAULT_TABLE[CONF_MPPT]),
             ATTR_PHASE: self._additional_options.get(CONF_PHASE, DEFAULT_TABLE[CONF_PHASE])
         }
@@ -123,6 +123,6 @@ class ProfileProvider:
         if f and f != DEFAULT_TABLE[CONF_LOOKUP_FILE] and (n := process_profile(f)) and (p := await yaml_open(self.config.directory + n)):
             self.parser = ParameterParser(p, self.attributes)
 
-            return build_device_info(self.serial, self.endpoint.mac, self.name, p["info"] if "info" in p else None, f)
-        
+            return build_device_info(self.serial, self.endpoint.mac, self.name, unwrap(p["info"], "model", self.attributes[ATTR_MOD]) if "info" in p else None, f)
+
         raise Exception(f"Unable to resolve and process selected profile: {self.filename}")

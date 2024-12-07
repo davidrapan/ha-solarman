@@ -26,9 +26,9 @@ CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_LOOKUP_FILE = "lookup_file"
 CONF_ADDITIONAL_OPTIONS = "additional_options"
+CONF_MOD = "mod"
 CONF_MPPT = "mppt"
 CONF_PHASE = "phase"
-CONF_MOD = "mod"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
@@ -61,11 +61,11 @@ DEFAULT_TABLE = {
     DIGITS: 6
 }
 
-AUTODETECTION_REDIRECT_TABLE = ["deye_string.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
+AUTODETECTION_REDIRECT_TABLE = [DEFAULT_TABLE[CONF_LOOKUP_FILE], "deye_string.yaml", "deye_p1.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_p3.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
 AUTODETECTION_CODE_DEYE = 0x03
 AUTODETECTION_REQUEST_DEYE = (AUTODETECTION_CODE_DEYE, 0x00, 0x16)
 AUTODETECTION_TYPE_DEYE = (AUTODETECTION_CODE_DEYE, 0x00)
-AUTODETECTION_TABLE_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 18), (0x0004, 0x0400): ("deye_micro.yaml", 18), (0x0005, 0x0500): ("deye_sg04lp3.yaml", 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_sg01hp3.yaml", 0x16) }
+AUTODETECTION_TABLE_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 0, 0x12), (0x0004, 0x0400): ("deye_micro.yaml", 0, 0x12), (0x0005, 0x0500): ("deye_p3.yaml", 0, 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_p3.yaml", 1, 0x16) }
 
 PROFILE_REDIRECT_TABLE = { "deye_4mppt.yaml": "deye_micro.yaml", "deye_2mppt.yaml": "deye_micro.yaml", "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
 
@@ -101,6 +101,7 @@ ACTION_ATTEMPTS = 5
 ACTION_ATTEMPTS_MAX = ACTION_ATTEMPTS * 6
 
 ATTR_FRIENDLY_NAME = "friendly_name"
+ATTR_MOD = "mod"
 ATTR_MPPT = "mppt"
 ATTR_PHASE = "l"
 

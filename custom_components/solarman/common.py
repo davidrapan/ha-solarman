@@ -63,10 +63,10 @@ def set_request(code, start, end):
 
 def lookup_profile(response, attr):
     if response and (device_type := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)):
-        file, conf = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]))
-        if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, conf)) and (m := (v & 0x0F00) // 0x100) and (p := v & 0x000F):
-            attr[ATTR_MPPT], attr[ATTR_PHASE] = min(m, attr[ATTR_MPPT]), min(p, attr[ATTR_PHASE])
-        return file
+        f, m, c = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]))
+        if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F):
+            attr[ATTR_MOD], attr[ATTR_MPPT], attr[ATTR_PHASE] = m, min(t, attr[ATTR_MPPT]), min(p, attr[ATTR_PHASE])
+        return f
     raise Exception("Unable to read Device Type at Modbus register address: 0x0000")
 
 async def yaml_open(file):
@@ -125,11 +125,16 @@ def is_ethernet_frame(frame):
 def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
+def unwrap(source: dict, key: Any, mod: int = 0):
+    if (c := source.get(key)) is not None and isinstance(c, list):
+        source[key] = c[mod]
+    return source
+
 def process_descriptions(item, group, table, code, mod):
     def modify(source: dict):
         for i in source:
-            if i in ("scale", "min", "max") and (c := source.get(i)) is not None and isinstance(c, list):
-                source[i] = c[mod]
+            if i in ("scale", "min", "max"):
+                unwrap(source, i, mod)
             elif isinstance(source[i], dict):
                 modify(source[i])
 
