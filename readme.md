@@ -18,7 +18,7 @@
 > [!NOTE]  
 > - It's still 🚧 work in progress  but currently very 🐎 stable 😉  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
-> - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 🎁 feature requests and 💡 Development Planning, etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
+> - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 💡 Development Planning and 🎁 feature requests etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
 
 > [!IMPORTANT]  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
@@ -44,4 +44,4 @@
 </a>
 <br>
 <br>
-<div align="right">Inspired by <a href="https://github.com/StephanJoubert/home_assistant_solarman">StephanJoubert/home_assistant_solarman</div>
+<div align="right">Inspired by <a href="https://github.com/StephanJoubert/home_assistant_solarman">Stephan Joubert's Solarman</div>
