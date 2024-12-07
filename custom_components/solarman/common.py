@@ -126,19 +126,23 @@ def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
 def process_descriptions(item, group, table, code, mod):
+    def modify(source: dict):
+        for i in source:
+            if i in ("scale", "min", "max") and (c := source.get(i)) is not None and isinstance(c, list):
+                source[i] = c[mod]
+            elif isinstance(source[i], dict):
+                modify(source[i])
+
     bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
-    if (c := item.get("scale")) is not None and isinstance(c, list): 
-        item["scale"] = c[mod]
+    modify(item)
     if (sensors := item.get("sensors")) is not None:
         for s in sensors:
-            if (c := s.get("scale")) is not None and isinstance(c, list): 
-                s["scale"] = c[mod]
+            modify(s)
             bulk_inherit(s, item, REQUEST_CODE, "scale")
             if (m := s.get("multiply")) is not None:
-                if (c := m.get("scale")) is not None and isinstance(c, list): 
-                    m["scale"] = c[mod]
+                modify(m)
                 bulk_inherit(m, s, REQUEST_CODE, "scale")
     return item
 
