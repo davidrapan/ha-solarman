@@ -248,18 +248,16 @@ class ParameterParser:
             if (m := s.get("multiply")) and (c := self._read_registers(data, m)) is not None:
                 n *= c
 
-            if not "operator" in s:
+            if (o := s.get("operator")) is None:
                 value += n
             else:
-                match s["operator"]:
+                match o:
                     case "subtract":
                         value -= n
                     case "multiply":
                         value *= n
                     case "divide" if n != 0:
                         value /= n
-                    case _:
-                        value += n
 
         return value
 

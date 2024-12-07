@@ -136,7 +136,7 @@ def process_descriptions(item, group, table, code, mod):
             if (c := s.get("scale")) is not None and isinstance(c, list): 
                 s["scale"] = c[mod]
             bulk_inherit(s, item, REQUEST_CODE, "scale")
-            if (m := item.get("multiply")) is not None:
+            if (m := s.get("multiply")) is not None:
                 if (c := m.get("scale")) is not None and isinstance(c, list): 
                     m["scale"] = c[mod]
                 bulk_inherit(m, s, REQUEST_CODE, "scale")
