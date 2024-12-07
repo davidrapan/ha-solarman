@@ -210,7 +210,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. #{runtime}")
 
         try:
-            await self.raise_when_busy(ACTION_ATTEMPTS, "Busy: Currently writing to the device!")
+            await self.raise_when_busy(message = "Busy: Currently writing to the device!")
 
             try:
                 async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
@@ -270,7 +270,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
         code_start_arg = f"{code:02X} ~ {start} | 0x{start:04X}: {arg}"
         _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} ...")
 
-        await self.raise_when_busy(ACTION_ATTEMPTS, "Busy: The coordinator is currently reading data from the device!")
+        await self.raise_when_busy(wait_for_attempts, "Busy: The coordinator is currently reading data from the device!")
 
         try:
             attempts_left = ACTION_ATTEMPTS
