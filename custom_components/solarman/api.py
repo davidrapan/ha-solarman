@@ -10,8 +10,6 @@ from datetime import datetime
 
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
-from homeassistant.helpers.update_coordinator import UpdateFailed
-
 from .const import *
 from .common import *
 from .provider import *
@@ -147,7 +145,7 @@ class Inverter():
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except BaseException as e:
-            raise UpdateFailed(f"[{self.config.serial}] Device loading failed. [{format_exception(e)}]") from e
+            raise Exception(f"[{self.config.serial}] Device loading failed. [{format_exception(e)}]") from e
 
     def get_entity_descriptions(self):
         return (STATE_SENSORS + self.profile.parser.get_entity_descriptions()) if self.profile and self.profile.parser else []
@@ -201,7 +199,7 @@ class Inverter():
 
         if await wait_for_done(attempts_left):
             _LOGGER.debug(f"[{self.config.serial}] R/W Timeout.")
-            raise UpdateFailed(f"[{self.config.serial}] {message}")
+            raise TimeoutError(f"[{self.config.serial}] {message}")
 
     async def get_failed(self):
         _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
@@ -259,7 +257,7 @@ class Inverter():
                 raise
             except Exception as e:
                 if await self.get_failed():
-                    raise UpdateFailed(f"[{self.config.serial}] {format_exception(e)}") from e
+                    raise Exception(f"[{self.config.serial}] {format_exception(e)}") from e
                 _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
             finally:
                 self._is_busy = 0

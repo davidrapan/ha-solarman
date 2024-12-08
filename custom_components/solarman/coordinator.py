@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import *
 from .api import Inverter
@@ -35,6 +35,8 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except TimeoutError:
             await self.inverter.endpoint.discover()
             raise
+        except Exception as e:
+            raise UpdateFailed(e) from e
 
     #async def _reload(self):
     #    _LOGGER.debug('_reload')
