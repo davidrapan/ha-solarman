@@ -22,20 +22,15 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
 
     @property
-    def connected(self):
-        return self.reader_task
-
-    @property
     def auto_reconnect(self):
         return self._needs_reconnect
 
-    async def connect(self) -> None:
+    async def connect(self) -> bool:
         if not self.reader_task:
             _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
             await super().connect()
-        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
-        #elif not self.state > 0:
-        #    await super().reconnect()
+            return True
+        return False
 
     async def disconnect(self) -> None:
         _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
@@ -155,9 +150,8 @@ class Inverter():
         await self.modbus.disconnect()
 
     async def read_write(self, code, start, arg):
-        if not self.modbus.connected:
+        if await self.modbus.connect():
             self.state_updated = datetime.now()
-        await self.modbus.connect()
 
         match code:
             case CODE.READ_COILS:
