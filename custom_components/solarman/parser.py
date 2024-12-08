@@ -258,6 +258,8 @@ class ParameterParser:
                         value *= n
                     case "divide" if n != 0:
                         value /= n
+                    case _:
+                        value += n
 
         return value
 
