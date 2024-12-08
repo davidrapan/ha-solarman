@@ -10,7 +10,7 @@ from functools import partial
 from datetime import datetime
 from propcache import cached_property
 
-from pysolarmanv5 import PySolarmanV5Async, V5FrameError
+from .include.pysolarmanv5 import PySolarmanV5Async, V5FrameError
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.update_coordinator import UpdateFailed
