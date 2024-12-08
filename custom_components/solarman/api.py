@@ -140,14 +140,35 @@ class Inverter():
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except BaseException as e:
-            raise Exception(f"[{self.config.serial}] Device loading failed. [{format_exception(e)}]") from e
+            raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
 
     def get_entity_descriptions(self):
         return (STATE_SENSORS + self.profile.parser.get_entity_descriptions()) if self.profile and self.profile.parser else []
 
+    def check(self, lock):
+        if lock and self._write_lock:
+            raise UserWarning("Entity is locked!")
+
     async def shutdown(self) -> None:
         self.state = -1
         await self.modbus.disconnect()
+
+    async def raise_when_busy(self, attempts_left = ACTION_ATTEMPTS, message = "Semaphore timeout."):
+        async def wait_for_done(attempts_left):
+            try:
+                try:
+                    while self._is_busy == 1 and attempts_left > 0:
+                        attempts_left -= 1
+                        await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
+                except Exception as e:
+                    _LOGGER.debug(f"wait_for_done: {format_exception(e)}")
+                return self._is_busy == 1
+            finally:
+                self._is_busy = 1
+
+        if await wait_for_done(attempts_left):
+            _LOGGER.debug(f"[{self.config.serial}] R/W Timeout.")
+            raise TimeoutError(f"[{self.config.serial}] {message}")
 
     async def read_write(self, code, start, arg):
         if await self.modbus.connect():
@@ -173,34 +194,27 @@ class Inverter():
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
-    async def safe_read_write(self, code, start, arg):
-        if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
-            raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
-        return response
+    async def try_read_write(self, code, start, arg, message, incremental_wait):
+        _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
-    async def raise_when_busy(self, attempts_left = ACTION_ATTEMPTS, message = "Semaphore timeout."):
-        async def wait_for_done(attempts_left):
+        response = None
+        attempts_left = ACTION_ATTEMPTS
+        while attempts_left > 0 and not response:
+            attempts_left -= 1
             try:
-                try:
-                    while self._is_busy == 1 and attempts_left > 0:
-                        attempts_left -= 1
-                        await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
-                except Exception as e:
-                    _LOGGER.debug(f"wait_for_done: {format_exception(e)}")
-                return self._is_busy == 1
-            finally:
-                self._is_busy = 1
+                if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
+                    raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
-        if await wait_for_done(attempts_left):
-            _LOGGER.debug(f"[{self.config.serial}] R/W Timeout.")
-            raise TimeoutError(f"[{self.config.serial}] {message}")
+                _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
+                return response
+            except Exception as e:
+                _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-    async def get_except(self, attempts_left, delay):
-        if not self.modbus.auto_reconnect:
-            await self.modbus.disconnect()
-        if not attempts_left > 0:
-            raise
-        await asyncio.sleep(delay)
+                if not self.modbus.auto_reconnect:
+                    await self.modbus.disconnect()
+                if not attempts_left > 0:
+                    raise
+                await asyncio.sleep(((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP) if incremental_wait else TIMINGS_WAIT_SLEEP)
 
     async def get_failed(self):
         _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
@@ -224,20 +238,8 @@ class Inverter():
                 async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
-                        quantity, code_start = end - start + 1, (code, start)
-                        code_start_end = f"{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}"
-                        _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} ...")
-
-                        attempts_left = ACTION_ATTEMPTS
-                        while attempts_left > 0 and not code_start in responses:
-                            attempts_left -= 1
-
-                            try:
-                                responses[code_start] = await self.safe_read_write(code, start, quantity)
-                                _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} succeeded.")
-                            except (V5FrameError, TimeoutError, Exception) as e:
-                                _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
-                                await self.get_except(attempts_left, (ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
+                        quantity = end - start + 1
+                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}", True)
 
                     result = self.profile.parser.process(responses) if not requests else responses
 
@@ -263,28 +265,13 @@ class Inverter():
 
         return result
 
-    def check(self, lock):
-        if lock and self._write_lock:
-            raise UserWarning("Entity is locked!")
-
     async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
-        code_start_arg = f"{code:02X} ~ {start} | 0x{start:04X}: {arg}"
-        _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} ...")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling call request.")
 
         await self.raise_when_busy(wait_for_attempts, "Busy: The coordinator is currently reading data from the device!")
 
         try:
-            attempts_left = ACTION_ATTEMPTS
-            while attempts_left > 0:
-                attempts_left -= 1
-
-                try:
-                    response = await self.safe_read_write(code, start, arg)
-                    _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} succeeded, response: {response}")
-                    return response
-                except Exception as e:
-                    _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
-                    await self.get_except(attempts_left, TIMINGS_WAIT_SLEEP)
+            return await self.try_read_write(code, start, arg, f"Call {code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
         except:
             raise
         finally:
