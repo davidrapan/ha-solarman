@@ -201,6 +201,13 @@ class Inverter():
             _LOGGER.debug(f"[{self.config.serial}] R/W Timeout.")
             raise TimeoutError(f"[{self.config.serial}] {message}")
 
+    async def get_except(self, attempts_left, delay):
+        if not self.modbus.auto_reconnect:
+            await self.modbus.disconnect()
+        if not attempts_left > 0:
+            raise
+        await asyncio.sleep(delay)
+
     async def get_failed(self):
         _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
@@ -236,14 +243,7 @@ class Inverter():
                                 _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} succeeded.")
                             except (V5FrameError, TimeoutError, Exception) as e:
                                 _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
-
-                                if not self.modbus.auto_reconnect:
-                                    await self.modbus.disconnect()
-
-                                if not attempts_left > 0:
-                                    raise
-
-                                await asyncio.sleep((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
+                                await self.get_except(attempts_left, (ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP)
 
                     result = self.profile.parser.process(responses) if not requests else responses
 
@@ -290,14 +290,7 @@ class Inverter():
                     return response
                 except Exception as e:
                     _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
-
-                    if not self.modbus.auto_reconnect:
-                        await self.modbus.disconnect()
-
-                    if not attempts_left > 0:
-                        raise
-
-                    await asyncio.sleep(TIMINGS_WAIT_SLEEP)
+                    await self.get_except(attempts_left, TIMINGS_WAIT_SLEEP)
         except:
             raise
         finally:
