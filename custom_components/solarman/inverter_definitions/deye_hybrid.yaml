@@ -2156,11 +2156,17 @@ parameters:
           - key: 0x000A
             value: "Shenggao Electric CAN"
 
-      - name: "Generator"
-        platform: switch
+      - name: "Meter"
+        platform: select
         rule: 1
         registers: [0x0146]
         value:
           on: 0x2000
           off: 0x0000
-        icon: mdi:generator-stationary
+        lookup:
+          - key: 0x0000
+            value: Disabled
+          - bit: 0
+            value: Enabled
+          - bit: [0, 13]
+            value: Generator
