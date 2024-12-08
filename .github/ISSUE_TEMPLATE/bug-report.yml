@@ -31,6 +31,13 @@ body:
     id: version
     attributes:
       label: Version
-      placeholder: v24.11.02
+      placeholder: 24.12.08
+    validations:
+      required: true
+  - type: input
+    id: version_ha
+    attributes:
+      label: Home Assistant Version
+      placeholder: 2024.12.1
     validations:
       required: true
