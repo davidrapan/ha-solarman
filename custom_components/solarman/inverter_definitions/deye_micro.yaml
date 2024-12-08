@@ -45,7 +45,7 @@ parameters:
             "Device Modbus Address",
             "Device Protocol Version",
             "Device Serial Number",
-            "Device Rated Phase",
+            "Device Flags",
             "Device Chip Type",
             "Device Communication Board Firmware Version 2",
             "Device Control Board Helper Version",
@@ -73,16 +73,16 @@ parameters:
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
 
-      - name: "Device Rated Phase"
+      - name: "Device Flags"
         attribute:
         class: "enum"
         rule: 1
         registers: [0x0008]
         lookup:
+          - key: 0
+            value: "Number of channels by Rated power"
           - key: 1
-            value: "Single-Phase"
-          - key: 2
-            value: "Three-Phase"
+            value: "Number of channels by MPPT number"
 
       - name: "Device Chip Type"
         attribute:
