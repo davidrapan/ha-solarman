@@ -152,6 +152,30 @@ parameters:
           min: 257
           max: 2051
 
+  - group: Control
+    items:
+      - name: "Self-check time"
+        platform: number
+        uom: "s"
+        rule: 1
+        registers: [0x0015]
+        range:
+          min: 0
+          max: 1000
+
+      - name: "Date & Time"
+        platform: datetime
+        rule: 8
+        registers: [0x0016, 0x0017, 0x0018]
+
+      - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+        platform: switch
+        rule: 1
+        registers: [0x002b]
+        value:
+          on: 0x0001
+          off: 0x0002
+
       - name: "Device State"
         class: "enum"
         rule: 1
@@ -171,6 +195,68 @@ parameters:
             value: "Alarm"
           - key: 0x0004
             value: "Fault"
+
+      - name: "Device Alarm"
+        class: "enum"
+        rule: 3
+        registers: [0x0065, 0x0066]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 1
+            value: "Fan failure"
+          - bit: 2
+            value: "Grid phase failure"
+          - bit: 3
+            value: "Meter communication failure"
+          - bit: 30
+            value: "Battery loss"
+          - bit: 31
+            value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
+
+      - name: "Device Fault"
+        class: "enum"
+        rule: 3
+        registers: [0x0067, 0x0068, 0x0069, 0x006A]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "OK"
+          - key: 0x1
+            value: "DC OverVoltage"
+          - key: 0x2
+            value: "DC Bus OverVoltage"
+          - key: 0x4
+            value: "DC Bus Uneven Voltage"
+          - key: 0x8
+            value: "DC Bus UnderVoltage"
+          - key: 0x10
+            value: "DC Bus2 Uneven Voltage"
+          - key: 0x20
+            value: "DC A path OverCurrent"
+          - key: 0x40
+            value: "DC B path OverCurrent"
+          - key: 0x80
+            value: "DC Input Disturbance"
+          - key: 0x100
+            value: "Grid OverCurrent"
+          - key: 0x200
+            value: "IGBT OverCurrent"
+          - key: 0x400
+            value: "Grid Disturbance 2"
+          - key: 0x800
+            value: "Arc Self-Test Protection"
+          - key: 0x1000
+            value: "Arc Fault Reservation"
+          - key: 0x2000
+            value: "Grid Current Sample Abnormality"
+          - key: 0x2030000
+            value: "Grid phase failure or No Relay Connection"
+          - key: "default"
+            value: "Error"
 
   - group: PV
     items:
@@ -473,20 +559,6 @@ parameters:
 
   - group: Settings
     items:
-      - name: "Self-check time"
-        platform: number
-        uom: "s"
-        rule: 1
-        registers: [0x0015]
-        range:
-          min: 0
-          max: 1000
-
-      - name: "Date & Time"
-        platform: datetime
-        rule: 8
-        registers: [0x0016, 0x0017, 0x0018]
-
       - name: "Grid Voltage Upper Limit"
         platform: number
         class: "voltage"
@@ -638,14 +710,6 @@ parameters:
           min: 0
           max: 1200
 
-      - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-        platform: switch
-        rule: 1
-        registers: [0x002b]
-        value:
-          on: 0x0001
-          off: 0x0002
-
       - name: "Island Protection"
         platform: "switch"
         rule: 1
@@ -763,67 +827,3 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x005A]
-
-  - group: Alert
-    items:
-      - name: "Device Alarm"
-        class: "enum"
-        rule: 3
-        registers: [0x0065, 0x0066]
-        icon: "mdi:alert-outline"
-        lookup:
-          - key: 0
-            value: "OK"
-          - bit: 1
-            value: "Fan failure"
-          - bit: 2
-            value: "Grid phase failure"
-          - bit: 3
-            value: "Meter communication failure"
-          - bit: 30
-            value: "Battery loss"
-          - bit: 31
-            value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
-
-      - name: "Device Fault"
-        class: "enum"
-        rule: 3
-        registers: [0x0067, 0x0068, 0x0069, 0x006A]
-        icon: "mdi:message-alert-outline"
-        lookup:
-          - key: 0x0000
-            value: "OK"
-          - key: 0x1
-            value: "DC OverVoltage"
-          - key: 0x2
-            value: "DC Bus OverVoltage"
-          - key: 0x4
-            value: "DC Bus Uneven Voltage"
-          - key: 0x8
-            value: "DC Bus UnderVoltage"
-          - key: 0x10
-            value: "DC Bus2 Uneven Voltage"
-          - key: 0x20
-            value: "DC A path OverCurrent"
-          - key: 0x40
-            value: "DC B path OverCurrent"
-          - key: 0x80
-            value: "DC Input Disturbance"
-          - key: 0x100
-            value: "Grid OverCurrent"
-          - key: 0x200
-            value: "IGBT OverCurrent"
-          - key: 0x400
-            value: "Grid Disturbance 2"
-          - key: 0x800
-            value: "Arc Self-Test Protection"
-          - key: 0x1000
-            value: "Arc Fault Reservation"
-          - key: 0x2000
-            value: "Grid Current Sample Abnormality"
-          - key: 0x2030000
-            value: "Grid phase failure or No Relay Connection"
-          - key: "default"
-            value: "Error"

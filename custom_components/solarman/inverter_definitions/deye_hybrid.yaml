@@ -11,7 +11,7 @@ info:
   model: SG0XLP1
 
 default:
-  update_interval: 10
+  update_interval: 5
   digits: 6
 
 parameters:
@@ -152,9 +152,37 @@ parameters:
           min: 257
           max: 2051
 
-      - name: "Device State"
+  - group: Control
+    update_interval: 5
+    items:
+      - name: "Self-check time"
+        platform: number
+        update_interval: 300
+        uom: "s"
+        rule: 1
+        registers: [0x0015]
+        range:
+          min: 0
+          max: 1000
+
+      - name: "Date & Time"
+        platform: datetime
+        update_interval: 60
+        rule: 8
+        registers: [0x0016, 0x0017, 0x0018]
+
+      - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
+        platform: switch
         update_interval: 30
+        rule: 1
+        registers: [0x002b]
+        value:
+          on: 0x0001
+          off: 0x0002
+
+      - name: "Device State"
         class: "enum"
+        update_interval: 10
         rule: 1
         registers: [0x003B]
         icon: "mdi:state-machine"
@@ -172,6 +200,54 @@ parameters:
             value: "Alarm"
           - key: 0x0004
             value: "Fault"
+
+      - name: "Device Alarm"
+        class: "enum"
+        rule: 3
+        registers: [0x0065, 0x0066]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 1
+            value: "Fan failure"
+          - bit: 2
+            value: "Grid phase failure"
+          - bit: 3
+            value: "Meter communication failure"
+          - bit: 30
+            value: "Battery loss"
+          - bit: 31
+            value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
+
+      - name: "Device Fault"
+        class: "enum"
+        rule: 3
+        registers: [0x0067, 0x0068, 0x0069, 0x006A]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 6
+            value: "DC/DC Soft Start failure"
+          - bit: 9
+            value: "Auxiliary power supply failure"
+          - bit: 12
+            value: "Working mode changed"
+          - bit: 17
+            value: "AC Over-current failure"
+          - bit: 18
+            value: "Tz_Integ_Fault failure"
+          - bit: 19
+            value: "DC Over-current failure"
+          - bit: 22
+            value: "AC current leakage failure"
+          - bit: 63
+            value: "Temperature is too high"
+          - key: "default"
+            value: "Error"
 
   - group: PV
     update_interval: 5
@@ -586,15 +662,6 @@ parameters:
         registers: [0x00BF]
         icon: "mdi:current-dc"
 
-      - name: "Generator"
-        platform: switch
-        rule: 1
-        registers: [0x0146]
-        value:
-          on: 0x2000
-          off: 0x0000
-        icon: mdi:generator-stationary
-
   - group: Grid
     items:
       - name: "Grid Frequency"
@@ -819,54 +886,6 @@ parameters:
         bit: 3
         icon: "mdi:lightning-bolt-circle"
 
-      - name: "Device Alarm"
-        class: "enum"
-        rule: 3
-        registers: [0x0065, 0x0066]
-        icon: "mdi:alert-outline"
-        lookup:
-          - key: 0
-            value: "OK"
-          - bit: 1
-            value: "Fan failure"
-          - bit: 2
-            value: "Grid phase failure"
-          - bit: 3
-            value: "Meter communication failure"
-          - bit: 30
-            value: "Battery loss"
-          - bit: 31
-            value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
-
-      - name: "Device Fault"
-        class: "enum"
-        rule: 3
-        registers: [0x22B, 0x022C, 0x022D, 0x022E]
-        icon: "mdi:message-alert-outline"
-        lookup:
-          - key: 0
-            value: "OK"
-          - bit: 6
-            value: "DC/DC Soft Start failure"
-          - bit: 9
-            value: "Auxiliary power supply failure"
-          - bit: 12
-            value: "Working mode changed"
-          - bit: 17
-            value: "AC Over-current failure"
-          - bit: 18
-            value: "Tz_Integ_Fault failure"
-          - bit: 19
-            value: "DC Over-current failure"
-          - bit: 22
-            value: "AC current leakage failure"
-          - bit: 63
-            value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
-
       - name: "Output Frequency"
         l: 1
         state_class: "measurement"
@@ -1015,11 +1034,6 @@ parameters:
   - group: Settings
     update_interval: 300
     items:
-      - name: "Date & Time"
-        platform: datetime
-        rule: 8
-        registers: [0x0016, 0x0017, 0x0018]
-
       - name: "Battery Control Mode"
         platform: "select"
         rule: 1
@@ -2088,6 +2102,9 @@ parameters:
           - key: 0x0003
             value: "Both"
 
+  - group: Grid, Generator and BMS
+    update_interval: 300
+    items:
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
@@ -2138,3 +2155,12 @@ parameters:
             value: "Tianbangda 485"
           - key: 0x000A
             value: "Shenggao Electric CAN"
+
+      - name: "Generator"
+        platform: switch
+        rule: 1
+        registers: [0x0146]
+        value:
+          on: 0x2000
+          off: 0x0000
+        icon: mdi:generator-stationary

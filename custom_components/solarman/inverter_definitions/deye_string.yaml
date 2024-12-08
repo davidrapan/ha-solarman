@@ -152,13 +152,27 @@ parameters:
           min: 257
           max: 2051
 
+  - group: Control
+    items:
+      - name: "Self-check time"
+        platform: number
+        update_interval: 300
+        uom: "s"
+        rule: 1
+        registers: [0x0015]
+        range:
+          min: 0
+          max: 1000
+
       - name: "Date & Time"
         platform: datetime
+        update_interval: 60
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
 
       - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: switch
+        update_interval: 30
         rule: 1
         registers: [0x002b]
         value:
@@ -203,6 +217,33 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
+          - key: "default"
+            value: "Error"
+
+      - name: "Device Fault"
+        class: "enum"
+        rule: 3
+        registers: [0x0067, 0x0068, 0x0069, 0x006A]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 6
+            value: "DC/DC Soft Start failure"
+          - bit: 9
+            value: "Auxiliary power supply failure"
+          - bit: 12
+            value: "Working mode changed"
+          - bit: 17
+            value: "AC Over-current failure"
+          - bit: 18
+            value: "Tz_Integ_Fault failure"
+          - bit: 19
+            value: "DC Over-current failure"
+          - bit: 22
+            value: "AC current leakage failure"
+          - bit: 63
+            value: "Temperature is too high"
           - key: "default"
             value: "Error"
 
