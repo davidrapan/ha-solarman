@@ -6,6 +6,10 @@
 # Tested
 #
 
+info:
+  manufacturer: Deye
+  model: SG0XLP1
+
 default:
   update_interval: 10
   digits: 6

@@ -6,6 +6,10 @@
 # Tested with SUN2000G3, SUN-800-G3-EU-230 FW: 2.06, SUN-M80-G3-EU-Q0 FW: 2.06, SUN-M80-G3-EU-230 FW: 2.32-D1, SUN-M80G3-EU-230 and SUN-M60G3-EU-Q0
 #
 
+info:
+  manufacturer: Deye
+  model: Microinverter
+
 default:
   update_interval: 5
   digits: 6
