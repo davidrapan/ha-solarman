@@ -1,4 +1,4 @@
-name: Attach Asset
+name: Attach Assets
 on:
   release:
     types:
@@ -10,8 +10,12 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
     - name: Zip
-      run: zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/*" ".gitignore" ".gitmodules"
+      run: |
+          cd ${{ github.workspace }}/custom_components/solarman
+          zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/*" ".gitignore" ".gitmodules"
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
