@@ -1,6 +1,7 @@
 # ⚡ Solarman Stick Logger
 
 [![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](license)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/davidrapan/ha-solarman/total)](https://github.com/davidrapan/ha-solarman/releases)
 [![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
 [![HACS Supported](https://img.shields.io/badge/HACS-Supported-03a9f4)](https://github.com/custom-components/hacs)
 [![Community Forum](https://img.shields.io/badge/community-forum-03a9f4)](https://community.home-assistant.io/t/solarman-stick-logger-by-david-rapan)
@@ -18,7 +19,7 @@
 > [!NOTE]  
 > - It's still 🚧 work in progress  but currently very 🐎 stable 😉  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
-> - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 💡 Development Planning and 🎁 feature requests etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
+> - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 💡 Development Planning and 🎁 feature requests, etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
 
 > [!IMPORTANT]  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
