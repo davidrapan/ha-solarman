@@ -7,13 +7,13 @@ from functools import partial
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
-from .api import Inverter
 from .provider import ConfigurationProvider
-from .coordinator import InverterCoordinator
+from .coordinator import Inverter, InverterCoordinator
 from .entity import migrate_unique_ids
 from .config_flow import async_update_listener, ConfigFlowHandler
 from .services import *
@@ -21,6 +21,13 @@ from .services import *
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.DATETIME, Platform.TIME, Platform.BUTTON]
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    _LOGGER.debug(f"async_setup")
+
+    register_services(hass)
+
+    return True
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
@@ -56,14 +63,14 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
 
-    register_services(hass)
-
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry({config.as_dict()})")
 
-    remove_services(hass)
+    # Forward setup
+    #
+    _LOGGER.debug(f"async_setup: hass.config_entries.async_unload_platforms: {PLATFORMS}")
 
     if unload_ok := await hass.config_entries.async_unload_platforms(config, PLATFORMS):
         _ = hass.data[DOMAIN].pop(config.entry_id)
