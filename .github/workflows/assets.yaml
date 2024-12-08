@@ -15,9 +15,9 @@ jobs:
     - name: Zip
       run: |
           cd ${{ github.workspace }}/custom_components/solarman
-          zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/*" ".gitignore" ".gitmodules"
+          zip -r solarman.zip . -x ".git/*" ".github/*" ".gitignore" ".gitmodules"
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: ${{ github.event.repository.name }}.zip
+        files: ${{ github.workspace }}/custom_components/solarman/solarman.zip
