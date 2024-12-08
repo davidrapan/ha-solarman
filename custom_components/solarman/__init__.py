@@ -11,8 +11,8 @@ from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
-from .provider import *
 from .api import Inverter
+from .provider import ConfigurationProvider
 from .coordinator import InverterCoordinator
 from .entity import migrate_unique_ids
 from .config_flow import async_update_listener, ConfigFlowHandler
@@ -26,9 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
     config = ConfigurationProvider(hass, config_entry)
-    coordinator = InverterCoordinator(hass, Inverter(config, await EndPointProvider(config).discover()))
-    # TODO: Move construction of EndPointProvider (w/ discover() flow within Inverter.Load())
-    #       into construction of Inverter after separation of PySolarmanV5AsyncWrapper
+    coordinator = InverterCoordinator(hass, Inverter(config))
 
     hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = coordinator
 

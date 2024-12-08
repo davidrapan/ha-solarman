@@ -57,7 +57,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
     @property
     def device_name(self) -> str:
-        return (device_entry.name_by_user or device_entry.name) if (device_entry := self.device_entry) else self.coordinator.inverter.name
+        return (device_entry.name_by_user or device_entry.name) if (device_entry := self.device_entry) else self.coordinator.inverter.config.name
 
     @property
     def available(self) -> bool:
@@ -89,7 +89,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.serial), self._attr_name, platform))))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.config.serial), self._attr_name, platform))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor

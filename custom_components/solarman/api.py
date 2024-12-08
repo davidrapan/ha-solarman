@@ -6,11 +6,8 @@ import asyncio
 import threading
 import concurrent.futures
 
-from functools import partial
 from datetime import datetime
-from propcache import cached_property
 
-from .include.pysolarmanv5 import PySolarmanV5Async, V5FrameError
 from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
 
 from homeassistant.helpers.update_coordinator import UpdateFailed
@@ -18,12 +15,42 @@ from homeassistant.helpers.update_coordinator import UpdateFailed
 from .const import *
 from .common import *
 from .provider import *
+from .include.pysolarmanv5 import PySolarmanV5Async, V5FrameError
 
 _LOGGER = logging.getLogger(__name__)
 
 class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
+
+    @property
+    def connected(self):
+        return self.reader_task
+
+    @property
+    def auto_reconnect(self):
+        return self._needs_reconnect
+
+    async def connect(self) -> None:
+        if not self.reader_task:
+            _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
+            await super().connect()
+        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
+        #elif not self.state > 0:
+        #    await super().reconnect()
+
+    async def disconnect(self) -> None:
+        _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
+        try:
+            await super().disconnect()
+        finally:
+            self.reader_task = None
+            self.reader = None
+            self.writer = None
+
+class PySolarmanV5AsyncEthernetWrapper(PySolarmanV5AsyncWrapper):
+    def __init__(self, address, serial, port, mb_slave_id):
+        super().__init__(address, serial, port, mb_slave_id)
         self._passthrough = False
 
     async def _tcp_send_receive_frame(self, mb_request_frame):
@@ -49,24 +76,6 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
             return False
         return True
-
-    async def connect(self) -> None:
-        if not self.reader_task:
-            _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
-            await super().connect()
-        # ! Gonna have to rewrite the state handling in the future as it's now after all the development and tunning mess AF !
-        #elif not self.state > 0:
-        #    await super().reconnect()
-
-    async def disconnect(self) -> None:
-        _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
-
-        try:
-            await super().disconnect()
-        finally:
-            self.reader_task = None
-            self.reader = None
-            self.writer = None
 
     async def read_coils(self, register_addr, quantity):
         if not self._passthrough:
@@ -108,27 +117,33 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             return await super().write_multiple_holding_registers(register_addr, values)
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
-class Inverter(PySolarmanV5AsyncWrapper):
-    def __init__(self, config: ConfigurationProvider, endpoint: EndPointProvider):
-        super().__init__(*endpoint.connection)
+class Inverter():
+    def __init__(self, config: ConfigurationProvider):
         self._is_busy = 0
         self._write_lock = True
 
         self.state = -1
         self.state_interval = 0
         self.state_updated = datetime.now()
+        self.config: ConfigurationProvider = config
+        self.endpoint: EndPointProvider = None
+        self.profile: ProfileProvider = None
+        self.modbus: PySolarmanV5AsyncEthernetWrapper = None
         self.device_info = {}
 
-        self.config = config
-        self.endpoint = endpoint
-        self.profile = ProfileProvider(config, endpoint)
+    @property
+    def available(self):
+        return self.state > -1
 
-    @cached_property
-    def name(self):
-        return self.config.name
+    @property
+    def get_connection_state(self):
+        return "Connected" if self.state > 0 else "Disconnected"
 
     async def load(self):
         try:
+            self.endpoint = await EndPointProvider(self.config).discover()
+            self.profile = ProfileProvider(self.config, self.endpoint)
+            self.modbus = PySolarmanV5AsyncEthernetWrapper(*self.endpoint.connection)
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except BaseException as e:
@@ -137,44 +152,38 @@ class Inverter(PySolarmanV5AsyncWrapper):
     def get_entity_descriptions(self):
         return (STATE_SENSORS + self.profile.parser.get_entity_descriptions()) if self.profile and self.profile.parser else []
 
-    def available(self):
-        return self.state > -1
-
-    def get_connection_state(self):
-        return "Connected" if self.state > 0 else "Disconnected"
-
     async def shutdown(self) -> None:
         self.state = -1
-        await self.disconnect()
+        await self.modbus.disconnect()
 
     async def read_write(self, code, start, arg):
-        if not self.reader_task:
+        if not self.modbus.connected:
             self.state_updated = datetime.now()
-        await self.connect()
+        await self.modbus.connect()
 
         match code:
             case CODE.READ_COILS:
-                return await self.read_coils(start, arg)
+                return await self.modbus.read_coils(start, arg)
             case CODE.READ_DISCRETE_INPUTS:
-                return await self.read_discrete_inputs(start, arg)
+                return await self.modbus.read_discrete_inputs(start, arg)
             case CODE.READ_HOLDING_REGISTERS:
-                return await self.read_holding_registers(start, arg)
+                return await self.modbus.read_holding_registers(start, arg)
             case CODE.READ_INPUT:
-                return await self.read_input_registers(start, arg)
+                return await self.modbus.read_input_registers(start, arg)
             case CODE.WRITE_SINGLE_COIL:
-                return await self.write_single_coil(start, arg)
+                return await self.modbus.write_single_coil(start, arg)
             case CODE.WRITE_HOLDING_REGISTER:
-                return await self.write_holding_register(start, arg)
+                return await self.modbus.write_holding_register(start, arg)
             case CODE.WRITE_MULTIPLE_COILS:
-                return await self.write_multiple_coils(start, ensure_list(arg))
+                return await self.modbus.write_multiple_coils(start, ensure_list(arg))
             case CODE.WRITE_MULTIPLE_HOLDING_REGISTERS:
-                return await self.write_multiple_holding_registers(start, ensure_list(arg))
+                return await self.modbus.write_multiple_holding_registers(start, ensure_list(arg))
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
     async def safe_read_write(self, code, start, arg):
         if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
-            raise Exception(f"[{self.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
+            raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
         return response
 
     async def raise_when_busy(self, attempts_left = ACTION_ATTEMPTS, message = "Semaphore timeout."):
@@ -195,10 +204,10 @@ class Inverter(PySolarmanV5AsyncWrapper):
             raise UpdateFailed(f"[{self.config.serial}] {message}")
 
     async def get_failed(self):
-        _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state()} ({self.state})]")
+        _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
         self.state = 0 if self.state == 1 else -1
 
-        await self.disconnect()
+        await self.modbus.disconnect()
 
         return self.state == -1
 
@@ -230,8 +239,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
                             except (V5FrameError, TimeoutError, Exception) as e:
                                 _LOGGER.debug(f"[{self.config.serial}] Querying {code_start_end} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                                if not self._needs_reconnect:
-                                    await self.disconnect()
+                                if not self.modbus.auto_reconnect:
+                                    await self.modbus.disconnect()
 
                                 if not attempts_left > 0:
                                     raise
@@ -241,7 +250,7 @@ class Inverter(PySolarmanV5AsyncWrapper):
                     result = self.profile.parser.process(responses) if not requests else responses
 
                     if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
-                        _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state()} ({self.state})]")
+                        _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state} ({self.state})]")
                         self.state_interval = now - self.state_updated
                         self.state_updated = now
                         self.state = 1
@@ -251,14 +260,14 @@ class Inverter(PySolarmanV5AsyncWrapper):
             except Exception as e:
                 if await self.get_failed():
                     raise UpdateFailed(f"[{self.config.serial}] {format_exception(e)}") from e
-                _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.name} data: {e}")
+                _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
             finally:
                 self._is_busy = 0
 
         except TimeoutError:
             if await self.get_failed():
                 raise
-            _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.name} data")
+            _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.config.name} data")
 
         return result
 
@@ -284,8 +293,8 @@ class Inverter(PySolarmanV5AsyncWrapper):
                 except Exception as e:
                     _LOGGER.debug(f"[{self.config.serial}] Call {code_start_arg} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                    if not self._needs_reconnect:
-                        await self.disconnect()
+                    if not self.modbus.auto_reconnect:
+                        await self.modbus.disconnect()
 
                     if not attempts_left > 0:
                         raise
