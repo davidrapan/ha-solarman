@@ -26,6 +26,10 @@ class ConfigurationProvider:
     config_entry: ConfigEntry
 
     @cached_property
+    def _data(self):
+        return self.config_entry.data
+
+    @cached_property
     def _options(self):
         return self.config_entry.options
 
@@ -35,11 +39,11 @@ class ConfigurationProvider:
 
     @cached_property
     def name(self):
-        return protected(self.config_entry.data.get(CONF_NAME), "Configuration parameter [name] does not have a value")
+        return protected(self._data.get(CONF_NAME), "Configuration parameter [name] does not have a value")
 
     @cached_property
     def serial(self):
-        return protected(self.config_entry.data.get(CONF_SERIAL, self.config_entry.data.get(OLD_[CONF_SERIAL])), "Configuration parameter [serial] does not have a value")
+        return protected(self._data.get(CONF_SERIAL, self._data.get(OLD_[CONF_SERIAL])), "Configuration parameter [serial] does not have a value")
 
     @cached_property
     def host(self):
