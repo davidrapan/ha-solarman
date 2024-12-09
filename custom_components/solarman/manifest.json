@@ -8,6 +8,6 @@
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
-  "requirements": ["pyyaml", "umodbus"],
+  "requirements": ["propcache", "pyyaml", "umodbus"],
   "version": "24.12.08_8"
 }
