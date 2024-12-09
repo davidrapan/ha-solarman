@@ -39,7 +39,7 @@ class ConfigurationProvider:
 
     @cached_property
     def serial(self):
-        return protected(self.config_entry.data.get(CONF_SERIAL, self.config_entry.data.get(CONF_OLD_SERIAL)), "Configuration parameter [serial] does not have a value")
+        return protected(self.config_entry.data.get(CONF_SERIAL, self.config_entry.data.get(OLD_[CONF_SERIAL])), "Configuration parameter [serial] does not have a value")
 
     @cached_property
     def host(self):
@@ -47,15 +47,15 @@ class ConfigurationProvider:
 
     @cached_property
     def port(self):
-        return self._options.get(CONF_PORT, DEFAULT_TABLE[CONF_PORT])
+        return self._options.get(CONF_PORT, DEFAULT_[CONF_PORT])
 
     @cached_property
     def filename(self):
-        return self._options.get(CONF_LOOKUP_FILE, DEFAULT_TABLE[CONF_LOOKUP_FILE])
+        return self._options.get(CONF_LOOKUP_FILE, DEFAULT_[CONF_LOOKUP_FILE])
 
     @cached_property
     def mb_slave_id(self):
-        return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_TABLE[CONF_MB_SLAVE_ID])
+        return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_[CONF_MB_SLAVE_ID])
 
     @cached_property
     def directory(self):
@@ -104,20 +104,20 @@ class ProfileProvider:
 
     @cached_property
     def auto(self) -> bool:
-        return not self.filename or self.filename in AUTODETECTION_REDIRECT_TABLE
+        return not self.filename or self.filename in AUTODETECTION_REDIRECT
 
     @cached_property
     def attributes(self) -> str:
-        return {ATTR_TABLE[k]: int(self._additional_options.get(k, DEFAULT_TABLE[k])) for k in ATTR_TABLE}
+        return {ATTR_[k]: int(self._additional_options.get(k, DEFAULT_[k])) for k in ATTR_}
 
     async def resolve(self, request: Callable[[], Awaitable[None]] | None = None):
         _LOGGER.debug(f"Device autodetection is {"enabled" if self.auto and request else f"disabled. Selected profile: {self.filename}"}")
 
         f = lookup_profile(await request(-1, [set_request(*AUTODETECTION_REQUEST_DEYE)]), self.attributes) if self.auto and request else self.filename
 
-        if f and f != DEFAULT_TABLE[CONF_LOOKUP_FILE] and (n := process_profile(f)) and (p := await yaml_open(self.config.directory + n)):
+        if f and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f)) and (p := await yaml_open(self.config.directory + n)):
             self.parser = ParameterParser(p, self.attributes)
 
-            return build_device_info(self.serial, self.endpoint.mac, self.name, unwrap(p["info"], "model", self.attributes[ATTR_TABLE[CONF_MOD]]) if "info" in p else None, f)
+            return build_device_info(self.serial, self.endpoint.mac, self.name, unwrap(p["info"], "model", self.attributes[ATTR_[CONF_MOD]]) if "info" in p else None, f)
 
         raise Exception(f"Unable to resolve and process selected profile: {self.filename}")

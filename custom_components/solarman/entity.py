@@ -8,7 +8,7 @@ from decimal import Decimal
 
 from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
-from homeassistant.const import EntityCategory, STATE_UNKNOWN
+from homeassistant.const import EntityCategory, STATE_UNKNOWN, CONF_FRIENDLY_NAME
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_registry import RegistryEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -93,7 +93,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
-        self._attr_friendly_name = sensor.get(ATTR_FRIENDLY_NAME)
+        self._attr_friendly_name = sensor.get(CONF_FRIENDLY_NAME)
         self._attr_icon = sensor.get("icon")
 
         if (unit_of_measurement := sensor.get("uom") or sensor.get("unit_of_measurement")):

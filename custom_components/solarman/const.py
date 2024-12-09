@@ -33,7 +33,7 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
-CONF_OLD_SERIAL = "inverter_serial"
+OLD_ = { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
 UPDATE_INTERVAL = "update_interval"
 IS_SINGLE_CODE = "is_single_code"
@@ -42,7 +42,7 @@ REGISTERS_MIN_SPAN = "registers_min_span"
 REGISTERS_MAX_SIZE = "registers_max_size"
 DIGITS = "digits"
 
-DEFAULT_TABLE = {
+DEFAULT_ = {
     "name": "Inverter",
     CONF_HOST: "",
     CONF_PORT: 8899, 
@@ -61,14 +61,16 @@ DEFAULT_TABLE = {
     DIGITS: 6
 }
 
-AUTODETECTION_REDIRECT_TABLE = [DEFAULT_TABLE[CONF_LOOKUP_FILE], "deye_string.yaml", "deye_p1.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_p3.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
+AUTODETECTION_REDIRECT = [DEFAULT_[CONF_LOOKUP_FILE], "deye_string.yaml", "deye_p1.yaml", "deye_hybrid.yaml", "deye_micro.yaml", "deye_4mppt.yaml", "deye_2mppt.yaml", "deye_p3.yaml", "deye_sg04lp3.yaml", "deye_sg01hp3.yaml"]
 AUTODETECTION_CODE_DEYE = 0x03
 AUTODETECTION_REQUEST_DEYE = (AUTODETECTION_CODE_DEYE, 0x00, 0x16)
 AUTODETECTION_DEVICE_DEYE = (AUTODETECTION_CODE_DEYE, 0x00)
 AUTODETECTION_TYPE_DEYE = (AUTODETECTION_CODE_DEYE, 0x08)
-AUTODETECTION_TABLE_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 0, 0x12), (0x0004, 0x0400): ("deye_micro.yaml", 0, 0x12), (0x0005, 0x0500): ("deye_p3.yaml", 0, 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_p3.yaml", 1, 0x16) }
+AUTODETECTION_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 0, 0x12), (0x0004, 0x0400): ("deye_micro.yaml", 0, 0x12), (0x0005, 0x0500): ("deye_p3.yaml", 0, 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_p3.yaml", 1, 0x16) }
 
-PROFILE_REDIRECT_TABLE = { "deye_4mppt.yaml": "deye_micro.yaml", "deye_2mppt.yaml": "deye_micro.yaml", "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
+PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
+
+ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l" }
 
 STATE_SENSORS = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
 
@@ -100,10 +102,6 @@ TIMINGS_WAIT_FOR_SLEEP = 1
 # Constants also tied to TIMINGS_INTERVAL to ensure maximum synergy
 ACTION_ATTEMPTS = 5
 ACTION_ATTEMPTS_MAX = ACTION_ATTEMPTS * 6
-
-ATTR_FRIENDLY_NAME = "friendly_name"
-
-ATTR_TABLE = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l" }
 
 REQUEST_UPDATE_INTERVAL = UPDATE_INTERVAL
 REQUEST_MIN_SPAN = "min_span"

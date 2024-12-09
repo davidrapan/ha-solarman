@@ -29,8 +29,8 @@ def _create_entity(coordinator, description, options):
             case "interval":
                 return SolarmanIntervalSensor(coordinator, description)
     elif (name := description["name"]) and "Battery" in name and (additional := options.get(CONF_ADDITIONAL_OPTIONS, {})) is not None:
-        battery_nominal_voltage = additional.get(CONF_BATTERY_NOMINAL_VOLTAGE, DEFAULT_TABLE[CONF_BATTERY_NOMINAL_VOLTAGE])
-        battery_life_cycle_rating = additional.get(CONF_BATTERY_LIFE_CYCLE_RATING, DEFAULT_TABLE[CONF_BATTERY_LIFE_CYCLE_RATING])
+        battery_nominal_voltage = additional.get(CONF_BATTERY_NOMINAL_VOLTAGE, DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE])
+        battery_life_cycle_rating = additional.get(CONF_BATTERY_LIFE_CYCLE_RATING, DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING])
         if "registers" in description:
             if name == "Battery":
                 return SolarmanBatterySensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
@@ -121,7 +121,7 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
         super().__init__(coordinator, sensor)
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
-        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_TABLE[DIGITS]
+        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_[DIGITS]
 
     def update(self):
         #super().update()
