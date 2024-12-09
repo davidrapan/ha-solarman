@@ -14,9 +14,9 @@ from .const import *
 from .common import *
 from .provider import ConfigurationProvider
 from .coordinator import Inverter, InverterCoordinator
+from .config_flow import ConfigFlowHandler
 from .entity import migrate_unique_ids
-from .config_flow import async_update_listener, ConfigFlowHandler
-from .services import *
+from .services import register_services
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,6 +60,14 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     _LOGGER.debug(f"async_setup: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+
+    # Add update listener
+    #
+    _LOGGER.debug(f"async_setup: config_entry.add_update_listener(async_update_listener)")
+
+    async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+        _LOGGER.debug(f"async_update_listener({config_entry.as_dict()})")
+        await hass.config_entries.async_reload(config_entry.entry_id)
 
     config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
 

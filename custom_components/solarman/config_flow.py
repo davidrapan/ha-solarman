@@ -43,12 +43,6 @@ OPTS_SCHEMA = {
     )
 }
 
-async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
-    _LOGGER.debug(f"async_update_listener: entry: {config_entry.as_dict()}")
-    #hass.data[DOMAIN][entry.entry_id].config(entry)
-    #entry.title = entry.options[CONF_NAME]
-    await hass.config_entries.async_reload(config_entry.entry_id)
-
 async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.Schema:
     lookup_files = [DEFAULT_[CONF_LOOKUP_FILE]] + await async_listdir(hass.config.path(LOOKUP_DIRECTORY_PATH)) + await async_listdir(hass.config.path(LOOKUP_CUSTOM_DIRECTORY_PATH), "custom/")
     _LOGGER.debug(f"step_user_data_schema: {LOOKUP_DIRECTORY_PATH}: {lookup_files}")
