@@ -36,6 +36,9 @@ def execute_async(x):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(x)
 
+def to_dict(*keys: list):
+    return {k: k for k in keys}
+
 def filter_by_keys(source: dict, keys: dict | list) -> dict:
     return {k: source[k] for k in source.keys() if k in keys}
 
@@ -51,9 +54,14 @@ def bulk_migrate(target: dict, source: dict, redirect: dict):
             target[k] = v
     return target
 
-def bulk_delete(source: dict[Any, Any], *keys: list[Any]):
-    for k in source.keys() & keys:
-        del source[k]
+def bulk_delete(target: dict[Any, Any], *keys: list[Any]):
+    for k in target.keys() & keys:
+        del target[k]
+
+def bulk_safe_delete(target: dict[Any, Any], redirect: dict):
+    for k in target.keys() & redirect.keys():
+        if redirect[k] in target:
+            del target[redirect[k]]
 
 def ensure_list(value):
     return value if isinstance(value, list) else [value]
