@@ -62,8 +62,10 @@ def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
 
 def lookup_profile(response, attr):
-    if response and (device_type := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)):
+    if response and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         f, m, c = next(iter([AUTODETECTION_TABLE_DEYE[i] for i in AUTODETECTION_TABLE_DEYE if device_type in i]))
+        if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in (0x0003, 0x0300):
+            attr[ATTR_TABLE[CONF_PHASE]] = min(t if t == 1 else 3, attr[ATTR_TABLE[CONF_PHASE]])
         if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F):
             attr[ATTR_TABLE[CONF_MOD]], attr[ATTR_TABLE[CONF_MPPT]], attr[ATTR_TABLE[CONF_PHASE]] = max(m, attr[ATTR_TABLE[CONF_MOD]]), min(t, attr[ATTR_TABLE[CONF_MPPT]]), min(p, attr[ATTR_TABLE[CONF_PHASE]])
         return f
