@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: 'true'
+        submodules: true
     - name: Zip
       run: |
           cd ${{ github.workspace }}/custom_components/solarman
