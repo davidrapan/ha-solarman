@@ -79,10 +79,12 @@ parameters:
         rule: 1
         registers: [0x0008]
         lookup:
-          - key: 1
+          - key: [0, 1, 2]
             value: "Single-Phase"
-          - key: 2
+          - key: 3
             value: "Three-Phase"
+          - key: 8
+            value: "Single-Phase Storage"
 
       - name: "Device Chip Type"
         attribute:
