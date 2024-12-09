@@ -200,7 +200,7 @@ class Inverter():
         response = None
 
         attempts_left = ACTION_ATTEMPTS
-        while attempts_left > 0 and not response:
+        while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
                 if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:

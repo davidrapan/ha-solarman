@@ -19,7 +19,7 @@ read_holding_registers:
       selector:
         number:
           min: 0
-          max: 65535 
+          max: 65535
           mode: box
     quantity:
       name: Quantity
@@ -63,7 +63,7 @@ read_input_registers:
       selector:
         number:
           min: 0
-          max: 65535 
+          max: 65535
           mode: box
     quantity:
       name: Quantity
@@ -107,7 +107,7 @@ write_holding_register:
       selector:
         number:
           min: 0
-          max: 65535 
+          max: 65535
           mode: box
     value:
       name: Value
@@ -151,7 +151,7 @@ write_multiple_holding_registers:
       selector:
         number:
           min: 0
-          max: 65535 
+          max: 65535
           mode: box
     values:
       name: Values
@@ -164,7 +164,7 @@ write_multiple_holding_registers:
       selector:
         number:
           min: 0
-          max: 65535 
+          max: 65535
           mode: box
     wait_for_attempts:
       name: Wait for attempts
