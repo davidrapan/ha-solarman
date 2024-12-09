@@ -16,7 +16,7 @@ from .provider import ConfigurationProvider
 from .coordinator import Inverter, InverterCoordinator
 from .config_flow import ConfigFlowHandler
 from .entity import migrate_unique_ids
-from .services import register_services
+from .services import async_register
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.S
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     _LOGGER.debug(f"async_setup")
 
-    register_services(hass)
+    async_register(hass)
 
     return True
 

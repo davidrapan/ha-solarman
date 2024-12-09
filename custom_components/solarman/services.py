@@ -4,52 +4,40 @@ import logging
 
 import voluptuous as vol
 
-from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.helpers import config_validation as cv, device_registry as dr, entity
-from homeassistant.helpers.entity_component import EntityComponent
+from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.exceptions import ServiceValidationError
 
 from .const import *
-from .api import Inverter
-from .coordinator import InverterCoordinator
+from .coordinator import Inverter, InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-# Register the services one can invoke on the inverter.
-# Apart from this, it also need to be defined in the file 
-# services.yaml for the Home Assistant UI in "Developer Tools"
+HEADER_SCHEMA = {
+    vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
+    vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
+}
 
-SERVICE_READ_REGISTERS_SCHEMA = vol.Schema(
-    {
-        vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
-        vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
-    }
-)
+QUANTITY_SCHEMA = {
+    vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 125))
+}
 
-SERVICE_WRITE_HOLDING_REGISTER_SCHEMA = vol.Schema(
-    {
-        vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
-        vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_VALUE): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
-    }
-)
+VALUE_SCHEMA = {
+    vol.Required(SERVICES_PARAM_VALUE): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
+}
 
-SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS_SCHEMA = vol.Schema(
-    {
-        vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
-        vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535)),
-        vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))]),
-        vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
-    }
-)
+VALUES_SCHEMA = {
+    vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))])
+}
 
-def register_services(hass: HomeAssistant) -> None:
-    _LOGGER.debug(f"register_services")
+WAIT_SCHEMA = {
+    vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
+}
 
-    def getDevice(device_id) -> Inverter:
+def async_register(hass: HomeAssistant) -> None:
+    _LOGGER.debug(f"register")
+
+    def get_device(device_id) -> Inverter:
         device_registry = dr.async_get(hass)
         device = device_registry.async_get(device_id)
 
@@ -62,7 +50,7 @@ def register_services(hass: HomeAssistant) -> None:
     async def read_holding_registers(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_holding_registers: {call}")
 
-        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := get_device(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -94,7 +82,7 @@ def register_services(hass: HomeAssistant) -> None:
     async def read_input_registers(call: ServiceCall) -> int:
         _LOGGER.debug(f"read_input_registers: {call}")
 
-        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := get_device(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -126,7 +114,7 @@ def register_services(hass: HomeAssistant) -> None:
     async def write_holding_register(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_holding_register: {call}")
 
-        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := get_device(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -151,7 +139,7 @@ def register_services(hass: HomeAssistant) -> None:
     async def write_multiple_holding_registers(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_multiple_holding_registers: {call}")
 
-        if (inverter := getDevice(call.data.get(SERVICES_PARAM_DEVICE))) is None:
+        if (inverter := get_device(call.data.get(SERVICES_PARAM_DEVICE))) is None:
             raise ServiceValidationError(
                 "No communication interface for device found",
                 translation_domain = DOMAIN,
@@ -174,29 +162,17 @@ def register_services(hass: HomeAssistant) -> None:
         return
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA | WAIT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = SERVICE_READ_REGISTERS_SCHEMA, supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA | WAIT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_HOLDING_REGISTER, write_holding_register, schema = SERVICE_WRITE_HOLDING_REGISTER_SCHEMA
+        DOMAIN, SERVICE_WRITE_HOLDING_REGISTER, write_holding_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA | WAIT_SCHEMA)
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS_SCHEMA
+        DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA | WAIT_SCHEMA)
     )
-
-    return
-
-def remove_services(hass: HomeAssistant) -> None:
-    _LOGGER.debug(f"remove_services")
-
-    hass.services.async_remove(DOMAIN, SERVICE_READ_HOLDING_REGISTERS)
-    hass.services.async_remove(DOMAIN, SERVICE_READ_INPUT_REGISTERS)
-    hass.services.async_remove(DOMAIN, SERVICE_WRITE_HOLDING_REGISTER)
-    hass.services.async_remove(DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS)
-
-    return

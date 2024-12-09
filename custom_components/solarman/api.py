@@ -13,7 +13,7 @@ from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_re
 from .const import *
 from .common import *
 from .provider import *
-from .include.pysolarmanv5 import PySolarmanV5Async, V5FrameError
+from .include.pysolarmanv5 import PySolarmanV5Async
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -198,6 +198,7 @@ class Inverter():
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
         response = None
+
         attempts_left = ACTION_ATTEMPTS
         while attempts_left > 0 and not response:
             attempts_left -= 1
@@ -206,7 +207,6 @@ class Inverter():
                     raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
                 _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
-                return response
             except Exception as e:
                 _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
@@ -215,6 +215,8 @@ class Inverter():
                 if not attempts_left > 0:
                     raise
                 await asyncio.sleep(((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP) if incremental_wait else TIMINGS_WAIT_SLEEP)
+        
+        return response
 
     async def get_failed(self):
         _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")

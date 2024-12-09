@@ -29,7 +29,7 @@ read_holding_registers:
       selector:
         number:
           min: 1
-          max: 65535 
+          max: 125
           mode: box
     wait_for_attempts:
       name: Wait for attempts
@@ -73,7 +73,7 @@ read_input_registers:
       selector:
         number:
           min: 1
-          max: 65535 
+          max: 125
           mode: box
     wait_for_attempts:
       name: Wait for attempts
