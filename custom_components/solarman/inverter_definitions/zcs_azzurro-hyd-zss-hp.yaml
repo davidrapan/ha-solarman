@@ -14,6 +14,21 @@ parameters:
   - group: PV
     update_interval: 5
     items:
+      - name: "PV Power"
+        description: "Combined power of all inputs"
+        realtime:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        registers: [0x0586, 0x0589]
+        scale: 10
+        sensors:
+          - registers: [0x0586]
+          - registers: [0x0589]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV1 Power"
         class: "power"
         mppt: 1
