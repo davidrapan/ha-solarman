@@ -23,11 +23,10 @@ parameters:
         rule: 1
         digits: 0
         registers: [0x0586, 0x0589]
+        scale: 10
         sensors:
-          - scale: 10
-            registers: [0x0586]
-          - scale: 10
-            registers: [0x0589]
+          - registers: [0x0586]
+          - registers: [0x0589]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
