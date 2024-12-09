@@ -47,7 +47,7 @@ class PySolarmanV5AsyncEthernetWrapper(PySolarmanV5AsyncWrapper):
         self._passthrough = False
 
     async def _tcp_send_receive_frame(self, mb_request_frame):
-        return mb_response_adu if not len(mb_response_adu := await self._send_receive_v5_frame(mb_request_frame)) == 10 else mb_response_adu + b'\x00\x01'
+        return mb_response_adu if (l := len(mb_response_adu := await self._send_receive_v5_frame(mb_request_frame))) and not 8 <= l <= 10 else mb_response_adu + b_(b'\x00\x01', 10 - l)
 
     async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._tcp_send_receive_frame(mb_request_frame), mb_request_frame)

@@ -122,6 +122,9 @@ def is_ethernet_frame(frame):
             return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])
     return False
 
+def b_(suffix, count):
+    return b'\x00' * count + suffix
+
 def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
