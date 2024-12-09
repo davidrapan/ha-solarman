@@ -25,18 +25,18 @@ DATA_SCHEMA = {
 }
 
 OPTS_SCHEMA = {
-    vol.Optional(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {"suggested_value": DEFAULT_[CONF_HOST]}): str,
-    vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {"suggested_value": DEFAULT_[CONF_PORT]}): cv.port,
-    vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {"suggested_value": DEFAULT_[CONF_LOOKUP_FILE]}): str,
+    vol.Optional(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
+    vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
+    vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema(
             {
-                vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {"suggested_value": DEFAULT_[CONF_MOD]}): bool,
-                vol.Optional(CONF_MPPT, default = DEFAULT_[CONF_MPPT], description = {"suggested_value": DEFAULT_[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
-                vol.Optional(CONF_PHASE, default = DEFAULT_[CONF_PHASE], description = {"suggested_value": DEFAULT_[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
-                vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE], description = {"suggested_value": DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
-                vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING], description = {"suggested_value": DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING]}): cv.positive_int,
-                vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_[CONF_MB_SLAVE_ID], description = {"suggested_value": DEFAULT_[CONF_MB_SLAVE_ID]}): cv.positive_int
+                vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MOD]}): bool,
+                vol.Optional(CONF_MPPT, default = DEFAULT_[CONF_MPPT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
+                vol.Optional(CONF_PHASE, default = DEFAULT_[CONF_PHASE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
+                vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
+                vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING]}): cv.positive_int,
+                vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_[CONF_MB_SLAVE_ID], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MB_SLAVE_ID]}): cv.positive_int
             }
         ),
         {"collapsed": True}

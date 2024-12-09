@@ -35,6 +35,7 @@ CONF_MB_SLAVE_ID = "mb_slave_id"
 
 OLD_ = { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
+SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"
 IS_SINGLE_CODE = "is_single_code"
 REGISTERS_CODE = "registers_code"
