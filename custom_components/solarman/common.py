@@ -66,8 +66,8 @@ def bulk_safe_delete(target: dict[Any, Any], redirect: dict):
 def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
-def safe_list_len(value: list):
-    return value, len(value) if value is not None and isinstance(value, list) else 0
+def ensure_list_safe_len(value: list):
+    return ensure_list(value), len(value) if value is not None and isinstance(value, list) else 0
 
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }

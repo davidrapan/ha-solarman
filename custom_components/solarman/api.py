@@ -219,7 +219,7 @@ class Inverter():
         return response
 
     async def get(self, runtime = 0, requests = None):
-        scheduled, scheduled_count = safe_list_len(self.profile.parser.schedule_requests(runtime) if not requests else requests)
+        scheduled, scheduled_count = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if not requests else requests)
         responses, result = {}, {}
 
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. ^{runtime}")
