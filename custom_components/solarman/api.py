@@ -110,27 +110,44 @@ class PySolarmanV5AsyncEthernetWrapper(PySolarmanV5AsyncWrapper):
             return await super().write_multiple_holding_registers(register_addr, values)
         return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
+class InverterState():
+    def __init__(self):
+        self.updated = datetime.now()
+        self.updated_interval = 0
+        self.value = -1
+
+    @property
+    def print(self):
+        return "Connected" if self.value > 0 else "Disconnected"
+
+    def update(self, reinit: bool = False):
+        now = datetime.now()
+        if reinit:
+            self.updated = now
+        else:
+            self.updated_interval = now - self.updated
+            self.updated = now
+            self.value = 1
+
+    def reevaluate(self) -> int:
+        self.value = 0 if self.value == 1 else -1
+        return self.value == -1
+
 class Inverter():
     def __init__(self, config: ConfigurationProvider):
         self._semaphore = asyncio.Semaphore(1)
         self._write_lock = True
 
-        self.state = -1
-        self.state_interval = 0
-        self.state_updated = datetime.now()
+        self.state: InverterState = InverterState()
         self.config: ConfigurationProvider = config
         self.endpoint: EndPointProvider = None
         self.profile: ProfileProvider = None
         self.modbus: PySolarmanV5AsyncEthernetWrapper = None
-        self.device_info = {}
+        self.device_info: dict = {}
 
     @property
     def available(self):
-        return self.state > -1
-
-    @property
-    def get_connection_state(self):
-        return "Connected" if self.state > 0 else "Disconnected"
+        return self.state.value > -1
 
     async def load(self):
         try:
@@ -150,12 +167,12 @@ class Inverter():
             raise UserWarning("Entity is locked!")
 
     async def shutdown(self) -> None:
-        self.state = -1
+        self.state.value = -1
         await self.modbus.disconnect()
 
     async def read_write(self, code, start, arg):
         if await self.modbus.connect():
-            self.state_updated = datetime.now()
+            self.state.update(True)
 
         match code:
             case CODE.READ_COILS:
@@ -218,16 +235,13 @@ class Inverter():
 
                     result = self.profile.parser.process(responses) if not requests else responses
 
-                    if (rc := len(result) if result else 0) > 0 and (now := datetime.now()):
-                        _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.get_connection_state} ({self.state})]")
-                        self.state_interval = now - self.state_updated
-                        self.state_updated = now
-                        self.state = 1
+                    if (rc := len(result) if result else 0) > 0:
+                        _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.state.print} ({self.state.value})]")
+                        self.state.update()
 
         except (TimeoutError, Exception) as e:
-            _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
-            self.state = 0 if self.state == 1 else -1
-            if self.state == -1:
+            _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.state.print} ({self.state.value})]")
+            if self.state.reevaluate():
                 await self.modbus.disconnect()
                 raise
             _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {format_exception(e)}")

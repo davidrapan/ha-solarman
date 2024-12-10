@@ -84,7 +84,7 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         return self._attr_native_value > 0
 
     def update(self):
-        self.set_state(self.coordinator.inverter.state_interval.total_seconds())
+        self.set_state(self.coordinator.inverter.state.updated_interval.total_seconds())
 
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
