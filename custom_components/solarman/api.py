@@ -232,13 +232,13 @@ class Inverter():
                         self.state_updated = now
                         self.state = 1
 
-        except TimeoutError:
+        except TimeoutError as e:
             if await self.get_failed():
                 raise
-            _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.config.name} data")
+            _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.config.name} data: {e}")
         except Exception as e:
             if await self.get_failed():
-                raise Exception(f"[{self.config.serial}] {format_exception(e)}") from e
+                raise
             _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
 
         return result
