@@ -219,11 +219,10 @@ class Inverter():
         return response
 
     async def get(self, runtime = 0, requests = None):
-        scheduled = self.profile.parser.schedule_requests(runtime) if not requests else requests
-        scheduled_count = len(scheduled) if scheduled else 0
+        scheduled, scheduled_count = safe_list_len(self.profile.parser.schedule_requests(runtime) if not requests else requests)
         responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. #{runtime}")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. ^{runtime}")
 
         try:
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
@@ -231,7 +230,7 @@ class Inverter():
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         quantity = end - start + 1
-                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} # {quantity:03}", True)
+                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}", True)
 
                     result = self.profile.parser.process(responses) if not requests else responses
 
