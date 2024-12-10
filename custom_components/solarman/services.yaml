@@ -31,16 +31,6 @@ read_holding_registers:
           min: 1
           max: 125
           mode: box
-    wait_for_attempts:
-      name: Wait for attempts
-      description: Wait for coordinator attempts
-      default: 5
-      required: true
-      selector:
-        number:
-          min: 0
-          max: 30
-          mode: box
 
 read_input_registers:
   name: Read Input Registers (Modbus Function Code 4)
@@ -75,16 +65,6 @@ read_input_registers:
           min: 1
           max: 125
           mode: box
-    wait_for_attempts:
-      name: Wait for attempts
-      description: Wait for coordinator attempts
-      default: 5
-      required: true
-      selector:
-        number:
-          min: 0
-          max: 30
-          mode: box
 
 write_holding_register:
   name: Write Holding Register (Modbus Function Code 6)
@@ -118,16 +98,6 @@ write_holding_register:
         number:
           min: 0
           max: 65535
-          mode: box
-    wait_for_attempts:
-      name: Wait for attempts
-      description: Wait for coordinator attempts
-      default: 5
-      required: true
-      selector:
-        number:
-          min: 0
-          max: 30
           mode: box
 
 write_multiple_holding_registers:
@@ -165,14 +135,4 @@ write_multiple_holding_registers:
         number:
           min: 0
           max: 65535
-          mode: box
-    wait_for_attempts:
-      name: Wait for attempts
-      description: Wait for coordinator attempts
-      default: 5
-      required: true
-      selector:
-        number:
-          min: 0
-          max: 30
           mode: box

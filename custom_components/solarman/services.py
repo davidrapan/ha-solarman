@@ -30,10 +30,6 @@ VALUES_SCHEMA = {
     vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))])
 }
 
-WAIT_SCHEMA = {
-    vol.Required(SERVICES_PARAM_WAIT_FOR_ATTEMPTS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 30))
-}
-
 def async_register(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register")
 
@@ -61,15 +57,9 @@ def async_register(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.call(
-                CODE.READ_HOLDING_REGISTERS, register, quantity,
-                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            response = await inverter.call(CODE.READ_HOLDING_REGISTERS, register, quantity)
         except Exception as e:
-            raise ServiceValidationError(
-                e,
-                translation_domain = DOMAIN,
-                translation_key = "call_failed"
-            )
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         result = {}
 
@@ -93,15 +83,9 @@ def async_register(hass: HomeAssistant) -> None:
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
 
         try:
-            response = await inverter.call(
-                CODE.READ_INPUT, register, quantity,
-                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            response = await inverter.call(CODE.READ_INPUT, register, quantity)
         except Exception as e:
-            raise ServiceValidationError(
-                e,
-                translation_domain = DOMAIN,
-                translation_key = "call_failed"
-            )
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         result = {}
 
@@ -122,17 +106,9 @@ def async_register(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.call(
-                CODE.WRITE_HOLDING_REGISTER,
-                call.data.get(SERVICES_PARAM_REGISTER), 
-                call.data.get(SERVICES_PARAM_VALUE),
-                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            await inverter.call(CODE.WRITE_HOLDING_REGISTER, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
-            raise ServiceValidationError(
-                e,
-                translation_domain = DOMAIN,
-                translation_key = "call_failed"
-            )
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         return
 
@@ -147,32 +123,24 @@ def async_register(hass: HomeAssistant) -> None:
             )
 
         try:
-            await inverter.call(
-                CODE.WRITE_MULTIPLE_HOLDING_REGISTERS,
-                call.data.get(SERVICES_PARAM_REGISTER),
-                call.data.get(SERVICES_PARAM_VALUES),
-                call.data.get(SERVICES_PARAM_WAIT_FOR_ATTEMPTS))
+            await inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
-            raise ServiceValidationError(
-                e,
-                translation_domain = DOMAIN,
-                translation_key = "call_failed"
-            )
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         return
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA | WAIT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA | WAIT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_HOLDING_REGISTER, write_holding_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA | WAIT_SCHEMA)
+        DOMAIN, SERVICE_WRITE_HOLDING_REGISTER, write_holding_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA)
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA | WAIT_SCHEMA)
+        DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA)
     )

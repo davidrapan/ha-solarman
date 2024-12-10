@@ -112,7 +112,7 @@ class PySolarmanV5AsyncEthernetWrapper(PySolarmanV5AsyncWrapper):
 
 class Inverter():
     def __init__(self, config: ConfigurationProvider):
-        self._is_busy = 0
+        self._semaphore = asyncio.Semaphore(1)
         self._write_lock = True
 
         self.state = -1
@@ -152,23 +152,6 @@ class Inverter():
     async def shutdown(self) -> None:
         self.state = -1
         await self.modbus.disconnect()
-
-    async def raise_when_busy(self, attempts_left = ACTION_ATTEMPTS, message = "Semaphore timeout."):
-        async def wait_for_done(attempts_left):
-            try:
-                try:
-                    while self._is_busy == 1 and attempts_left > 0:
-                        attempts_left -= 1
-                        await asyncio.sleep(TIMINGS_WAIT_FOR_SLEEP)
-                except Exception as e:
-                    _LOGGER.debug(f"wait_for_done: {format_exception(e)}")
-                return self._is_busy == 1
-            finally:
-                self._is_busy = 1
-
-        if await wait_for_done(attempts_left):
-            _LOGGER.debug(f"[{self.config.serial}] R/W Timeout.")
-            raise TimeoutError(f"[{self.config.serial}] {message}")
 
     async def read_write(self, code, start, arg):
         if await self.modbus.connect():
@@ -234,10 +217,8 @@ class Inverter():
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. #{runtime}")
 
         try:
-            await self.raise_when_busy(message = "Busy: Currently writing to the device!")
-
-            try:
-                async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+                async with self._semaphore:
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         quantity = end - start + 1
@@ -251,30 +232,20 @@ class Inverter():
                         self.state_updated = now
                         self.state = 1
 
-            except TimeoutError:
-                raise
-            except Exception as e:
-                if await self.get_failed():
-                    raise Exception(f"[{self.config.serial}] {format_exception(e)}") from e
-                _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
-            finally:
-                self._is_busy = 0
-
         except TimeoutError:
             if await self.get_failed():
                 raise
             _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.config.name} data")
+        except Exception as e:
+            if await self.get_failed():
+                raise Exception(f"[{self.config.serial}] {format_exception(e)}") from e
+            _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
 
         return result
 
-    async def call(self, code, start, arg, wait_for_attempts = ACTION_ATTEMPTS):
+    async def call(self, code, start, arg):
         _LOGGER.debug(f"[{self.config.serial}] Scheduling call request.")
 
-        await self.raise_when_busy(wait_for_attempts, "Busy: The coordinator is currently reading data from the device!")
-
-        try:
-            return await self.try_read_write(code, start, arg, f"Call {code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
-        except:
-            raise
-        finally:
-            self._is_busy = 0
+        async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+            async with self._semaphore:
+                return await self.try_read_write(code, start, arg, f"Call {code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
