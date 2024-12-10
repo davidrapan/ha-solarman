@@ -55,17 +55,15 @@ def async_register(hass: HomeAssistant) -> None:
 
         register = call.data.get(SERVICES_PARAM_REGISTER)
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
-
-        try:
-            response = await inverter.call(CODE.READ_HOLDING_REGISTERS, register, quantity)
-        except Exception as e:
-            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
-
         result = {}
 
-        if response:
-            for i in range(0, quantity):
-                result[register + i] = response[i]
+        try:
+            if (response := await inverter.call(CODE.READ_HOLDING_REGISTERS, register, quantity)) is not None:
+                for i in range(0, quantity):
+                    result[register + i] = response[i]
+
+        except Exception as e:
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         return result
 
@@ -81,17 +79,15 @@ def async_register(hass: HomeAssistant) -> None:
 
         register = call.data.get(SERVICES_PARAM_REGISTER)
         quantity = call.data.get(SERVICES_PARAM_QUANTITY)
-
-        try:
-            response = await inverter.call(CODE.READ_INPUT, register, quantity)
-        except Exception as e:
-            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
-
         result = {}
 
-        if response:
-            for i in range(0, quantity):
-                result[register + i] = response[i]
+        try:
+            if (response := await inverter.call(CODE.READ_INPUT, register, quantity)) is not None:
+                for i in range(0, quantity):
+                    result[register + i] = response[i]
+
+        except Exception as e:
+            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
         return result
 
@@ -110,8 +106,6 @@ def async_register(hass: HomeAssistant) -> None:
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
-        return
-
     async def write_multiple_holding_registers(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_multiple_holding_registers: {call}")
 
@@ -126,8 +120,6 @@ def async_register(hass: HomeAssistant) -> None:
             await inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
-
-        return
 
     hass.services.async_register(
         DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA), supports_response = SupportsResponse.OPTIONAL
