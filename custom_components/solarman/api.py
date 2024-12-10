@@ -201,14 +201,6 @@ class Inverter():
         
         return response
 
-    async def get_failed(self):
-        _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
-        self.state = 0 if self.state == 1 else -1
-
-        await self.modbus.disconnect()
-
-        return self.state == -1
-
     async def get(self, runtime = 0, requests = None):
         scheduled = self.profile.parser.schedule_requests(runtime) if not requests else requests
         scheduled_count = len(scheduled) if scheduled else 0
@@ -232,14 +224,13 @@ class Inverter():
                         self.state_updated = now
                         self.state = 1
 
-        except TimeoutError as e:
-            if await self.get_failed():
+        except (TimeoutError, Exception) as e:
+            _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.get_connection_state} ({self.state})]")
+            self.state = 0 if self.state == 1 else -1
+            if self.state == -1:
+                await self.modbus.disconnect()
                 raise
-            _LOGGER.debug(f"[{self.config.serial}] Timeout fetching {self.config.name} data: {e}")
-        except Exception as e:
-            if await self.get_failed():
-                raise
-            _LOGGER.debug(f"[{self.config.serial}] Error fetching {self.config.name} data: {e}")
+            _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {format_exception(e)}")
 
         return result
 
