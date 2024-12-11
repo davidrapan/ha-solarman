@@ -19,4 +19,6 @@ jobs:
           close-issue-label: closed
           stale-issue-message: This issue is stale because it has been open for 30 days with no activity.
           close-issue-message: This issue was closed because it has been inactive for 14 days since being marked as stale.
+          exempt-issue-labels: help wanted
+          exempt-all-assignees: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
