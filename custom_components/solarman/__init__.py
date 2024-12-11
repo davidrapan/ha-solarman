@@ -7,6 +7,7 @@ from functools import partial
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.entity_registry import async_migrate_entries
 
@@ -21,6 +22,8 @@ from .services import async_register
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.DATETIME, Platform.TIME, Platform.BUTTON]
+
+CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     _LOGGER.debug(f"async_setup")
