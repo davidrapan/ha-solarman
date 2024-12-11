@@ -1,6 +1,6 @@
 # ⚡ Solarman Stick Logger
 
-[![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](license)
+[![License](https://img.shields.io/github/license/davidrapan/ha-solarman)](https://github.com/davidrapan/ha-solarman/blob/main/license)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/davidrapan/ha-solarman/total)](https://github.com/davidrapan/ha-solarman/releases)
 [![GitHub Activity](https://img.shields.io/github/commit-activity/y/davidrapan/ha-solarman?label=commits)](https://github.com/davidrapan/ha-solarman/commits/main)
 [![HACS Supported](https://img.shields.io/badge/HACS-Supported-03a9f4)](https://github.com/custom-components/hacs)
