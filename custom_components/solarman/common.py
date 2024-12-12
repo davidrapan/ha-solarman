@@ -135,8 +135,8 @@ def is_ethernet_frame(frame):
             return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])
     return False
 
-def b_(suffix, count):
-    return b'\x00' * count + suffix
+def mb_compatibility(response, request):
+    return response if not 8 <= (l := len(response)) <= 10 else response[:5] + b'\x06' + response[6:] + (request[l:10] if len(request) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
 
 def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
