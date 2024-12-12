@@ -2104,6 +2104,14 @@ parameters:
           - key: 0x0003
             value: "Both"
 
+      - name: SmartLoad Grid On
+        description: On Grid always on
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 12
+
   - group: Grid, Generator and BMS
     update_interval: 300
     items:

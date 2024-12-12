@@ -751,6 +751,14 @@ parameters:
           min: 0
           max: 100
 
+      - name: SmartLoad Grid On
+        description: On Grid always on
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 6
+
   - group: Grid Parameters
     update_interval: 300
     items:
