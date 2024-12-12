@@ -123,7 +123,7 @@ class ParameterParser:
         return True
 
     def process(self, data):
-        if data:
+        if data is not None:
             for i in self._items:
                 if not (self.is_valid(i) and self.is_enabled(i)):
                     continue

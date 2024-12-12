@@ -203,7 +203,7 @@ class Inverter():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
+                if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) is None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
                     raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
                 _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
@@ -219,7 +219,7 @@ class Inverter():
         return response
 
     async def get(self, runtime = 0, requests = None):
-        scheduled, scheduled_count = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if not requests else requests)
+        scheduled, scheduled_count = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
 
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. ^{runtime}")
@@ -232,7 +232,7 @@ class Inverter():
                         quantity = end - start + 1
                         responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}", True)
 
-                    result = self.profile.parser.process(responses) if not requests else responses
+                    result = self.profile.parser.process(responses) if requests is None else responses
 
                     if (rc := len(result) if result else 0) > 0:
                         _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.state.print} ({self.state.value})]")

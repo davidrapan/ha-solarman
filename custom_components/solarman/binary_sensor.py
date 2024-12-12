@@ -67,9 +67,7 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
 
     @property
     def is_on(self) -> bool | None:
-        if not self._attr_state:
-            return None
-        return self._attr_state > -1
+        return self._attr_state > -1 if self._attr_state is not None else False
 
     def update(self):
         self.set_state(self.coordinator.inverter.state.value)
