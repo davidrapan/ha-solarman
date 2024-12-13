@@ -50,7 +50,7 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
         if self.dictionary:
             for o in self.dictionary:
                 if o["value"] == value and (key := from_bit_index(o["bit"]) if "bit" in o else o["key"]) is not None:
-                    return key if not self.mask else self._attr_value & (0xFFFFFFFF - self.mask) | key
+                    return (key if not "mode" in o else (self._attr_value | key)) if not self.mask else (self._attr_value & (0xFFFFFFFF - self.mask) | key)
 
         return self.options.index(value)
 

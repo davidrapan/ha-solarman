@@ -1681,7 +1681,9 @@ parameters:
           - key: 0x00C1
             value: "Weekend"
           - key: 0x00FF
-            default:
+            value: "Week"
+          - bit: 0
+            mode: single
             value: "Enabled"
 
       - name: "Program 1 Time"
