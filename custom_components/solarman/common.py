@@ -11,6 +11,7 @@ import voluptuous as vol
 
 from typing import Any
 
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
@@ -35,6 +36,10 @@ async def async_listdir(path, prefix = ""):
 def execute_async(x):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(x)
+
+def get_coordinator(hass: HomeAssistant, entry_id: str):
+    coordinator = hass.data[DOMAIN][entry_id]
+    return coordinator, coordinator.inverter.get_entity_descriptions()
 
 def to_dict(*keys: list):
     return {k: k for k in keys}

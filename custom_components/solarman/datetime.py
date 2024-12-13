@@ -19,11 +19,10 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
-    _LOGGER.debug(f"async_setup_entry: {config.options}")
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+    _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator = hass.data[DOMAIN][config.entry_id]
-    descriptions = coordinator.inverter.get_entity_descriptions()
+    coordinator, descriptions = get_coordinator(hass, config_entry.entry_id)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
@@ -31,8 +30,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
     return True
 
-async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
-    _LOGGER.debug(f"async_unload_entry: {config.options}")
+async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
 

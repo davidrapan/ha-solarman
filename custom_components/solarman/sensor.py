@@ -48,20 +48,19 @@ def _create_entity(coordinator, description, options):
 
     return SolarmanSensor(coordinator, description)
 
-async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
-    _LOGGER.debug(f"async_setup_entry: {config.options}")
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+    _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator = hass.data[DOMAIN][config.entry_id]
-    descriptions = coordinator.inverter.get_entity_descriptions()
+    coordinator, descriptions = get_coordinator(hass, config_entry.entry_id)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config.options), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
 
     return True
 
-async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
-    _LOGGER.debug(f"async_unload_entry: {config.options}")
+async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
 

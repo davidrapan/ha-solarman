@@ -25,7 +25,7 @@ PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.S
 
 CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
     _LOGGER.debug(f"async_setup")
 
     async_register(hass)
@@ -76,15 +76,15 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     return True
 
-async def async_unload_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
-    _LOGGER.debug(f"async_unload_entry({config.as_dict()})")
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    _LOGGER.debug(f"async_unload_entry({config_entry.as_dict()})")
 
     # Forward setup
     #
     _LOGGER.debug(f"async_setup: hass.config_entries.async_unload_platforms: {PLATFORMS}")
 
-    if unload_ok := await hass.config_entries.async_unload_platforms(config, PLATFORMS):
-        _ = hass.data[DOMAIN].pop(config.entry_id)
+    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
+        _ = hass.data[DOMAIN].pop(config_entry.entry_id)
 
     return unload_ok
 
