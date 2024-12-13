@@ -32,10 +32,10 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             except:
                 self._counter = 0
                 raise
-        except TimeoutError:
-            await self.inverter.endpoint.discover()
-            raise
-        except Exception as e:
+        except (TimeoutError, Exception) as e:
+            if isinstance(e, TimeoutError):
+                await self.inverter.endpoint.discover()
+                raise
             raise UpdateFailed(e) from e
 
     #async def _reload(self):

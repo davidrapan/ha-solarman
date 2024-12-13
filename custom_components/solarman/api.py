@@ -194,7 +194,7 @@ class Inverter():
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
-    async def try_read_write(self, code, start, arg, message, incremental_wait):
+    async def try_read_write(self, code, start, arg, message: str, incremental_wait: bool = True):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
         response = None
@@ -224,13 +224,16 @@ class Inverter():
 
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. ^{runtime}")
 
+        if scheduled_count == 0:
+            return result
+
         try:
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                 async with self._semaphore:
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         quantity = end - start + 1
-                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}", True)
+                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}")
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -248,7 +251,7 @@ class Inverter():
         return result
 
     async def call(self, code, start, arg):
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling call request.")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling request.")
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
