@@ -41,7 +41,7 @@ class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
             self.reader = None
             self.writer = None
 
-class PySolarmanV5AsyncEthernetWrapper(PySolarmanV5AsyncWrapper):
+class PySolarmanAsync(PySolarmanV5AsyncWrapper):
     def __init__(self, address, serial, port, mb_slave_id):
         super().__init__(address, serial, port, mb_slave_id)
         self._passthrough = False
@@ -142,7 +142,7 @@ class Inverter():
         self.config: ConfigurationProvider = config
         self.endpoint: EndPointProvider = None
         self.profile: ProfileProvider = None
-        self.modbus: PySolarmanV5AsyncEthernetWrapper = None
+        self.modbus: PySolarmanAsync = None
         self.device_info: dict = {}
 
     @property
@@ -153,7 +153,7 @@ class Inverter():
         try:
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
-            self.modbus = PySolarmanV5AsyncEthernetWrapper(*self.endpoint.connection)
+            self.modbus = PySolarmanAsync(*self.endpoint.connection)
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except BaseException as e:
