@@ -95,6 +95,7 @@ def process_profile(filename):
     return filename if not filename in PROFILE_REDIRECT else PROFILE_REDIRECT[filename]
 
 def build_device_info(serial, mac, name, info, filename):
+    device_info = DeviceInfo()
     manufacturer = "Solarman"
     model = "Stick Logger"
 
@@ -106,13 +107,14 @@ def build_device_info(serial, mac, name, info, filename):
         manufacturer = dev_man[0].capitalize()
         model = dev_man[1].upper()
 
-    return ({ "connections": {(CONNECTION_NETWORK_MAC, format_mac(mac))} } if mac else {}) | {
-        "identifiers": {(DOMAIN, serial)},
-        "serial_number": serial,
-        "manufacturer": manufacturer,
-        "model": model,
-        "name": name
-    }
+    device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else {}
+    device_info["identifiers"] = {(DOMAIN, serial)}
+    device_info["serial_number"] = serial
+    device_info["manufacturer"] = manufacturer
+    device_info["model"] = model
+    device_info["name"] = name
+
+    return device_info
 
 def is_platform(description, value):
     return (description["platform"] if "platform" in description else "sensor") == value
