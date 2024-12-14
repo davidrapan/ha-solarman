@@ -11,6 +11,7 @@ import voluptuous as vol
 
 from typing import Any
 
+from homeassistant.util import slugify
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
@@ -161,6 +162,9 @@ def process_descriptions(item, group, table, code, mod):
             elif isinstance(source[i], dict):
                 modify(source[i])
 
+    if not "platform" in item:
+        item["platform"] = "sensor" if not "configurable" in item else "number"
+    item["key"] = slugify('_'.join(filter(None, (item["name"], item["platform"]))))
     bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)

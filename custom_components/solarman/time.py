@@ -36,7 +36,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
         self._multiple_registers = len(self.registers) > 1 and self.registers[1] == self.registers[0] + 1
         self._hex = "hex" in sensor

@@ -73,7 +73,7 @@ PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-
 
 ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l" }
 
-STATE_SENSORS = [{"name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"name": "Update Interval", "artificial": "interval"}]
+STATE_SENSORS = [{"key": "Connection binary_sensor", "name": "Connection", "artificial": "state", "platform": "binary_sensor"}, {"key": "Update Interval sensor", "name": "Update Interval", "artificial": "interval", "platform": "sensor"}]
 
 CONTROL_CODE = types.SimpleNamespace()
 CONTROL_CODE.REQUEST = struct.pack("<H", 0x4510)

@@ -37,7 +37,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
         self._value = 1
         self._value_bit = None

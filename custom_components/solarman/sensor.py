@@ -55,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions if (is_platform(d, _PLATFORM) and not "configurable" in d))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions if is_platform(d, _PLATFORM))
 
     return True
 
@@ -66,7 +66,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanSensorEntity(SolarmanEntity, SensorEntity):
     def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor, _PLATFORM)
+        super().__init__(coordinator, sensor)
         if "state_class" in sensor and (state_class := sensor["state_class"]):
             self._attr_state_class = state_class
 
@@ -125,45 +125,45 @@ class SolarmanBatteryCustomSensor(SolarmanSensor):
     def update(self):
         #super().update()
         c = len(self.coordinator.data)
-        if c > 1 or (c == 1 and self._attr_name in self.coordinator.data):
-            match self._attr_name:
-                case "Battery SOH":
-                    total_battery_charge = get_tuple(self.coordinator.data.get("Total Battery Charge"))
+        if c > 1 or (c == 1 and self._attr_key in self.coordinator.data):
+            match self._attr_key:
+                case "battery_soh_sensor":
+                    total_battery_charge = get_tuple(self.coordinator.data.get("total_battery_charge_sensor"))
                     if total_battery_charge == 0:
                         self.set_state(100)
                         return
-                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
-                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
+                    battery_capacity = get_tuple(self.coordinator.data.get("battery_capacity_number"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("battery_corrected_capacity_sensor"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
                             battery_capacity = battery_corrected_capacity
                     if total_battery_charge and battery_capacity and self._battery_nominal_voltage and self._battery_life_cycle_rating:
                         self.set_state(get_number(100 - total_battery_charge / get_battery_power_capacity(battery_capacity, self._battery_nominal_voltage) / (self._battery_life_cycle_rating * 0.05), self._digits))
-                case "Battery State":
-                    battery_power = get_tuple(self.coordinator.data.get("Battery Power"))
+                case "battery_state_sensor":
+                    battery_power = get_tuple(self.coordinator.data.get("battery_power_sensor"))
                     if battery_power:
                         self.set_state("discharging" if battery_power > 50 else "charging" if battery_power < -50 else "idle")
-                case "Today Battery Life Cycles":
-                    today_battery_charge = get_tuple(self.coordinator.data.get("Today Battery Charge"))
+                case "today_battery_life_cycles_sensor":
+                    today_battery_charge = get_tuple(self.coordinator.data.get("today_battery_charge_sensor"))
                     if today_battery_charge == 0:
                         self.set_state(0)
                         return
-                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
-                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
+                    battery_capacity = get_tuple(self.coordinator.data.get("battery_capacity_number"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("battery_corrected_capacity_sensor"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:
                             battery_capacity = battery_corrected_capacity
                     if today_battery_charge and battery_capacity and self._battery_nominal_voltage:
                         self.set_state(get_number(get_battery_cycles(today_battery_charge, battery_capacity, self._battery_nominal_voltage), self._digits))
-                case "Total Battery Life Cycles":
-                    total_battery_charge = get_tuple(self.coordinator.data.get("Total Battery Charge"))
+                case "total_battery_life_cycles_sensor":
+                    total_battery_charge = get_tuple(self.coordinator.data.get("total_battery_charge_sensor"))
                     if total_battery_charge == 0:
                         self.set_state(0)
                         return
-                    battery_capacity = get_tuple(self.coordinator.data.get("Battery Capacity"))
-                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("Battery Corrected Capacity"))
+                    battery_capacity = get_tuple(self.coordinator.data.get("battery_capacity_number"))
+                    battery_corrected_capacity = get_tuple(self.coordinator.data.get("battery_corrected_capacity_sensor"))
                     if battery_capacity and battery_corrected_capacity:
                         battery_capacity_5 = battery_capacity / 100 * 5
                         if battery_capacity - battery_capacity_5 <= battery_corrected_capacity <= battery_capacity + battery_capacity_5:

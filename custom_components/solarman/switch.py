@@ -37,7 +37,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
         self._attr_device_class = SwitchDeviceClass.SWITCH
 
         self._value_on = 1

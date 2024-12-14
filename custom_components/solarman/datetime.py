@@ -37,7 +37,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
         self._time_zone = ZoneInfo(self.coordinator.hass.config.time_zone)
         self._multiple_registers = len(self.registers) > 3 and self.registers[3] == self.registers[0] + 3

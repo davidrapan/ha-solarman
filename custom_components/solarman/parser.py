@@ -85,7 +85,7 @@ class ParameterParser:
 
         for i in self._items:
             if self.is_requestable(i) and self.is_scheduled(i, runtime):
-                self.set_state(i["name"], self.default_from_unit_of_measurement(i))
+                self.set_state(i["key"], self.default_from_unit_of_measurement(i))
                 if "registers" in i:
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
@@ -270,7 +270,7 @@ class ParameterParser:
         if "uint" in definition and value < 0:
             value = 0
 
-        key = definition["name"]
+        key = definition["key"]
 
         if "lookup" in definition:
             self.set_state(key, lookup_value(value, definition["lookup"]), int(value))
@@ -293,7 +293,7 @@ class ParameterParser:
         if definition.get("inverted"):
             value = -value
 
-        key = definition["name"]
+        key = definition["key"]
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
             if not "default" in validation:
@@ -312,7 +312,7 @@ class ParameterParser:
 
             value += chr(temp >> 8) + chr(temp & 0xFF)
 
-        self.set_state(definition["name"], value)
+        self.set_state(definition["key"], value)
 
     def try_parse_bits(self, data, definition):
         code = get_code(definition, "read")
@@ -324,7 +324,7 @@ class ParameterParser:
 
             value.append(hex(temp))
 
-        self.set_state(definition["name"], value)
+        self.set_state(definition["key"], value)
 
     def try_parse_version(self, data, definition):
         code = get_code(definition, "read")
@@ -339,7 +339,7 @@ class ParameterParser:
         if (remove := definition.get("remove")) is not None:
             value = value.replace(remove, "")
 
-        self.set_state(definition["name"], value)
+        self.set_state(definition["key"], value)
 
     def try_parse_datetime(self, data, definition):
         code = get_code(definition, "read")
@@ -376,7 +376,7 @@ class ParameterParser:
         try:
             if not "platform" in definition:
                 value = datetime.strptime(value, DATETIME_FORMAT)
-            self.set_state(definition["name"], value)
+            self.set_state(definition["key"], value)
         except Exception as e:
             _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
 
@@ -406,7 +406,7 @@ class ParameterParser:
                 if i == 0 or (i == 1 and registers_count > 2):
                     value += ":"
 
-        self.set_state(definition["name"], value)
+        self.set_state(definition["key"], value)
 
     def try_parse_raw(self, data, definition):
         code = get_code(definition, "read")
@@ -418,4 +418,4 @@ class ParameterParser:
 
             value.append(temp)
 
-        self.set_state(definition["name"], value)
+        self.set_state(definition["key"], value)

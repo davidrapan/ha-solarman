@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 
 from typing import Any
-from datetime import date
 from decimal import Decimal
+from datetime import date, datetime, time
 
 from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
@@ -75,21 +75,22 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         return True
 
     def update(self):
-        if (data := self.coordinator.data.get(self._attr_name)) and self.set_state(*data) and self.attributes:
+        if (data := self.coordinator.data.get(self._attr_key)) and self.set_state(*data) and self.attributes:
             if "inverse" in self.attributes and self._attr_native_value:
                 self._attr_extra_state_attributes["−x"] = -self._attr_native_value
             for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
                 self._attr_extra_state_attributes[attr.replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, sensor, platform):
+    def __init__(self, coordinator, sensor):
         super().__init__(coordinator)
 
+        self._attr_key = sensor["key"]
         self._attr_name = sensor["name"]
         self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.config.serial), self._attr_name, platform))))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.config.serial), self._attr_key))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
@@ -126,8 +127,8 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         return f"{device_name} {name}"
 
 class SolarmanWritableEntity(SolarmanEntity):
-    def __init__(self, coordinator, sensor, platform):
-        super().__init__(coordinator, sensor, platform)
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
 
         #self._write_lock = "locked" in sensor
 

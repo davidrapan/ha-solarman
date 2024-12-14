@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities")
 
-    async_add_entities(create_entity(lambda x: SolarmanNumberEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM) or "configurable" in d)
+    async_add_entities(create_entity(lambda x: SolarmanNumberEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
 
     return True
 
@@ -36,7 +36,7 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> boo
 
 class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
     def __init__(self, coordinator, sensor):
-        SolarmanWritableEntity.__init__(self, coordinator, sensor, _PLATFORM)
+        SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
         if "mode" in sensor and (mode := sensor["mode"]):
             self._attr_mode = mode
