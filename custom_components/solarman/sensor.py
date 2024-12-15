@@ -24,11 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 _PLATFORM = get_current_file_name(__name__)
 
 def _create_entity(coordinator, description, options):
-    if "artificial" in description:
-        match description["artificial"]:
-            case "interval":
-                return SolarmanIntervalSensor(coordinator, description)
-    elif (name := description["name"]) and "Battery" in name and (additional := options.get(CONF_ADDITIONAL_OPTIONS, {})) is not None:
+    if (name := description["name"]) and "Battery" in name and (additional := options.get(CONF_ADDITIONAL_OPTIONS, {})) is not None:
         battery_nominal_voltage = additional.get(CONF_BATTERY_NOMINAL_VOLTAGE, DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE])
         battery_life_cycle_rating = additional.get(CONF_BATTERY_LIFE_CYCLE_RATING, DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING])
         if "registers" in description:
@@ -51,11 +47,13 @@ def _create_entity(coordinator, description, options):
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator, descriptions = get_coordinator(hass, config_entry.entry_id)
+    coordinator, descriptions = get_coordinator_descriptions(hass, config_entry.entry_id, _PLATFORM)
 
-    _LOGGER.debug(f"async_setup_entry: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions if is_platform(d, _PLATFORM))
+    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions)
+
+    async_add_entities([create_entity(lambda _: SolarmanIntervalSensor(coordinator), None)])
 
     return True
 
@@ -71,8 +69,8 @@ class SolarmanSensorEntity(SolarmanEntity, SensorEntity):
             self._attr_state_class = state_class
 
 class SolarmanIntervalSensor(SolarmanSensorEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+    def __init__(self, coordinator):
+        super().__init__(coordinator, {"key": "update_interval_sensor", "name": "Update Interval"})
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_native_unit_of_measurement = "s"
         self._attr_state_class = "duration"

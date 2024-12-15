@@ -38,9 +38,9 @@ def execute_async(x):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(x)
 
-def get_coordinator(hass: HomeAssistant, entry_id: str):
+def get_coordinator_descriptions(hass: HomeAssistant, entry_id: str, platform: str):
     coordinator = hass.data[DOMAIN][entry_id]
-    return coordinator, coordinator.inverter.get_entity_descriptions()
+    return coordinator, coordinator.inverter.profile.parser.get_entity_descriptions(platform)
 
 def to_dict(*keys: list):
     return {k: k for k in keys}
@@ -116,9 +116,6 @@ def build_device_info(serial, mac, name, info, filename):
     device_info["name"] = name
 
     return device_info
-
-def is_platform(description, value):
-    return (description["platform"] if "platform" in description else "sensor") == value
 
 def all_equals(values, value):
     return all(i == value for i in values)

@@ -19,22 +19,16 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-def _create_entity(coordinator, description):
-    if "artificial" in description:
-        match description["artificial"]:
-            case "state":
-                return SolarmanConnectionSensor(coordinator, description)
-
-    return SolarmanBinarySensorEntity(coordinator, description)
-
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator, descriptions = get_coordinator(hass, config_entry.entry_id)
+    coordinator, descriptions = get_coordinator_descriptions(hass, config_entry.entry_id, _PLATFORM)
 
-    _LOGGER.debug(f"async_setup_entry: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
+    async_add_entities(create_entity(lambda x: SolarmanBinarySensorEntity(coordinator, x), d) for d in descriptions)
+
+    async_add_entities([create_entity(lambda _: SolarmanConnectionSensor(coordinator), None)])
 
     return True
 
@@ -55,8 +49,8 @@ class SolarmanBinarySensorEntity(SolarmanEntity, BinarySensorEntity):
         return (self._attr_state != 0) if not self._sensor_inverted else (self._attr_state == 0)
 
 class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
-    def __init__(self, coordinator, sensor):
-        super().__init__(coordinator, sensor)
+    def __init__(self, coordinator):
+        super().__init__(coordinator, {"key": "connection_binary_sensor", "name": "Connection"})
         self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY 
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
 

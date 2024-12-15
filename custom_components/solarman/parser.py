@@ -72,8 +72,8 @@ class ParameterParser:
     def set_state(self, key, state, value = None):
         self._result[key] = (state, value)
 
-    def get_entity_descriptions(self):
-        return [i for i in self._items if self.is_valid(i) and not "attribute" in i]
+    def get_entity_descriptions(self, platform: str):
+        return [i for i in self._items if self.is_valid(i) and not "attribute" in i and i.get("platform") == platform]
 
     def schedule_requests(self, runtime = 0):
         self._result = {}

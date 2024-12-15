@@ -21,11 +21,11 @@ _PLATFORM = get_current_file_name(__name__)
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
     
-    coordinator, descriptions = get_coordinator(hass, config_entry.entry_id)
+    coordinator, descriptions = get_coordinator_descriptions(hass, config_entry.entry_id, _PLATFORM)
 
-    _LOGGER.debug(f"async_setup_entry: async_add_entities")
+    _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
-    async_add_entities(create_entity(lambda x: SolarmanSelectEntity(coordinator, x), d) for d in descriptions if is_platform(d, _PLATFORM))
+    async_add_entities(create_entity(lambda x: SolarmanSelectEntity(coordinator, x), d) for d in descriptions)
 
     return True
 

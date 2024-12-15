@@ -145,10 +145,6 @@ class Inverter():
         self.modbus: PySolarmanAsync = None
         self.device_info: dict = {}
 
-    @property
-    def available(self):
-        return self.state.value > -1
-
     async def load(self):
         try:
             self.endpoint = await EndPointProvider(self.config).discover()
@@ -158,9 +154,6 @@ class Inverter():
             _LOGGER.debug(self.device_info)
         except BaseException as e:
             raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
-
-    def get_entity_descriptions(self):
-        return (STATE_SENSORS + self.profile.parser.get_entity_descriptions()) if self.profile and self.profile.parser else []
 
     def check(self, lock):
         if lock and self._write_lock:
