@@ -174,7 +174,7 @@ parameters:
         uom: "Hz"
         scale: 0.01
         rule: 1
-        registers: [0x20C]
+        registers: [0x020C]
         icon: "mdi:sine-wave"
 
       - name: Today Energy Export
@@ -289,12 +289,34 @@ parameters:
           min: 0.1
 
       - name: "Battery SOH"
-        update_interval: 300
+        update_interval: 30
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x0237]
         icon: "mdi:battery-heart"
+
+      - name: "Battery Type"
+        class: "enum"
+        rule: 1
+        registers: [0x10B0]
+        lookup:
+          - key: 0x0000
+            value: "DARFON"
+          - key: 0x0001
+            value: "PYLON"
+          - key: 0x0002
+            value: "SOLTARO"
+          - key: 0x0003
+            value: "SOLTARO"
+            # or "ALPHA.ESS" ?
+          - key: 0x0004
+            value: "GENERAL"
+          - key: 0x0080
+            value: "TELE"
+          - key: 0x0100
+            default:
+            value: "DEFAULT"
 
       - name: "Battery Capacity"
         rule: 1
@@ -361,31 +383,6 @@ parameters:
         rule: 1
         registers: [0x10BC]
         icon: "mdi:battery"
-
-  - group: Info
-    update_interval: 300
-    items:
-      - name: "Battery Type"
-        class: "enum"
-        rule: 1
-        registers: [0x10B0]
-        lookup:
-          - key: 0x0000
-            value: "DARFON"
-          - key: 0x0001
-            value: "PYLON"
-          - key: 0x0002
-            value: "SOLTARO"
-          - key: 0x0003
-            value: "SOLTARO"
-            # or "ALPHA.ESS" ?
-          - key: 0x0004
-            value: "GENERAL"
-          - key: 0x0080
-            value: "TELE"
-          - key: 0x0100
-            default:
-            value: "DEFAULT"
 
   - group: Settings
     update_interval: 300
@@ -532,7 +529,7 @@ parameters:
       - name: "Inverter Status"
         class: "enum"
         rule: 1
-        registers: [0x200]
+        registers: [0x0200]
         lookup:
           - key: 0
             value: "Wait"
@@ -872,6 +869,7 @@ parameters:
         icon: "mdi:wrench"
 
   - group: InverterInformation
+    update_interval: 3600
     items:
       - name: "Production Code"
         rule: 1
