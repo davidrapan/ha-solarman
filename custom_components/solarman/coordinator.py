@@ -27,14 +27,10 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            try:
-                return await self.inverter.get(self._accounting())
-            except:
-                self._counter = 0
-                raise
-        except (TimeoutError, Exception) as e:
+            return await self.inverter.get(self._accounting())
+        except Exception as e:
+            self._counter = 0
             if isinstance(e, TimeoutError):
-                await self.inverter.endpoint.discover()
                 raise
             raise UpdateFailed(e) from e
 

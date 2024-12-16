@@ -212,12 +212,12 @@ class Inverter():
         return response
 
     async def get(self, runtime = 0, requests = None):
-        scheduled, scheduled_count = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
+        scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scheduled_count} query request{'' if scheduled_count == 1 else 's'}. ^{runtime}")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount > 1 else ''}. ^{runtime}")
 
-        if scheduled_count == 0:
+        if scount == 0:
             return result
 
         try:
@@ -230,15 +230,19 @@ class Inverter():
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
-                    if (rc := len(result) if result else 0) > 0:
-                        _LOGGER.debug(f"[{self.config.serial}] Returning {rc} new values to the Coordinator. [Previous State: {self.state.print} ({self.state.value})]")
+                    if (rcount := len(result) if result else 0) > 0:
+                        _LOGGER.debug(f"[{self.config.serial}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                         self.state.update()
 
         except (TimeoutError, Exception) as e:
             _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.state.print} ({self.state.value})]")
+
+            await self.endpoint.discover()
+
             if self.state.reevaluate():
                 await self.modbus.disconnect()
                 raise
+
             _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {format_exception(e)}")
 
         return result
