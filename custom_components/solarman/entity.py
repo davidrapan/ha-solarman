@@ -79,7 +79,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
             if "inverse" in self.attributes and self._attr_native_value:
                 self._attr_extra_state_attributes["−x"] = -self._attr_native_value
             for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
-                self._attr_extra_state_attributes[attr.replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
+                self._attr_extra_state_attributes[self.attributes[attr].replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
     def __init__(self, coordinator, sensor):
@@ -111,7 +111,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if description := sensor.get("description"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
 
-        self.attributes = sensor.get("attributes")
+        self.attributes = {slugify('_'.join(filter(None, (x, "sensor")))): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
         self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
