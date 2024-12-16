@@ -29,6 +29,7 @@
           "additional_options": {
             "name": "Zusätzliche Optionen",
             "data": {
+              "mod": "Skalierungsmodifikator",
               "mppt": "Anzahl der MPPTs",
               "phase": "Anzahl der Phasen",
               "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
@@ -37,6 +38,93 @@
             }
           }
         }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_host": "Ungültiger Hostname oder ungültige IP-Adresse",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "step": {
+      "init": {
+        "title": "Konfiguration der Verbindung zum Wechselrichter",
+        "data": {
+          "host": "Host (IP-Adresse oder Hostname)",
+          "port": "Port (normalerweise 8899)",
+          "lookup_file": "Profil"
+        },
+        "data_description": {
+          "host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll",
+          "port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll",
+          "lookup_file": "YAML-Datei mit der Parameter-Definition"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Zusätzliche Optionen",
+            "data": {
+              "mod": "Skalierungsmodifikator",
+              "mppt": "Anzahl der MPPTs",
+              "phase": "Anzahl der Phasen",
+              "battery_nominal_voltage": "Nennspannung des Lithium-Ionen-Akkus",
+              "battery_life_cycle_rating": "Erwartete Lebensdauer der Lithium-Ionen-Batterie",
+              "mb_slave_id": "Modbus-Slave-ID (normalerweise 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Heutige Batterieladung"
+      },
+      "today_battery_discharge": {
+        "name": "Heutige Batterieentladung"
+      },
+      "today_battery_life_cycles": {
+        "name": "Heutige Batterielebenszyklen"
+      },
+      "today_energy_export": {
+        "name": "Heutige Energieexport"
+      },
+      "today_energy_import": {
+        "name": "Heutige Energieimport"
+      },
+      "today_load_consumption": {
+        "name": "Heutiger Lastverbrauch"
+      },
+      "today_losses": {
+        "name": "Heutigen Verluste"
+      },
+      "today_production": {
+        "name": "Heutige Produktion"
+      },
+      "total_battery_charge": {
+        "name": "Gesamt Batterieladung"
+      },
+      "total_battery_discharge": {
+        "name": "Gesamt Batterieentladung"
+      },
+      "total_battery_life_cycles": {
+        "name": "Gesamt Batterielebenszyklen"
+      },
+      "total_energy_export": {
+        "name": "Gesamt Energieexport"
+      },
+      "total_energy_import": {
+        "name": "Gesamt Energieimport"
+      },
+      "total_load_consumption": {
+        "name": "Gesamt Lastverbrauch"
+      },
+      "total_losses": {
+        "name": "Gesamt Verluste"
+      },
+      "total_production": {
+        "name": "Gesamt Produktion"
       }
     }
   }

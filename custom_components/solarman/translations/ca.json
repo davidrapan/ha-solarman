@@ -29,6 +29,7 @@
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
+              "mod": "Modificador d'escala",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
@@ -63,6 +64,7 @@
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
+              "mod": "Modificador d'escala",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",

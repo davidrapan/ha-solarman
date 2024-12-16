@@ -29,6 +29,7 @@
           "additional_options": {
             "name": "Opcje dodatkowe",
             "data": {
+              "mod": "Modyfikator skali",
               "mppt": "Liczba MPPTs",
               "phase": "Liczba faz",
               "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
@@ -63,6 +64,7 @@
           "additional_options": {
             "name": "Opcje dodatkowe",
             "data": {
+              "mod": "Modyfikator skali",
               "mppt": "Liczba MPPTs",
               "phase": "Liczba faz",
               "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",

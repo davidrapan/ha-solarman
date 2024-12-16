@@ -29,6 +29,7 @@
           "additional_options": {
             "name": "Opções adicionais",
             "data": {
+              "mod": "Modificador de escala",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
               "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
@@ -63,6 +64,7 @@
           "additional_options": {
             "name": "Opções adicionais",
             "data": {
+              "mod": "Modificador de escala",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
               "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
