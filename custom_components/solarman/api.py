@@ -234,16 +234,12 @@ class Inverter():
                         _LOGGER.debug(f"[{self.config.serial}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                         self.state.update()
 
-        except (TimeoutError, Exception) as e:
-            _LOGGER.debug(f"[{self.config.serial}] Fetching failed. [Previous State: {self.state.print} ({self.state.value})]")
-
+        except Exception as e:
             await self.endpoint.discover()
-
             if self.state.reevaluate():
                 await self.modbus.disconnect()
                 raise
-
-            _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {format_exception(e)}")
+            _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 
         return result
 
