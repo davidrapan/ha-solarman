@@ -511,7 +511,7 @@ parameters:
             value: "Saturday"
           - bit: 6
             value: "Sunday"
-          - bit: 7
+          - key: 0x1F 
             value: "Weekdays"
           - bit: [6, 7]
             value: "Weekend"

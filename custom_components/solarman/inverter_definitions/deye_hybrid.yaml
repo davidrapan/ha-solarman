@@ -1662,24 +1662,38 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Disabled"
-          - key: 0x0003
+          - bit: [0, 1]
             value: "Monday"
-          - key: 0x0005
+          - bit: [0, 2]
             value: "Tuesday"
-          - key: 0x0009
+          - bit: [0, 3]
             value: "Wednesday"
-          - key: 0x0011
+          - bit: [0, 4]
             value: "Thursday"
-          - key: 0x0021
+          - bit: [0, 5]
             value: "Friday"
-          - key: 0x0041
+          - bit: [0, 6]
             value: "Saturday"
-          - key: 0x0081
+          - bit: [0, 7]
             value: "Sunday"
           - key: 0x003F
             value: "Weekdays"
           - key: 0x00C1
             value: "Weekend"
+          - key: 0x00FD
+            value: "Week -Monday"
+          - key: 0x00FB
+            value: "Week -Tuesday"
+          - key: 0x00F7
+            value: "Week -Wednesday"
+          - key: 0x00EF
+            value: "Week -Thursday"
+          - key: 0x00DF
+            value: "Week -Friday"
+          - key: 0x00BF
+            value: "Week -Saturday"
+          - key: 0x007F
+            value: "Week -Sunday"
           - key: 0x00FF
             value: "Week"
           - bit: 0
