@@ -76,7 +76,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
     def update(self):
         if (data := self.coordinator.data.get(self._attr_key)) and self.set_state(*data) and self.attributes:
-            if "inverse" in self.attributes and self._attr_native_value:
+            if "inverse_sensor" in self.attributes and self._attr_native_value:
                 self._attr_extra_state_attributes["−x"] = -self._attr_native_value
             for attr in filter(lambda a: a in self.coordinator.data, self.attributes):
                 self._attr_extra_state_attributes[self.attributes[attr].replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
