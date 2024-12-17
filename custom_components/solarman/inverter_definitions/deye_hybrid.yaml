@@ -1689,19 +1689,19 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Disabled"
-          - bit: [0, 1]
+          - key: 0x0003
             value: "Monday"
-          - bit: [0, 2]
+          - key: 0x0005
             value: "Tuesday"
-          - bit: [0, 3]
+          - key: 0x0009
             value: "Wednesday"
-          - bit: [0, 4]
+          - key: 0x0011
             value: "Thursday"
-          - bit: [0, 5]
+          - key: 0x0021
             value: "Friday"
-          - bit: [0, 6]
+          - key: 0x0041
             value: "Saturday"
-          - bit: [0, 7]
+          - key: 0x0081
             value: "Sunday"
           - key: 0x003F
             value: "Weekdays"
