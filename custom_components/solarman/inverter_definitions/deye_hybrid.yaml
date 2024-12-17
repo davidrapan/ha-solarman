@@ -910,7 +910,7 @@ parameters:
         device_class: power
         rule: 1
         registers: [0x00C3]
-        bit: 3
+        bit: 8
 
       - name: "Output Frequency"
         l: 1
@@ -2213,9 +2213,6 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0146]
-        value:
-          on: 0x2000
-          off: 0x0000
         lookup:
           - key: 0x0000
             value: Disabled
