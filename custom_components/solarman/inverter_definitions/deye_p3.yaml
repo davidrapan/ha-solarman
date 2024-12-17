@@ -676,7 +676,9 @@ parameters:
         registers: [0x0084]
         icon: "mdi:generator-stationary"
 
-      - name: "SmartLoad Mode"
+      - name: "IO Mode"
+        alt: Generator input mode
+        description: The Generator/SmartLoad/Microinverter input-output mode
         platform: "select"
         rule: 1
         registers: [0x0085]
@@ -685,7 +687,7 @@ parameters:
           - key: 0x0000
             value: "Generator"
           - key: 0x0001
-            value: "Output"
+            value: "SmartLoad"
           - key: 0x0002
             value: "Microinverter"
 
@@ -1827,7 +1829,8 @@ parameters:
         bit: 2
         icon: "mdi:transmission-tower"
 
-      - name: "SmartLoad"
+      - name: "Generator"
+        name_lookup: "io_mode_select"
         platform: "binary_sensor"
         device_class: power
         rule: 1
@@ -2496,11 +2499,12 @@ parameters:
         rule: 1
         registers: [0x028F]
 
-  - group: SmartLoad/Generator
+  - group: Generator/SmartLoad/Microinverter
     update_interval: 5
     items:
-      # SmartLoad/Generator - The voltage of phase A
-      - name: "SmartLoad L1 Voltage"
+      # Generator/SmartLoad/Microinverter - The voltage of phase A
+      - name: "Generator L1 Voltage"
+        name_lookup: "io_mode_select"
         l: 1
         class: "voltage"
         state_class: "measurement"
@@ -2509,8 +2513,9 @@ parameters:
         rule: 1
         registers: [0x0295]
 
-      # SmartLoad/Generator - The voltage of phase B
-      - name: "SmartLoad L2 Voltage"
+      # Generator/SmartLoad/Microinverter - The voltage of phase B
+      - name: "Generator L2 Voltage"
+        name_lookup: "io_mode_select"
         l: 2
         class: "voltage"
         state_class: "measurement"
@@ -2519,8 +2524,9 @@ parameters:
         rule: 1
         registers: [0x0296]
 
-      # SmartLoad/Generator - The voltage of phase C
-      - name: "SmartLoad L3 Voltage"
+      # Generator/SmartLoad/Microinverter - The voltage of phase C
+      - name: "Generator L3 Voltage"
+        name_lookup: "io_mode_select"
         l: 3
         class: "voltage"
         state_class: "measurement"
@@ -2530,7 +2536,8 @@ parameters:
         registers: [0x0297]
 
       # Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "SmartLoad L1 Power"
+      - name: "Generator L1 Power"
+        name_lookup: "io_mode_select"
         l: 1
         class: "power"
         state_class: "measurement"
@@ -2538,8 +2545,9 @@ parameters:
         rule: 2
         registers: [0x0298, 0x029C]
 
-      # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "SmartLoad L2 Power"
+      # Generator/SmartLoad/Microinverter - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Generator L2 Power"
+        name_lookup: "io_mode_select"
         l: 2
         class: "power"
         state_class: "measurement"
@@ -2547,8 +2555,9 @@ parameters:
         rule: 2
         registers: [0x0299, 0x029D]
 
-      # SmartLoad/Generator - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "SmartLoad L3 Power"
+      # Generator/SmartLoad/Microinverter - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Generator L3 Power"
+        name_lookup: "io_mode_select"
         l: 3
         class: "power"
         state_class: "measurement"
@@ -2556,8 +2565,9 @@ parameters:
         rule: 2
         registers: [0x029A, 0x029E]
 
-      # SmartLoad/Generator - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "SmartLoad Power"
+      # Generator/SmartLoad/Microinverter - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Generator Power"
+        name_lookup: "io_mode_select"
         l: 1
         description: Combined power of all three phases
         class: "power"

@@ -39,6 +39,11 @@ def create_entity(creator, description):
     try:
         entity = creator(description)
 
+        if description is not None and (nlookup := description.get("name_lookup")) is not None and (prefix := entity.coordinator.data.get(nlookup)) is not None:
+            description["name"] = replace_first(description["name"], get_tuple(prefix))
+            description["key"] = slugify('_'.join(filter(None, (description["name"], description["platform"]))))
+            entity = creator(description)
+
         entity.update()
 
         return entity
@@ -75,7 +80,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
         return True
 
     def update(self):
-        if (data := self.coordinator.data.get(self._attr_key)) and self.set_state(*data) and self.attributes:
+        if (data := self.coordinator.data.get(self._attr_key)) is not None and self.set_state(*data) and self.attributes:
             if "inverse_sensor" in self.attributes and self._attr_native_value:
                 self._attr_extra_state_attributes["−x"] = -self._attr_native_value
             for attr in filter(lambda a: a in self.coordinator.data, self.attributes):

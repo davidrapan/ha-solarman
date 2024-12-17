@@ -879,14 +879,14 @@ parameters:
         rule: 1
         registers: [0x00C0]
 
-      - name: "SmartLoad"
+      - name: "Generator"
+        name_lookup: "io_mode_select"
         update_interval: 30
         platform: "binary_sensor"
         device_class: power
         rule: 1
         registers: [0x00C3]
         bit: 3
-        icon: "mdi:lightning-bolt-circle"
 
       - name: "Output Frequency"
         l: 1
@@ -1010,16 +1010,8 @@ parameters:
         registers: [0x00C2]
         icon: "mdi:transmission-tower"
 
-      - name: "Generator"
-        update_interval: 30
-        platform: "binary_sensor"
-        device_class: power
-        rule: 1
-        mask: 0x00F0
-        registers: [0x00C3]
-
       - name: "Generator Power"
-        alt: "Microinverter Power"
+        name_lookup: "io_mode_select"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1027,6 +1019,7 @@ parameters:
         registers: [0x00A6]
 
       - name: "Generator Frequency"
+        name_lookup: "io_mode_select"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
@@ -1496,7 +1489,9 @@ parameters:
         registers: [0x00EA]
         icon: "mdi:generator-stationary"
 
-      - name: "SmartLoad Mode"
+      - name: "IO Mode"
+        alt: Generator input mode
+        description: The Generator/SmartLoad/Microinverter input-output mode
         platform: "select"
         rule: 1
         registers: [0x00EB]
@@ -1505,7 +1500,7 @@ parameters:
           - key: 0x0000
             value: "Generator"
           - key: 0x0001
-            value: "Output"
+            value: "SmartLoad"
           - key: 0x0002
             value: "Microinverter"
 

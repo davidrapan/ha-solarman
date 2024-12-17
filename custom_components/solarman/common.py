@@ -198,6 +198,9 @@ def get_addr_value(data, code, addr):
 def ilen(object):
     return len(object) if not isinstance(object, int) else 1
 
+def replace_first(object: str, newvalue, separator: str = ' '):
+    return separator.join(filter(None, (newvalue, str(parts[1] if (parts := object.split(separator, 1)) and len(parts) > 1 else ''))))
+
 def get_or_def(o, k, d):
     return o.get(k, d) or d
 
