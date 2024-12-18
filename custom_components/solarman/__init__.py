@@ -79,7 +79,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry({config_entry.as_dict()})")
 
-    # Forward setup
+    # Forward unload
     #
     _LOGGER.debug(f"async_setup: hass.config_entries.async_unload_platforms: {PLATFORMS}")
 

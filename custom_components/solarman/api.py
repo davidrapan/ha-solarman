@@ -203,10 +203,13 @@ class Inverter():
             except Exception as e:
                 _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
+                await self.endpoint.discover()
+
                 if not self.modbus.auto_reconnect:
                     await self.modbus.disconnect()
                 if not attempts_left > 0:
                     raise
+
                 await asyncio.sleep(((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP) if incremental_wait else TIMINGS_WAIT_SLEEP)
         
         return response
@@ -235,7 +238,6 @@ class Inverter():
                         self.state.update()
 
         except Exception as e:
-            await self.endpoint.discover()
             if self.state.reevaluate():
                 await self.modbus.disconnect()
                 raise

@@ -151,6 +151,9 @@ def unwrap(source: dict, key: Any, mod: int = 0):
         source[key] = c[mod]
     return source
 
+def entity_key(object: dict):
+    return slugify('_'.join(filter(None, (object["name"], object["platform"]))))
+
 def process_descriptions(item, group, table, code, mod):
     def modify(source: dict):
         for i in source:
@@ -161,7 +164,7 @@ def process_descriptions(item, group, table, code, mod):
 
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
-    item["key"] = slugify('_'.join(filter(None, (item["name"], item["platform"]))))
+    item["key"] = entity_key(item)
     bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
