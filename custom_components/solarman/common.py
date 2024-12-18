@@ -34,10 +34,6 @@ async def async_execute(x):
 async def async_listdir(path, prefix = ""):
     return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []
 
-def execute_async(x):
-    loop = asyncio.get_event_loop()
-    return loop.run_until_complete(x)
-
 def get_coordinator_descriptions(hass: HomeAssistant, entry_id: str, platform: str):
     coordinator = hass.data[DOMAIN][entry_id]
     return coordinator, coordinator.inverter.profile.parser.get_entity_descriptions(platform)

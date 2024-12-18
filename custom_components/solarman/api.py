@@ -104,7 +104,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
             return False
         if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
             self.log.debug("[%s] V5_HEARTBEAT: %s", self.serial, frame.hex(" "))
-            execute_async(self._heartbeat_response(frame))
+            asyncio.ensure_future(self._heartbeat_response(frame))
             return False
         return True
 
