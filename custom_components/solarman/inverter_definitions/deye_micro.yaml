@@ -3,7 +3,7 @@
 #
 # Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
 #
-# Tested with SUN2000G3, SUN-800-G3-EU-230 FW: 2.06, SUN-M80-G3-EU-Q0 FW: 2.06, SUN-M80-G3-EU-230 FW: 2.32-D1, 2.33-E3, SUN-M80G3-EU-230 and SUN-M60G3-EU-Q0
+# Tested with SUN2000G3, SUN-800-G3-EU-230 FW: 2.06, SUN-M80-G3-EU-Q0 FW: 2.06, SUN-M80-G3-EU-230 FW: 2.32-D1, 2.33-E3, 5.0C-S, SUN-M80G3-EU-230 and SUN-M60G3-EU-Q0
 #
 
 info:
