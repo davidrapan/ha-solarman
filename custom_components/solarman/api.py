@@ -53,43 +53,40 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
     async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._tcp_send_receive_frame(mb_request_frame), mb_request_frame)
 
-    async def _heartbeat_response(self):
-        v5_header = bytearray(
+    async def _heartbeat_response(self, request_frame):
+        v5_frame = bytearray(
             self.v5_start
             + struct.pack("<H", 10)
             + struct.pack("<H", 0x1710)
-            + struct.pack("<H", self._get_next_sequence_number())
+            + request_frame[5:6]
             + self.v5_loggerserial
-        )
-
-        v5_payload = bytearray(
-            struct.pack("<H", 0x0100)
+            + struct.pack("<H", 0x0100)
             + struct.pack("<I", int(time.time()))
             + struct.pack("<I", 0)
+            + self.v5_checksum
+            + self.v5_end
         )
 
-        v5_trailer = bytearray(self.v5_checksum + self.v5_end)
+        v5_frame[5] = v5_frame[5] + 1
 
-        v5_frame = v5_header + v5_payload + v5_trailer
-
-        v5_frame[len(v5_frame) - 2] = self._calculate_v5_frame_checksum(v5_frame)
+        v5_frame[-2] = self._calculate_v5_frame_checksum(v5_frame)
 
         self.log.debug("[%s] V5_HEARTBEAT RESPONSE: %s", self.serial, v5_frame.hex(" "))
         try:
             self.writer.write(v5_frame)
             await self.writer.drain()
-        except AttributeError as exc:
-            raise NoSocketAvailableError("Connection already closed") from exc
+        except AttributeError as e:
+            raise NoSocketAvailableError("Connection already closed") from e
         except NoSocketAvailableError:
             raise
         except TimeoutError:
             raise
-        except OSError as exc:
-            if exc.errno == errno.EHOSTUNREACH:
-                raise TimeoutError from exc
+        except OSError as e:
+            if e.errno == errno.EHOSTUNREACH:
+                raise TimeoutError from e
             raise
-        except Exception as exc:
-            self.log.exception("[%s] Send/Receive error: %s", self.serial, exc)
+        except Exception as e:
+            self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
             raise
 
     def _received_frame_is_valid(self, frame):
@@ -107,7 +104,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
             return False
         if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
             self.log.debug("[%s] V5_HEARTBEAT: %s", self.serial, frame.hex(" "))
-            execute_async(self._heartbeat_response())
+            execute_async(self._heartbeat_response(frame))
             return False
         return True
 
