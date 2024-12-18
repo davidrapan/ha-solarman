@@ -1,5 +1,6 @@
 import time
 import errno
+import struct
 import socket
 import logging
 import asyncio
@@ -13,7 +14,7 @@ from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_re
 from .const import *
 from .common import *
 from .provider import *
-from .include.pysolarmanv5 import PySolarmanV5Async
+from .include.pysolarmanv5 import PySolarmanV5Async, NoSocketAvailableError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,6 +53,45 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
     async def _tcp_parse_response_adu(self, mb_request_frame):
         return parse_response_adu(await self._tcp_send_receive_frame(mb_request_frame), mb_request_frame)
 
+    async def _heartbeat_response(self):
+        v5_header = bytearray(
+            self.v5_start
+            + struct.pack("<H", 10)
+            + struct.pack("<H", 0x1710)
+            + struct.pack("<H", self._get_next_sequence_number())
+            + self.v5_loggerserial
+        )
+
+        v5_payload = bytearray(
+            struct.pack("<H", 0x0100)
+            + struct.pack("<I", int(time.time()))
+            + struct.pack("<I", 0)
+        )
+
+        v5_trailer = bytearray(self.v5_checksum + self.v5_end)
+
+        v5_frame = v5_header + v5_payload + v5_trailer
+
+        v5_frame[len(v5_frame) - 2] = self._calculate_v5_frame_checksum(v5_frame)
+
+        self.log.debug("[%s] V5_HEARTBEAT RESPONSE: %s", self.serial, v5_frame.hex(" "))
+        try:
+            self.writer.write(v5_frame)
+            await self.writer.drain()
+        except AttributeError as exc:
+            raise NoSocketAvailableError("Connection already closed") from exc
+        except NoSocketAvailableError:
+            raise
+        except TimeoutError:
+            raise
+        except OSError as exc:
+            if exc.errno == errno.EHOSTUNREACH:
+                raise TimeoutError from exc
+            raise
+        except Exception as exc:
+            self.log.exception("[%s] Send/Receive error: %s", self.serial, exc)
+            raise
+
     def _received_frame_is_valid(self, frame):
         if self._passthrough:
             return True
@@ -66,7 +106,8 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
             self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
-            self.log.debug("[%s] COUNTER: %s", self.serial, frame.hex(" "))
+            self.log.debug("[%s] V5_HEARTBEAT: %s", self.serial, frame.hex(" "))
+            execute_async(self._heartbeat_response())
             return False
         return True
 
