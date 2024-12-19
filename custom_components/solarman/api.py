@@ -57,7 +57,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
         v5_frame = bytearray(
             self.v5_start
             + struct.pack("<H", 10)
-            + struct.pack("<H", 0x1710)
+            + CONTROL_CODE.HEARTBEAT_RESPONSE
             + request_frame[5:6]
             + self.v5_loggerserial
             + struct.pack("<H", 0x0100)
@@ -102,7 +102,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
         if frame[5] != self.sequence_number:
             self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
-        if frame.startswith(self.v5_start + b"\x01\x00\x10\x47"):
+        if frame.startswith(self.v5_start + CONTROL_CODE.HEARTBEAT):
             self.log.debug("[%s] V5_HEARTBEAT: %s", self.serial, frame.hex(" "))
             asyncio.ensure_future(self._heartbeat_response(frame))
             return False
