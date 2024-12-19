@@ -35,6 +35,8 @@ def _create_entity(coordinator, description, options):
                 return SolarmanBatteryCustomSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
             elif battery_nominal_voltage > 0 and battery_life_cycle_rating > 0 and name in ("Battery SOH", "Today Battery Life Cycles", "Total Battery Life Cycles"):
                 return SolarmanBatteryCustomSensor(coordinator, description, battery_nominal_voltage, battery_life_cycle_rating)
+            elif name == "Battery Capacity":
+                return SolarmanBatteryCapacitySensor(coordinator, description)
 
     if "persistent" in description:
         return SolarmanPersistentSensor(coordinator, description)
@@ -112,6 +114,30 @@ class SolarmanBatterySensor(SolarmanSensor):
         super().__init__(coordinator, sensor)
         if battery_nominal_voltage > 0 and battery_life_cycle_rating > 0:
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
+
+class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
+        self._states = []
+
+    def update(self):
+        if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None:
+            if power > -500:
+                self._states = []
+                return
+            if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is not None and (tbc := get_tuple(self.coordinator.data.get("total_battery_charge_sensor"))) is not None:
+                self._states.append((power, soc, tbc))
+                h = l = (soc, tbc)
+                for i in reversed(self._states):
+                    s = (i[1], i[2])
+                    if h[1] > l[1] > s[1]:
+                        break
+                    if h[1] == s[1]:
+                        h = l = s
+                    if l[1] >= s[1]:
+                        l = s
+                if h[1] > l[1] > s[1] and (diff := h[0] - l[0]) > 0:
+                    self.set_state((h[1] - l[1]) * (100 / (diff)))
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):

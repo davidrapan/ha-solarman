@@ -688,6 +688,15 @@ parameters:
         registers: [0x00BF]
         icon: "mdi:current-dc"
 
+      - name: "Battery Capacity"
+        description: Estimates capacity of the battery during charging
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        rule: 0
+        digits: 2
+        icon: "mdi:battery-check"
+
   - group: Grid
     items:
       - name: "Grid Frequency"

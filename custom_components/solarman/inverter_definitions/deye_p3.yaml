@@ -1988,6 +1988,16 @@ parameters:
         digits: 2
         icon: "mdi:battery-heart"
 
+      # Battery - Capacity
+      - name: "Battery Capacity"
+        description: Estimates capacity of the battery during charging
+        class: "power"
+        state_class: "measurement"
+        uom: "kW"
+        rule: 0
+        digits: 2
+        icon: "mdi:battery-check"
+
       # Battery - The state of battery
       - name: "Battery State"
         description: Determines battery state from battery power by +-50 W
