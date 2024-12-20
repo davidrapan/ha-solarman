@@ -118,26 +118,36 @@ class SolarmanBatterySensor(SolarmanSensor):
 class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
+        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_[DIGITS]
         self._states = []
+        self._temp = []
 
     def update(self):
-        if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None:
-            if power > -500:
-                self._states = []
+        if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None and (is_charging := power < 0) is not None and (was_charging := (self._temp[-1][0] < 0) if len(self._temp) > 0 else is_charging) is not None:
+            if len(self._states) == 0 and self._attr_native_value is not None:
+                self._attr_extra_state_attributes["states"] = self._states = [float(self._attr_native_value)]
+            if (power > -300 and was_charging) or (power < 300 and not was_charging):
+                self._temp = []
                 return
-            if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is not None and (tbc := get_tuple(self.coordinator.data.get("total_battery_charge_sensor"))) is not None:
-                self._states.append((power, soc, tbc))
-                h = l = (soc, tbc)
-                for i in reversed(self._states):
+            if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is not None and (tb := get_tuple(self.coordinator.data.get("total_battery_charge_sensor" if is_charging else "total_battery_discharge_sensor"))) is not None:
+                self._temp.append((power, soc, tb))
+                h = m = l = s = (soc, tb)
+                for i in reversed(self._temp):
                     s = (i[1], i[2])
-                    if h[1] > l[1] > s[1]:
+                    if h[1] > m[1] > l[1] > s[1]:
                         break
                     if h[1] == s[1]:
-                        h = l = s
-                    if l[1] >= s[1]:
+                        h = m = l = s
+                    if m[1] == h[1] or m[1] == s[1]:
+                        m = l = s
+                    if l[1] == m[1] or l[1] == s[1]:
                         l = s
-                if h[1] > l[1] > s[1] and (diff := h[0] - l[0]) > 0:
-                    self.set_state((h[1] - l[1]) * (100 / (diff)))
+                if h[1] > l[1] > s[1] and (diff := abs(h[0] - l[0])) > 0 and (state := get_number((h[1] - l[1]) * (100 / diff), self._digits)):
+                    self._states.append(state)
+                    self._attr_extra_state_attributes["states"] = self._states
+                    self._temp = [(power, soc, tb)]
+                    if (srtd := sorted(self._states)) and (c := srtd[1:-1] if len(srtd) > 2 else srtd):
+                        self.set_state(get_number((sum(c) + self._states[0]) / (len(c) + 1), self._digits))
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
