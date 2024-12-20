@@ -92,7 +92,6 @@ class SolarmanSensor(SolarmanSensorEntity):
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:
-        """Handle entity which will be added."""
         await super().async_added_to_hass()
 
         if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
@@ -122,10 +121,13 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
         self._states = []
         self._temp = []
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if len(self._states) == 0 and self._attr_native_value is not None:
+            self._attr_extra_state_attributes["states"] = self._states = [self._attr_native_value]
+
     def update(self):
         if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None and (is_charging := power < 0) is not None and (was_charging := (self._temp[-1][0] < 0) if len(self._temp) > 0 else is_charging) is not None:
-            if len(self._states) == 0 and self._attr_native_value is not None:
-                self._attr_extra_state_attributes["states"] = self._states = [float(self._attr_native_value)]
             if (power > -300 and was_charging) or (power < 300 and not was_charging):
                 self._temp = []
                 return
@@ -142,7 +144,7 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                         m = l = s
                     if l[1] == m[1] or l[1] == s[1]:
                         l = s
-                if h[1] > l[1] > s[1] and (diff := abs(h[0] - l[0])) > 0 and (state := get_number((h[1] - l[1]) * (100 / diff), self._digits)):
+                if h[1] > m[1] > l[1] > s[1] and (diff := abs(h[0] - l[0])) > 0 and (state := get_number((h[1] - l[1]) * (100 / diff), self._digits)):
                     self._states.append(state)
                     self._attr_extra_state_attributes["states"] = self._states
                     self._temp = [(power, soc, tb)]
