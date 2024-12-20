@@ -93,6 +93,9 @@
       "today_energy_import": {
         "name": "Dnešní import energie"
       },
+      "today_generation": {
+        "name": "Dnešní generace"
+      },
       "today_load_consumption": {
         "name": "Dnešní spotřeba zátěže"
       },
@@ -116,6 +119,9 @@
       },
       "total_energy_import": {
         "name": "Celkový import energie"
+      },
+      "total_generation": {
+        "name": "Celková generace"
       },
       "total_load_consumption": {
         "name": "Celková spotřeba zátěže"

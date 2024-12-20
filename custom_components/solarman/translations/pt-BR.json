@@ -75,5 +75,63 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Carga da bateria de hoje"
+      },
+      "today_battery_discharge": {
+        "name": "Descarga da bateria de hoje"
+      },
+      "today_battery_life_cycles": {
+        "name": "Ciclos de bateria de hoje"
+      },
+      "today_energy_export": {
+        "name": "Exportação de energia de hoje"
+      },
+      "today_energy_import": {
+        "name": "Importação de energia de hoje"
+      },
+      "today_generation": {
+        "name": "A geração de hoje"
+      },
+      "today_load_consumption": {
+        "name": "Consumo de carga de hoje"
+      },
+      "today_losses": {
+        "name": "Perdas de hoje"
+      },
+      "today_production": {
+        "name": "Produção de hoje"
+      },
+      "total_battery_charge": {
+        "name": "Carga total da bateria"
+      },
+      "total_battery_discharge": {
+        "name": "Descarga total da bateria"
+      },
+      "total_battery_life_cycles": {
+        "name": "Ciclos totais da bateria"
+      },
+      "total_energy_export": {
+        "name": "Exportação total de energia"
+      },
+      "total_energy_import": {
+        "name": "Importação total de energia"
+      },
+      "total_generation": {
+        "name": "Geração total"
+      },
+      "total_load_consumption": {
+        "name": "Consumo total de carga"
+      },
+      "total_losses": {
+        "name": "Perdas totais"
+      },
+      "total_production": {
+        "name": "Produção total"
+      }
+    }
   }
 }

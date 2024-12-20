@@ -93,6 +93,9 @@
       "today_energy_import": {
         "name": "Today's Energy Import"
       },
+      "today_generation": {
+        "name": "Today's Generation"
+      },
       "today_load_consumption": {
         "name": "Today's Load Consumption"
       },

@@ -93,6 +93,9 @@
       "today_energy_import": {
         "name": "Energia importata odierna"
       },
+      "today_generation": {
+        "name": "Generazione odierna"
+      },
       "today_load_consumption": {
         "name": "Consumo del carico odierno"
       },
@@ -101,6 +104,33 @@
       },
       "today_production": {
         "name": "Produzione odierna"
+      },
+      "total_battery_charge": {
+        "name": "Carica totale della batteria"
+      },
+      "total_battery_discharge": {
+        "name": "Scarica totale della batteria"
+      },
+      "total_battery_life_cycles": {
+        "name": "Cicli totali della batteria"
+      },
+      "total_energy_export": {
+        "name": "Esportazione totale di energia"
+      },
+      "total_energy_import": {
+        "name": "Importazione totale di energia"
+      },
+      "total_generation": {
+        "name": "Generazione totale"
+      },
+      "total_load_consumption": {
+        "name": "Consumo totale del carico"
+      },
+      "total_losses": {
+        "name": "Perdite totali"
+      },
+      "total_production": {
+        "name": "Produzione totale"
       }
     }
   }

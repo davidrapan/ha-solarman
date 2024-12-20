@@ -93,6 +93,9 @@
       "today_energy_import": {
         "name": "Heutige Energieimport"
       },
+      "today_generation": {
+        "name": "Heutige Generation"
+      },
       "today_load_consumption": {
         "name": "Heutiger Lastverbrauch"
       },
@@ -116,6 +119,9 @@
       },
       "total_energy_import": {
         "name": "Gesamt Energieimport"
+      },
+      "total_generation": {
+        "name": "Gesamt Generation"
       },
       "total_load_consumption": {
         "name": "Gesamt Lastverbrauch"

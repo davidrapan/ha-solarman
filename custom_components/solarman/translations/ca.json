@@ -93,6 +93,9 @@
       "today_energy_import": {
         "name": "Importació d'energia d'avui"
       },
+      "today_generation": {
+        "name": "Generació d'avui"
+      },
       "today_load_consumption": {
         "name": "Consum de càrrega d'avui"
       },
@@ -101,6 +104,33 @@
       },
       "today_production": {
         "name": "Producció d'avui"
+      },
+      "total_battery_charge": {
+        "name": "Càrrega total de la bateria"
+      },
+      "total_battery_discharge": {
+        "name": "Descàrrega total de la bateria"
+      },
+      "total_battery_life_cycles": {
+        "name": "Cicles totals de la bateria"
+      },
+      "total_energy_export": {
+        "name": "Exportació total d'energia"
+      },
+      "total_energy_import": {
+        "name": "Importació total d'energia"
+      },
+      "total_generation": {
+        "name": "Generació total"
+      },
+      "total_load_consumption": {
+        "name": "Consum total de càrrega"
+      },
+      "total_losses": {
+        "name": "Pèrdues totals"
+      },
+      "total_production": {
+        "name": "Producció total"
       }
     }
   }

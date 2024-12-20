@@ -79,28 +79,58 @@
   "entity": {
     "sensor": {
       "today_battery_charge": {
-        "name": "Заряд батареї за сьогодні"
+        "name": "Сьогоднішній заряд акумулятора"
       },
       "today_battery_discharge": {
-        "name": "Розряд батареї за сьогодні"
+        "name": "Сьогоднішня розрядка батареї"
       },
       "today_battery_life_cycles": {
-        "name": "Кількість циклів заряду/розряду батареї за сьогодні"
+        "name": "Сьогоднішні цикли батареї"
       },
       "today_energy_export": {
-        "name": "Експорт енергії за сьогодні"
+        "name": "Сьогоднішній експорт енергії"
       },
       "today_energy_import": {
-        "name": "Імпорт енергії за сьогодні"
+        "name": "Сьогоднішній імпорт енергії"
+      },
+      "today_generation": {
+        "name": "Сьогоднішня генерація"
       },
       "today_load_consumption": {
-        "name": "Споживання енергії за сьогодні"
+        "name": "Сьогоднішнє споживання навантаження"
       },
       "today_losses": {
-        "name": "Втрати енергії за сьогодні"
+        "name": "Сьогоднішні втрати"
       },
       "today_production": {
-        "name": "Виробництво енергії за сьогодні"
+        "name": "Сьогоднішнє виробництво"
+      },
+      "total_battery_charge": {
+        "name": "Загальний заряд акумулятора"
+      },
+      "total_battery_discharge": {
+        "name": "Повний розряд акумулятора"
+      },
+      "total_battery_life_cycles": {
+        "name": "Загальна кількість циклів батареї"
+      },
+      "total_energy_export": {
+        "name": "Загальний експорт енергоносіїв"
+      },
+      "total_energy_import": {
+        "name": "Загальний імпорт енергоносіїв"
+      },
+      "total_generation": {
+        "name": "Загальна генерація"
+      },
+      "total_load_consumption": {
+        "name": "Загальне споживання навантаження"
+      },
+      "total_losses": {
+        "name": "Загальні втрати"
+      },
+      "total_production": {
+        "name": "Загальний обсяг виробництва"
       }
     }
   }

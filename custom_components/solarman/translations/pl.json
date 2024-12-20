@@ -75,5 +75,63 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Dzisiejszy ładunek baterii"
+      },
+      "today_battery_discharge": {
+        "name": "Dzisiejsze rozładowanie baterii"
+      },
+      "today_battery_life_cycles": {
+        "name": "Dzisiejsze cykle baterii"
+      },
+      "today_energy_export": {
+        "name": "Dzisiejszy eksport energii"
+      },
+      "today_energy_import": {
+        "name": "Dzisiejszy import energii"
+      },
+      "today_generation": {
+        "name": "Dzisiejsza generacja"
+      },
+      "today_load_consumption": {
+        "name": "Dzisiejsze zużycie prądu"
+      },
+      "today_losses": {
+        "name": "Dzisiejsze straty"
+      },
+      "today_production": {
+        "name": "Dzisiejsza produkcja"
+      },
+      "total_battery_charge": {
+        "name": "Całkowity ładunek baterii"
+      },
+      "total_battery_discharge": {
+        "name": "Całkowity rozładowanie baterii"
+      },
+      "total_battery_life_cycles": {
+        "name": "Całkowita liczba cykli baterii"
+      },
+      "total_energy_export": {
+        "name": "Całkowity eksport energii"
+      },
+      "total_energy_import": {
+        "name": "Całkowity import energii"
+      },
+      "total_generation": {
+        "name": "Całkowita generacja"
+      },
+      "total_load_consumption": {
+        "name": "Całkowite zużycie obciążenia"
+      },
+      "total_losses": {
+        "name": "Całkowite straty"
+      },
+      "total_production": {
+        "name": "Całkowita produkcja"
+      }
+    }
   }
 }
