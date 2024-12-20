@@ -58,7 +58,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
             self.v5_start
             + struct.pack("<H", 10)
             + CONTROL_CODE.HEARTBEAT_RESPONSE
-            + request_frame[5:6]
+            + request_frame[5:7]
             + self.v5_loggerserial
             + struct.pack("<H", 0x0100)
             + struct.pack("<I", int(time.time()))
