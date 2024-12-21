@@ -50,16 +50,11 @@ parameters:
             "Device Modbus Address",
             "Device Protocol Version",
             "Device Serial Number",
-            "Device Control Board Version",
-            "Device Control Board Auxiliary MCU Software Version",
-            "Device Control Board Bootloader Software Version",
-            "Device AFCI Version",
-            "Device Control Board Auxiliary MCU Board Version",
-            "Device Control Board Firmware Version 2",
             "Device Control Board Firmware Version",
-            "Device Communication Board Firmware Version 1",
-            "Device Communication Board Firmware Version 2",
             "Device Communication Board Firmware Version",
+            "Device MCU Board Version",
+            "Device MCU Version",
+            "Device AFCI Version",
             "Device Rated Power",
             "Device MPPTs",
             "Device Phases",
@@ -81,66 +76,36 @@ parameters:
         rule: 5
         registers: [0x0003, 0x0004, 0x0005, 0x0006, 0x0007]
 
-      - name: "Device Control Board Version"
+      - name: "Device MCU Board Version"
         attribute:
         rule: 7
-        mask: 0x00FF
-        remove: "0."
+        delimiter: ""
         registers: [0x000A]
-
-      - name: "Device Control Board Auxiliary MCU Software Version"
-        attribute:
-        rule: 1
-        mask: 0xFF00
-        registers: [0x000B]
-
-      - name: "Device Control Board Bootloader Software Version"
-        attribute:
-        rule: 1
-        mask: 0x00FF
-        registers: [0x000B]
 
       - name: "Device AFCI Version"
         attribute:
         rule: 7
-        remove: "0."
+        delimiter: ""
         registers: [0x000C]
 
-      - name: "Device Control Board Auxiliary MCU Board Version"
+      - name: "Device MCU Version"
         attribute:
         rule: 7
-        remove: "0."
+        delimiter: ""
         registers: [0x000D]
-
-      - name: "Device Control Board Firmware Version 2"
-        attribute:
-        rule: 7
-        remove: "0."
-        registers: [0x000E]
 
       - name: "Device Control Board Firmware Version"
         attribute:
         rule: 7
-        remove: "0."
-        registers: [0x000F]
-
-      - name: "Device Communication Board Firmware Version 1"
-        attribute:
-        rule: 7
-        remove: "0."
-        registers: [0x0010]
-
-      - name: "Device Communication Board Firmware Version 2"
-        attribute:
-        rule: 7
-        remove: "0."
-        registers: [0x0011]
+        delimiter: ""
+        registers: [0x000E, 0x000F, 0x000B]
 
       - name: "Device Communication Board Firmware Version"
         attribute:
         rule: 7
-        remove: "0."
-        registers: [0x0012]
+        hex:
+        delimiter: ""
+        registers: [0x0011, 0x0012, 0x0010]
 
       - name: "Device Rated Power"
         attribute:

@@ -328,18 +328,28 @@ class ParameterParser:
 
     def try_parse_version(self, data, definition):
         code = get_code(definition, "read")
+        f = "{:1x}" if "hex" in definition else "{:1d}"
+        delimiter_digit, delimiter_register = (d, "-") if (d := definition.get("delimiter", '.')) is not None and isinstance(d, str) else (d.get("digit", "."), d.get("register", "-"))
         value = ""
+
+        registers_count = len(definition["registers"])
 
         for r in definition["registers"]:
             if (temp := get_addr_value(data, code, r)) is None:
                 return
 
-            value += str(temp >> 12) + "." + str(temp >> 8 & 0x0F) + "." + str(temp >> 4 & 0x0F) + "." + str(temp & 0x0F)
+            value += f.format(temp >> 12) + delimiter_digit + f.format(temp >> 8 & 0x0F) + delimiter_digit + f.format(temp >> 4 & 0x0F) + delimiter_digit + f.format(temp & 0x0F)
+
+            if registers_count > 1:
+                value += delimiter_register
+
+        if value.endswith(delimiter_register):
+            value = value[:-1]
 
         if (remove := definition.get("remove")) is not None:
             value = value.replace(remove, "")
 
-        self.set_state(definition["key"], value)
+        self.set_state(definition["key"], value.upper())
 
     def try_parse_datetime(self, data, definition):
         code = get_code(definition, "read")

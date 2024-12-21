@@ -47,9 +47,6 @@ parameters:
             "Device Serial Number",
             "Device Rated Phase",
             "Device Chip Type",
-            "Device Communication Board Firmware Version 2",
-            "Device Control Board Helper Version",
-            "Device Control Board Firmware Version 2",
             "Device Control Board Firmware Version",
             "Device Communication Board Firmware Version",
             "Device Rated Power",
@@ -101,30 +98,18 @@ parameters:
           - key: 0x0003
             value: "GD32F303"
 
-      - name: "Device Communication Board Firmware Version 2"
-        attribute:
-        rule: 7
-        registers: [0x000A]
-
-      - name: "Device Control Board Helper Version"
-        attribute:
-        rule: 7
-        registers: [0x000B]
-
-      - name: "Device Control Board Firmware Version 2"
-        attribute:
-        rule: 7
-        registers: [0x000C]
-
       - name: "Device Control Board Firmware Version"
         attribute:
         rule: 7
-        registers: [0x000D]
+        delimiter: ""
+        registers: [0x000D, 0x000C, 0x000B]
 
       - name: "Device Communication Board Firmware Version"
         attribute:
         rule: 7
-        registers: [0x000E]
+        hex:
+        delimiter: ""
+        registers: [0x000E, 0x000A]
 
       - name: "Device Rated Power"
         attribute:
