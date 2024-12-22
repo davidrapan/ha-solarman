@@ -1,7 +1,3 @@
-import time
-import errno
-import struct
-import socket
 import logging
 import asyncio
 import threading
@@ -9,144 +5,12 @@ import concurrent.futures
 
 from datetime import datetime
 
-from umodbus.client.tcp import read_coils, read_discrete_inputs, read_holding_registers, read_input_registers, write_single_coil, write_multiple_coils, write_single_register, write_multiple_registers, parse_response_adu
-
 from .const import *
 from .common import *
 from .provider import *
-from .include.pysolarmanv5 import PySolarmanV5Async, NoSocketAvailableError
+from .include.pysolarmanv5 import PySolarmanAsync
 
 _LOGGER = logging.getLogger(__name__)
-
-class PySolarmanV5AsyncWrapper(PySolarmanV5Async):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port = port, mb_slave_id = mb_slave_id, logger = _LOGGER, auto_reconnect = AUTO_RECONNECT, socket_timeout = TIMINGS_SOCKET_TIMEOUT)
-
-    @property
-    def auto_reconnect(self):
-        return self._needs_reconnect
-
-    async def connect(self) -> bool:
-        if not self.reader_task:
-            _LOGGER.info(f"[{self.serial}] Connecting to {self.address}:{self.port}")
-            await super().connect()
-            return True
-        return False
-
-    async def disconnect(self) -> None:
-        _LOGGER.info(f"[{self.serial}] Disconnecting from {self.address}:{self.port}")
-        try:
-            await super().disconnect()
-        finally:
-            self.reader_task = None
-            self.reader = None
-            self.writer = None
-
-class PySolarmanAsync(PySolarmanV5AsyncWrapper):
-    def __init__(self, address, serial, port, mb_slave_id):
-        super().__init__(address, serial, port, mb_slave_id)
-        self._passthrough = False
-
-    async def _tcp_send_receive_frame(self, mb_request_frame):
-        return mb_compatibility(await self._send_receive_v5_frame(mb_request_frame), mb_request_frame)
-
-    async def _tcp_parse_response_adu(self, mb_request_frame):
-        return parse_response_adu(await self._tcp_send_receive_frame(mb_request_frame), mb_request_frame)
-
-    async def _heartbeat_response(self, request_frame):
-        v5_frame = bytearray(
-            self.v5_start
-            + struct.pack("<H", 10)
-            + CONTROL_CODE.HEARTBEAT_RESPONSE
-            + request_frame[5:7]
-            + self.v5_loggerserial
-            + struct.pack("<H", 0x0100)
-            + struct.pack("<I", int(time.time()))
-            + struct.pack("<I", 0)
-            + self.v5_checksum
-            + self.v5_end
-        )
-
-        v5_frame[5] = (v5_frame[5] + 1) & 0xFF
-
-        v5_frame[-2] = self._calculate_v5_frame_checksum(v5_frame)
-
-        self.log.debug("[%s] V5_HEARTBEAT RESPONSE: %s", self.serial, v5_frame.hex(" "))
-        try:
-            self.writer.write(v5_frame)
-            await self.writer.drain()
-        except AttributeError as e:
-            raise NoSocketAvailableError("Connection already closed") from e
-        except NoSocketAvailableError:
-            raise
-        except TimeoutError:
-            raise
-        except OSError as e:
-            if e.errno == errno.EHOSTUNREACH:
-                raise TimeoutError from e
-            raise
-        except Exception as e:
-            self.log.exception("[%s] Send/Receive error: %s", self.serial, e)
-            raise
-
-    def _received_frame_is_valid(self, frame):
-        if self._passthrough:
-            return True
-        if not frame.startswith(self.v5_start):
-            self.log.debug("[%s] V5_MISMATCH: %s", self.serial, frame.hex(" "))
-            return False
-        if frame[5] != self.sequence_number and is_ethernet_frame(frame):
-            self.log.debug("[%s] V5_ETHERNET_DETECTED: %s", self.serial, frame.hex(" "))
-            self._passthrough = True
-            return True
-        if frame[5] != self.sequence_number:
-            self.log.debug("[%s] V5_SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
-            return False
-        if frame.startswith(self.v5_start + CONTROL_CODE.HEARTBEAT):
-            self.log.debug("[%s] V5_HEARTBEAT: %s", self.serial, frame.hex(" "))
-            asyncio.ensure_future(self._heartbeat_response(frame))
-            return False
-        return True
-
-    async def read_coils(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_coils(register_addr, quantity)
-        return await self._tcp_parse_response_adu(read_coils(self.mb_slave_id, register_addr, quantity))
-
-    async def read_discrete_inputs(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_discrete_inputs(register_addr, quantity)
-        return await self._tcp_parse_response_adu(read_discrete_inputs(self.mb_slave_id, register_addr, quantity))
-
-    async def read_input_registers(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_input_registers(register_addr, quantity)
-        return await self._tcp_parse_response_adu(read_input_registers(self.mb_slave_id, register_addr, quantity))
-
-    async def read_holding_registers(self, register_addr, quantity):
-        if not self._passthrough:
-            return await super().read_holding_registers(register_addr, quantity)
-        return await self._tcp_parse_response_adu(read_holding_registers(self.mb_slave_id, register_addr, quantity))
-
-    async def write_single_coil(self, register_addr, value):
-        if not self._passthrough:
-            return await super().write_single_coil(register_addr, value)
-        return await self._tcp_parse_response_adu(write_single_coil(self.mb_slave_id, register_addr, value))
-
-    async def write_multiple_coils(self, register_addr, values):
-        if not self._passthrough:
-            return await super().write_multiple_coils(register_addr, values)
-        return await self._tcp_parse_response_adu(write_multiple_coils(self.mb_slave_id, register_addr, values))
-
-    async def write_holding_register(self, register_addr, value):
-        if not self._passthrough:
-            return await super().write_holding_register(register_addr, value)
-        return await self._tcp_parse_response_adu(write_single_register(self.mb_slave_id, register_addr, value))
-
-    async def write_multiple_holding_registers(self, register_addr, values):
-        if not self._passthrough:
-            return await super().write_multiple_holding_registers(register_addr, values)
-        return await self._tcp_parse_response_adu(write_multiple_registers(self.mb_slave_id, register_addr, values))
 
 class InverterState():
     def __init__(self):
@@ -187,7 +51,7 @@ class Inverter():
         try:
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
-            self.modbus = PySolarmanAsync(*self.endpoint.connection)
+            self.modbus = PySolarmanAsync(*self.endpoint.connection, _LOGGER, AUTO_RECONNECT, TIMINGS_SOCKET_TIMEOUT)
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except BaseException as e:

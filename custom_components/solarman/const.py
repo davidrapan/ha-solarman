@@ -73,12 +73,6 @@ PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-
 
 ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l" }
 
-CONTROL_CODE = types.SimpleNamespace()
-CONTROL_CODE.REQUEST = struct.pack("<H", 0x4510)
-CONTROL_CODE.RESPONSE = struct.pack("<H", 0x1510)
-CONTROL_CODE.HEARTBEAT = struct.pack("<I", 0x47100001)
-CONTROL_CODE.HEARTBEAT_RESPONSE = struct.pack("<H", 0x1710)
-
 AUTO_RECONNECT = True
 
 # Data are requsted in most cases in different invervals:

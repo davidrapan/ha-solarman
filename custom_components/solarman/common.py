@@ -128,17 +128,6 @@ def group_when(iterable, predicate):
         i += 1
     yield iterable[x:size]
 
-def is_ethernet_frame(frame):
-    if frame[3:5] == CONTROL_CODE.REQUEST and (frame_len := len(frame)):
-        if frame_len > 9:
-            return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:]) and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])
-        if frame_len > 6: # [0xa5, 0x17, 0x00, 0x10, 0x45, 0x03, 0x00, 0x98, 0x02]
-            return int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])
-    return False
-
-def mb_compatibility(response, request):
-    return response if not 8 <= (l := len(response)) <= 10 else response[:5] + b'\x06' + response[6:] + (request[l:10] if len(request) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
-
 def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
 
