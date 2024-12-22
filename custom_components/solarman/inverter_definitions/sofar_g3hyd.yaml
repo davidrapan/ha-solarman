@@ -1395,3 +1395,80 @@ parameters:
           - key: 6
             value: "Generator"
         icon: "mdi:power-settings"
+
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: "Timed Program"
+        platform: number
+        rule: 1
+        registers: [0x11111]
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 3
+
+      - name: Timed Control
+        platform: select
+        rule: 1
+        registers: [0x1112]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Charge"
+          - key: 2
+            value: "Discharge"
+          - key: 3
+            value: "Both"
+
+      - name: Timed Charge Start
+        platform: time
+        rule: 9
+        registers: [0x1113]
+
+      - name: Timed Charge End
+        platform: time
+        rule: 9
+        registers: [0x1114]
+
+      - name: Timed Discharge Start
+        platform: time
+        rule: 9
+        registers: [0x1115]
+
+      - name: Timed Discharge End
+        platform: time
+        rule: 9
+        registers: [0x1116]
+
+      - name: "Timed Charge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x1117, 0x1118]
+        range:
+          min: 0
+          max: 4294967296
+
+      - name: "Timed Discharge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x1119, 0x111A]
+        range:
+          min: 0
+          max: 4294967296
+
+      - name: Timed Set Program
+        platform: button
+        class: restart
+        rule: 0
+        code:
+          write: 0x06
+        registers: [0x111F]
