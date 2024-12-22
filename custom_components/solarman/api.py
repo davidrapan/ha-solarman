@@ -67,7 +67,7 @@ class PySolarmanAsync(PySolarmanV5AsyncWrapper):
             + self.v5_end
         )
 
-        v5_frame[5] = v5_frame[5] + 1
+        v5_frame[5] = (v5_frame[5] + 1) & 0xFF
 
         v5_frame[-2] = self._calculate_v5_frame_checksum(v5_frame)
 
