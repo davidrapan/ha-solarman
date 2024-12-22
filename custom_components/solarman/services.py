@@ -79,23 +79,23 @@ def async_register(hass: HomeAssistant) -> None:
 
         return result
 
-    async def write_holding_register(call: ServiceCall) -> None:
-        _LOGGER.debug(f"write_holding_register: {call}")
+    async def write_single_register(call: ServiceCall) -> None:
+        _LOGGER.debug(f"write_single_register: {call}")
 
         inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(CODE.WRITE_HOLDING_REGISTER, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUE))
+            await inverter.call(CODE.WRITE_SINGLE_REGISTER, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
-    async def write_multiple_holding_registers(call: ServiceCall) -> None:
-        _LOGGER.debug(f"write_multiple_holding_registers: {call}")
+    async def write_multiple_registers(call: ServiceCall) -> None:
+        _LOGGER.debug(f"write_multiple_registers: {call}")
 
         inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(CODE.WRITE_MULTIPLE_HOLDING_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
+            await inverter.call(CODE.WRITE_MULTIPLE_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
@@ -108,9 +108,17 @@ def async_register(hass: HomeAssistant) -> None:
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_HOLDING_REGISTER, write_holding_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA)
+        DOMAIN, SERVICE_WRITE_SINGLE_REGISTER, write_single_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA)
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_WRITE_MULTIPLE_HOLDING_REGISTERS, write_multiple_holding_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA)
+        DOMAIN, SERVICE_WRITE_MULTIPLE_REGISTERS, write_multiple_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA)
+    )
+
+    hass.services.async_register(
+        DOMAIN, DEPRECATION_SERVICE_WRITE_SINGLE_REGISTER, write_single_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA)
+    )
+
+    hass.services.async_register(
+        DOMAIN, DEPRECATION_SERVICE_WRITE_MULTIPLE_REGISTERS, write_multiple_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA)
     )

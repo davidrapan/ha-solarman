@@ -140,7 +140,7 @@ class SolarmanWritableEntity(SolarmanEntity):
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
 
-        self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_HOLDING_REGISTERS)
+        self.code = get_code(sensor, "write", CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
 
     async def write(self, value, state = None) -> None:

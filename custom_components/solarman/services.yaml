@@ -66,8 +66,79 @@ read_input_registers:
           max: 125
           mode: box
 
+write_single_register:
+  name: Write Single Register (Modbus Function Code 6)
+  description: USE WITH CARE! (Some devices might not accept Code 6 in this case try to use 'Write Multiple Registers')
+  fields:
+    device:
+      name: Device
+      description: The Device
+      example: "Inverter"
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: solarman
+    register:
+      name: Register
+      description: Modbus register address
+      example: 16384
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    value:
+      name: Value
+      description: Value to write
+      example: "1"
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+
+write_multiple_registers:
+  name: Write Multiple Registers (Modbus Function Code 16)
+  description: USE WITH CARE! (Some devices might not accept Code 16 in this case try to use 'Write Single Register')
+  fields:
+    device:
+      name: Device
+      description: The Device
+      example: "Inverter"
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: solarman
+    register:
+      name: Register
+      description: Modbus register address
+      example: 16384
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    values:
+      name: Values
+      description: Values to write
+      example: |
+        - 1
+        - 2
+        - 3
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+
 write_holding_register:
-  name: Write Holding Register (Modbus Function Code 6)
+  name: DEPRECATED! Write Holding Register (Modbus Function Code 6)
   description: USE WITH CARE! (Some devices might not accept Code 6 in this case try to use 'Write Multiple Holding Registers')
   fields:
     device:
@@ -101,7 +172,7 @@ write_holding_register:
           mode: box
 
 write_multiple_holding_registers:
-  name: Write Multiple Holding Registers (Modbus Function Code 16)
+  name: DEPRECATED! Write Multiple Holding Registers (Modbus Function Code 16)
   description: USE WITH CARE! (Some devices might not accept Code 16 in this case try to use 'Write Holding Register')
   fields:
     device:

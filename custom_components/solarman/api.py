@@ -80,12 +80,12 @@ class Inverter():
                 return await self.modbus.read_input_registers(start, arg)
             case CODE.WRITE_SINGLE_COIL:
                 return await self.modbus.write_single_coil(start, arg)
-            case CODE.WRITE_HOLDING_REGISTER:
-                return await self.modbus.write_holding_register(start, arg)
+            case CODE.WRITE_SINGLE_REGISTER:
+                return await self.modbus.write_single_register(start, arg)
             case CODE.WRITE_MULTIPLE_COILS:
                 return await self.modbus.write_multiple_coils(start, ensure_list(arg))
-            case CODE.WRITE_MULTIPLE_HOLDING_REGISTERS:
-                return await self.modbus.write_multiple_holding_registers(start, ensure_list(arg))
+            case CODE.WRITE_MULTIPLE_REGISTERS:
+                return await self.modbus.write_multiple_registers(start, ensure_list(arg))
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
