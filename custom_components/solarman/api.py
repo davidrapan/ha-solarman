@@ -131,7 +131,7 @@ class Inverter():
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         quantity = end - start + 1
-                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}")
+                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02} | 0x{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}")
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -152,4 +152,4 @@ class Inverter():
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.try_read_write(code, start, arg, f"Call {code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
+                return await self.try_read_write(code, start, arg, f"Call {code:02} | 0x{code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
