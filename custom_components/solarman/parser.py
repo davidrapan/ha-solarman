@@ -100,24 +100,17 @@ class ParameterParser:
 
     def in_range(self, value, definition):
         if (range := definition.get("range")) is not None:
-            if (min := range.get("min")) is not None and (max := range.get("max")) is not None:
-                if value < min or value > max:
-                    _LOGGER.debug(f"Value: {value} of {definition["registers"]} is out of range: {range}")
-                    return False
+            if ((min := range.get("min")) is not None and value < min) or ((max := range.get("max")) is not None and value > max):
+                _LOGGER.debug(f"Value: {value} of {definition["registers"]} is out of range: {range}")
+                return False
 
         return True
 
     def do_validate(self, key, value, rule):
-        if "min" in rule and (min := rule["min"]) is not None and min > value:
-            _LOGGER.debug(f"do_validate {key}: {value} < {min}")
+        if ((min := rule.get("min")) is not None and min > value) or ((max := rule.get("max")) is not None and max < value):
+            _LOGGER.debug(f"Value: {value} of {key} validation failed: {rule}")
             if "invalidate_all" in rule:
-                raise ValueError(f"Invalidate complete dataset - {key}: {value} < {min}")
-            return False
-
-        if "max" in rule and (max := rule["max"]) is not None and max < value:
-            _LOGGER.debug(f"do_validate {key}: {value} > {max}")
-            if "invalidate_all" in rule:
-                raise ValueError(f"Invalidate complete dataset - {key}: {value} > {max}")
+                raise ValueError(f"Invalidate complete dataset - {value} of {key} validation failed: {rule}")
             return False
 
         return True
