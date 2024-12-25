@@ -31,13 +31,20 @@ body:
     id: version
     attributes:
       label: Version
-      placeholder: 24.12.08
+      placeholder: "24.12.22"
     validations:
       required: true
   - type: input
     id: version_ha
     attributes:
-      label: Home Assistant Version
-      placeholder: 2024.12.1
+      label: Home Assistant Core Version
+      placeholder: "2024.12.5"
+    validations:
+      required: true
+  - type: input
+    id: version_ha
+    attributes:
+      label: Home Assistant Operating System Version
+      placeholder: "14.1"
     validations:
       required: true
