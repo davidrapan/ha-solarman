@@ -127,7 +127,9 @@ parameters:
         registers: [0x0016]
         range:
           min: 257
-          max: 2051
+        validation:
+          max: 12
+          default: 2
 
       - name: "Device Phases"
         attribute:
@@ -136,7 +138,9 @@ parameters:
         registers: [0x0016]
         range:
           min: 257
-          max: 2051
+        validation:
+          max: 3
+          default: 3
 
       - name: Device Self-check
         attribute:

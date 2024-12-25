@@ -79,7 +79,7 @@ def lookup_profile(response, attr):
         f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))
         if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in (0x0003, 0x0300):
             attr[ATTR_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, attr[ATTR_[CONF_PHASE]])
-        if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F):
+        if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
             attr[ATTR_[CONF_MOD]], attr[ATTR_[CONF_MPPT]], attr[ATTR_[CONF_PHASE]] = max(m, attr[ATTR_[CONF_MOD]]), min(t, attr[ATTR_[CONF_MPPT]]), min(p, attr[ATTR_[CONF_PHASE]])
         return f
     raise Exception("Unable to read Device Type at Modbus register address: 0x0000")

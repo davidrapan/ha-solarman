@@ -128,7 +128,9 @@ parameters:
         registers: [0x0012]
         range:
           min: 257
-          max: 2051
+        validation:
+          max: 12
+          default: 2
 
       - name: "Device Phases"
         attribute:
@@ -137,7 +139,9 @@ parameters:
         registers: [0x0012]
         range:
           min: 257
-          max: 2051
+        validation:
+          max: 3
+          default: 3
 
   - group: Control
     update_interval: 5
