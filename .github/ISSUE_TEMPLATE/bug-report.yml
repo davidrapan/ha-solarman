@@ -35,14 +35,14 @@ body:
     validations:
       required: true
   - type: input
-    id: version_ha
+    id: version_core
     attributes:
       label: Home Assistant Core Version
       placeholder: "2024.12.5"
     validations:
       required: true
   - type: input
-    id: version_ha
+    id: version_haos
     attributes:
       label: Home Assistant Operating System Version
       placeholder: "14.1"
