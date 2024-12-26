@@ -66,7 +66,7 @@ class InverterDiscovery:
         async for item in self._discover([str(net.broadcast_address) for net in nets], True):
             yield item
 
-    async def discover(self):
+    async def discover(self, ping_only = False):
         _LOGGER.debug(f"discover")
 
         self._devices = {}
@@ -76,6 +76,8 @@ class InverterDiscovery:
             self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
             if len(self._devices) > 0 and not self._serial in self._devices:
                 self._devices = {}
+            if ping_only:
+                return self._devices
 
         attempts_left = ACTION_ATTEMPTS
         while len(self._devices) == 0 and attempts_left > 0:

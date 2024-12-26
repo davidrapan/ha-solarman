@@ -55,7 +55,7 @@ class Inverter():
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except TimeoutError as e:
-            raise TimeoutError(f"[{self.config.serial}] Device setup timed out.") from e
+            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e
         except BaseException as e:
             raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
 
@@ -107,7 +107,7 @@ class Inverter():
             except Exception as e:
                 _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                await self.endpoint.discover()
+                await self.endpoint.discover(True)
 
                 if not self.modbus.auto_reconnect:
                     await self.modbus.disconnect()
