@@ -15,6 +15,8 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class InverterDiscovery:
+    networks = None
+
     def __init__(self, hass: HomeAssistant, ip = None, serial = None):
         self._hass = hass
         self._ip = ip
@@ -59,11 +61,11 @@ class InverterDiscovery:
         if not self._hass:
             return
 
-        adapters = await network.async_get_adapters(self._hass)
-        nets = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in adapters if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
+        if InverterDiscovery.networks is None:
+            InverterDiscovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
-        _LOGGER.debug(f"_discover_all: Broadcasting on {nets}")
-        async for item in self._discover([str(net.broadcast_address) for net in nets], True):
+        _LOGGER.debug(f"_discover_all: Broadcasting on {InverterDiscovery.networks}")
+        async for item in self._discover([str(net.broadcast_address) for net in InverterDiscovery.networks], True):
             yield item
 
     async def discover(self, ping_only = False):
