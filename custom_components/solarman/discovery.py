@@ -74,14 +74,14 @@ class InverterDiscovery:
         self._devices = {}
 
         if self._ip:
-            _LOGGER.debug(f"_discover_all: Broadcasting on {self._ip}")
+            _LOGGER.debug(f"_discover: Broadcasting on {self._ip}")
             self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
             if len(self._devices) > 0 and not self._serial in self._devices:
                 self._devices = {}
             if ping_only:
                 return self._devices
 
-        attempts_left = ACTION_ATTEMPTS
+        attempts_left = 1
         while len(self._devices) == 0 and attempts_left > 0:
             attempts_left -= 1
 
