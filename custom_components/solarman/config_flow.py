@@ -82,7 +82,7 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 5
+    MINOR_VERSION = 6
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
@@ -110,7 +110,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         errors = {}
 
         if validate_connection(user_input, errors):
-            await self.async_set_unique_id(user_input[CONF_SERIAL])
+            await self.async_set_unique_id(f"solarman_{user_input[CONF_SERIAL]}")
             self._abort_if_unique_id_configured() # self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
             return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
 
