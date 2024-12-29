@@ -117,18 +117,19 @@ class SolarmanBatterySensor(SolarmanSensor):
 class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
-        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_[DIGITS]
+        self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])
+        self._threshold = sensor.get("threshold", 200)
         self._states = []
         self._temp = []
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-        if len(self._states) == 0 and self._attr_native_value is not None:
-            self._attr_extra_state_attributes["states"] = self._states = [self._attr_native_value]
+        if (state := await self.async_get_last_state()) and "states" in state.attributes:
+            self._attr_extra_state_attributes["states"] = self._states = state.attributes["states"]
 
     def update(self):
         if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None and (is_charging := power < 0) is not None and (was_charging := (self._temp[-1][0] < 0) if len(self._temp) > 0 else is_charging) is not None:
-            if (power > -300 and was_charging) or (power < 300 and not was_charging):
+            if (power > -self._threshold and was_charging) or (power < self._threshold and not was_charging):
                 self._temp = []
                 return
             if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is not None and (tb := get_tuple(self.coordinator.data.get("total_battery_charge_sensor" if is_charging else "total_battery_discharge_sensor"))) is not None:
@@ -148,15 +149,15 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                     self._states.append(state)
                     self._attr_extra_state_attributes["states"] = self._states
                     self._temp = [(power, soc, tb)]
-                    if (srtd := sorted(self._states)) and (c := srtd[1:-1] if len(srtd) > 2 else srtd):
-                        self.set_state(get_number((sum(c) + self._states[0]) / (len(c) + 1), self._digits))
+                    if (srtd := sorted(self._states)):
+                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits))
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, sensor)
+        self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])
         self._battery_nominal_voltage = battery_nominal_voltage
         self._battery_life_cycle_rating = battery_life_cycle_rating
-        self._digits = sensor[DIGITS] if DIGITS in sensor else DEFAULT_[DIGITS]
 
     def update(self):
         #super().update()
