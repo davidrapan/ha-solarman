@@ -154,4 +154,4 @@ class Inverter():
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.try_read_write(code, start, arg, f"Call {code:02} ❘ 0x{code:02X} ~ {start} ❘ 0x{start:04X}: {arg}", False)
+                return await self.try_read_write(code, start, arg, f"Call {code:02} ❘ 0x{code:02X} ~ {start} ❘ 0x{start:04X}: {arg}")
