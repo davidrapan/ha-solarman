@@ -91,7 +91,7 @@ class Inverter():
             case _:
                 raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
 
-    async def try_read_write(self, code, start, arg, message: str, incremental_wait: bool = True):
+    async def try_read_write(self, code, start, arg, message: str):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
         response = None
@@ -114,15 +114,15 @@ class Inverter():
                 if not attempts_left > 0:
                     raise
 
-                await asyncio.sleep(((ACTION_ATTEMPTS - attempts_left) * TIMINGS_WAIT_SLEEP) if incremental_wait else TIMINGS_WAIT_SLEEP)
-        
+                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
+
         return response
 
     async def get(self, runtime = 0, requests = None):
         scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount > 1 else ''}. ^{runtime}")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
 
         if scount == 0:
             return result
@@ -133,7 +133,7 @@ class Inverter():
                     for request in scheduled:
                         code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         quantity = end - start + 1
-                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02} | 0x{code:02X} ~ {start:04} - {end:04} | 0x{start:04X} - 0x{end:04X} #{quantity:03}")
+                        responses[(code, start)] = await self.try_read_write(code, start, quantity, f"Querying {code:02} ❘ 0x{code:02X} ~ {start:04} - {end:04} ❘ 0x{start:04X} - 0x{end:04X} #{quantity:03}")
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -150,8 +150,8 @@ class Inverter():
         return result
 
     async def call(self, code, start, arg):
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling request.")
+        _LOGGER.debug(f"[{self.config.serial}] Scheduling request")
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.try_read_write(code, start, arg, f"Call {code:02} | 0x{code:02X} ~ {start} | 0x{start:04X}: {arg}", False)
+                return await self.try_read_write(code, start, arg, f"Call {code:02} ❘ 0x{code:02X} ~ {start} ❘ 0x{start:04X}: {arg}", False)
