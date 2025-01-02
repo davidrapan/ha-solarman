@@ -14,13 +14,21 @@ _LOGGER = logging.getLogger(__name__)
 
 class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, inverter: Inverter):
-        super().__init__(hass, _LOGGER, name = inverter.config.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
+        super().__init__(
+            hass,
+            _LOGGER,
+            name=inverter.config.name,
+            update_interval=TIMINGS_UPDATE_INTERVAL,
+            always_update=False,
+        )
         self.inverter = inverter
         self._counter = 0
+        self._last_successful_data: dict[str, Any] | None = None
+        self._is_offline_logged = False
 
     async def _async_setup(self) -> None:
         try:
-            return await self.inverter.load()
+            await self.inverter.load()
         except Exception as e:
             if isinstance(e, TimeoutError):
                 raise
@@ -28,16 +36,28 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            return await self.inverter.get(int(self._counter * self._update_interval_seconds))
+            data = await self.inverter.get(int(self._counter * self._update_interval_seconds))
+            self._last_successful_data = data
+            self._is_offline_logged = False
+            return data
         except Exception as e:
             self._counter = 0
+
+            if not self._is_offline_logged:
+                _LOGGER.warning("Error retrieving data. Use last known data.")
+                self._is_offline_logged = True
+
+            if self._last_successful_data is not None:
+                return self._last_successful_data
+
             if isinstance(e, TimeoutError):
                 raise
+            
             raise UpdateFailed(e) from e
         finally:
             if self.last_update_success:
                 self._counter += 1
-
+                
     #async def _reload(self):
     #    _LOGGER.debug('_reload')
     #    await self.hass.services.async_call("homeassistant", "reload_config_entry", { "entity_id": "???" }, blocking = False)
