@@ -258,6 +258,18 @@ parameters:
           - key: "default"
             value: "Error"
 
+      - name: "Device Debug 1"
+        class: "enum"
+        rule: 3
+        registers: [0x0069]
+        icon: "mdi:message-alert-outline"
+
+      - name: "Device Debug 2"
+        class: "enum"
+        rule: 3
+        registers: [0x006A]
+        icon: "mdi:message-alert-outline"
+
   - group: PV
     items:
       - name: PV Power
