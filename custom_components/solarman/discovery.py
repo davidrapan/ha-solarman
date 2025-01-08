@@ -53,7 +53,7 @@ class InverterDiscovery:
                     except (TimeoutError, socket.timeout):
                         break
         except Exception as e:
-            _LOGGER.exception(f"_discover: {format_exception(e)}")
+            _LOGGER.debug(f"_discover exception: {format_exception(e)}")
 
     async def _discover_all(self) -> dict:
         _LOGGER.debug(f"_discover_all")
