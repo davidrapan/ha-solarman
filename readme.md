@@ -39,6 +39,11 @@
 ### 🔧 Manually
 - Copy the contents of `custom_components/solarman` directory into the Home Assistant with exactly the same hirearchy within the `/config` directory
 
+## ⚙️ Configuration
+- In Home Assistant, go to Settings > Devices & services > Integrations
+- Click the `+ ADD INTEGRATION` button, search for and select "Solarman"
+- Enter the appropriate details (they should be autodiscovered under most circumstances) and submit
+
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=davidrapan/ha-solarman" />
