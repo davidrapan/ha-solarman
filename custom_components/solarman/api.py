@@ -107,7 +107,7 @@ class Inverter():
             except Exception as e:
                 _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
-                if attempts_left == ACTION_ATTEMPTS - 2:
+                if isinstance(e, TimeoutError):
                     await self.endpoint.discover(True)
                 if not self.modbus.auto_reconnect:
                     await self.modbus.disconnect()
