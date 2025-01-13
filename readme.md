@@ -37,7 +37,7 @@
 - Find newly added Solarman, open it and click DOWNLOAD
 
 ### 🔧 Manually
-- Copy the contents of `custom_components/solarman` directory into the Home Assistant with exactly the same hirearchy within the `/config` directory
+- Copy the contents of `custom_components/solarman` to `/config/custom_components/solarman` in Home Assistant
 
 ## ⚙️ Configuration
 - Go to Settings > Devices & services > Integrations
