@@ -679,9 +679,9 @@ parameters:
 
       - name: "Battery Capacity"
         description: Estimates capacity of the battery during (dis)charging
-        class: "power"
+        class: "energy"
         state_class: "measurement"
-        uom: "kW"
+        uom: "kWh"
         rule: 0
         digits: 1
         icon: "mdi:battery-check"
