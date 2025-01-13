@@ -30,10 +30,10 @@
 
 [![🔌 Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=davidrapan&repository=ha-solarman&category=integration)
 
-### 🪛 HACS (Manually)
+### 🪛 HACS
 - Follow the link [here](https://hacs.xyz/docs/faq/custom_repositories/)
-- Add custom repository: https://github.com/davidrapan/ha-solarman
-- Select type of the category: **integration**
+- Repository: **davidrapan/ha-solarman**
+- Select type of the category: **Integration**
 - Find newly added Solarman, open it and click DOWNLOAD
 
 ### 🔧 Manually
