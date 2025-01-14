@@ -30,19 +30,19 @@
 
 [![🔌 Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=davidrapan&repository=ha-solarman&category=integration)
 
-### 🪛 HACS (Manually)
+### 🪛 HACS
 - Follow the link [here](https://hacs.xyz/docs/faq/custom_repositories/)
-- Add custom repository: https://github.com/davidrapan/ha-solarman
-- Select type of the category: **integration**
-- Find newly added Solarman, open it and then click on the DOWNLOAD button
+- Repository: **davidrapan/ha-solarman**
+- Select type of the category: **Integration**
+- Find newly added Solarman, open it and click DOWNLOAD
 
 ### 🔧 Manually
-- Copy the contents of `custom_components/solarman` directory into the Home Assistant with exactly the same hirearchy within the `/config` directory
+- Copy the contents of `custom_components/solarman` to `/config/custom_components/solarman` in Home Assistant
 
 ## ⚙️ Configuration
-- In Home Assistant, go to Settings > Devices & services > Integrations
-- Click the `+ ADD INTEGRATION` button, search for and select "Solarman"
-- Enter the appropriate details (they should be autodiscovered under most circumstances) and submit
+- Go to Settings > Devices & services > Integrations
+- Click ADD INTEGRATION, search for and select Solarman
+- Enter the appropriate details (should be autodiscovered under most circumstances) and click SUBMIT
 
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">
