@@ -16,15 +16,15 @@
 - [Naming Scheme](https://github.com/davidrapan/ha-solarman/wiki/Naming-Scheme)
 - [Supported Devices](https://github.com/davidrapan/ha-solarman/wiki/Supported-Devices)
 
+> [!IMPORTANT]  
+> - Made for [🏡 Home Assistant](https://www.home-assistant.io/)  
+> - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
+> - Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and even supports Ethernet Loggers
+
 > [!NOTE]  
 > - It's still 🚧 work in progress  but currently very 🐎 stable 😉  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
 > - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 💡 Development Planning and 🎁 feature requests, etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
-
-> [!IMPORTANT]  
-> - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> - Made for [Home Assistant](https://www.home-assistant.io/) w/ fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/)  
-> - Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and even supports Ethernet Loggers
 
 ## 🔌 Installation
 
