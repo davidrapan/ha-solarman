@@ -38,10 +38,6 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if self.last_update_success:
                 self._counter += 1
 
-    #async def _reload(self):
-    #    _LOGGER.debug('_reload')
-    #    await self.hass.services.async_call("homeassistant", "reload_config_entry", { "entity_id": "???" }, blocking = False)
-
     async def async_shutdown(self) -> None:
         _LOGGER.debug("async_shutdown")
         await super().async_shutdown()
