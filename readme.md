@@ -23,7 +23,7 @@
 
 > [!IMPORTANT]  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> - Made for Home Assistant w/ fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/)  
+> - Made for [Home Assistant](https://www.home-assistant.io/) w/ fetching through [DataUpdateCoordinator](https://developers.home-assistant.io/docs/integration_fetching_data/)  
 > - Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and even supports Ethernet Loggers
 
 ## 🔨 Installation
