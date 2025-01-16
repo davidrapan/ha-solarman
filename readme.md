@@ -40,6 +40,9 @@
 - Copy the contents of `custom_components/solarman` to `/config/custom_components/solarman` in Home Assistant
 
 ## ⚙️ Configuration
+
+[![⚙️ Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=solarman)
+
 - Go to Settings > Devices & services > Integrations
 - Click ADD INTEGRATION, search for and select Solarman
 - Enter the appropriate details (should be autodiscovered under most circumstances) and click SUBMIT
