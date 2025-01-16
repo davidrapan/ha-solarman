@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy
 import logging
 
 from typing import Any
@@ -9,7 +10,6 @@ from homeassistant.components.template.sensor import TriggerSensorEntity
 from homeassistant.helpers.template import Template
 
 from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -17,6 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
+from .provider import SolarmanConfigEntry
 from .entity import create_entity, SolarmanEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,10 +47,11 @@ def _create_entity(coordinator, description, options):
 
     return SolarmanSensor(coordinator, description)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator, descriptions = get_coordinator_descriptions(hass, config_entry.entry_id, _PLATFORM)
+    coordinator = config_entry.runtime_data
+    descriptions = coordinator.inverter.profile.parser.get_entity_descriptions(_PLATFORM)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
@@ -59,7 +61,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     return True
 
-async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_unload_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True

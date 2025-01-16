@@ -6,14 +6,13 @@ from functools import partial
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
-from .provider import ConfigurationProvider
+from .provider import SolarmanConfigEntry, ConfigurationProvider
 from .coordinator import Inverter, InverterCoordinator
 from .config_flow import ConfigFlowHandler
 from .entity import migrate_unique_ids
@@ -32,13 +31,11 @@ async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
 
     return True
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
     config = ConfigurationProvider(hass, config_entry)
-    coordinator = InverterCoordinator(hass, Inverter(config))
-
-    hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = coordinator
+    config_entry.runtime_data = InverterCoordinator(hass, Inverter(config))
 
     # Fetch initial data so we have data when entities subscribe.
     #
@@ -46,11 +43,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     # raise ConfigEntryNotReady and setup will try again later.
     #
     # If you do not want to retry setup on failure, use
-    # coordinator.async_refresh() instead.
+    # config_entry.runtime_data.async_refresh() instead.
     #
-    _LOGGER.debug(f"async_setup: coordinator.async_config_entry_first_refresh")
+    _LOGGER.debug(f"async_setup: config_entry.runtime_data.async_config_entry_first_refresh")
 
-    await coordinator.async_config_entry_first_refresh()
+    await config_entry.runtime_data.async_config_entry_first_refresh()
 
     # Migrations
     #
@@ -68,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     #
     _LOGGER.debug(f"async_setup: config_entry.add_update_listener(async_update_listener)")
 
-    async def async_update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    async def async_update_listener(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> None:
         _LOGGER.debug(f"async_update_listener({config_entry.as_dict()})")
         await hass.config_entries.async_reload(config_entry.entry_id)
 
@@ -76,19 +73,16 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     return True
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry({config_entry.as_dict()})")
 
     # Forward unload
     #
     _LOGGER.debug(f"async_setup: hass.config_entries.async_unload_platforms: {PLATFORMS}")
 
-    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
-        _ = hass.data[DOMAIN].pop(config_entry.entry_id)
+    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
-    return unload_ok
-
-async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
 
     #if config_entry.minor_version > 1:
