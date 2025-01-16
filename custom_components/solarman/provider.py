@@ -16,14 +16,17 @@ from homeassistant.config_entries import ConfigEntry
 from .const import *
 from .common import *
 from .discovery import InverterDiscovery
+from .coordinator import InverterCoordinator
 from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
 
+type SolarmanConfigEntry = ConfigEntry[InverterCoordinator]
+
 @dataclass
 class ConfigurationProvider:
     hass: HomeAssistant
-    config_entry: ConfigEntry
+    config_entry: SolarmanConfigEntry
 
     @cached_property
     def _data(self):

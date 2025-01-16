@@ -5,24 +5,25 @@ import logging
 from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.components.datetime import DateTimeEntity, DateTimeEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
 from .common import *
 from .services import *
+from .provider import SolarmanConfigEntry
 from .entity import create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator, descriptions = get_coordinator_descriptions(hass, config_entry.entry_id, _PLATFORM)
+    coordinator = config_entry.runtime_data
+    descriptions = coordinator.inverter.profile.parser.get_entity_descriptions(_PLATFORM)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
@@ -30,7 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     return True
 
-async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_unload_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
