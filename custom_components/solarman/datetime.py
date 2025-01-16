@@ -12,8 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .provider import SolarmanConfigEntry
-from .entity import create_entity, SolarmanWritableEntity
+from .entity import SolarmanConfigEntry, create_entity, SolarmanWritableEntity
 
 _LOGGER = logging.getLogger(__name__)
 
