@@ -46,7 +46,7 @@ def _create_entity(coordinator, description, options):
 
     return SolarmanSensor(coordinator, description)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
     coordinator = config_entry.runtime_data

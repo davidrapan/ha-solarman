@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
     coordinator = config_entry.runtime_data
