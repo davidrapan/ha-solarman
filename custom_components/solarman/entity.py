@@ -9,6 +9,7 @@ from datetime import date, datetime, time
 from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
 from homeassistant.const import EntityCategory, STATE_UNKNOWN, CONF_FRIENDLY_NAME
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_registry import RegistryEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -20,6 +21,8 @@ from .services import *
 from .coordinator import InverterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+type SolarmanConfigEntry = ConfigEntry[InverterCoordinator]
 
 @callback
 def migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:

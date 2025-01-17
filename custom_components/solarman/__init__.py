@@ -12,10 +12,10 @@ from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
-from .provider import SolarmanConfigEntry, ConfigurationProvider
+from .provider import ConfigurationProvider
 from .coordinator import Inverter, InverterCoordinator
 from .config_flow import ConfigFlowHandler
-from .entity import migrate_unique_ids
+from .entity import SolarmanConfigEntry, migrate_unique_ids
 from .services import async_register
 
 _LOGGER = logging.getLogger(__name__)
