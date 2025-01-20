@@ -20,7 +20,7 @@ from .const import *
 _LOGGER = logging.getLogger(__name__)
 
 def protected(value, error):
-    if value is None or not value:
+    if value is None:
         raise vol.Invalid(error)
     return value
 
