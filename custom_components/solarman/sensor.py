@@ -120,6 +120,7 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
         super().__init__(coordinator, sensor)
         self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])
         self._threshold = sensor.get("threshold", 200)
+        self._nstates = sensor.get("states", 1000)
         self._states = []
         self._temp = []
 
@@ -148,6 +149,8 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                         l = s
                 if h[1] > m[1] > l[1] > s[1] and (diff := abs(h[0] - l[0])) > 0 and (state := get_number((h[1] - l[1]) * (100 / diff), self._digits)):
                     self._states.append(state)
+                    while len(self._states) > self._nstates:
+                        self._states.pop(0)
                     self._attr_extra_state_attributes["states"] = self._states
                     self._temp = [(power, soc, tb)]
                     if (srtd := sorted(self._states)):
