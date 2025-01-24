@@ -28,6 +28,7 @@ CONF_ADDITIONAL_OPTIONS = "additional_options"
 CONF_MOD = "mod"
 CONF_MPPT = "mppt"
 CONF_PHASE = "phase"
+CONF_PACK = "pack"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
@@ -51,6 +52,7 @@ DEFAULT_ = {
     CONF_MOD: False,
     CONF_MPPT: 4,
     CONF_PHASE: 3,
+    CONF_PACK: 0,
     CONF_BATTERY_NOMINAL_VOLTAGE: 48,
     CONF_BATTERY_LIFE_CYCLE_RATING: 6000,
     UPDATE_INTERVAL: 60,
@@ -70,7 +72,7 @@ AUTODETECTION_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003,
 
 PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
 
-ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l" }
+ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK: CONF_PACK }
 
 AUTO_RECONNECT = True
 

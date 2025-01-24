@@ -32,6 +32,7 @@
               "mod": "Scale modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
+              "pack": "Number of Battery packs",
               "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
               "mb_slave_id": "Modbus Slave ID (usually 1)"
@@ -67,6 +68,7 @@
               "mod": "Scale modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
+              "pack": "Number of Battery packs",
               "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
               "mb_slave_id": "Modbus Slave ID (usually 1)"

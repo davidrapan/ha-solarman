@@ -2,8 +2,8 @@
 # Pylontech Force H2/H3
 #
 # Reference: https://gist.github.com/nagisa/435bdf783e4b13b8e810106b0852081e
-# 
-# Tested Firmware Version: 0.1.0.1 - cryptocake August 2024
+#
+# Tested Firmware Version: 0.1.0.1 - cryptocake, extended with cell sensors - mamonick and kwaaak
 #
 
 default:
@@ -28,7 +28,7 @@ parameters:
 
       - name: "FW Version"
         rule: 7
-        registers: [4106] # 00000001	00000110 = V1.6
+        registers: [4106] # 00000001 00000110 = V1.6
 
       - name: "Battery Module (series)"
         rule: 1
@@ -40,26 +40,6 @@ parameters:
 
   - group: Battery
     items:
-      - name: "Total Battery Charge"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        rule: 1
-        registers: [5164]
-        icon: "mdi:battery-plus"
-        validation:
-          min: 0.1
-
-      - name: "Total Battery Discharge"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        rule: 1
-        registers: [5166]
-        icon: "mdi:battery-minus"
-        validation:
-          min: 0.1
-
       - name: "Battery Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -67,7 +47,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [5123]
-        icon: "mdi:battery"
 
       - name: "Battery Current"
         class: "current"
@@ -85,7 +64,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5126]
-        icon: "mdi:thermometer"
 
       - name: "Battery"
         class: "battery"
@@ -93,7 +71,6 @@ parameters:
         uom: "%"
         rule: 1
         registers: [5127]
-        icon: "mdi:battery"
 
       - name: "Battery Cycle Times"
         rule: 1
@@ -141,7 +118,6 @@ parameters:
         scale: 0.001
         rule: 1
         registers: [5136]
-        icon: "mdi:battery"
 
       - name: "Min Cell Voltage"
         class: "voltage"
@@ -150,7 +126,6 @@ parameters:
         scale: 0.001
         rule: 1
         registers: [5137]
-        icon: "mdi:battery"
 
       - name: "Max Cell Voltage ID"
         rule: 1
@@ -167,7 +142,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5140]
-        icon: "mdi:thermometer"
 
       - name: "Min Cell Temperature"
         class: "temperature"
@@ -176,7 +150,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5141]
-        icon: "mdi:thermometer"
 
       - name: "Max Cell Temperature ID"
         rule: 1
@@ -193,7 +166,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5144]
-        icon: "mdi:battery"
 
       - name: "Min Module Voltage"
         class: "voltage"
@@ -202,7 +174,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5145]
-        icon: "mdi:battery"
 
       - name: "Max Module Voltage ID"
         rule: 1
@@ -219,7 +190,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5148]
-        icon: "mdi:thermometer"
 
       - name: "Min Module Temperature"
         class: "temperature"
@@ -228,7 +198,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5149]
-        icon: "mdi:thermometer"
 
       - name: "Max Module Temperature ID"
         rule: 1
@@ -238,11 +207,20 @@ parameters:
         rule: 1
         registers: [5151]
 
-      - name: "Battery Pack SOH"
+      - name: "Battery SOH"
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [5152]
+        icon: "mdi:battery"
+
+      - name: "Battery Remaining capacity"
+        class: "energy"
+        state_class: "measurement"
+        uom: "kWh"
+        scale: 0.001
+        rule: 1
+        registers: [5154]
         icon: "mdi:battery"
 
       - name: "Today Battery Charge"
@@ -252,6 +230,7 @@ parameters:
         scale: 0.001
         rule: 1
         registers: [5160]
+        icon: "mdi:battery-plus"
 
       - name: "Today Battery Discharge"
         class: "energy"
@@ -260,8 +239,30 @@ parameters:
         scale: 0.001
         rule: 1
         registers: [5162]
+        icon: "mdi:battery-minus"
+
+      - name: "Total Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 1
+        registers: [5164]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
+
+      - name: "Total Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 1
+        registers: [5166]
+        icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
 
   - group: Battery Module 0
+    hidden:
     items:
       - name: "Battery Module 0 Voltage"
         class: "voltage"
@@ -270,7 +271,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5216]
-        icon: "mdi:battery"
 
       - name: "Battery Module 0 Temperature"
         class: "temperature"
@@ -279,9 +279,9 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5296]
-        icon: "mdi:thermometer"
 
   - group: Battery Module 1
+    hidden:
     items:
       - name: "Battery Module 1 Voltage"
         class: "voltage"
@@ -290,7 +290,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5217]
-        icon: "mdi:battery"
 
       - name: "Battery Module 1 Temperature"
         class: "temperature"
@@ -299,9 +298,9 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5297]
-        icon: "mdi:thermometer"
 
   - group: Battery Module 2
+    hidden:
     items:
       - name: "Battery Module 2 Voltage"
         class: "voltage"
@@ -310,7 +309,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5218]
-        icon: "mdi:battery"
 
       - name: "Battery Module 2 Temperature"
         class: "temperature"
@@ -319,9 +317,9 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5298]
-        icon: "mdi:thermometer"
 
   - group: Battery Module 3
+    hidden:
     items:
       - name: "Battery Module 3 Voltage"
         class: "voltage"
@@ -330,7 +328,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [5219]
-        icon: "mdi:battery"
 
       - name: "Battery Module 3 Temperature"
         class: "temperature"
@@ -339,4 +336,2486 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [5299]
+
+  - group: Battery Module 4
+    hidden:
+    items:
+      - name: "Battery Module 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [5220]
+        icon: "mdi:battery"
+
+      - name: "Battery Module 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [5300]
         icon: "mdi:thermometer"
+
+  - group: Battery Module 5
+    hidden:
+    items:
+      - name: "Battery Module 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [5221]
+        icon: "mdi:battery"
+
+      - name: "Battery Module 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [5301]
+        icon: "mdi:thermometer"
+
+  - group: Battery Module 6
+    hidden:
+    items:
+      - name: "Battery Module 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [5222]
+        icon: "mdi:battery"
+
+      - name: "Battery Module 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [5302]
+        icon: "mdi:thermometer"
+
+  - group: Battery Module 0 Cells
+    hidden:
+    pack: 1
+    items:
+      - name: "Cell 0 - 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5376]
+
+      - name: "Cell 0 - 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5377]
+
+      - name: "Cell 0 - 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5378]
+
+      - name: "Cell 0 - 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5379]
+
+      - name: "Cell 0 - 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5380]
+
+      - name: "Cell 0 - 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5381]
+
+      - name: "Cell 0 - 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5382]
+
+      - name: "Cell 0 - 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5383]
+
+      - name: "Cell 0 - 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5384]
+
+      - name: "Cell 0 - 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5385]
+
+      - name: "Cell 0 - 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5386]
+
+      - name: "Cell 0 - 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5387]
+
+      - name: "Cell 0 - 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5388]
+
+      - name: "Cell 0 - 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5389]
+
+      - name: "Cell 0 - 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5390]
+
+      - name: "Cell 0 - 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5391]
+
+      - name: "Cell 0 - 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5392]
+
+      - name: "Cell 0 - 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5393]
+
+      - name: "Cell 0 - 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5394]
+
+      - name: "Cell 0 - 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5395]
+
+      - name: "Cell 0 - 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5396]
+
+      - name: "Cell 0 - 21 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5397]
+
+      - name: "Cell 0 - 22 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5398]
+
+      - name: "Cell 0 - 23 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5399]
+
+      - name: "Cell 0 - 24 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5400]
+
+      - name: "Cell 0 - 25 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5401]
+
+      - name: "Cell 0 - 26 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5402]
+
+      - name: "Cell 0 - 27 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5403]
+
+      - name: "Cell 0 - 28 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5404]
+
+      - name: "Cell 0 - 29 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5405]
+
+      - name: "Cell 0 - 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6144]
+
+      - name: "Cell 0 - 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6145]
+
+      - name: "Cell 0 - 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6146]
+
+      - name: "Cell 0 - 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6147]
+
+      - name: "Cell 0 - 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6148]
+
+      - name: "Cell 0 - 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6149]
+
+      - name: "Cell 0 - 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6150]
+
+      - name: "Cell 0 - 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6151]
+
+      - name: "Cell 0 - 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6152]
+
+      - name: "Cell 0 - 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6153]
+
+      - name: "Cell 0 - 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6154]
+
+      - name: "Cell 0 - 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6155]
+
+      - name: "Cell 0 - 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6156]
+
+      - name: "Cell 0 - 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6157]
+
+      - name: "Cell 0 - 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6158]
+
+      - name: "Cell 0 - 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6159]
+
+      - name: "Cell 0 - 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6160]
+
+      - name: "Cell 0 - 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6161]
+
+      - name: "Cell 0 - 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6162]
+
+      - name: "Cell 0 - 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6163]
+
+      - name: "Cell 0 - 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6164]
+
+      - name: "Cell 0 - 21 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6165]
+
+      - name: "Cell 0 - 22 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6166]
+
+      - name: "Cell 0 - 23 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6167]
+
+      - name: "Cell 0 - 24 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6168]
+
+      - name: "Cell 0 - 25 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6169]
+
+      - name: "Cell 0 - 26 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6170]
+
+      - name: "Cell 0 - 27 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6171]
+
+      - name: "Cell 0 - 28 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6172]
+
+      - name: "Cell 0 - 29 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6173]
+
+  - group: Battery Module 1 Cells
+    hidden:
+    pack: 2
+    items:
+      - name: "Cell 1 - 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5406]
+
+      - name: "Cell 1 - 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5407]
+
+      - name: "Cell 1 - 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5408]
+
+      - name: "Cell 1 - 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5409]
+
+      - name: "Cell 1 - 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5410]
+
+      - name: "Cell 1 - 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5411]
+
+      - name: "Cell 1 - 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5412]
+
+      - name: "Cell 1 - 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5413]
+
+      - name: "Cell 1 - 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5414]
+
+      - name: "Cell 1 - 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5415]
+
+      - name: "Cell 1 - 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5416]
+
+      - name: "Cell 1 - 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5417]
+
+      - name: "Cell 1 - 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5418]
+
+      - name: "Cell 1 - 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5419]
+
+      - name: "Cell 1 - 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5420]
+
+      - name: "Cell 1 - 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5421]
+
+      - name: "Cell 1 - 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5422]
+
+      - name: "Cell 1 - 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5423]
+
+      - name: "Cell 1 - 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5424]
+
+      - name: "Cell 1 - 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5425]
+
+      - name: "Cell 1 - 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5426]
+
+      - name: "Cell 1 - 21 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5427]
+
+      - name: "Cell 1 - 22 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5428]
+
+      - name: "Cell 1 - 23 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5429]
+
+      - name: "Cell 1 - 24 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5430]
+
+      - name: "Cell 1 - 25 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5431]
+
+      - name: "Cell 1 - 26 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5432]
+
+      - name: "Cell 1 - 27 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5433]
+
+      - name: "Cell 1 - 28 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5434]
+
+      - name: "Cell 1 - 29 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5435]
+
+      - name: "Cell 1 - 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6174]
+
+      - name: "Cell 1 - 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6175]
+
+      - name: "Cell 1 - 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6176]
+
+      - name: "Cell 1 - 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6177]
+
+      - name: "Cell 1 - 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6178]
+
+      - name: "Cell 1 - 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6179]
+
+      - name: "Cell 1 - 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6180]
+
+      - name: "Cell 1 - 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6181]
+
+      - name: "Cell 1 - 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6182]
+
+      - name: "Cell 1 - 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6183]
+
+      - name: "Cell 1 - 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6184]
+
+      - name: "Cell 1 - 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6185]
+
+      - name: "Cell 1 - 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6186]
+
+      - name: "Cell 1 - 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6187]
+
+      - name: "Cell 1 - 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6188]
+
+      - name: "Cell 1 - 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6189]
+
+      - name: "Cell 1 - 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6190]
+
+      - name: "Cell 1 - 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6191]
+
+      - name: "Cell 1 - 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6192]
+
+      - name: "Cell 1 - 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6193]
+
+      - name: "Cell 1 - 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6194]
+
+      - name: "Cell 1 - 21 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6195]
+
+      - name: "Cell 1 - 22 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6196]
+
+      - name: "Cell 1 - 23 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6197]
+
+      - name: "Cell 1 - 24 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6198]
+
+      - name: "Cell 1 - 25 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6199]
+
+      - name: "Cell 1 - 26 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6200]
+
+      - name: "Cell 1 - 27 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6201]
+
+      - name: "Cell 1 - 28 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6202]
+
+      - name: "Cell 1 - 29 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6203]
+
+  - group: Battery Module 2 Cells
+    hidden:
+    pack: 3
+    items:
+      - name: "Cell 2 - 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5436]
+
+      - name: "Cell 2 - 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5437]
+
+      - name: "Cell 2 - 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5438]
+
+      - name: "Cell 2 - 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5439]
+
+      - name: "Cell 2 - 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5440]
+
+      - name: "Cell 2 - 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5441]
+
+      - name: "Cell 2 - 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5442]
+
+      - name: "Cell 2 - 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5443]
+
+      - name: "Cell 2 - 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5444]
+        icon: "mdi:battery"
+      - name: "Cell 2 - 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5445]
+
+      - name: "Cell 2 - 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5446]
+
+      - name: "Cell 2 - 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5447]
+
+      - name: "Cell 2 - 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5448]
+
+      - name: "Cell 2 - 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5449]
+
+      - name: "Cell 2 - 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5450]
+
+      - name: "Cell 2 - 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5451]
+
+      - name: "Cell 2 - 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5452]
+
+      - name: "Cell 2 - 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5453]
+
+      - name: "Cell 2 - 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5454]
+
+      - name: "Cell 2 - 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5455]
+
+      - name: "Cell 2 - 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5456]
+
+      - name: "Cell 2 - 21 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5457]
+
+      - name: "Cell 2 - 22 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5458]
+
+      - name: "Cell 2 - 23 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5459]
+
+      - name: "Cell 2 - 24 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5460]
+
+      - name: "Cell 2 - 25 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5461]
+
+      - name: "Cell 2 - 26 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5462]
+
+      - name: "Cell 2 - 27 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5463]
+
+      - name: "Cell 2 - 28 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5464]
+
+      - name: "Cell 2 - 29 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5465]
+
+      - name: "Cell 2 - 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6204]
+
+      - name: "Cell 2 - 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6205]
+
+      - name: "Cell 2 - 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6206]
+
+      - name: "Cell 2 - 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6207]
+
+      - name: "Cell 2 - 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6208]
+
+      - name: "Cell 2 - 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6209]
+
+      - name: "Cell 2 - 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6210]
+
+      - name: "Cell 2 - 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6211]
+
+      - name: "Cell 2 - 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6212]
+
+      - name: "Cell 2 - 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6213]
+
+      - name: "Cell 2 - 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6214]
+
+      - name: "Cell 2 - 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6215]
+
+      - name: "Cell 2 - 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6216]
+
+      - name: "Cell 2 - 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6217]
+
+      - name: "Cell 2 - 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6218]
+
+      - name: "Cell 2 - 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6219]
+
+      - name: "Cell 2 - 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6220]
+
+      - name: "Cell 2 - 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6221]
+
+      - name: "Cell 2 - 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6222]
+
+      - name: "Cell 2 - 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6223]
+
+      - name: "Cell 2 - 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6224]
+
+      - name: "Cell 2 - 21 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6225]
+
+      - name: "Cell 2 - 22 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6226]
+
+      - name: "Cell 2 - 23 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6227]
+
+      - name: "Cell 2 - 24 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6228]
+
+      - name: "Cell 2 - 25 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6229]
+
+      - name: "Cell 2 - 26 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6230]
+
+      - name: "Cell 2 - 27 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6231]
+
+      - name: "Cell 2 - 28 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6232]
+
+      - name: "Cell 2 - 29 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6233]
+
+  - group: Battery Module 3 Cells
+    hidden:
+    pack: 4
+    items:
+      - name: "Cell 3 - 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5466]
+
+      - name: "Cell 3 - 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5467]
+
+      - name: "Cell 3 - 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5468]
+
+      - name: "Cell 3 - 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5469]
+
+      - name: "Cell 3 - 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5470]
+
+      - name: "Cell 3 - 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5471]
+
+      - name: "Cell 3 - 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5472]
+
+      - name: "Cell 3 - 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5473]
+
+      - name: "Cell 3 - 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5474]
+
+      - name: "Cell 3 - 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5475]
+
+      - name: "Cell 3 - 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5476]
+
+      - name: "Cell 3 - 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5477]
+
+      - name: "Cell 3 - 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5478]
+
+      - name: "Cell 3 - 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5479]
+
+      - name: "Cell 3 - 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5480]
+
+      - name: "Cell 3 - 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5481]
+
+      - name: "Cell 3 - 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5482]
+
+      - name: "Cell 3 - 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5483]
+
+      - name: "Cell 3 - 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5484]
+
+      - name: "Cell 3 - 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5485]
+
+      - name: "Cell 3 - 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5486]
+
+      - name: "Cell 3 - 21 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5487]
+
+      - name: "Cell 3 - 22 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5488]
+
+      - name: "Cell 3 - 23 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5489]
+
+      - name: "Cell 3 - 24 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5490]
+
+      - name: "Cell 3 - 25 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5491]
+
+      - name: "Cell 3 - 26 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5492]
+
+      - name: "Cell 3 - 27 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5493]
+
+      - name: "Cell 3 - 28 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5494]
+
+      - name: "Cell 3 - 29 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5495]
+
+      - name: "Cell 3 - 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6234]
+
+      - name: "Cell 3 - 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6235]
+
+      - name: "Cell 3 - 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6236]
+
+      - name: "Cell 3 - 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6237]
+
+      - name: "Cell 3 - 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6238]
+
+      - name: "Cell 3 - 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6239]
+
+      - name: "Cell 3 - 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6240]
+
+      - name: "Cell 3 - 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6241]
+
+      - name: "Cell 3 - 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6242]
+
+      - name: "Cell 3 - 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6243]
+
+      - name: "Cell 3 - 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6244]
+
+      - name: "Cell 3 - 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6245]
+
+      - name: "Cell 3 - 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6246]
+
+      - name: "Cell 3 - 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6247]
+
+      - name: "Cell 3 - 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6248]
+
+      - name: "Cell 3 - 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6249]
+
+      - name: "Cell 3 - 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6250]
+
+      - name: "Cell 3 - 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6251]
+
+      - name: "Cell 3 - 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6252]
+
+      - name: "Cell 3 - 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6253]
+
+      - name: "Cell 3 - 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6254]
+
+      - name: "Cell 3 - 21 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6255]
+
+      - name: "Cell 3 - 22 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6256]
+
+      - name: "Cell 3 - 23 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6257]
+
+      - name: "Cell 3 - 24 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6258]
+
+      - name: "Cell 3 - 25 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6259]
+
+      - name: "Cell 3 - 26 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6260]
+
+      - name: "Cell 3 - 27 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6261]
+
+      - name: "Cell 3 - 28 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6262]
+
+      - name: "Cell 3 - 29 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6263]
+
+  - group: Battery Module 4 Cells
+    hidden:
+    pack: 5
+    items:
+      - name: "Cell 4 - 0 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5496]
+
+      - name: "Cell 4 - 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5497]
+
+      - name: "Cell 4 - 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5498]
+
+      - name: "Cell 4 - 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5499]
+
+      - name: "Cell 4 - 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5500]
+
+      - name: "Cell 4 - 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5501]
+
+      - name: "Cell 4 - 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5502]
+
+      - name: "Cell 4 - 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5473]
+
+      - name: "Cell 4 - 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5504]
+
+      - name: "Cell 4 - 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5505]
+
+      - name: "Cell 4 - 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5506]
+
+      - name: "Cell 4 - 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5507]
+
+      - name: "Cell 4 - 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5508]
+
+      - name: "Cell 4 - 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5509]
+
+      - name: "Cell 4 - 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5510]
+
+      - name: "Cell 4 - 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5511]
+
+      - name: "Cell 4 - 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5512]
+
+      - name: "Cell 4 - 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5513]
+
+      - name: "Cell 4 - 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5514]
+
+      - name: "Cell 4 - 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5515]
+
+      - name: "Cell 4 - 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5516]
+
+      - name: "Cell 4 - 21 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5517]
+
+      - name: "Cell 4 - 22 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5518]
+
+      - name: "Cell 4 - 23 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5519]
+
+      - name: "Cell 4 - 24 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5520]
+
+      - name: "Cell 4 - 25 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5521]
+
+      - name: "Cell 4 - 26 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5522]
+
+      - name: "Cell 4 - 27 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5523]
+
+      - name: "Cell 4 - 28 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5524]
+
+      - name: "Cell 4 - 29 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [5525]
+
+      - name: "Cell 4 - 0 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6264]
+
+      - name: "Cell 4 - 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6265]
+
+      - name: "Cell 4 - 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6266]
+
+      - name: "Cell 4 - 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6267]
+
+      - name: "Cell 4 - 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6268]
+
+      - name: "Cell 4 - 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6269]
+
+      - name: "Cell 4 - 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6270]
+
+      - name: "Cell 4 - 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6271]
+
+      - name: "Cell 4 - 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6272]
+
+      - name: "Cell 4 - 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6273]
+
+      - name: "Cell 4 - 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6274]
+
+      - name: "Cell 4 - 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6275]
+
+      - name: "Cell 4 - 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6276]
+
+      - name: "Cell 4 - 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6277]
+
+      - name: "Cell 4 - 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6278]
+
+      - name: "Cell 4 - 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6279]
+
+      - name: "Cell 4 - 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6280]
+
+      - name: "Cell 4 - 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6281]
+
+      - name: "Cell 4 - 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6282]
+
+      - name: "Cell 4 - 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6283]
+
+      - name: "Cell 4 - 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6284]
+
+      - name: "Cell 4 - 21 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6285]
+
+      - name: "Cell 4 - 22 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6286]
+
+      - name: "Cell 4 - 23 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6287]
+
+      - name: "Cell 4 - 24 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6288]
+
+      - name: "Cell 4 - 25 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6289]
+
+      - name: "Cell 4 - 26 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6290]
+
+      - name: "Cell 4 - 27 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6291]
+
+      - name: "Cell 4 - 28 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6292]
+
+      - name: "Cell 4 - 29 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [6293]

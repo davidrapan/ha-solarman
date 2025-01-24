@@ -32,6 +32,7 @@
               "mod": "Modyfikator skali",
               "mppt": "Liczba MPPTs",
               "phase": "Liczba faz",
+              "pack": "Liczba pakietów baterii",
               "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
               "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego",
               "mb_slave_id": "Modbus Slave ID (zwykle 1)"
@@ -67,6 +68,7 @@
               "mod": "Modyfikator skali",
               "mppt": "Liczba MPPTs",
               "phase": "Liczba faz",
+              "pack": "Liczba pakietów baterii",
               "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
               "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego",
               "mb_slave_id": "Modbus Slave ID (zwykle 1)"

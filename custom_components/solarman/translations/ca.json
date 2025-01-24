@@ -32,6 +32,7 @@
               "mod": "Modificador d'escala",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
+              "pack": "Nombre de paquets de bateries",
               "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
               "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti",
               "mb_slave_id": "ID de l'esclau Modbus (normalment 1)"
@@ -67,6 +68,7 @@
               "mod": "Modificador d'escala",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
+              "pack": "Nombre de paquets de bateries",
               "battery_nominal_voltage": "Voltatge nominal de la bateria de ió-liti",
               "battery_life_cycle_rating": "Estimació del cicle de vida esperat de la bateria d'ió-liti",
               "mb_slave_id": "ID de l'esclau Modbus (normalment 1)"

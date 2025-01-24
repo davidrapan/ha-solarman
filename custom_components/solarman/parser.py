@@ -43,7 +43,7 @@ class ParameterParser:
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = sorted([process_descriptions(item, group, table, self._code, attr["mod"]) for group in profile["parameters"] for item in group["items"] if len((a := item.keys() & attr.keys())) == 0 or ((k := next(iter(a))) and item[k] <= attr[k])], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1))
+        self._items = [i for i in sorted([process_descriptions(item, group, table, self._code, attr["mod"]) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & attr.keys())) == 0 or ((k := next(iter(a))) and i[k] <= attr[k])]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code

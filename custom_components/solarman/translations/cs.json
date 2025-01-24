@@ -32,6 +32,7 @@
               "mod": "Modifikátor měřítka",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
+              "pack": "Počet bateriových sad",
               "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
               "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie",
               "mb_slave_id": "Modbus Slave ID (obvykle 1)"
@@ -67,6 +68,7 @@
               "mod": "Modifikátor měřítka",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
+              "pack": "Počet bateriových sad",
               "battery_nominal_voltage": "Jmenovité napětí lithium-iontové baterie",
               "battery_life_cycle_rating": "Předpokládaná životnost lithium-iontové baterie",
               "mb_slave_id": "Modbus Slave ID (obvykle 1)"

@@ -146,7 +146,7 @@ def process_descriptions(item, group, table, code, mod):
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
     item["key"] = entity_key(item)
-    bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, REQUEST_CODE) if "registers" in item else REQUEST_UPDATE_INTERVAL)
+    bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, CONF_PACK, REQUEST_CODE, "hidden") if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
     modify(item)

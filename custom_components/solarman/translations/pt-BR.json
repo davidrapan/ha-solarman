@@ -32,6 +32,7 @@
               "mod": "Modificador de escala",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
+              "pack": "Número de baterias",
               "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
               "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio",
               "mb_slave_id": "Modbus Slave ID (geralmente 1)"
@@ -67,6 +68,7 @@
               "mod": "Modificador de escala",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
+              "pack": "Número de baterias",
               "battery_nominal_voltage": "Tensão nominal da bateria de íons de lítio",
               "battery_life_cycle_rating": "Classificação do ciclo de vida esperado da bateria de íons de lítio",
               "mb_slave_id": "Modbus Slave ID (geralmente 1)"

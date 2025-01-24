@@ -2761,3 +2761,755 @@ parameters:
         range:
           min: 0
           max: 65535
+
+  - group: Battery 1
+    update_interval: 10
+    hidden:
+    pack: 1
+    items:
+      - name: "Battery 1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2738]
+
+      - name: "Battery 1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2739]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 1 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x273A]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 1"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x273F]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 1 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2740]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 1 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2741]
+        icon: "mdi:battery"
+
+      - name: "Battery 1 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2742]
+        icon: "mdi:battery"
+
+      - name: "Battery 1 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2746]
+
+      - name: "Battery 1 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2747]
+
+      - name: "Battery 1 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x2748]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 2
+    update_interval: 10
+    hidden:
+    pack: 2
+    items:
+      - name: "Battery 2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x275E]
+
+      - name: "Battery 2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x275F]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 2 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2760]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 2"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2765]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 2 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2766]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 2 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2767]
+        icon: "mdi:battery"
+
+      - name: "Battery 2 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2768]
+        icon: "mdi:battery"
+
+      - name: "Battery 2 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x276C]
+
+      - name: "Battery 2 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x276D]
+
+      - name: "Battery 2 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x276E]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 3
+    update_interval: 10
+    hidden:
+    pack: 3
+    items:
+      - name: "Battery 3 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2784]
+
+      - name: "Battery 3 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2785]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 3 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2786]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 3"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x278B]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 3 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x278C]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 3 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x278D]
+        icon: "mdi:battery"
+
+      - name: "Battery 3 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x278E]
+        icon: "mdi:battery"
+
+      - name: "Battery 3 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2792]
+
+      - name: "Battery 3 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2793]
+
+      - name: "Battery 3 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x2794]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 4
+    update_interval: 10
+    hidden:
+    pack: 4
+    items:
+      - name: "Battery 4 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27AA]
+
+      - name: "Battery 4 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x27AB]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 4 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x27AC]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 4"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27B1]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 4 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27B2]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 4 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x27B3]
+        icon: "mdi:battery"
+
+      - name: "Battery 4 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x27B4]
+        icon: "mdi:battery"
+
+      - name: "Battery 4 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27B8]
+
+      - name: "Battery 4 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27B9]
+
+      - name: "Battery 4 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x27BA]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 5
+    update_interval: 10
+    hidden:
+    pack: 5
+    items:
+      - name: "Battery 5 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27D0]
+
+      - name: "Battery 5 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x27D1]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 5 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x27D2]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 5"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27D7]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 5 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27D8]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 5 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x27D9]
+        icon: "mdi:battery"
+
+      - name: "Battery 5 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x27DA]
+        icon: "mdi:battery"
+
+      - name: "Battery 5 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27DE]
+
+      - name: "Battery 5 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27DF]
+
+      - name: "Battery 5 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x27E0]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 6
+    update_interval: 10
+    hidden:
+    pack: 6
+    items:
+      - name: "Battery 6 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x27F6]
+
+      - name: "Battery 6 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x27F7]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 6 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x27F8]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 6"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27FD]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 6 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x27FE]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 6 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x27FF]
+        icon: "mdi:battery"
+
+      - name: "Battery 6 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2800]
+        icon: "mdi:battery"
+
+      - name: "Battery 6 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2804]
+
+      - name: "Battery 6 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2805]
+
+      - name: "Battery 6 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x2806]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 7
+    update_interval: 10
+    hidden:
+    pack: 7
+    items:
+      - name: "Battery 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x281C]
+
+      - name: "Battery 7 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x281D]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 7 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x281E]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 7"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2823]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 7 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2824]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 7 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2825]
+        icon: "mdi:battery"
+
+      - name: "Battery 7 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x2826]
+        icon: "mdi:battery"
+
+      - name: "Battery 7 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x282A]
+
+      - name: "Battery 7 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x282B]
+
+      - name: "Battery 7 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x282C]
+        icon: "mdi:battery-sync"
+
+  - group: Battery 8
+    update_interval: 10
+    hidden:
+    pack: 8
+    items:
+      - name: "Battery 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2842]
+
+      - name: "Battery 8 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2843]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 8 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2844]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: 1
+          max: 99
+
+      - name: "Battery 8"
+        #class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2849]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery 8 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x284A]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 8 Remaining capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x284B]
+        icon: "mdi:battery"
+
+      - name: "Battery 8 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x284C]
+        icon: "mdi:battery"
+
+      - name: "Battery 8 Cell Max Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2850]
+
+      - name: "Battery 8 Cell Min Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.01]
+        rule: 1
+        registers: [0x2851]
+
+      - name: "Battery 8 Cycles"
+        state_class: "total_increasing"
+        digits: 2
+        rule: 1
+        registers: [0x2852]
+        icon: "mdi:battery-sync"
