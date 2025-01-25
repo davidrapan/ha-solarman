@@ -8,7 +8,7 @@ from datetime import datetime
 from .const import *
 from .common import *
 from .provider import *
-from .include.pysolarmanv5 import PySolarmanAsync
+from .include.pysolarmanv5.pysolarman import PySolarmanAsync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -125,6 +125,8 @@ class Inverter():
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
 
         if scount == 0:
+            if not self.modbus.connected:
+                raise Exception(f"[{self.config.serial}] No scheduled requests found, aborting.")
             return result
 
         try:
