@@ -34,7 +34,7 @@
 - Repository: **davidrapan/ha-solarman**, Type: **Integration**
 - Find newly added Solarman, open it and click DOWNLOAD
 
-### 🔨 Manually
+### 🛠 Manually
 - Copy the contents of `custom_components/solarman` to `/config/custom_components/solarman` in Home Assistant
 
 ## ⚙️ Configuration
