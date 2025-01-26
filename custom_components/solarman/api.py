@@ -100,7 +100,7 @@ class Inverter():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                if (response := await self.read_write(code, start, arg)) and (length := ilen(response)) is None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) and length != expected:
+                if (response := await self.read_write(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
                     raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
                 _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
