@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy
 import logging
 
 from typing import Any
