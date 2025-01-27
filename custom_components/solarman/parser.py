@@ -5,6 +5,7 @@ import bisect
 import logging
 
 from datetime import datetime
+from warnings import catch_warnings
 
 from .const import *
 from .common import *
@@ -198,31 +199,40 @@ class ParameterParser:
         magnitude = definition.get("magnitude", False)
         maxint = 0
         value = 0
+        value2 = 0
         shift = 0
 
-        for r in definition["registers"]:
-            if (temp := get_addr_value(data, code, r)) is None:
+        with catch_warnings(record=True) as w:
+            for r in definition["registers"]:
+                if (temp := get_addr_value(data, code, r)) is None:
+                    return None
+
+                maxint <<= 16
+                maxint |= 0xFFFF
+                value2 += (temp & 0xFFFF) << shift
+                shift += 16
+
+            value = value2
+
+            if not self.in_range(value, definition):
                 return None
 
-            maxint <<= 16
-            maxint |= 0xFFFF
-            value += (temp & 0xFFFF) << shift
-            shift += 16
+            if (offset := definition.get("offset")) is not None:
+                value -= offset
 
-        if not self.in_range(value, definition):
-            return None
+            if value > (maxint >> 1):
+                value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
-        if (offset := definition.get("offset")) is not None:
-            value -= offset
+            if (scale := definition.get("scale")) is not None:
+                value *= scale
 
-        if value > (maxint >> 1):
-            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+            if (divide := definition.get("divide")) is not None:
+                value //= divide
 
-        if (scale := definition.get("scale")) is not None:
-            value *= scale
-
-        if (divide := definition.get("divide")) is not None:
-            value //= divide
+            if w:
+                _LOGGER.warning(f"Warning spawn w/ value2: {type(value2)} ({value2}), value: {type(value)} ({value}), maxint: {type(maxint)} ({maxint}), scale: {type(scale)} ({scale})")
+                for wm in w:
+                    _LOGGER.warning(f"{wm.category} <{wm.filename}> [{wm.lineno}]: {wm.message}")
 
         return value
     
