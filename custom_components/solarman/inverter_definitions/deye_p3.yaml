@@ -814,10 +814,10 @@ parameters:
         registers: [0x008F]
         configurable:
           min: 0
-          max: [15600, 25000]
+          max: [15600, 50000]
         range:
           min: 0
-          max: [15600, 2500]
+          max: [15600, 5000]
 
       - name: Export Surplus
         alt: Solar Sell
@@ -837,10 +837,10 @@ parameters:
         icon: "mdi:solar-power-variant"
         configurable:
           min: 0
-          max: [15600, 25000]
+          max: [15600, 50000]
         range:
           min: 0
-          max: [15600, 2500]
+          max: [15600, 5000]
 
       - name: Time of Use
         platform: select
@@ -958,10 +958,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 2 Power
         platform: number
@@ -974,10 +974,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 3 Power
         platform: number
@@ -990,10 +990,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 4 Power
         platform: number
@@ -1006,10 +1006,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 5 Power
         platform: number
@@ -1022,10 +1022,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 6 Power
         platform: number
@@ -1038,10 +1038,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 25000]
+          max: [12000, 50000]
         range:
           min: 0
-          max: [12000, 2500]
+          max: [12000, 5000]
 
       - name: Program 1 Voltage
         platform: number
