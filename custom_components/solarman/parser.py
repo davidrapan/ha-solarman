@@ -238,7 +238,7 @@ class ParameterParser:
                     continue
                 n = validation["default"]
 
-            if (m := s.get("multiply")) and (c := self._read_registers(data, m)) is not None:
+            if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
                 n *= c
 
             if (o := s.get("operator")) is None:
