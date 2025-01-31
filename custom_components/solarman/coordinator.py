@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import *
-from .api import Inverter
+from .inverter import Inverter
 
 _LOGGER = logging.getLogger(__name__)
 

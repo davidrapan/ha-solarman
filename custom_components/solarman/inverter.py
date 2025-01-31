@@ -8,7 +8,7 @@ from datetime import datetime
 from .const import *
 from .common import *
 from .provider import *
-from .include.pysolarmanv5.pysolarman import PySolarmanAsync
+from .pysolarman.pysolarman import Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,14 +44,15 @@ class Inverter():
         self.config: ConfigurationProvider = config
         self.endpoint: EndPointProvider = None
         self.profile: ProfileProvider = None
-        self.modbus: PySolarmanAsync = None
+        self.modbus: Solarman = None
         self.device_info: dict = {}
 
     async def load(self):
         try:
+            self.state.update(True)
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
-            self.modbus = PySolarmanAsync(*self.endpoint.connection, _LOGGER, AUTO_RECONNECT, TIMINGS_SOCKET_TIMEOUT)
+            self.modbus = Solarman(*self.endpoint.connection)
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except TimeoutError as e:
@@ -65,12 +66,10 @@ class Inverter():
 
     async def shutdown(self) -> None:
         self.state.value = -1
+        _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
         await self.modbus.disconnect()
 
     async def read_write(self, code, start, arg):
-        if await self.modbus.connect():
-            self.state.update(True)
-
         match code:
             case CODE.READ_COILS:
                 return await self.modbus.read_coils(start, arg)
@@ -89,7 +88,7 @@ class Inverter():
             case CODE.WRITE_MULTIPLE_REGISTERS:
                 return await self.modbus.write_multiple_registers(start, ensure_list(arg))
             case _:
-                raise Exception(f"[{self.serial}] Used incorrect modbus function code {code}")
+                raise Exception(f"[{self.config.serial}] Used invalid modbus function code {code}")
 
     async def try_read_write(self, code, start, arg, message: str):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
@@ -109,8 +108,6 @@ class Inverter():
 
                 if isinstance(e, TimeoutError):
                     await self.endpoint.discover(True)
-                if not self.modbus.auto_reconnect:
-                    await self.modbus.disconnect()
                 if not attempts_left > 0:
                     raise
 
@@ -145,6 +142,7 @@ class Inverter():
 
         except Exception as e:
             if self.state.reevaluate():
+                _LOGGER.info(f"[{self.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
                 await self.modbus.disconnect()
                 raise
             _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")

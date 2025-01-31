@@ -1,4 +1,0 @@
-[submodule "custom_components/solarman/include"]
-	path = custom_components/solarman/include
-	url = https://github.com/davidrapan/pysolarmanv5
-	branch = module

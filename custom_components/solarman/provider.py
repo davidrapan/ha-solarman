@@ -79,7 +79,7 @@ class EndPointProvider:
 
     @cached_property
     def connection(self):
-        return self.address, self.serial, self.port, self.mb_slave_id
+        return self.serial, self.address, self.port, self.mb_slave_id
 
     @cached_property
     def ipaddress(self):
