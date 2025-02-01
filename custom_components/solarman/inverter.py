@@ -69,27 +69,6 @@ class Inverter():
         _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
         await self.modbus.disconnect()
 
-    async def read_write(self, code, start, arg):
-        match code:
-            case CODE.READ_COILS:
-                return await self.modbus.read_coils(start, arg)
-            case CODE.READ_DISCRETE_INPUTS:
-                return await self.modbus.read_discrete_inputs(start, arg)
-            case CODE.READ_HOLDING_REGISTERS:
-                return await self.modbus.read_holding_registers(start, arg)
-            case CODE.READ_INPUT:
-                return await self.modbus.read_input_registers(start, arg)
-            case CODE.WRITE_SINGLE_COIL:
-                return await self.modbus.write_single_coil(start, arg)
-            case CODE.WRITE_SINGLE_REGISTER:
-                return await self.modbus.write_single_register(start, arg)
-            case CODE.WRITE_MULTIPLE_COILS:
-                return await self.modbus.write_multiple_coils(start, ensure_list(arg))
-            case CODE.WRITE_MULTIPLE_REGISTERS:
-                return await self.modbus.write_multiple_registers(start, ensure_list(arg))
-            case _:
-                raise Exception(f"[{self.config.serial}] Used invalid modbus function code {code}")
-
     async def try_read_write(self, code, start, arg, message: str):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
@@ -99,7 +78,7 @@ class Inverter():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                if (response := await self.read_write(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
+                if (response := await self.modbus.read_write(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
                     raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
                 _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
