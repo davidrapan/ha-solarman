@@ -10,6 +10,7 @@ info:
 
 default:
   update_interval: 5
+  max_size: 30
   digits: 6
 
 parameters:
