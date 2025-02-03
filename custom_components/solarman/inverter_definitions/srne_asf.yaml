@@ -1,0 +1,595 @@
+#
+# SRNE ASF | Three Phase | Hybrid Inverter
+#
+# Reference: https://github.com/user-attachments/files/18642567/SRNE.Solar.Charge.Inverter.MODBUS.Protocol1.96.pdf
+#
+
+info:
+  manufacturer: SRNE
+  model: ASF
+
+default:
+  update_interval: 5
+  digits: 6
+
+parameters:
+  - group: Battery
+    items:
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0100]
+
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0101]
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x0102]
+        icon: "mdi:current-dc"
+
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        digits: 3
+        scale: 0.1
+        registers: [0x0101, 0x0102]
+        sensors:
+          - registers: [0x0101]
+          - operator: multiply
+            signed:
+            registers: [0x0102]
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0103]
+
+  - group: PV
+    items:
+      - name: "PV1 Voltage"
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0107]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        mppt: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0108]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0109]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV Power"
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x010A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV+AC Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x010E]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        mppt: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x010F]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        mppt: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0110]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0111]
+        icon: "mdi:solar-power-variant"
+
+  - group: Inverter
+    items:
+      - name: "PV Voltage"
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0212]
+        icon: "mdi:solar-power-variant"
+
+      - name: "Grid L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0213]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0214]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0215]
+
+      - name: "Output L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0216]
+
+      - name: "Output L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x0217]
+
+      - name: "Output Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0218]
+
+      - name: "Load L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0219]
+
+      - name: "Load L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x021B]
+
+      - name: "Load L1 Apparent Power"
+        l: 1
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x021C]
+
+      - name: "DC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0220]
+
+      - name: "AC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0221]
+
+      - name: "Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0222]
+
+      - name: "Ambient Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0223]
+
+      - name: "Grid L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022A]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022B]
+        icon: "mdi:transmission-tower"
+
+      - name: "Output L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022C]
+
+      - name: "Output L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022D]
+
+      - name: "Output L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022E]
+
+      - name: "Output L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022F]
+
+      - name: "Load L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0230]
+
+      - name: "Load L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0231]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0232]
+
+      - name: "Load L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0233]
+
+      - name: "Load L2 Apparent Power"
+        l: 2
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x0234]
+
+      - name: "Load L3 Apparent Power"
+        l: 3
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x0235]
+
+      - name: "Grid L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0238]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0239]
+        icon: "mdi:transmission-tower"
+
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: Batttery Discharge Limit
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE00F]
+        icon: mdi:battery
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Batttery Charge Limit
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE01D]
+        icon: mdi:battery
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Batttery Discharge Stop
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE01F]
+        icon: mdi:battery
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Batttery Discharge Start
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE020]
+        icon: mdi:battery
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+  - group: Meter
+    update_interval: 30
+    items:
+      - name: "Today Production"
+        alt: Daily Production
+        friendly_name: Today's Production
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF02F]
+        icon: "mdi:solar-power"
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF038, 0xF039]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: Today Energy Export
+        alt: Daily Energy Sold
+        friendly_name: Today's Energy Export
+        description: Today's energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF02C]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Total Energy Export
+        alt: Total Energy Sold
+        description: Total energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF032, 0xF033]
+        icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
+
+      - name: "Today Energy Import"
+        alt: Daily Energy Bought
+        friendly_name: Today's Energy Import
+        description: Today's energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF03D]
+        icon: "mdi:transmission-tower-export"
+
+      - name: "Total Energy Import"
+        alt: Total Energy Bought
+        description: Total energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF048, 0xF049]
+        icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
+
+      - name: "Today Load Consumption"
+        alt: Daily Load Consumption
+        friendly_name: Today's Load Consumption
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF030]
+
+      - name: "Total Load Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF03A, 0xF03B]
+        validation:
+          min: 0.1
+
+      - name: Today Battery Charge Ampere-hour
+        alt: Daily Battery Charge
+        friendly_name: Today's Battery Charge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF02D]
+        icon: "mdi:battery-plus"
+
+      - name: Today Battery Discharge Ampere-hour
+        alt: Daily Battery Discharge
+        friendly_name: Today's Battery Discharge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF02E]
+        icon: "mdi:battery-minus"
+
+      - name: "Total Battery Charge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF034, 0xF035]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
+
+      - name: "Total Battery Discharge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF036, 0xF037]
+        icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
+
+      - name: Today Battery Grid Charge Ampere-hour
+        alt: Daily Battery Grid Charge
+        friendly_name: Today's Battery Grid Charge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF03C]
+        icon: "mdi:battery-plus"
+
+      - name: "Total Battery Grid Charge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF046, 0xF047]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
