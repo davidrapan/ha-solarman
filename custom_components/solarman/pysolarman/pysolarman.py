@@ -316,6 +316,7 @@ class Solarman:
 
     async def read_write(self, code, address, arg):
         if code in FUNCTION_CODE_MAP:
-            #arg if isinstance(arg, list) else [arg]
+            if code >= FUNCTION_CODE.WRITE_MULTIPLE_COILS and not isinstance(arg, list):
+                arg = [arg]
             return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), address = address, count = arg, bits = arg, registers = arg))
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
