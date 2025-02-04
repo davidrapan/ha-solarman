@@ -5,56 +5,56 @@ import struct
 import logging
 import asyncio
 
-from random import randrange
 from multiprocessing import Event
+from random import randrange, randint
 
-from umodbus.client import tcp
-from umodbus.client.serial import rtu
-from umodbus.client.serial.redundancy_check import get_crc
-from umodbus.exceptions import ModbusError, error_code_to_exception_map
+from pymodbus.pdu import bit_message, register_message, DecodePDU
+from pymodbus.framer import FramerRTU, FramerSocket
 
 _LOGGER = logging.getLogger(__name__)
 
 PROTOCOL = types.SimpleNamespace()
-PROTOCOL.START = bytes.fromhex("A5")
+PROTOCOL.CONTROL_CODE = types.SimpleNamespace()
+PROTOCOL.CONTROL_CODE.HANDSHAKE = 0x41
+PROTOCOL.CONTROL_CODE.DATA = 0x42
+PROTOCOL.CONTROL_CODE.INFO = 0x43
+PROTOCOL.CONTROL_CODE.REQUEST = 0x45
+PROTOCOL.CONTROL_CODE.HEARTBEAT = 0x47
+PROTOCOL.CONTROL_CODE.REPORT = 0x48
 PROTOCOL.CONTROL_CODE_SUFFIX = bytes.fromhex("10")
+PROTOCOL.CONTROL_CODES = PROTOCOL.CONTROL_CODE.__dict__.values()
+PROTOCOL.START = bytes.fromhex("A5")
 PROTOCOL.FRAME_TYPE = bytes.fromhex("02")
 PROTOCOL.PLACEHOLDER1 = bytes.fromhex("0000")
-PROTOCOL.PLACEHOLDER2 = bytes.fromhex("00000000")
+PROTOCOL.PLACEHOLDER2 = bytes.fromhex("000000000000000000000000")
 PROTOCOL.END = bytes.fromhex("15")
 
-CONTROL_CODE = types.SimpleNamespace()
-CONTROL_CODE.HANDSHAKE = 0x41
-CONTROL_CODE.DATA = 0x42
-CONTROL_CODE.INFO = 0x43
-CONTROL_CODE.REQUEST = 0x45
-CONTROL_CODE.HEARTBEAT = 0x47
-CONTROL_CODE.REPORT = 0x48
+FUNCTION_CODE = types.SimpleNamespace()
+FUNCTION_CODE.READ_COILS = 1
+FUNCTION_CODE.READ_DISCRETE_INPUTS = 2
+FUNCTION_CODE.READ_HOLDING_REGISTERS = 3
+FUNCTION_CODE.READ_INPUT = 4
+FUNCTION_CODE.WRITE_SINGLE_COIL = 5
+FUNCTION_CODE.WRITE_SINGLE_REGISTER = 6
+FUNCTION_CODE.WRITE_MULTIPLE_COILS = 15
+FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS = 16
 
-MODBUS_CODE = types.SimpleNamespace()
-MODBUS_CODE.READ_COILS = 1
-MODBUS_CODE.READ_DISCRETE_INPUTS = 2
-MODBUS_CODE.READ_HOLDING_REGISTERS = 3
-MODBUS_CODE.READ_INPUT = 4
-MODBUS_CODE.WRITE_SINGLE_COIL = 5
-MODBUS_CODE.WRITE_SINGLE_REGISTER = 6
-MODBUS_CODE.WRITE_MULTIPLE_COILS = 15
-MODBUS_CODE.WRITE_MULTIPLE_REGISTERS = 16
+FUNCTION_CODE_MAP = {
+    FUNCTION_CODE.READ_COILS: bit_message.ReadCoilsRequest,
+    FUNCTION_CODE.READ_DISCRETE_INPUTS: bit_message.ReadDiscreteInputsRequest,
+    FUNCTION_CODE.READ_HOLDING_REGISTERS: register_message.ReadHoldingRegistersRequest,
+    FUNCTION_CODE.READ_INPUT: register_message.ReadInputRegistersRequest,
+    FUNCTION_CODE.WRITE_SINGLE_COIL: bit_message.WriteSingleCoilRequest,
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: register_message.WriteSingleRegisterRequest,
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: bit_message.WriteMultipleCoilsRequest,
+    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: register_message.WriteMultipleRegistersRequest
+}
 
 class FrameError(Exception):
     """Frame Validation Error"""
 
 class NoSocketAvailableError(Exception):
     """No Socket Available Error"""
-
-class NegativeAcknowledgeError(ModbusError):
-    error_code = 7
-    def __str__(self):
-        return self.__doc__
-
-error_code_to_exception_map |= {
-    NegativeAcknowledgeError.error_code: NegativeAcknowledgeError
-}
 
 class Solarman:
     def __init__(self, serial, address, port, slave, timeout):
@@ -72,12 +72,15 @@ class Solarman:
 
         self.sequence_number = None
 
-        self.control_codes = CONTROL_CODE.__dict__.values()
         self.serial_bytes = struct.pack("<I", self.serial)
 
         self._handle_frame = self._handle_protocol_frame if serial > 0 else lambda: True
         self._get_response = self._get_rtu_response if serial > 0 else self._get_tcp_response
-        self._adu = rtu if serial > 0 else tcp
+
+        self._server_decoder = DecodePDU(True)
+        self._client_decoder = DecodePDU(False)
+        self._server_framer = FramerRTU(self._server_decoder) if serial > 0 else FramerSocket(self._server_decoder)
+        self._client_framer = FramerRTU(self._client_decoder) if serial > 0 else FramerSocket(self._client_decoder)
 
     @staticmethod
     def _get_response_code(code: int) -> int:
@@ -89,10 +92,6 @@ class Solarman:
         for d in data:
             checksum += d & 0xFF
         return int(checksum & 0xFF)
-
-    @staticmethod
-    def _calculate_protocol_frame_checksum(frame: bytes) -> int:
-        return Solarman._calculate_checksum(frame[1:-2])
 
     @property
     def connected(self):
@@ -115,48 +114,6 @@ class Solarman:
         self.sequence_number = randrange(0x01, 0xFF) if self.sequence_number is None else (self.sequence_number + 1) & 0xFF
         return self.sequence_number
 
-    def _frame_encoder(self, modbus_frame: bytes) -> bytearray:
-        header = self._protocol_header(
-            15 + len(modbus_frame),
-            CONTROL_CODE.REQUEST,
-            struct.pack("<H", self._get_next_sequence_number())
-        )
-        payload = bytearray(
-            PROTOCOL.FRAME_TYPE
-            + PROTOCOL.PLACEHOLDER1 # sensor type
-            + PROTOCOL.PLACEHOLDER2 # delivery time
-            + PROTOCOL.PLACEHOLDER2 # power on time
-            + PROTOCOL.PLACEHOLDER2 # offset time
-            + modbus_frame
-        )
-        frame = header + payload
-        return frame + self._protocol_trailer(frame)
-
-    def _frame_decoder(self, frame: bytes) -> bytearray:
-        if (frame[0] != int.from_bytes(PROTOCOL.START, byteorder="big")) or (
-            frame[-1] != int.from_bytes(PROTOCOL.END, byteorder="big")
-        ):
-            raise FrameError("Frame contains invalid start or end values")
-        if frame[-2] != self._calculate_protocol_frame_checksum(frame):
-            raise FrameError("Frame contains invalid checksum")
-        if frame[5] != self.sequence_number:
-            raise FrameError("Frame contains invalid sequence number")
-        if frame[7:11] != self.serial_bytes:
-            raise FrameError("Frame contains incorrect data logger serial number")
-        if frame[4] != self._get_response_code(CONTROL_CODE.REQUEST):
-            raise FrameError("Frame contains incorrect control code")
-        if frame[11] != int("02", 16):
-            raise FrameError("Frame contains invalid frametype")
-
-        modbus_frame = frame[25:-2]
-
-        if len(modbus_frame) < 5:
-            if len(modbus_frame) > 0 and (err := error_code_to_exception_map.get(modbus_frame[0])):
-                raise FrameError(f"Modbus: {err.__name__}")
-            raise FrameError("Frame does not contain a valid Modbus RTU frame")
-
-        return modbus_frame
-
     def _time_response_frame(self, frame: bytes) -> bytearray:
         response_frame = self._protocol_header(10, self._get_response_code(frame[4]), frame[5:7]) + bytearray(
             + struct.pack("<H", 0x0100) # Frame & sensor type?
@@ -168,7 +125,7 @@ class Solarman:
 
     def _received_frame_is_valid(self, frame: bytes) -> bool:
         def is_tcp_frame(frame):
-            if frame[4] == CONTROL_CODE.REQUEST and (frame_len := len(frame)) and frame_len > 6 and (f := int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])):
+            if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and (frame_len := len(frame)) and frame_len > 6 and (f := int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])):
                 return (f and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])) if frame_len > 9 else f # [0xa5, 0x17, 0x00, 0x10, 0x45, 0x03, 0x00, 0x98, 0x02]
             return False
         if not frame.startswith(PROTOCOL.START) or not frame.endswith(PROTOCOL.END):
@@ -179,7 +136,8 @@ class Solarman:
                 _LOGGER.debug("[%s] TCP_DETECTED: %s", self.serial, frame.hex(" "))
                 self._handle_frame = lambda: True
                 self._get_response = self._get_tcp_response
-                self._adu = tcp
+                self._server_framer = FramerSocket(self._server_decoder)
+                self._client_framer = FramerSocket(self._client_decoder)
                 return True
             _LOGGER.debug("[%s] SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
@@ -188,10 +146,10 @@ class Solarman:
     def _received_frame_response(self, frame: bytes) -> tuple[bool, bytearray]:
         do_continue = True
         response_frame = None
-        if frame[4] != CONTROL_CODE.REQUEST and frame[4] in self.control_codes:
+        if frame[4] != PROTOCOL.CONTROL_CODE.REQUEST and frame[4] in PROTOCOL.CONTROL_CODES:
             do_continue = False
             # Maybe do_continue = True for CONTROL_CODE.DATA|INFO|REPORT and thus process packets in the future?
-            control_name = [i for i in CONTROL_CODE.__dict__ if CONTROL_CODE.__dict__[i]==frame[4]][0]
+            control_name = [i for i in PROTOCOL.CONTROL_CODE.__dict__ if PROTOCOL.CONTROL_CODE.__dict__[i] == frame[4]][0]
             _LOGGER.debug("[%s] PROTOCOL_%s: %s", self.serial, control_name, frame.hex(" "))
             response_frame = self._time_response_frame(frame)
             _LOGGER.debug("[%s] PROTOCOL_%s RESP: %s", self.serial, control_name, response_frame.hex(" "))
@@ -207,7 +165,7 @@ class Solarman:
                 return None
 
     async def _handle_protocol_frame(self, frame):
-        if (do_continue := self._received_frame_is_valid(frame)) == True:
+        if (do_continue := self._received_frame_is_valid(frame)):
             do_continue, response_frame = self._received_frame_response(frame)
             if response_frame is not None:
                 try:
@@ -273,7 +231,6 @@ class Solarman:
                 await self.writer.drain()
         except Exception as e:
             _LOGGER.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
-            await asyncio.sleep(0.5)
             await self.reconnect()
 
     async def disconnect(self) -> None:
@@ -320,7 +277,31 @@ class Solarman:
         return response_frame
 
     async def _get_rtu_response(self, frame: bytes) -> bytearray:
-        return self._frame_decoder(await self._send_receive_frame(self._frame_encoder(frame)))
+        request_frame = self._protocol_header(
+            15 + len(frame),
+            PROTOCOL.CONTROL_CODE.REQUEST,
+            struct.pack("<H", self._get_next_sequence_number())
+        ) + bytearray(
+            PROTOCOL.FRAME_TYPE
+            + PROTOCOL.PLACEHOLDER1 # sensor type
+            + PROTOCOL.PLACEHOLDER2 # delivery|poweron|offset time
+            + frame
+        )
+        response_frame = await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
+        if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
+            raise FrameError("Frame contains incorrect control code")
+        if response_frame[5] != self.sequence_number:
+            raise FrameError("Frame contains invalid sequence number")
+        if response_frame[7:11] != self.serial_bytes:
+            raise FrameError("Frame contains incorrect logger serial number")
+        if response_frame[11:12] != PROTOCOL.FRAME_TYPE:
+            raise FrameError("Frame contains invalid frame type")
+        if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
+            raise FrameError("Frame contains invalid checksum")
+        modbus_frame = response_frame[25:-2]
+        if len(modbus_frame) == 0:
+            raise FrameError("Frame does not contain a valid Modbus RTU frame")
+        return modbus_frame
 
     async def _get_tcp_response(self, frame: bytes) -> bytearray:
         def compatibility(response, request):
@@ -328,31 +309,16 @@ class Solarman:
         return compatibility(await self._send_receive_frame(frame), frame)
 
     async def _get_modbus_response(self, request_frame: bytes):
-        response_frame = await self._get_response(request_frame)
+        response_frame = await self._get_response(self._server_framer.buildFrame(request_frame))
         try:
-            return self._adu.parse_response_adu(response_frame, request_frame)
+            return self._client_framer.processIncomingFrame(response_frame)[1].registers
         except struct.error as e:
-            if response_frame.endswith(PROTOCOL.PLACEHOLDER1) and (stripped := response_frame[:-2]) is not None and get_crc(stripped[:-2]) == stripped[-2:]:
-                return self._adu.parse_response_adu(stripped, request_frame)
+            if response_frame.endswith(PROTOCOL.PLACEHOLDER1) and (stripped := response_frame[:-2]) is not None and FramerRTU.compute_CRC(stripped[:-2]).to_bytes(2, "big") == stripped[-2:]:
+                return self._client_framer.processIncomingFrame(stripped)[1].registers
             raise e
 
     async def read_write(self, code, address, arg):
-        match code:
-            case MODBUS_CODE.READ_COILS:
-                return await self._get_modbus_response(self._adu.read_coils(self.slave, address, arg))
-            case MODBUS_CODE.READ_DISCRETE_INPUTS:
-                return await self._get_modbus_response(self._adu.read_discrete_inputs(self.slave, address, arg))
-            case MODBUS_CODE.READ_HOLDING_REGISTERS:
-                return await self._get_modbus_response(self._adu.read_holding_registers(self.slave, address, arg))
-            case MODBUS_CODE.READ_INPUT:
-                return await self._get_modbus_response(self._adu.read_input_registers(self.slave, address, arg))
-            case MODBUS_CODE.WRITE_SINGLE_COIL:
-                return await self._get_modbus_response(self._adu.write_single_coil(self.slave, address, arg))
-            case MODBUS_CODE.WRITE_SINGLE_REGISTER:
-                return await self._get_modbus_response(self._adu.write_single_register(self.slave, address, arg if isinstance(arg, list) else [arg]))
-            case MODBUS_CODE.WRITE_MULTIPLE_COILS:
-                return await self._get_modbus_response(self._adu.write_multiple_coils(self.slave, address, arg))
-            case MODBUS_CODE.WRITE_MULTIPLE_REGISTERS:
-                return await self._get_modbus_response(self._adu.write_multiple_registers(self.slave, address, arg if isinstance(arg, list) else [arg]))
-            case _:
-                raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
+        if code in FUNCTION_CODE_MAP:
+            #arg if isinstance(arg, list) else [arg]
+            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), address = address, count = arg, bits = arg, registers = arg))
+        raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)

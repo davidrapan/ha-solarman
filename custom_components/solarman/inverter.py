@@ -8,7 +8,7 @@ from datetime import datetime
 from .const import *
 from .common import *
 from .provider import *
-from .pysolarman.pysolarman import Solarman
+from .pysolarman.pysolarman import FUNCTION_CODE, Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class Inverter():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                if (response := await self.modbus.read_write(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
+                if (response := await self.modbus.read_write(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < FUNCTION_CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
                     raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
                 _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
@@ -89,8 +89,6 @@ class Inverter():
                     await self.endpoint.discover(True)
                 if not attempts_left > 0:
                     raise
-
-                await asyncio.sleep(TIMINGS_WAIT_SLEEP)
 
         return response
 
@@ -121,7 +119,7 @@ class Inverter():
 
         except Exception as e:
             if self.state.reevaluate():
-                _LOGGER.info(f"[{self.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
+                _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
                 await self.modbus.disconnect()
                 raise
             _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")

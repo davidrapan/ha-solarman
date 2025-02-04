@@ -10,6 +10,7 @@ from homeassistant.exceptions import ServiceValidationError
 
 from .const import *
 from .coordinator import Inverter, InverterCoordinator
+from .pysolarman.pysolarman import FUNCTION_CODE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def async_register(hass: HomeAssistant) -> None:
         result = {}
 
         try:
-            if (response := await inverter.call(CODE.READ_INPUT, register, quantity)) is not None:
+            if (response := await inverter.call(FUNCTION_CODE.READ_INPUT, register, quantity)) is not None:
                 for i in range(0, quantity):
                     result[register + i] = response[i]
 
@@ -70,7 +71,7 @@ def async_register(hass: HomeAssistant) -> None:
         result = {}
 
         try:
-            if (response := await inverter.call(CODE.READ_HOLDING_REGISTERS, register, quantity)) is not None:
+            if (response := await inverter.call(FUNCTION_CODE.READ_HOLDING_REGISTERS, register, quantity)) is not None:
                 for i in range(0, quantity):
                     result[register + i] = response[i]
 
@@ -85,7 +86,7 @@ def async_register(hass: HomeAssistant) -> None:
         inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(CODE.WRITE_SINGLE_REGISTER, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUE))
+            await inverter.call(FUNCTION_CODE.WRITE_SINGLE_REGISTER, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
@@ -95,7 +96,7 @@ def async_register(hass: HomeAssistant) -> None:
         inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(CODE.WRITE_MULTIPLE_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
+            await inverter.call(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, call.data.get(SERVICES_PARAM_REGISTER), call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 

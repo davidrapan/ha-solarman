@@ -209,14 +209,14 @@ class ParameterParser:
             value += (temp & 0xFFFF) << shift
             shift += 16
 
+        if value > (maxint >> 1):
+            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+
         if not self.in_range(value, definition):
             return None
 
         if (offset := definition.get("offset")) is not None:
             value -= offset
-
-        if value > (maxint >> 1):
-            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
         if (scale := definition.get("scale")) is not None:
             value *= scale
