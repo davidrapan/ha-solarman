@@ -298,10 +298,7 @@ class Solarman:
             raise FrameError("Frame contains invalid frame type")
         if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
             raise FrameError("Frame contains invalid checksum")
-        modbus_frame = response_frame[25:-2]
-        if len(modbus_frame) == 0:
-            raise FrameError("Frame does not contain a valid Modbus RTU frame")
-        return modbus_frame
+        return response_frame[25:-2]
 
     async def _get_tcp_response(self, frame: bytes) -> bytearray:
         def compatibility(response, request):
