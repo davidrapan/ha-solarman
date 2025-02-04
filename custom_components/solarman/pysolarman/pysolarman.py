@@ -8,7 +8,7 @@ import asyncio
 from multiprocessing import Event
 from random import randrange, randint
 
-from pymodbus.pdu import bit_message, register_message, DecodePDU
+from pymodbus.pdu.decoders import bit_msg, reg_msg, DecodePDU
 from pymodbus.framer import FramerRTU, FramerSocket
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,14 +40,14 @@ FUNCTION_CODE.WRITE_MULTIPLE_COILS = 15
 FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS = 16
 
 FUNCTION_CODE_MAP = {
-    FUNCTION_CODE.READ_COILS: bit_message.ReadCoilsRequest,
-    FUNCTION_CODE.READ_DISCRETE_INPUTS: bit_message.ReadDiscreteInputsRequest,
-    FUNCTION_CODE.READ_HOLDING_REGISTERS: register_message.ReadHoldingRegistersRequest,
-    FUNCTION_CODE.READ_INPUT: register_message.ReadInputRegistersRequest,
-    FUNCTION_CODE.WRITE_SINGLE_COIL: bit_message.WriteSingleCoilRequest,
-    FUNCTION_CODE.WRITE_SINGLE_REGISTER: register_message.WriteSingleRegisterRequest,
-    FUNCTION_CODE.WRITE_MULTIPLE_COILS: bit_message.WriteMultipleCoilsRequest,
-    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: register_message.WriteMultipleRegistersRequest
+    FUNCTION_CODE.READ_COILS: bit_msg.ReadCoilsRequest,
+    FUNCTION_CODE.READ_DISCRETE_INPUTS: bit_msg.ReadDiscreteInputsRequest,
+    FUNCTION_CODE.READ_HOLDING_REGISTERS: reg_msg.ReadHoldingRegistersRequest,
+    FUNCTION_CODE.READ_INPUT: reg_msg.ReadInputRegistersRequest,
+    FUNCTION_CODE.WRITE_SINGLE_COIL: bit_msg.WriteSingleCoilRequest,
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: reg_msg.WriteSingleRegisterRequest,
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: bit_msg.WriteMultipleCoilsRequest,
+    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: reg_msg.WriteMultipleRegistersRequest
 }
 
 class FrameError(Exception):
