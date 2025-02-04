@@ -312,9 +312,9 @@ class Solarman:
         _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(data)))
         return pdu.registers if len(pdu.registers) > 0 else pdu.count
 
-    async def execute(self, code, address, **kwargs):
+    async def execute(self, code, **kwargs):
         if code in FUNCTION_CODE_MAP:
             if "registers" in kwargs and not isinstance(kwargs["registers"], list):
                 kwargs["registers"] = [kwargs["registers"]]
-            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), address = address, **kwargs))
+            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
