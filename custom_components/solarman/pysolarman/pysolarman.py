@@ -33,7 +33,7 @@ FUNCTION_CODE = types.SimpleNamespace()
 FUNCTION_CODE.READ_COILS = bit_msg.ReadCoilsRequest.function_code
 FUNCTION_CODE.READ_DISCRETE_INPUTS = bit_msg.ReadDiscreteInputsRequest.function_code
 FUNCTION_CODE.READ_HOLDING_REGISTERS = reg_msg.ReadHoldingRegistersRequest.function_code
-FUNCTION_CODE.READ_INPUT = reg_msg.ReadInputRegistersRequest.function_code
+FUNCTION_CODE.READ_INPUT_REGISTERS = reg_msg.ReadInputRegistersRequest.function_code
 FUNCTION_CODE.WRITE_SINGLE_COIL = bit_msg.WriteSingleCoilRequest.function_code
 FUNCTION_CODE.WRITE_SINGLE_REGISTER = reg_msg.WriteSingleRegisterRequest.function_code
 FUNCTION_CODE.WRITE_MULTIPLE_COILS = bit_msg.WriteMultipleCoilsRequest.function_code
@@ -43,7 +43,7 @@ FUNCTION_CODE_MAP = {
     FUNCTION_CODE.READ_COILS: bit_msg.ReadCoilsRequest,
     FUNCTION_CODE.READ_DISCRETE_INPUTS: bit_msg.ReadDiscreteInputsRequest,
     FUNCTION_CODE.READ_HOLDING_REGISTERS: reg_msg.ReadHoldingRegistersRequest,
-    FUNCTION_CODE.READ_INPUT: reg_msg.ReadInputRegistersRequest,
+    FUNCTION_CODE.READ_INPUT_REGISTERS: reg_msg.ReadInputRegistersRequest,
     FUNCTION_CODE.WRITE_SINGLE_COIL: bit_msg.WriteSingleCoilRequest,
     FUNCTION_CODE.WRITE_SINGLE_REGISTER: reg_msg.WriteSingleRegisterRequest,
     FUNCTION_CODE.WRITE_MULTIPLE_COILS: bit_msg.WriteMultipleCoilsRequest,
@@ -310,11 +310,18 @@ class Solarman:
 
     async def _get_modbus_response(self, data: bytes) -> list[int]:
         _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(data)))
-        return pdu.registers if len(pdu.registers) > 0 else pdu.count
+        return pdu
 
     async def execute(self, code, **kwargs):
         if code in FUNCTION_CODE_MAP:
             if "registers" in kwargs and not isinstance(kwargs["registers"], list):
                 kwargs["registers"] = [kwargs["registers"]]
-            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))
+            elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
+                kwargs["bits"] = [kwargs["bits"]]
+            response = await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))
+            if FUNCTION_CODE.READ_HOLDING_REGISTERS <= code <= FUNCTION_CODE.READ_INPUT_REGISTERS:
+                return response.registers
+            if FUNCTION_CODE.READ_COILS <= code <= FUNCTION_CODE.READ_DISCRETE_INPUTS:
+                return response.bits
+            return response.count
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
