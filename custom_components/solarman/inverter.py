@@ -69,7 +69,7 @@ class Inverter():
         _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
         await self.modbus.disconnect()
 
-    async def try_read_write(self, code, start, message: str, **kwargs):
+    async def try_read_write(self, code, message: str, **kwargs):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
         response = None
@@ -78,7 +78,7 @@ class Inverter():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                response = await self.modbus.execute(code, start, **kwargs)
+                response = await self.modbus.execute(code, **kwargs)
                 #if (response := await self.modbus.execute(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < FUNCTION_CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
                 #    raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
@@ -108,9 +108,9 @@ class Inverter():
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                 async with self._semaphore:
                     for request in scheduled:
-                        code, start, end = get_request_code(request), get_request_start(request), get_request_end(request)
-                        count = end - start + 1
-                        responses[(code, start)] = await self.try_read_write(code, start, f"Querying {code:02} ❘ 0x{code:02X} ~ {start:04} - {end:04} ❘ 0x{start:04X} - 0x{end:04X} #{count:03}", count)
+                        code, address, end = get_request_code(request), get_request_start(request), get_request_end(request)
+                        count = end - address + 1
+                        responses[(code, address)] = await self.try_read_write(code, f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", address = address, count = count)
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -127,9 +127,9 @@ class Inverter():
 
         return result
 
-    async def call(self, code, start, **kwargs):
+    async def call(self, code, address, **kwargs):
         _LOGGER.debug(f"[{self.config.serial}] Scheduling request")
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.try_read_write(code, start, f"Call {code:02} ❘ 0x{code:02X} ~ {start} ❘ 0x{start:04X}: {kwargs}", **kwargs)
+                return await self.try_read_write(code, f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", address = address, **kwargs)
