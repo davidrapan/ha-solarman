@@ -304,9 +304,10 @@ class Solarman:
         return adu
 
     async def _get_tcp_response(self, frame: bytes) -> bytearray:
-        def compatibility(response, request):
-            return response if not 8 <= (l := len(response)) <= 10 else response[:5] + b'\x06' + response[6:] + (request[l:10] if len(request) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
-        return compatibility(await self._send_receive_frame(frame), frame)
+        adu = await self._send_receive_frame(frame)
+        if 8 <= (l := len(adu)) <= 10:
+            return adu[:5] + b'\x06' + adu[6:] + (frame[l:10] if len(frame) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
+        return adu
 
     async def _get_modbus_response(self, data: bytes) -> list[int]:
         _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(data)))
