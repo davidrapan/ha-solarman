@@ -309,20 +309,16 @@ class Solarman:
             return adu[:5] + b'\x06' + adu[6:] + (frame[l:10] if len(frame) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
         return adu
 
-    async def _get_modbus_response(self, data: bytes) -> list[int]:
-        _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(data)))
-        return pdu
-
     async def execute(self, code, **kwargs):
         if code in FUNCTION_CODE_MAP:
             if "registers" in kwargs and not isinstance(kwargs["registers"], list):
                 kwargs["registers"] = [kwargs["registers"]]
             elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
                 kwargs["bits"] = [kwargs["bits"]]
-            response = await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))
+            _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))))
             if FUNCTION_CODE.READ_HOLDING_REGISTERS <= code <= FUNCTION_CODE.READ_INPUT_REGISTERS:
-                return response.registers
+                return pdu.registers
             if FUNCTION_CODE.READ_COILS <= code <= FUNCTION_CODE.READ_DISCRETE_INPUTS:
-                return response.bits
-            return response.count
+                return pdu.bits
+            return pdu.count
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
