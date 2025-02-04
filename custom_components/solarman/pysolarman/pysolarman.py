@@ -289,34 +289,32 @@ class Solarman:
         )
         response_frame = await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
         if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
-            raise FrameError("Frame contains incorrect control code")
+            raise FrameError("Incorrect control code")
         if response_frame[5] != self.sequence_number:
-            raise FrameError("Frame contains invalid sequence number")
+            raise FrameError("Invalid sequence number")
         if response_frame[7:11] != self.serial_bytes:
-            raise FrameError("Frame contains incorrect logger serial number")
+            raise FrameError("Incorrect logger serial number")
         if response_frame[11:12] != PROTOCOL.FRAME_TYPE:
-            raise FrameError("Frame contains invalid frame type")
+            raise FrameError("Invalid frame type")
         if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
-            raise FrameError("Frame contains invalid checksum")
-        return response_frame[25:-2]
+            raise FrameError("Invalid checksum")
+        adu = response_frame[25:-2]
+        if adu.endswith(PROTOCOL.PLACEHOLDER1) and (s := adu[:-2]) is not None and FramerRTU.compute_CRC(s[:-2]).to_bytes(2, "big") == s[-2:]:
+            return s
+        return adu
 
     async def _get_tcp_response(self, frame: bytes) -> bytearray:
         def compatibility(response, request):
             return response if not 8 <= (l := len(response)) <= 10 else response[:5] + b'\x06' + response[6:] + (request[l:10] if len(request) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
         return compatibility(await self._send_receive_frame(frame), frame)
 
-    async def _get_modbus_response(self, request_frame: bytes):
-        response_frame = await self._get_response(self._server_framer.buildFrame(request_frame))
-        try:
-            return self._client_framer.processIncomingFrame(response_frame)[1].registers
-        except struct.error as e:
-            if response_frame.endswith(PROTOCOL.PLACEHOLDER1) and (stripped := response_frame[:-2]) is not None and FramerRTU.compute_CRC(stripped[:-2]).to_bytes(2, "big") == stripped[-2:]:
-                return self._client_framer.processIncomingFrame(stripped)[1].registers
-            raise e
+    async def _get_modbus_response(self, data: bytes) -> list[int]:
+        _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(data)))
+        return pdu.registers if len(pdu.registers) > 0 else pdu.count
 
-    async def read_write(self, code, address, arg):
+    async def execute(self, code, address, **kwargs):
         if code in FUNCTION_CODE_MAP:
-            if code >= FUNCTION_CODE.WRITE_MULTIPLE_COILS and not isinstance(arg, list):
-                arg = [arg]
-            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), address = address, count = arg, bits = arg, registers = arg))
+            if "registers" in kwargs and not isinstance(kwargs["registers"], list):
+                kwargs["registers"] = [kwargs["registers"]]
+            return await self._get_modbus_response(FUNCTION_CODE_MAP[code](dev_id = self.slave, transaction_id = randint(0, 65535), address = address, **kwargs))
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
