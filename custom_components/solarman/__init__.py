@@ -20,7 +20,7 @@ from .services import async_register
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SWITCH, Platform.BUTTON, Platform.SELECT, Platform.DATETIME, Platform.TIME]
+_PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SWITCH, Platform.BUTTON, Platform.SELECT, Platform.DATETIME, Platform.TIME]
 
 CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
@@ -57,9 +57,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
 
     # Forward setup
     #
-    _LOGGER.debug(f"async_setup_entry: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
+    _LOGGER.debug(f"async_setup_entry: hass.config_entries.async_forward_entry_setups: {_PLATFORMS}")
 
-    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(config_entry, _PLATFORMS)
 
     # Add update listener
     #
@@ -78,9 +78,9 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEn
 
     # Forward unload
     #
-    _LOGGER.debug(f"async_unload_entry: hass.config_entries.async_unload_platforms: {PLATFORMS}")
+    _LOGGER.debug(f"async_unload_entry: hass.config_entries.async_unload_platforms: {_PLATFORMS}")
 
-    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
+    return await hass.config_entries.async_unload_platforms(config_entry, _PLATFORMS)
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_migrate_entry({config_entry.as_dict()})")
