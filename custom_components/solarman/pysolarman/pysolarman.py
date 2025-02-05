@@ -228,13 +228,13 @@ class Solarman:
                     self.writer.write(b"")
                     await self.writer.drain()
                 except (AttributeError, ConnectionResetError) as e:
-                    _LOGGER.debug(f"{e} can be during closing ignored.")
+                    _LOGGER.debug(f"{e} can be during closing ignored")
                 finally:
                     self.writer.close()
                     try:
                         await self.writer.wait_closed()
                     except OSError as e: # Happens when host is unreachable.
-                        _LOGGER.debug(f"{e} can be during closing ignored.")
+                        _LOGGER.debug(f"{e} can be during closing ignored")
         finally:
             self.reader_task = None
             self.reader = None
@@ -251,16 +251,16 @@ class Solarman:
             await self.writer.drain()
             if (response_frame := await asyncio.wait_for(self.data_queue.get(), self.timeout)) == b"":
                 raise NoSocketAvailableError("Connection closed on read. Retry if auto-reconnect is enabled")
+            _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
+            return response_frame
         except Exception as e:
             if (err := self._send_receive_except(e)) is not None:
                 raise err from e
             raise
         finally:
             self.data_wanted_ev.clear()
-        _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
-        return response_frame
 
-    async def _parse_adu_from_rtu_response(self, frame: bytes) -> bytearray:
+    async def _parse_adu_from_rtu_response(self, frame: bytes) -> bytes:
         request_frame = self._protocol_header(15 + len(frame),
             PROTOCOL.CONTROL_CODE.REQUEST,
             struct.pack("<H", self._get_next_sequence_number())
@@ -284,7 +284,7 @@ class Solarman:
             return adu[:-2]
         return adu
 
-    async def _parse_adu_from_tcp_response(self, frame: bytes) -> bytearray:
+    async def _parse_adu_from_tcp_response(self, frame: bytes) -> bytes:
         adu = await self._send_receive_frame(frame)
         if 8 <= len(adu) <= 10: # Incomplete response frame correction
             return adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
