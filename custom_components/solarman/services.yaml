@@ -4,15 +4,15 @@ read_holding_registers:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to read data from
       example: "Inverter"
       required: true
       selector:
         device:
           filter:
             - integration: solarman
-    register:
-      name: Register
+    address:
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
@@ -21,9 +21,9 @@ read_holding_registers:
           min: 0
           max: 65535
           mode: box
-    quantity:
-      name: Quantity
-      description: Quantity of registers to read
+    count:
+      name: Count
+      description: Number of registers to read
       default: 1
       required: true
       selector:
@@ -38,15 +38,15 @@ read_input_registers:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to read data from
       example: "Inverter"
       required: true
       selector:
         device:
           filter:
             - integration: solarman
-    register:
-      name: Register
+    address:
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
@@ -55,9 +55,9 @@ read_input_registers:
           min: 0
           max: 65535
           mode: box
-    quantity:
-      name: Quantity
-      description: Quantity of registers to read
+    count:
+      name: Count
+      description: Number of registers to read
       default: 1
       required: true
       selector:
@@ -72,15 +72,15 @@ write_single_register:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to write data to
       example: "Inverter"
       required: true
       selector:
         device:
           filter:
             - integration: solarman
-    register:
-      name: Register
+    address:
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
@@ -106,7 +106,7 @@ write_multiple_registers:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to write data to
       example: "Inverter"
       required: true
       selector:
@@ -143,7 +143,7 @@ write_holding_register:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to write data to
       example: "Inverter"
       required: true
       selector:
@@ -151,7 +151,7 @@ write_holding_register:
           filter:
             - integration: solarman
     register:
-      name: Register
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
@@ -177,7 +177,7 @@ write_multiple_holding_registers:
   fields:
     device:
       name: Device
-      description: The Device
+      description: Device to write data to
       example: "Inverter"
       required: true
       selector:
@@ -185,7 +185,7 @@ write_multiple_holding_registers:
           filter:
             - integration: solarman
     register:
-      name: Register
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
