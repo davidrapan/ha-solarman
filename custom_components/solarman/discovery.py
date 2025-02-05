@@ -14,7 +14,7 @@ from .common import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class InverterDiscovery:
+class Discovery:
     networks = None
 
     def __init__(self, hass: HomeAssistant, ip = None, serial = None):
@@ -23,7 +23,7 @@ class InverterDiscovery:
         self._serial = serial
         self._devices = {}
 
-    async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY) -> dict:
+    async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY):
         _LOGGER.debug(f"_discover")
 
         loop = asyncio.get_running_loop()
@@ -55,17 +55,17 @@ class InverterDiscovery:
         except Exception as e:
             _LOGGER.debug(f"_discover exception: {format_exception(e)}")
 
-    async def _discover_all(self) -> dict:
+    async def _discover_all(self):
         _LOGGER.debug(f"_discover_all")
 
         if not self._hass:
             return
 
-        if InverterDiscovery.networks is None:
-            InverterDiscovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
+        if Discovery.networks is None:
+            Discovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
-        _LOGGER.debug(f"_discover_all: Broadcasting on {InverterDiscovery.networks}")
-        async for item in self._discover([str(net.broadcast_address) for net in InverterDiscovery.networks], True):
+        _LOGGER.debug(f"_discover_all: Broadcasting on {Discovery.networks}")
+        async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
             yield item
 
     async def discover(self, ping_only = False):

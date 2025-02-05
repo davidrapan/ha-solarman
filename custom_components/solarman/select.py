@@ -21,7 +21,7 @@ async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry,
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
     coordinator = config_entry.runtime_data
-    descriptions = coordinator.inverter.profile.parser.get_entity_descriptions(_PLATFORM)
+    descriptions = coordinator.device.profile.parser.get_entity_descriptions(_PLATFORM)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 

@@ -22,7 +22,7 @@ async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry,
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
     coordinator = config_entry.runtime_data
-    descriptions = coordinator.inverter.profile.parser.get_entity_descriptions(_PLATFORM)
+    descriptions = coordinator.device.profile.parser.get_entity_descriptions(_PLATFORM)
 
     _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
 
@@ -63,6 +63,6 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
         return self._attr_state > 0 if self._attr_state is not None else False
 
     def update(self):
-        self.set_state(self.coordinator.inverter.state.value)
-        self._attr_extra_state_attributes["updated"] = self.coordinator.inverter.state.updated.strftime("%m/%d/%Y, %H:%M:%S")
+        self.set_state(self.coordinator.device.state.value)
+        self._attr_extra_state_attributes["updated"] = self.coordinator.device.state.updated.strftime("%m/%d/%Y, %H:%M:%S")
         # Maybe set the timestamp using HA's datetime format???

@@ -82,8 +82,8 @@ AUTO_RECONNECT = True
 # HA's Recorder is controlling that using its sampling rate (default is 5m)
 # On the contrary changing this value can break:
 # - Request scheduling according "update_interval" properties set in profiles
-# - Inverter configuring flows
 # - Behavior of services
+# - Configuration flow
 #
 TIMINGS_INTERVAL = 5
 TIMINGS_INTERVAL_SCALE = 1

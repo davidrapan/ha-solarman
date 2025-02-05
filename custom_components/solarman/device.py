@@ -12,7 +12,7 @@ from .pysolarman.pysolarman import FUNCTION_CODE, Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
-class InverterState():
+class DeviceState():
     def __init__(self):
         self.updated = datetime.now()
         self.updated_interval = 0
@@ -35,12 +35,12 @@ class InverterState():
         self.value = 0 if self.value == 1 else -1
         return self.value == -1
 
-class Inverter():
+class Device():
     def __init__(self, config: ConfigurationProvider):
         self._semaphore = asyncio.Semaphore(1)
         self._write_lock = True
 
-        self.state: InverterState = InverterState()
+        self.state: DeviceState = DeviceState()
         self.config: ConfigurationProvider = config
         self.endpoint: EndPointProvider = None
         self.profile: ProfileProvider = None
@@ -69,7 +69,7 @@ class Inverter():
         _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
         await self.modbus.disconnect()
 
-    async def try_read_write(self, code, message: str, **kwargs):
+    async def execute(self, code, message: str, **kwargs):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
 
         response = None
@@ -110,7 +110,7 @@ class Inverter():
                     for request in scheduled:
                         code, address, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         count = end - address + 1
-                        responses[(code, address)] = await self.try_read_write(code, f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", address = address, count = count)
+                        responses[(code, address)] = await self.execute(code, f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", address = address, count = count)
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -127,9 +127,9 @@ class Inverter():
 
         return result
 
-    async def call(self, code, address, **kwargs):
+    async def exe(self, code, address, **kwargs):
         _LOGGER.debug(f"[{self.config.serial}] Scheduling request")
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.try_read_write(code, f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", address = address, **kwargs)
+                return await self.execute(code, f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", address = address, **kwargs)
