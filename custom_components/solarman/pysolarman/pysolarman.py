@@ -25,8 +25,8 @@ PROTOCOL.CONTROL_CODE_SUFFIX = bytes.fromhex("10")
 PROTOCOL.CONTROL_CODES = PROTOCOL.CONTROL_CODE.__dict__.values()
 PROTOCOL.START = bytes.fromhex("A5")
 PROTOCOL.FRAME_TYPE = bytes.fromhex("02")
-PROTOCOL.PLACEHOLDER1 = bytes.fromhex("0000")
-PROTOCOL.PLACEHOLDER2 = bytes.fromhex("000000000000000000000000")
+PROTOCOL.PLACEHOLDER1 = bytes.fromhex("0000") # sensor type and double crc
+PROTOCOL.PLACEHOLDER2 = bytes.fromhex("000000000000000000000000") # delivery|poweron|offset time
 PROTOCOL.END = bytes.fromhex("15")
 
 FUNCTION_CODE = types.SimpleNamespace()
@@ -53,23 +53,22 @@ class Solarman:
         self.slave = slave
         self.timeout = timeout
 
+        self.serial_bytes = struct.pack("<I", self.serial)
+
         self.reader_task: asyncio.Task = None
         self.reader: asyncio.StreamReader = None
         self.writer: asyncio.StreamWriter = None
         self.data_queue = asyncio.Queue(maxsize = 1)
         self.data_wanted_ev = Event()
 
-        self.sequence_number = None
-
-        self.serial_bytes = struct.pack("<I", self.serial)
-
-        self._handle_frame = self._handle_protocol_frame if serial > 0 else lambda: True
-        self._get_response = self._get_rtu_response if serial > 0 else self._get_tcp_response
-
         self._server_decoder = DecodePDU(True)
         self._client_decoder = DecodePDU(False)
         self._server_framer = FramerRTU(self._server_decoder) if serial > 0 else FramerSocket(self._server_decoder)
         self._client_framer = FramerRTU(self._client_decoder) if serial > 0 else FramerSocket(self._client_decoder)
+        self._handle_frame = self._handle_protocol_frame if serial > 0 else lambda: True
+        self._get_response = self._parse_adu_from_rtu_response if serial > 0 else self._parse_adu_from_tcp_response
+
+        self.sequence_number = None
 
     @staticmethod
     def _get_response_code(code: int) -> int:
@@ -113,18 +112,14 @@ class Solarman:
         return response_frame + self._protocol_trailer(response_frame)
 
     def _received_frame_is_valid(self, frame: bytes) -> bool:
-        def is_tcp_frame(frame):
-            if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and (frame_len := len(frame)) and frame_len > 6 and (f := int.from_bytes(frame[5:6], byteorder = "big") == len(frame[6:])):
-                return (f and int.from_bytes(frame[8:9], byteorder = "big") == len(frame[9:])) if frame_len > 9 else f # [0xa5, 0x17, 0x00, 0x10, 0x45, 0x03, 0x00, 0x98, 0x02]
-            return False
         if not frame.startswith(PROTOCOL.START) or not frame.endswith(PROTOCOL.END):
             _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         if frame[5] != self.sequence_number:
-            if is_tcp_frame(frame):
+            if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and len(frame) > 6 and (f := int.from_bytes(frame[5:6], "big") == len(frame[6:])) and (int.from_bytes(frame[8:9], "big") == len(frame[9:]) if len(frame) > 9 else f):
                 _LOGGER.debug("[%s] TCP_DETECTED: %s", self.serial, frame.hex(" "))
                 self._handle_frame = lambda: True
-                self._get_response = self._get_tcp_response
+                self._get_response = self._parse_adu_from_tcp_response
                 self._server_framer = FramerSocket(self._server_decoder)
                 self._client_framer = FramerSocket(self._client_decoder)
                 return True
@@ -238,7 +233,7 @@ class Solarman:
                     self.writer.close()
                     try:
                         await self.writer.wait_closed()
-                    except OSError as e:  # Happens when host is unreachable.
+                    except OSError as e: # Happens when host is unreachable.
                         _LOGGER.debug(f"{e} can be during closing ignored.")
         finally:
             self.reader_task = None
@@ -265,17 +260,14 @@ class Solarman:
         _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
         return response_frame
 
-    async def _get_rtu_response(self, frame: bytes) -> bytearray:
-        request_frame = self._protocol_header(
-            15 + len(frame),
+    async def _parse_adu_from_rtu_response(self, frame: bytes) -> bytearray:
+        request_frame = self._protocol_header(15 + len(frame),
             PROTOCOL.CONTROL_CODE.REQUEST,
             struct.pack("<H", self._get_next_sequence_number())
-        ) + bytearray(
-            PROTOCOL.FRAME_TYPE
+        ) + bytearray(PROTOCOL.FRAME_TYPE
             + PROTOCOL.PLACEHOLDER1 # sensor type
             + PROTOCOL.PLACEHOLDER2 # delivery|poweron|offset time
-            + frame
-        )
+            + frame)
         response_frame = await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
         if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
             raise FrameError("Incorrect control code")
@@ -288,13 +280,13 @@ class Solarman:
         if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
             raise FrameError("Invalid checksum")
         adu = response_frame[25:-2]
-        if adu.endswith(PROTOCOL.PLACEHOLDER1) and (s := adu[:-2]) is not None and FramerRTU.compute_CRC(s[:-2]).to_bytes(2, "big") == s[-2:]:
-            return s
+        if adu.endswith(PROTOCOL.PLACEHOLDER1) and FramerRTU.compute_CRC(adu[:-4]).to_bytes(2, "big") == adu[-4:-2]: # Double CRC (XXXX0000) correction
+            return adu[:-2]
         return adu
 
-    async def _get_tcp_response(self, frame: bytes) -> bytearray:
+    async def _parse_adu_from_tcp_response(self, frame: bytes) -> bytearray:
         adu = await self._send_receive_frame(frame)
-        if 8 <= (l := len(adu)) <= 10:
+        if 8 <= (l := len(adu)) <= 10: # Incomplete response frame correction
             return adu[:5] + b'\x06' + adu[6:] + (frame[l:10] if len(frame) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
         return adu
 
