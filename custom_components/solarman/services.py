@@ -16,11 +16,16 @@ _LOGGER = logging.getLogger(__name__)
 
 HEADER_SCHEMA = {
     vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
+    vol.Required(SERVICES_PARAM_ADDRESS): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
+}
+
+DEPRECATION_HEADER_SCHEMA = {
+    vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
     vol.Required(SERVICES_PARAM_REGISTER): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))
 }
 
-QUANTITY_SCHEMA = {
-    vol.Required(SERVICES_PARAM_QUANTITY): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 125))
+COUNT_SCHEMA = {
+    vol.Required(SERVICES_PARAM_COUNT): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 125))
 }
 
 VALUE_SCHEMA = {
@@ -35,77 +40,61 @@ def async_register(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register")
 
     def get_device(device_id) -> Inverter:
-        device_registry = dr.async_get(hass)
-        device = device_registry.async_get(device_id)
-
-        for config_entry in device.config_entries:
-            if config_entry in hass.data[DOMAIN] and isinstance(hass.data[DOMAIN][config_entry], InverterCoordinator):
-                return hass.data[DOMAIN][config_entry].inverter
+        for config_entry_id in dr.async_get(hass).async_get(device_id).config_entries:
+            if (config_entry := hass.config_entries.async_get_entry(config_entry_id)) and config_entry.domain == DOMAIN and config_entry.runtime_data is not None and isinstance(config_entry.runtime_data, InverterCoordinator):
+                return config_entry.runtime_data.inverter
 
         raise ServiceValidationError("No communication interface for device found", translation_domain = DOMAIN, translation_key = "no_interface_found")
 
-    async def read_input_registers(call: ServiceCall) -> int:
-        _LOGGER.debug(f"read_input_registers: {call}")
-
-        inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
-        register = call.data.get(SERVICES_PARAM_REGISTER)
-        quantity = call.data.get(SERVICES_PARAM_QUANTITY)
-        result = {}
+    async def read_registers(call: ServiceCall, code: int):
+        device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
+        address = call.data.get(SERVICES_PARAM_ADDRESS)
+        count = call.data.get(SERVICES_PARAM_COUNT)
 
         try:
-            if (response := await inverter.call(FUNCTION_CODE.READ_INPUT, address = register, count = quantity)) is not None:
-                for i in range(0, quantity):
-                    result[register + i] = response[i]
+            if (response := await device.call(code, address = address, count = count)) is not None:
+                for i in range(0, count):
+                    yield address + i, response[i]
 
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
-        return result
-
-    async def read_holding_registers(call: ServiceCall) -> int:
+    async def read_holding_registers(call: ServiceCall):
         _LOGGER.debug(f"read_holding_registers: {call}")
 
-        inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
-        register = call.data.get(SERVICES_PARAM_REGISTER)
-        quantity = call.data.get(SERVICES_PARAM_QUANTITY)
-        result = {}
+        return {k: v async for k, v in read_registers(call, FUNCTION_CODE.READ_HOLDING_REGISTERS)}
 
-        try:
-            if (response := await inverter.call(FUNCTION_CODE.READ_HOLDING_REGISTERS, address = register, count = quantity)) is not None:
-                for i in range(0, quantity):
-                    result[register + i] = response[i]
+    async def read_input_registers(call: ServiceCall):
+        _LOGGER.debug(f"read_input_registers: {call}")
 
-        except Exception as e:
-            raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
-
-        return result
+        return {k: v async for k, v in read_registers(call, FUNCTION_CODE.READ_INPUT_REGISTERS)}
 
     async def write_single_register(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_single_register: {call}")
 
-        inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
+        device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(FUNCTION_CODE.WRITE_SINGLE_REGISTER, address = call.data.get(SERVICES_PARAM_REGISTER), registers = call.data.get(SERVICES_PARAM_VALUE))
+            await device.call(FUNCTION_CODE.WRITE_SINGLE_REGISTER, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
     async def write_multiple_registers(call: ServiceCall) -> None:
         _LOGGER.debug(f"write_multiple_registers: {call}")
 
-        inverter = get_device(call.data.get(SERVICES_PARAM_DEVICE))
+        device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await inverter.call(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, address = call.data.get(SERVICES_PARAM_REGISTER), registers = call.data.get(SERVICES_PARAM_VALUES))
+            await device.call(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA), supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | COUNT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_READ_HOLDING_REGISTERS, read_holding_registers, schema = vol.Schema(HEADER_SCHEMA | QUANTITY_SCHEMA), supports_response = SupportsResponse.OPTIONAL
+        DOMAIN, SERVICE_READ_INPUT_REGISTERS, read_input_registers, schema = vol.Schema(HEADER_SCHEMA | COUNT_SCHEMA), supports_response = SupportsResponse.OPTIONAL
     )
 
     hass.services.async_register(
@@ -117,9 +106,9 @@ def async_register(hass: HomeAssistant) -> None:
     )
 
     hass.services.async_register(
-        DOMAIN, DEPRECATION_SERVICE_WRITE_SINGLE_REGISTER, write_single_register, schema = vol.Schema(HEADER_SCHEMA | VALUE_SCHEMA)
+        DOMAIN, DEPRECATION_SERVICE_WRITE_SINGLE_REGISTER, write_single_register, schema = vol.Schema(DEPRECATION_HEADER_SCHEMA | VALUE_SCHEMA)
     )
 
     hass.services.async_register(
-        DOMAIN, DEPRECATION_SERVICE_WRITE_MULTIPLE_REGISTERS, write_multiple_registers, schema = vol.Schema(HEADER_SCHEMA | VALUES_SCHEMA)
+        DOMAIN, DEPRECATION_SERVICE_WRITE_MULTIPLE_REGISTERS, write_multiple_registers, schema = vol.Schema(DEPRECATION_HEADER_SCHEMA | VALUES_SCHEMA)
     )
