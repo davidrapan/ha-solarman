@@ -113,8 +113,8 @@ write_multiple_registers:
         device:
           filter:
             - integration: solarman
-    register:
-      name: Register
+    address:
+      name: Address
       description: Modbus register address
       example: 16384
       required: true
