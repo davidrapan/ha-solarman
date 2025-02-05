@@ -65,8 +65,8 @@ class Solarman:
         self._client_decoder = DecodePDU(False)
         self._server_framer = FramerRTU(self._server_decoder) if serial > 0 else FramerSocket(self._server_decoder)
         self._client_framer = FramerRTU(self._client_decoder) if serial > 0 else FramerSocket(self._client_decoder)
-        self._handle_frame = self._handle_protocol_frame if serial > 0 else lambda: True
         self._get_response = self._parse_adu_from_rtu_response if serial > 0 else self._parse_adu_from_tcp_response
+        self._handle_frame = self._handle_protocol_frame if serial > 0 else None
 
         self.sequence_number = None
 
@@ -118,10 +118,10 @@ class Solarman:
         if frame[5] != self.sequence_number:
             if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and len(frame) > 6 and (f := int.from_bytes(frame[5:6], "big") == len(frame[6:])) and (int.from_bytes(frame[8:9], "big") == len(frame[9:]) if len(frame) > 9 else f):
                 _LOGGER.debug("[%s] TCP_DETECTED: %s", self.serial, frame.hex(" "))
-                self._handle_frame = lambda: True
-                self._get_response = self._parse_adu_from_tcp_response
                 self._server_framer = FramerSocket(self._server_decoder)
                 self._client_framer = FramerSocket(self._client_decoder)
+                self._get_response = self._parse_adu_from_tcp_response
+                self._handle_frame = None
                 return True
             _LOGGER.debug("[%s] SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
@@ -166,12 +166,12 @@ class Solarman:
             try:
                 data = await self.reader.read(1024)
             except ConnectionResetError:
-                _LOGGER.debug("[%s] Connection reset. Closing the socket reader.", self.serial, exc_info = True)
+                _LOGGER.debug("[%s] Connection reset. Closing the socket reader", self.serial, exc_info = True)
                 break
             if data == b"":
-                _LOGGER.debug("[%s] Connection closed by the remote. Closing the socket reader.", self.serial)
+                _LOGGER.debug("[%s] Connection closed by the remote. Closing the socket reader", self.serial)
                 break
-            if not await self._handle_frame(data):
+            if self._handle_frame is not None and not await self._handle_frame(data):
                 continue
             if self.data_wanted_ev.is_set():
                 if not self.data_queue.empty():
@@ -286,8 +286,8 @@ class Solarman:
 
     async def _parse_adu_from_tcp_response(self, frame: bytes) -> bytearray:
         adu = await self._send_receive_frame(frame)
-        if 8 <= (l := len(adu)) <= 10: # Incomplete response frame correction
-            return adu[:5] + b'\x06' + adu[6:] + (frame[l:10] if len(frame) > 12 else (b'\x00' * (10 - l))) + b'\x00\x01'
+        if 8 <= len(adu) <= 10: # Incomplete response frame correction
+            return adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
         return adu
 
     async def execute(self, code, **kwargs):
