@@ -18,12 +18,12 @@ from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 from .const import *
 from .common import *
 from .services import *
-from .coordinator import InverterCoordinator
+from .coordinator import Coordinator
 from .pysolarman.pysolarman import FUNCTION_CODE
 
 _LOGGER = logging.getLogger(__name__)
 
-type SolarmanConfigEntry = ConfigEntry[InverterCoordinator]
+type SolarmanConfigEntry = ConfigEntry[Coordinator]
 
 @callback
 def migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:
@@ -55,10 +55,10 @@ def create_entity(creator, description):
         _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
         raise
 
-class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
-    def __init__(self, coordinator: InverterCoordinator):
+class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
+    def __init__(self, coordinator: Coordinator):
         super().__init__(coordinator)
-        self._attr_device_info = self.coordinator.inverter.device_info
+        self._attr_device_info = self.coordinator.device.device_info
         self._attr_state: StateType = STATE_UNKNOWN
         self._attr_native_value: StateType | str | date | datetime | time | float | Decimal = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
@@ -66,11 +66,11 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[InverterCoordinator]):
 
     @property
     def device_name(self) -> str:
-        return (device_entry.name_by_user or device_entry.name) if (device_entry := self.device_entry) else self.coordinator.inverter.config.name
+        return (device_entry.name_by_user or device_entry.name) if (device_entry := self.device_entry) else self.coordinator.device.config.name
 
     @property
     def available(self) -> bool:
-        return self.coordinator.last_update_success and self.coordinator.inverter.state.value > -1
+        return self.coordinator.last_update_success and self.coordinator.device.state.value > -1
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -99,7 +99,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.inverter.config.serial), self._attr_key))))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.device.config.serial), self._attr_key))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
@@ -148,7 +148,7 @@ class SolarmanWritableEntity(SolarmanEntity):
         self.register = min(self.registers) if len(self.registers) > 0 else None
 
     async def write(self, value, state = None) -> None:
-        #self.coordinator.inverter.check(self._write_lock)
+        #self.coordinator.device.check(self._write_lock)
         if isinstance(value, int):
             if value > 0xFFFF:
                 value = list(split_p16b(value))
@@ -157,7 +157,7 @@ class SolarmanWritableEntity(SolarmanEntity):
         if isinstance(value, list):
             while len(self.registers) > len(value):
                 value.insert(0, 0)
-        if await self.coordinator.inverter.call(self.code, address = self.register, registers = value) > 0 and state is not None:
+        if await self.coordinator.device.exe(self.code, address = self.register, registers = value) > 0 and state is not None:
             self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))

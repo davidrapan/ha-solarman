@@ -9,7 +9,7 @@ from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.exceptions import ServiceValidationError
 
 from .const import *
-from .coordinator import Inverter, InverterCoordinator
+from .coordinator import Device, Coordinator
 from .pysolarman.pysolarman import FUNCTION_CODE
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,11 +39,10 @@ VALUES_SCHEMA = {
 def async_register(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register")
 
-    def get_device(device_id) -> Inverter:
+    def get_device(device_id) -> Device:
         for config_entry_id in dr.async_get(hass).async_get(device_id).config_entries:
-            if (config_entry := hass.config_entries.async_get_entry(config_entry_id)) and config_entry.domain == DOMAIN and config_entry.runtime_data is not None and isinstance(config_entry.runtime_data, InverterCoordinator):
-                return config_entry.runtime_data.inverter
-
+            if (config_entry := hass.config_entries.async_get_entry(config_entry_id)) and config_entry.domain == DOMAIN and config_entry.runtime_data is not None and isinstance(config_entry.runtime_data, Coordinator):
+                return config_entry.runtime_data.device
         raise ServiceValidationError("No communication interface for device found", translation_domain = DOMAIN, translation_key = "no_interface_found")
 
     async def read_registers(call: ServiceCall, code: int):
@@ -52,10 +51,9 @@ def async_register(hass: HomeAssistant) -> None:
         count = call.data.get(SERVICES_PARAM_COUNT)
 
         try:
-            if (response := await device.call(code, address = address, count = count)) is not None:
+            if (response := await device.exe(code, address = address, count = count)) is not None:
                 for i in range(0, count):
                     yield address + i, response[i]
-
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
@@ -75,7 +73,7 @@ def async_register(hass: HomeAssistant) -> None:
         device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await device.call(FUNCTION_CODE.WRITE_SINGLE_REGISTER, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUE))
+            await device.exe(FUNCTION_CODE.WRITE_SINGLE_REGISTER, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
@@ -85,7 +83,7 @@ def async_register(hass: HomeAssistant) -> None:
         device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await device.call(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUES))
+            await device.exe(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), registers = call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 

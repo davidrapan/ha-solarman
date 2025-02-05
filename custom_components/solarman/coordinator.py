@@ -8,19 +8,19 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import *
-from .inverter import Inverter
+from .device import Device
 
 _LOGGER = logging.getLogger(__name__)
 
-class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, inverter: Inverter):
-        super().__init__(hass, _LOGGER, name = inverter.config.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
-        self.inverter = inverter
+class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
+    def __init__(self, hass: HomeAssistant, device: Device):
+        super().__init__(hass, _LOGGER, name = device.config.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
+        self.device = device
         self._counter = 0
 
     async def _async_setup(self) -> None:
         try:
-            return await self.inverter.load()
+            return await self.device.load()
         except Exception as e:
             if isinstance(e, TimeoutError):
                 raise
@@ -28,7 +28,7 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            return await self.inverter.get(int(self._counter * self._update_interval_seconds))
+            return await self.device.get(int(self._counter * self._update_interval_seconds))
         except Exception as e:
             self._counter = 0
             if isinstance(e, TimeoutError):
@@ -41,4 +41,4 @@ class InverterCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_shutdown(self) -> None:
         _LOGGER.debug("async_shutdown")
         await super().async_shutdown()
-        await self.inverter.shutdown()
+        await self.device.shutdown()

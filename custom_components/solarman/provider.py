@@ -15,7 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 
 from .const import *
 from .common import *
-from .discovery import InverterDiscovery
+from .discovery import Discovery
 from .parser import ParameterParser
 
 _LOGGER = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ class EndPointProvider:
             return IPv4Address(socket.gethostbyname(self.host))    
 
     async def discover(self, ping_only = False):
-        if self.ipaddress.is_private and (discover := await InverterDiscovery(self.hass, self.host, self.serial).discover(ping_only)):
+        if self.ipaddress.is_private and (discover := await Discovery(self.hass, self.host, self.serial).discover(ping_only)):
             if (device := discover.get(self.serial)) is not None:
                 self.host = device["ip"]
                 self.mac = device["mac"]

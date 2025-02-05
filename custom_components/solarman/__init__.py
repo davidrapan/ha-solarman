@@ -12,9 +12,9 @@ from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import *
 from .common import *
-from .provider import ConfigurationProvider
-from .coordinator import Inverter, InverterCoordinator
 from .config_flow import ConfigFlowHandler
+from .provider import ConfigurationProvider
+from .coordinator import Device, Coordinator
 from .entity import SolarmanConfigEntry, migrate_unique_ids
 from .services import async_register
 
@@ -35,7 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
     config = ConfigurationProvider(hass, config_entry)
-    config_entry.runtime_data = InverterCoordinator(hass, Inverter(config))
+    config_entry.runtime_data = Coordinator(hass, Device(config))
 
     # Fetch initial data so we have data when entities subscribe.
     #

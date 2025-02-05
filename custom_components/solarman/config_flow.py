@@ -15,7 +15,7 @@ from homeassistant.data_entry_flow import section
 
 from .const import *
 from .common import *
-from .discovery import InverterDiscovery
+from .discovery import Discovery
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             name = None
             serial = None
             ip = None
-            if (discovered := await InverterDiscovery(self.hass).discover()):
+            if (discovered := await Discovery(self.hass).discover()):
                 for s in discovered:
                     try:
                         self._async_abort_entries_match({ CONF_SERIAL: s })
