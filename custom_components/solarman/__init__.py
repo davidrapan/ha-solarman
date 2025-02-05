@@ -45,25 +45,25 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     # If you do not want to retry setup on failure, use
     # config_entry.runtime_data.async_refresh() instead.
     #
-    _LOGGER.debug(f"async_setup: config_entry.runtime_data.async_config_entry_first_refresh")
+    _LOGGER.debug(f"async_setup_entry: config_entry.runtime_data.async_config_entry_first_refresh")
 
     await config_entry.runtime_data.async_config_entry_first_refresh()
 
     # Migrations
     #
-    _LOGGER.debug(f"async_setup: async_migrate_entries")
+    _LOGGER.debug(f"async_setup_entry: async_migrate_entries")
 
     await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config.name, config.serial))
 
     # Forward setup
     #
-    _LOGGER.debug(f"async_setup: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
+    _LOGGER.debug(f"async_setup_entry: hass.config_entries.async_forward_entry_setups: {PLATFORMS}")
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
     # Add update listener
     #
-    _LOGGER.debug(f"async_setup: config_entry.add_update_listener(async_update_listener)")
+    _LOGGER.debug(f"async_setup_entry: config_entry.add_update_listener(async_update_listener)")
 
     async def async_update_listener(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> None:
         _LOGGER.debug(f"async_update_listener({config_entry.as_dict()})")
@@ -78,15 +78,17 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEn
 
     # Forward unload
     #
-    _LOGGER.debug(f"async_setup: hass.config_entries.async_unload_platforms: {PLATFORMS}")
+    _LOGGER.debug(f"async_unload_entry: hass.config_entries.async_unload_platforms: {PLATFORMS}")
 
     return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
-    _LOGGER.debug("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
+    _LOGGER.debug(f"async_migrate_entry({config_entry.as_dict()})")
 
     #if config_entry.minor_version > 1:
     #    return False
+
+    _LOGGER.info("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
 
     if (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
         bulk_migrate(new_data, new_data, OLD_)
@@ -100,6 +102,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
 
         hass.config_entries.async_update_entry(config_entry, unique_id = f"solarman_{new_data[CONF_SERIAL]}", options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
 
-    _LOGGER.debug("Migration to configuration version %s.%s successful", config_entry.version, config_entry.minor_version)
+    _LOGGER.info("Migration to configuration version %s.%s was successful", config_entry.version, config_entry.minor_version)
 
     return True
