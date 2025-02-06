@@ -55,6 +55,7 @@ class Solarman:
 
         self.serial_bytes = struct.pack("<I", self.serial)
 
+        self.open_task: asyncio.Task = None
         self.reader_task: asyncio.Task = None
         self.reader: asyncio.StreamReader = None
         self.writer: asyncio.StreamWriter = None
@@ -178,16 +179,18 @@ class Solarman:
                 _ = self.data_queue.get_nowait()
             self.data_queue.put_nowait(data)
             self.data_wanted_ev.clear()
+        self.reader_task = None
         self.reader = None
         self.writer = None
-        asyncio.get_running_loop().create_task(self._reconnect(), name="ReconnKeeper")
+        self.open_task = asyncio.get_running_loop().create_task(self._reconnect(), name = "OpenKeeper")
 
     async def _open_connection(self) -> None:
         try:
             if self.reader_task:
                 self.reader_task.cancel()
             self.reader, self.writer = await asyncio.wait_for(asyncio.open_connection(self.address, self.port), self.timeout)
-            self.reader_task = asyncio.get_running_loop().create_task(self._conn_keeper(), name="ConnKeeper")
+            self.reader_task = asyncio.get_running_loop().create_task(self._conn_keeper(), name = "ConnKeeper")
+            self.open_task = None
         except Exception as e:
             self.reader_task = None
             raise NoSocketAvailableError(f"Cannot open connection to {self.address}") from e
@@ -199,6 +202,7 @@ class Solarman:
             if self.data_wanted_ev.is_set():
                 _LOGGER.debug("[%s] Data expected. Will retry the last request", self.serial)
                 await self._write(self._last_frame)
+            self.open_task = None
         except Exception as e:
             _LOGGER.debug(f"[{self.serial}] {e!r}")
             await self._reconnect()
@@ -219,7 +223,8 @@ class Solarman:
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
         if not self.connected:
-            await self._open_connection()
+            self.open_task = asyncio.get_running_loop().create_task(self._open_connection(), name = "OpenKeeper")
+            await self.open_task
         _LOGGER.debug("[%s] SENT: %s", self.serial, frame.hex(" "))
         self.data_wanted_ev.set()
         self._last_frame = frame
@@ -283,11 +288,12 @@ class Solarman:
 
     async def close(self) -> None:
         try:
-            if (task := (t,) if (t := [task for task in asyncio.all_tasks() if task.get_name() == "ReconnKeeper"]) and len(t) > 0 else None):
-                task.cancel()
+            if self.open_task:
+                self.open_task.cancel()
             if self.reader_task:
                 self.reader_task.cancel()
             await self._close()
         finally:
+            self.open_task = None
             self.reader_task = None
             self.reader = None
