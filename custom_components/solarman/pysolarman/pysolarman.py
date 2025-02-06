@@ -87,14 +87,12 @@ class Solarman:
         return self.reader_task and not self.reader_task.done()
 
     def _protocol_header(self, length: int, control: int, seq: bytes) -> bytearray:
-        return bytearray(
-            PROTOCOL.START
+        return bytearray(PROTOCOL.START
             + struct.pack("<H", length)
             + PROTOCOL.CONTROL_CODE_SUFFIX
             + struct.pack("<B", control)
             + seq
-            + self.serial_bytes
-        )
+            + self.serial_bytes)
 
     def _protocol_trailer(self, data: bytes) -> bytearray:
         return bytearray(struct.pack("<B", self._calculate_checksum(data[1:])) + PROTOCOL.END)
@@ -107,8 +105,7 @@ class Solarman:
         response_frame = self._protocol_header(10, self._get_response_code(frame[4]), frame[5:7]) + bytearray(
             + struct.pack("<H", 0x0100) # Frame & sensor type?
             + struct.pack("<I", int(time.time()))
-            + struct.pack("<I", 0) # Offset?
-        )
+            + struct.pack("<I", 0)) # Offset?
         response_frame[5] = (response_frame[5] + 1) & 0xFF
         return response_frame + self._protocol_trailer(response_frame)
 
@@ -198,10 +195,11 @@ class Solarman:
     async def _reconnect(self) -> None:
         try:
             await self._open_connection()
-            _LOGGER.debug("[%s] Successful reconnect", self.serial)
             if self.data_wanted_ev.is_set():
-                _LOGGER.debug("[%s] Data expected. Will retry the last request", self.serial)
+                _LOGGER.debug("[%s] Successful reconnection! Data expected. Will retry the last request", self.serial)
                 await self._write(self._last_frame)
+            else:
+                _LOGGER.debug("[%s] Successful reconnection", self.serial)
             self.open_task = None
         except Exception as e:
             _LOGGER.debug(f"[{self.serial}] {e!r}")
