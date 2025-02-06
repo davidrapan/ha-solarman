@@ -56,7 +56,7 @@ class Device():
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except TimeoutError as e:
-            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e
+            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e 
         except BaseException as e:
             raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
 
@@ -66,8 +66,8 @@ class Device():
 
     async def shutdown(self) -> None:
         self.state.value = -1
-        _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
-        await self.modbus.disconnect()
+        _LOGGER.info(f"[{self.config.serial}] Closing connection to {self.endpoint.address}")
+        await self.modbus.close()
 
     async def execute(self, code, message: str, **kwargs):
         _LOGGER.debug(f"[{self.config.serial}] {message} ...")
@@ -79,10 +79,8 @@ class Device():
             attempts_left -= 1
             try:
                 response = await self.modbus.execute(code, **kwargs)
-                #if (response := await self.modbus.execute(code, start, arg)) is not None and (length := ilen(response)) is not None and (expected := arg if code < FUNCTION_CODE.WRITE_SINGLE_COIL else 1) is not None and length != expected:
-                #    raise Exception(f"[{self.config.serial}] Unexpected response: Invalid length! (Length: {length}, Expected: {expected})")
 
-                _LOGGER.debug(f"[{self.config.serial}] {message} succeeded, response: {response}")
+                _LOGGER.debug(f"[{self.config.serial}] {message} succeeded")
             except Exception as e:
                 _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
@@ -120,8 +118,8 @@ class Device():
 
         except Exception as e:
             if self.state.reevaluate():
-                _LOGGER.info(f"[{self.config.serial}] Disconnecting from {self.endpoint.address}:{self.endpoint.port}")
-                await self.modbus.disconnect()
+                _LOGGER.info(f"[{self.config.serial}] Closing connection to {self.endpoint.address}")
+                await self.modbus.close()
                 raise
             _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 

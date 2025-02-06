@@ -139,26 +139,23 @@ class Solarman:
             _LOGGER.debug("[%s] PROTOCOL_%s RESP: %s", self.serial, control_name, response_frame.hex(" "))
         return do_continue, response_frame
 
-    def _send_receive_except(self, e: Exception) -> Exception | None:
-        match e:
-            case AttributeError():
-                return NoSocketAvailableError("Connection already closed")
-            case OSError() if e.errno == errno.EHOSTUNREACH:
-                return TimeoutError
-            case _:
-                return None
+    async def _write(self, data: bytes) -> None:
+        try:
+            self.writer.write(data)
+            await self.writer.drain()
+        except Exception as e:
+            match e:
+                case AttributeError():
+                    raise NoSocketAvailableError("Connection already closed") from e
+                case OSError() if e.errno == errno.EHOSTUNREACH:
+                    raise TimeoutError from e
+            _LOGGER.exception("[%s] Write error: %s", self.serial, e)
 
     async def _handle_protocol_frame(self, frame):
         if (do_continue := self._received_frame_is_valid(frame)):
             do_continue, response_frame = self._received_frame_response(frame)
             if response_frame is not None:
-                try:
-                    self.writer.write(response_frame)
-                    await self.writer.drain()
-                except Exception as e:
-                    if (err := self._send_receive_except(e)) is not None:
-                        e = err
-                    _LOGGER.debug(f"[{self.serial}] PROTOCOL error: {type(e).__name__}{f': {e}' if f'{e}' else ''}")
+                await self._write(response_frame)
         return do_continue
 
     async def _conn_keeper(self) -> None:
@@ -166,97 +163,77 @@ class Solarman:
             try:
                 data = await self.reader.read(1024)
             except ConnectionResetError:
-                _LOGGER.debug("[%s] Connection reset. Closing the socket reader", self.serial, exc_info = True)
+                _LOGGER.debug("[%s] Connection is reset by the peer. Will try to restart the connection", self.serial)
                 break
             if data == b"":
-                _LOGGER.debug("[%s] Connection closed by the remote. Closing the socket reader", self.serial)
+                _LOGGER.debug("[%s] Connection closed by the remote. Will try to restart the connection", self.serial)
                 break
             if self._handle_frame is not None and not await self._handle_frame(data):
+                # Skip...
                 continue
-            if self.data_wanted_ev.is_set():
-                if not self.data_queue.empty():
-                    _ = self.data_queue.get_nowait()
-                self.data_queue.put_nowait(data)
-                self.data_wanted_ev.clear()
-            else:
-                _LOGGER.debug("Data received but nobody waits for it... Discarded")
+            if not self.data_wanted_ev.is_set():
+                _LOGGER.debug("[%s] Data received but nobody waits for it... Discarded", self.serial)
+                continue
+            if not self.data_queue.empty():
+                _ = self.data_queue.get_nowait()
+            self.data_queue.put_nowait(data)
+            self.data_wanted_ev.clear()
         self.reader = None
         self.writer = None
-        _LOGGER.debug("[%s] Auto reconnect enabled. Will try to restart the socket reader", self.serial)
-        loop = asyncio.get_running_loop()
-        loop.create_task(self.reconnect(), name="ReconnKeeper")
+        asyncio.get_running_loop().create_task(self._reconnect(), name="ReconnKeeper")
 
-    async def _connect(self) -> None:
+    async def _open_connection(self) -> None:
         try:
             if self.reader_task:
                 self.reader_task.cancel()
             self.reader, self.writer = await asyncio.wait_for(asyncio.open_connection(self.address, self.port), self.timeout)
-            loop = asyncio.get_running_loop()
-            self.reader_task = loop.create_task(self._conn_keeper(), name="ConnKeeper")
-        except:
-            self.reader_task = None
-            raise
-
-    async def connect(self) -> None:
-        try:
-            await self._connect()
+            self.reader_task = asyncio.get_running_loop().create_task(self._conn_keeper(), name="ConnKeeper")
         except Exception as e:
-            raise NoSocketAvailableError(
-                f"Cannot open connection to {self.address}"
-            ) from e
+            self.reader_task = None
+            raise NoSocketAvailableError(f"Cannot open connection to {self.address}") from e
 
-    async def reconnect(self) -> None:
+    async def _reconnect(self) -> None:
         try:
-            await self._connect()
+            await self._open_connection()
             _LOGGER.debug("[%s] Successful reconnect", self.serial)
             if self.data_wanted_ev.is_set():
                 _LOGGER.debug("[%s] Data expected. Will retry the last request", self.serial)
-                self.writer.write(self._last_frame)
-                await self.writer.drain()
+                await self._write(self._last_frame)
         except Exception as e:
-            _LOGGER.debug(f"Cannot open connection to {self.address}. [{type(e).__name__}{f': {e}' if f'{e}' else ''}]")
-            await self.reconnect()
+            _LOGGER.debug(f"[{self.serial}] {e!r}")
+            await self._reconnect()
 
-    async def disconnect(self) -> None:
-        try:
-            if (task := (t,) if (t := [task for task in asyncio.all_tasks() if task.get_name() == "ReconnKeeper"]) and len(t) > 0 else None):
-                task.cancel()
-            if self.reader_task:
-                self.reader_task.cancel()
-            if self.writer:
+    async def _close(self) -> None:
+        if self.writer:
+            try:
+                await self._write(b"")
+            except (NoSocketAvailableError, TimeoutError, ConnectionResetError) as e:
+                _LOGGER.debug(f"[{self.serial}] {e} can be during closing ignored")
+            finally:
                 try:
-                    self.writer.write(b"")
-                    await self.writer.drain()
-                except (AttributeError, ConnectionResetError) as e:
-                    _LOGGER.debug(f"{e} can be during closing ignored")
-                finally:
                     self.writer.close()
-                    try:
-                        await self.writer.wait_closed()
-                    except OSError as e: # Happens when host is unreachable.
-                        _LOGGER.debug(f"{e} can be during closing ignored")
-        finally:
-            self.reader_task = None
-            self.reader = None
-            self.writer = None
+                    await self.writer.wait_closed()
+                except (AttributeError, OSError) as e: # OSError happens when is host unreachable
+                    _LOGGER.debug(f"[{self.serial}] {e} can be during closing ignored")
+                self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
         if not self.connected:
-            await self.connect()
+            await self._open_connection()
         _LOGGER.debug("[%s] SENT: %s", self.serial, frame.hex(" "))
         self.data_wanted_ev.set()
         self._last_frame = frame
         try:
-            self.writer.write(frame)
-            await self.writer.drain()
-            if (response_frame := await asyncio.wait_for(self.data_queue.get(), self.timeout)) == b"":
-                raise NoSocketAvailableError("Connection closed on read. Retry if auto-reconnect is enabled")
-            _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
-            return response_frame
-        except Exception as e:
-            if (err := self._send_receive_except(e)) is not None:
-                raise err from e
-            raise
+            await self._write(frame)
+            while True:
+                try:
+                    response_frame = await asyncio.wait_for(self.data_queue.get(), self.timeout)
+                    _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
+                    return response_frame
+                except TimeoutError:
+                    _LOGGER.debug("[%s] Peer not responding. Closing connection", self.serial)
+                    await self._close()
+                    continue
         finally:
             self.data_wanted_ev.clear()
 
@@ -303,3 +280,14 @@ class Solarman:
                 return pdu.bits
             return pdu.count
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
+
+    async def close(self) -> None:
+        try:
+            if (task := (t,) if (t := [task for task in asyncio.all_tasks() if task.get_name() == "ReconnKeeper"]) and len(t) > 0 else None):
+                task.cancel()
+            if self.reader_task:
+                self.reader_task.cancel()
+            await self._close()
+        finally:
+            self.reader_task = None
+            self.reader = None
