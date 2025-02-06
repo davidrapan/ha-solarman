@@ -98,8 +98,7 @@ class Device():
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
 
         if scount == 0:
-            if not self.modbus.connected:
-                raise Exception(f"[{self.config.serial}] No scheduled requests found, aborting.")
+            self.modbus.open()
             return result
 
         try:

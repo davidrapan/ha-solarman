@@ -220,9 +220,7 @@ class Solarman:
                 self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
-        if not self.connected:
-            self.open_task = asyncio.get_running_loop().create_task(self._open_connection(), name = "OpenKeeper")
-            await self.open_task
+        await self.open()
         _LOGGER.debug("[%s] SENT: %s", self.serial, frame.hex(" "))
         self.data_wanted_ev.set()
         self._last_frame = frame
@@ -283,6 +281,11 @@ class Solarman:
                 return pdu.bits
             return pdu.count
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
+
+    async def open(self) -> None:
+        if not self.connected:
+            self.open_task = asyncio.get_running_loop().create_task(self._open_connection(), name = "OpenKeeper")
+            await self.open_task
 
     async def close(self) -> None:
         try:
