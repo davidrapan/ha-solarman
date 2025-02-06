@@ -28,15 +28,16 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            return await self.device.get(int(self._counter * self._update_interval_seconds))
+            try:
+                return await self.device.get(int(self._counter * self._update_interval_seconds))
+            finally:
+                if self.last_update_success:
+                    self._counter += 1
         except Exception as e:
             self._counter = 0
             if isinstance(e, TimeoutError):
                 raise
             raise UpdateFailed(e) from e
-        finally:
-            if self.last_update_success:
-                self._counter += 1
 
     async def async_shutdown(self) -> None:
         _LOGGER.debug("async_shutdown")
