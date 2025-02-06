@@ -97,11 +97,11 @@ class Device():
 
         _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
 
-        if scount == 0:
-            self.modbus.open()
-            return result
-
         try:
+            if scount == 0:
+                self.modbus.open()
+                return result
+
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
                 async with self._semaphore:
                     for request in scheduled:
