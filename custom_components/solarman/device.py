@@ -56,7 +56,7 @@ class Device():
             self.device_info = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except TimeoutError as e:
-            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e 
+            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e
         except BaseException as e:
             raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
 
