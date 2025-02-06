@@ -31,8 +31,7 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             try:
                 return await self.device.get(int(self._counter * self._update_interval_seconds))
             finally:
-                if self.last_update_success:
-                    self._counter += 1
+                self._counter += 1
         except Exception as e:
             self._counter = 0
             if isinstance(e, TimeoutError):
