@@ -8,9 +8,8 @@ from socket import getaddrinfo, herror, gaierror, timeout
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.helpers import config_validation as cv
-from homeassistant.components.dhcp import DhcpServiceInfo
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.data_entry_flow import section
 
 from .const import *
