@@ -87,7 +87,7 @@ async def yaml_open(file):
 def process_profile(filename):
     return filename if not filename in PROFILE_REDIRECT else PROFILE_REDIRECT[filename]
 
-def build_device_info(serial, mac, name, info, filename):
+def build_device_info(serial, mac, host, name, info, filename):
     device_info = DeviceInfo()
     manufacturer = "Solarman"
     model = "Stick Logger"
@@ -96,12 +96,13 @@ def build_device_info(serial, mac, name, info, filename):
         if "manufacturer" in info:
             manufacturer = info["manufacturer"]
         model = info["model"]
-    elif '_' in filename and (dev_man := filename.replace(".yaml", "").split('_')):
+    elif filename and '_' in filename and (dev_man := filename.replace(".yaml", "").split('_')):
         manufacturer = dev_man[0].capitalize()
         model = dev_man[1].upper()
 
     device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else {}
     device_info["identifiers"] = {(DOMAIN, serial)}
+    device_info["configuration_url"] = f"http://{host}/config_hide.html" if host else ""
     device_info["serial_number"] = serial
     device_info["manufacturer"] = manufacturer
     device_info["model"] = model
