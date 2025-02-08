@@ -14,6 +14,30 @@ from .common import *
 
 _LOGGER = logging.getLogger(__name__)
 
+class DiscoveryProtocol:
+    def __init__(self, addresses):
+        self.addresses = addresses
+        self.responses = asyncio.Queue()
+        self.transport = None
+
+    def connection_made(self, transport):
+        self.transport = transport
+        _LOGGER.debug(f"DiscoveryProtocol: Send to {self.addresses}")
+        for address in ensure_list(self.addresses):
+            self.transport.sendto(DISCOVERY_MESSAGE[0], (address, DISCOVERY_PORT))
+
+    def datagram_received(self, d, _):
+        if len(data := d.decode().split(',')) == 3:
+            serial = int(data[2])
+            self.responses.put_nowait((serial, {"ip": data[0], "mac": data[1]}))
+            _LOGGER.debug(f"DiscoveryProtocol: [{data[0]}, {data[1]}, {serial}]")
+
+    def error_received(self, e):
+        _LOGGER.debug(f"DiscoveryProtocol: Error received:", e)
+
+    def connection_lost(self, _):
+        _LOGGER.debug(f"DiscoveryProtocol: Connection closed")
+
 class Discovery:
     networks = None
 
@@ -23,41 +47,24 @@ class Discovery:
         self._serial = serial
         self._devices = {}
 
-    async def _discover(self, ips = IP_BROADCAST, wait = False, source = IP_ANY):
-        _LOGGER.debug(f"_discover")
-
+    async def _discover(self, ips = IP_BROADCAST, wait = False):
         loop = asyncio.get_running_loop()
 
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) as sock:
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-                sock.setblocking(False)
-                sock.settimeout(DISCOVERY_TIMEOUT)
-
-                if source != IP_ANY:
-                    sock.bind((source, PORT_ANY))
-
-                for ip in ensure_list(ips):
-                    await loop.sock_sendto(sock, DISCOVERY_MESSAGE[0], (ip, DISCOVERY_PORT))
-
-                while True:
-                    try:
-                        data = (await loop.sock_recv(sock, DISCOVERY_RECV_MESSAGE_SIZE)).decode().split(',')
-                        if len(data) == 3:
-                            serial = int(data[2])
-                            yield serial, {"ip": data[0], "mac": data[1]}
-                            _LOGGER.debug(f"_discover: [{data[0]}, {data[1]}, {serial}]")
-                            if not wait:
-                                return
-                    except (TimeoutError, socket.timeout):
-                        break
+            transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(ips), family = socket.AF_INET, allow_broadcast = True)
+            try:
+                while (response := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) is not None:
+                    yield response
+                    if not wait:
+                        return
+            except TimeoutError:
+                pass
+            finally:
+                transport.close()
         except Exception as e:
             _LOGGER.debug(f"_discover exception: {format_exception(e)}")
 
     async def _discover_all(self):
-        _LOGGER.debug(f"_discover_all")
-
         if not self._hass:
             return
 
@@ -69,8 +76,6 @@ class Discovery:
             yield item
 
     async def discover(self, ping_only = False):
-        _LOGGER.debug(f"discover")
-
         self._devices = {}
 
         if self._ip:
