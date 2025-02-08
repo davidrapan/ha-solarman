@@ -33,7 +33,7 @@ class DiscoveryProtocol:
             _LOGGER.debug(f"DiscoveryProtocol: [{data[0]}, {data[1]}, {serial}]")
 
     def error_received(self, e):
-        _LOGGER.debug(f"DiscoveryProtocol: Error received:", e)
+        _LOGGER.debug(f"DiscoveryProtocol: Error received: {e}")
 
     def connection_lost(self, _):
         _LOGGER.debug(f"DiscoveryProtocol: Connection closed")
@@ -52,22 +52,18 @@ class Discovery:
 
         try:
             transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(ips), family = socket.AF_INET, allow_broadcast = True)
-            try:
-                while (response := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) is not None:
-                    yield response
-                    if not wait:
-                        return
-            except TimeoutError:
-                pass
-            finally:
-                transport.close()
+            r = None
+            while r is None or wait:
+                r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
+                yield r
+        except TimeoutError:
+            pass
         except Exception as e:
             _LOGGER.debug(f"_discover exception: {format_exception(e)}")
+        finally:
+            transport.close()
 
     async def _discover_all(self):
-        if not self._hass:
-            return
-
         if Discovery.networks is None:
             Discovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 

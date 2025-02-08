@@ -89,7 +89,7 @@ class EndPointProvider:
             return IPv4Address(socket.gethostbyname(self.host))    
 
     async def discover(self, ping_only = False):
-        if self.ipaddress.is_private and (discover := await Discovery(self.hass, self.host, self.serial).discover(ping_only)):
+        if self.ipaddress.is_private and (discover := await Discovery(self.hass, self.address, self.serial).discover(ping_only)):
             if (device := discover.get(self.serial)) is not None:
                 self.host = device["ip"]
                 self.mac = device["mac"]
