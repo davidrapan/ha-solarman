@@ -640,10 +640,10 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Generator"
+        name_lookup: "io_mode_select"
         platform: "switch"
         rule: 1
         registers: [0x0084]
-        icon: "mdi:generator-stationary"
 
       - name: "IO Mode"
         alt: Generator input mode
