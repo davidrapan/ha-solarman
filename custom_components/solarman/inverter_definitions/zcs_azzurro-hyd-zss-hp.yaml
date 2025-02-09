@@ -403,7 +403,6 @@ parameters:
     update_interval: 5
     items:
       - name: "Device State"
-        update_interval: 30
         class: "enum"
         rule: 1
         registers: [0x0404]
