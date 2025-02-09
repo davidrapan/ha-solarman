@@ -534,6 +534,8 @@ parameters:
             value: "ID03 Grid Over Frequency Protection"
           - key: 8
             value: "ID04 Grid Under Frequency Protection"
+          - key: 10
+            value: "Off-Grid"
           - key: 16
             value: "ID05 Leakage current fault"
           - key: 32
