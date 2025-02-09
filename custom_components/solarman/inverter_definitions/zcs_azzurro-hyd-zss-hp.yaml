@@ -208,6 +208,7 @@ parameters:
           min: 0.1
 
       - name: "Battery Cycles"
+        state_class: "measurement"
         uom: "Charges"
         rule: 1
         registers: [0x060A]
