@@ -176,8 +176,8 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        #se non funziona cambia questo in 2
-        rule: 1
+        # change this to 1 if it doesn't work
+        rule: 2
         registers: [0x0607]
         icon: "mdi:thermometer"
 
