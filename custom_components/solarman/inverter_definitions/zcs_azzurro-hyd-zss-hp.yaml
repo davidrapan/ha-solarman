@@ -499,6 +499,7 @@ parameters:
         icon: "mdi:alpha-v"
 
   - group: Alarm
+    update_interval: 5
     items:
       - name: "Device Alarm"
         update_interval: 30
@@ -520,7 +521,6 @@ parameters:
           ]
 
       - name: "Fault 1"
-        update_interval: 30
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -563,7 +563,6 @@ parameters:
             value: "ID16"
 
       - name: "Fault 2"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -604,7 +603,6 @@ parameters:
             value: "ID32"
 
       - name: "Fault 3"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0407]
@@ -645,7 +643,6 @@ parameters:
             value: "ID048 Serial number error"
 
       - name: "Fault 4"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -686,7 +683,6 @@ parameters:
             value: "ID064 "
 
       - name: "Fault 5"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -727,7 +723,6 @@ parameters:
             value: "ID080 "
 
       - name: "Fault 6"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -768,7 +763,6 @@ parameters:
             value: "ID096 "
 
       - name: "Fault 7"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -809,7 +803,6 @@ parameters:
             value: "ID112 Overload protection 3"
 
       - name: "Fault 8"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -850,7 +843,6 @@ parameters:
             value: "ID128 "
 
       - name: "Fault 9"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040D]
@@ -891,7 +883,6 @@ parameters:
             value: "ID144 "
 
       - name: "Fault 10"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -932,7 +923,6 @@ parameters:
             value: "ID160 Lithium battery 4 communication failure"
 
       - name: "Fault 11"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -973,7 +963,6 @@ parameters:
             value: "ID176 Meter communication failure"
 
       - name: "Fault 12"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]
