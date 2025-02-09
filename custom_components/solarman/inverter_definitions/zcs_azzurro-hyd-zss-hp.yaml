@@ -415,13 +415,13 @@ parameters:
           - key: 0x0002
             value: "Grid connected"
           - key: 0x0003
-            value: "Grid UFP"
-          - key: 0x0004
             value: "Emergency power supply"
-          - key: 0x0005
+          - key: 0x0004
             value: "Recoverable fault"
-          - key: 0x0006
+          - key: 0x0005
             value: "Permanent fault"
+          - key: 0x0006
+            value: "Upgrade"
           - key: 0x0007
             value: "Self-charging"
 
