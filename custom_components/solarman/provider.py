@@ -116,12 +116,7 @@ class ProfileProvider:
 
     async def resolve(self, request: Callable[[], Awaitable[None]] | None = None):
         _LOGGER.debug(f"Device autodetection is {"enabled" if self.auto and request else f"disabled. Selected profile: {self.filename}"}")
-
-        f = lookup_profile(await request(-1, set_request(*AUTODETECTION_REQUEST_DEYE)), self.attributes) if self.auto and request else self.filename
-
-        if f and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f)) and (p := await yaml_open(self.config.directory + n)):
+        if (f := await lookup_profile(request, self.attributes) if self.auto and request else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f)) and (p := await yaml_open(self.config.directory + n)):
             self.parser = ParameterParser(p, self.attributes)
-
             return build_device_info(self.serial, self.endpoint.mac, self.endpoint.host, self.name, unwrap(p["info"], "model", self.attributes[ATTR_[CONF_MOD]]) if "info" in p else None, f)
-
         raise Exception(f"Unable to resolve and process selected profile: {self.filename}")

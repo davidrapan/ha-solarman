@@ -41,7 +41,7 @@ def filter_by_keys(source: dict, keys: dict | list) -> dict:
     return {k: source[k] for k in source.keys() if k in keys}
 
 def bulk_inherit(target: dict, source: dict, *keys: list):
-    for k in source.keys() & keys:
+    for k in source.keys() if len(keys) == 0 else source.keys() & keys:
         if not k in target and (v := source.get(k)) is not None:
             target[k] = v
     return target
@@ -70,15 +70,17 @@ def ensure_list_safe_len(value: list):
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
 
-def lookup_profile(response, attr):
-    if response and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
+async def lookup_profile(request, attr):
+    if (response := await request(-1, set_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))
         if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in (0x0003, 0x0300):
             attr[ATTR_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, attr[ATTR_[CONF_PHASE]])
         if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
             attr[ATTR_[CONF_MOD]], attr[ATTR_[CONF_MPPT]], attr[ATTR_[CONF_PHASE]] = max(m, attr[ATTR_[CONF_MOD]]), min(t, attr[ATTR_[CONF_MPPT]]), min(p, attr[ATTR_[CONF_PHASE]])
+        if device_type in (0x0005, 0x0500, 0x0006, 0x0007, 0x0600, 0x0008, 0x0601) and (response := await request(-1, set_request(0x0003, 0x2712, 0x2713))) and (p := get_addr_value(response, 0x0003, 0x2712)) is not None:
+            attr[ATTR_[CONF_PACK]] = max(p, attr[ATTR_[CONF_PACK]])
         return f
-    raise Exception("Unable to read Device Type at Modbus register address: 0x0000")
+    raise Exception("Unable to read Device Type at address 0x0000")
 
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
@@ -102,7 +104,7 @@ def build_device_info(serial, mac, host, name, info, filename):
 
     device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else {}
     device_info["identifiers"] = {(DOMAIN, serial)}
-    device_info["configuration_url"] = f"http://{host}/config_hide.html" if host else ""
+    device_info["configuration_url"] = f"http://{host}/config_hide.html" if host else None
     device_info["serial_number"] = serial
     device_info["manufacturer"] = manufacturer
     device_info["model"] = model
@@ -147,7 +149,9 @@ def process_descriptions(item, group, table, code, mod):
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
     item["key"] = entity_key(item)
-    bulk_inherit(item, group, *(REQUEST_UPDATE_INTERVAL, CONF_PACK, REQUEST_CODE, "hidden") if "registers" in item else REQUEST_UPDATE_INTERVAL)
+    g = dict(group)
+    g.pop("items")
+    bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
     modify(item)

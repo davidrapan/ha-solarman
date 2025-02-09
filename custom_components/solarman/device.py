@@ -53,7 +53,7 @@ class Device():
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
-            self.device_info = await self.profile.resolve(self.get)
+            self.device_info[self.config.serial] = await self.profile.resolve(self.get)
             _LOGGER.debug(self.device_info)
         except TimeoutError as e:
             raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e

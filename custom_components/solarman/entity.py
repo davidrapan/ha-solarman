@@ -58,7 +58,7 @@ def create_entity(creator, description):
 class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
     def __init__(self, coordinator: Coordinator):
         super().__init__(coordinator)
-        self._attr_device_info = self.coordinator.device.device_info
+        self._attr_device_info = self.coordinator.device.device_info.get(coordinator.device.config.serial)
         self._attr_state: StateType = STATE_UNKNOWN
         self._attr_native_value: StateType | str | date | datetime | time | float | Decimal = None
         self._attr_extra_state_attributes: dict[str, Any] = {}

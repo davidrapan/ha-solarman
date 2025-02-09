@@ -2763,15 +2763,23 @@ parameters:
           max: 65535
 
   - group: Battery 1
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 1
     items:
+      - name: "Battery 1 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2738]
 
@@ -2799,8 +2807,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 1"
-        #class: "battery"
+      - name: "Battery 1 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -2819,13 +2827,6 @@ parameters:
         registers: [0x2740]
         icon: "mdi:battery-heart"
 
-      - name: "Battery 1 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x2741]
-        icon: "mdi:battery"
-
       - name: "Battery 1 Capacity"
         state_class: "measurement"
         uom: "Ah"
@@ -2837,7 +2838,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2746]
 
@@ -2845,27 +2846,34 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2747]
 
       - name: "Battery 1 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x2748]
         icon: "mdi:battery-sync"
 
   - group: Battery 2
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 2
     items:
+      - name: "Battery 2 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 2 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x275E]
 
@@ -2893,8 +2901,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 2"
-        #class: "battery"
+      - name: "Battery 2 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -2912,13 +2920,6 @@ parameters:
         rule: 1
         registers: [0x2766]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 2 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x2767]
-        icon: "mdi:battery"
 
       - name: "Battery 2 Capacity"
         state_class: "measurement"
@@ -2945,16 +2946,23 @@ parameters:
 
       - name: "Battery 2 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x276E]
         icon: "mdi:battery-sync"
 
   - group: Battery 3
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 3
     items:
+      - name: "Battery 3 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x277C, 0x277D, 0x277E, 0x277F, 0x2780, 0x2781, 0x2782, 0x2783]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 3 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -2987,8 +2995,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 3"
-        #class: "battery"
+      - name: "Battery 3 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3006,13 +3014,6 @@ parameters:
         rule: 1
         registers: [0x278C]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 3 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x278D]
-        icon: "mdi:battery"
 
       - name: "Battery 3 Capacity"
         state_class: "measurement"
@@ -3039,16 +3040,23 @@ parameters:
 
       - name: "Battery 3 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x2794]
         icon: "mdi:battery-sync"
 
   - group: Battery 4
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 4
     items:
+      - name: "Battery 4 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x27A2, 0x27A3, 0x27A4, 0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 4 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3081,8 +3089,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 4"
-        #class: "battery"
+      - name: "Battery 4 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3100,13 +3108,6 @@ parameters:
         rule: 1
         registers: [0x27B2]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 4 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x27B3]
-        icon: "mdi:battery"
 
       - name: "Battery 4 Capacity"
         state_class: "measurement"
@@ -3133,16 +3134,23 @@ parameters:
 
       - name: "Battery 4 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x27BA]
         icon: "mdi:battery-sync"
 
   - group: Battery 5
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 5
     items:
+      - name: "Battery 5 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x27C8, 0x27C9, 0x27CA, 0x27CB, 0x27CC, 0x27CD, 0x27CE, 0x27CF]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 5 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3175,8 +3183,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 5"
-        #class: "battery"
+      - name: "Battery 5 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3194,13 +3202,6 @@ parameters:
         rule: 1
         registers: [0x27D8]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 5 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x27D9]
-        icon: "mdi:battery"
 
       - name: "Battery 5 Capacity"
         state_class: "measurement"
@@ -3227,16 +3228,23 @@ parameters:
 
       - name: "Battery 5 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x27E0]
         icon: "mdi:battery-sync"
 
   - group: Battery 6
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 6
     items:
+      - name: "Battery 6 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x27EE, 0x27EF, 0x27F0, 0x27F1, 0x27F2, 0x27F3, 0x27F4, 0x27F5]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 6 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3269,8 +3277,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 6"
-        #class: "battery"
+      - name: "Battery 6 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3288,13 +3296,6 @@ parameters:
         rule: 1
         registers: [0x27FE]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 6 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x27FF]
-        icon: "mdi:battery"
 
       - name: "Battery 6 Capacity"
         state_class: "measurement"
@@ -3321,16 +3322,23 @@ parameters:
 
       - name: "Battery 6 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x2806]
         icon: "mdi:battery-sync"
 
   - group: Battery 7
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 7
     items:
+      - name: "Battery 7 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x2814, 0x2815, 0x2816, 0x2817, 0x2818, 0x2819, 0x281A, 0x281B]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 7 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3363,8 +3371,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 7"
-        #class: "battery"
+      - name: "Battery 7 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3382,13 +3390,6 @@ parameters:
         rule: 1
         registers: [0x2824]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 7 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x2825]
-        icon: "mdi:battery"
 
       - name: "Battery 7 Capacity"
         state_class: "measurement"
@@ -3415,16 +3416,23 @@ parameters:
 
       - name: "Battery 7 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x282C]
         icon: "mdi:battery-sync"
 
   - group: Battery 8
+    via_device: "inverter"
     update_interval: 10
-    hidden:
     pack: 8
     items:
+      - name: "Battery 8 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 1
+        registers: [0x283A, 0x283B, 0x283C, 0x283D, 0x283E, 0x283F, 0x2840, 0x2841]
+        icon: "mdi:battery-sync"
+
       - name: "Battery 8 Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3457,8 +3465,8 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 8"
-        #class: "battery"
+      - name: "Battery 8 "
+        class: "battery"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
@@ -3476,13 +3484,6 @@ parameters:
         rule: 1
         registers: [0x284A]
         icon: "mdi:battery-heart"
-
-      - name: "Battery 8 Remaining capacity"
-        state_class: "measurement"
-        uom: "Ah"
-        rule: 1
-        registers: [0x284B]
-        icon: "mdi:battery"
 
       - name: "Battery 8 Capacity"
         state_class: "measurement"
@@ -3509,7 +3510,6 @@ parameters:
 
       - name: "Battery 8 Cycles"
         state_class: "total_increasing"
-        digits: 2
         rule: 1
         registers: [0x2852]
         icon: "mdi:battery-sync"

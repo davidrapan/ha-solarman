@@ -4,10 +4,7 @@ import logging
 
 from typing import Any
 
-from homeassistant.components.template.sensor import SensorTemplate
-from homeassistant.components.template.sensor import TriggerSensorEntity
-from homeassistant.helpers.template import Template
-
+from homeassistant.util import slugify
 from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
 from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
@@ -42,6 +39,9 @@ def _create_entity(coordinator, description, options):
 
     if "restore" in description or "ensure_increasing" in description:
         return SolarmanRestoreSensor(coordinator, description)
+
+    if "via_device" in description:
+        return SolarmanNestedSensor(coordinator, description)
 
     return SolarmanSensor(coordinator, description)
 
@@ -89,6 +89,19 @@ class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
         self._sensor_ensure_increasing = "ensure_increasing" in sensor
+
+class SolarmanNestedSensor(SolarmanSensorEntity):
+    def __init__(self, coordinator, sensor):
+        super().__init__(coordinator, sensor)
+        parent_device_info = self.coordinator.device.device_info.get(self.coordinator.device.config.serial)
+        device_serial_number, _ = self.coordinator.data[slugify(' '.join(filter(None, (sensor["group"], "serial", "number", "sensor"))))]
+        if not device_serial_number in self.coordinator.device.device_info:
+            self.coordinator.device.device_info[device_serial_number] = build_device_info(device_serial_number, None, None, parent_device_info["name"], None, None)
+            self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, self.coordinator.device.config.serial)
+            self.coordinator.device.device_info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
+            self.coordinator.device.device_info[device_serial_number]["model"] = None
+        self._attr_device_info = self.coordinator.device.device_info[device_serial_number]
+        self._attr_name.replace(f"{sensor["group"]} ", '')
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:
