@@ -110,7 +110,7 @@ class Solarman:
         return response_frame + self._protocol_trailer(response_frame)
 
     def _received_frame_is_valid(self, frame: bytes) -> bool:
-        if not frame.startswith(PROTOCOL.START) or not frame.endswith(PROTOCOL.END):
+        if not frame.startswith(PROTOCOL.START):
             _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         if frame[5] != self.sequence_number:
@@ -122,6 +122,9 @@ class Solarman:
                 self._handle_frame = None
                 return True
             _LOGGER.debug("[%s] SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
+            return False
+        if not frame.endswith(PROTOCOL.END):
+            _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         return True
 
