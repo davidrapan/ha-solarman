@@ -449,7 +449,7 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
-        update_interval: 300
+        update_interval: 30
         state_class: "measurement"
         uom: "kΩ"
         rule: 1
