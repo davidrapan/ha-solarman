@@ -110,8 +110,9 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         errors = {}
 
         if validate_connection(user_input, errors):
-            await self.async_set_unique_id(f"solarman_{user_input[CONF_SERIAL]}")
-            self._abort_if_unique_id_configured() # self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
+            if (serial := user_input[CONF_SERIAL]):
+                await self.async_set_unique_id(f"solarman_{serial}")
+                self._abort_if_unique_id_configured() # self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
             return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
 
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: connection validation failed: {user_input}")
