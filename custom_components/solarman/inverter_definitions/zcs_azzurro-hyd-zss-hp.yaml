@@ -210,7 +210,7 @@ parameters:
 
       - name: "Battery Cycles"
         update_interval: 30
-        state_class: "measurement"
+        state_class: "total_increasing"
         uom: "Charges"
         rule: 1
         registers: [0x060A]
