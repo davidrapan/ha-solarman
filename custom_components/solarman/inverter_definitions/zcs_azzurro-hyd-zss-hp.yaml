@@ -141,7 +141,32 @@ parameters:
         registers: [0x0608]
         icon: "mdi:battery"
 
+      - name: "Battery DOD"
+        update_interval: 30
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104D]
+        icon: "mdi:battery"
+
+      - name: "Battery EOD"
+        update_interval: 30
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104E]
+        icon: "mdi:battery"
+
+      - name: "Battery EPS Buffer"
+        update_interval: 30
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1052]
+        icon: "mdi:battery-low"
+
       - name: "Battery SOH"
+        update_interval: 30
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -152,8 +177,8 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        #se non funziona cambia questo in 2
-        rule: 1
+        # change this to 1 if it doesn't work
+        rule: 2
         registers: [0x0607]
         icon: "mdi:thermometer"
 
@@ -184,6 +209,8 @@ parameters:
           min: 0.1
 
       - name: "Battery Cycles"
+        update_interval: 30
+        state_class: "measurement"
         uom: "Charges"
         rule: 1
         registers: [0x060A]
@@ -281,6 +308,24 @@ parameters:
         registers: [0x0504]
         icon: "mdi:home-lightning-bolt"
 
+      - name: "Load Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x050A]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0507]
+        icon: "mdi:home-lightning-bolt"
+
       - name: "Today Energy Import"
         alt: Energy Purchase Today
         friendly_name: Today's Energy Import
@@ -331,11 +376,35 @@ parameters:
         validation:
           min: 0.1
 
+      - name: "Today Load Consumption"
+        alt: "Today Power Consumption"
+        friendly_name: "Today's Load Consumption"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 3
+        registers: [0x0689, 0x0688]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Total Load Consumption"
+        alt: "Total Power Consumption"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0x068B, 0x068A]
+        icon: "mdi:lightning-bolt"
+        validation:
+          min: 0.1
+
   - group: Device
     update_interval: 5
     items:
       - name: "Device State"
-        update_interval: 30
         class: "enum"
         rule: 1
         registers: [0x0404]
@@ -348,13 +417,13 @@ parameters:
           - key: 0x0002
             value: "Grid connected"
           - key: 0x0003
-            value: "Grid UFP"
-          - key: 0x0004
             value: "Emergency power supply"
-          - key: 0x0005
+          - key: 0x0004
             value: "Recoverable fault"
-          - key: 0x0006
+          - key: 0x0005
             value: "Permanent fault"
+          - key: 0x0006
+            value: "Upgrade"
           - key: 0x0007
             value: "Self-charging"
 
@@ -381,14 +450,57 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "Insulation Resistance"
-        update_interval: 300
+        update_interval: 30
         state_class: "measurement"
         uom: "kΩ"
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
 
+      - name: "Serial Number"
+        update_interval: 60
+        rule: 5
+        registers: [0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C] # serial number 17th to 20th digits are in 0x0470 and 0x0471
+        icon: "mdi:barcode"
+
+      - name: "Hardware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x044D, 0x044E]
+        icon: "mdi:alpha-v"
+
+      - name: "Software Version Master"
+        update_interval: 60
+        rule: 5
+        registers: [0x0453, 0x0454, 0x0455, 0x0456]
+        icon: "mdi:alpha-v"
+
+      - name: "Software Version Slave"
+        update_interval: 60
+        rule: 5
+        registers: [0x0457, 0x0458, 0x0459, 0x045A]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x045B, 0x045C]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Firmware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x0460, 0x0461, 0x0462, 0x0463]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Hardware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x0464, 0x0465]
+        icon: "mdi:alpha-v"
+
   - group: Alarm
+    update_interval: 5
     items:
       - name: "Device Alarm"
         update_interval: 30
@@ -410,7 +522,6 @@ parameters:
           ]
 
       - name: "Fault 1"
-        update_interval: 30
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -425,6 +536,8 @@ parameters:
             value: "ID03 Grid Over Frequency Protection"
           - key: 8
             value: "ID04 Grid Under Frequency Protection"
+          - key: 10
+            value: "Off-Grid"
           - key: 16
             value: "ID05 Leakage current fault"
           - key: 32
@@ -451,7 +564,6 @@ parameters:
             value: "ID16"
 
       - name: "Fault 2"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -492,7 +604,6 @@ parameters:
             value: "ID32"
 
       - name: "Fault 3"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0407]
@@ -533,7 +644,6 @@ parameters:
             value: "ID048 Serial number error"
 
       - name: "Fault 4"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -574,7 +684,6 @@ parameters:
             value: "ID064 "
 
       - name: "Fault 5"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -615,7 +724,6 @@ parameters:
             value: "ID080 "
 
       - name: "Fault 6"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -656,7 +764,6 @@ parameters:
             value: "ID096 "
 
       - name: "Fault 7"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -697,7 +804,6 @@ parameters:
             value: "ID112 Overload protection 3"
 
       - name: "Fault 8"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -738,7 +844,6 @@ parameters:
             value: "ID128 "
 
       - name: "Fault 9"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040D]
@@ -779,7 +884,6 @@ parameters:
             value: "ID144 "
 
       - name: "Fault 10"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -820,7 +924,6 @@ parameters:
             value: "ID160 Lithium battery 4 communication failure"
 
       - name: "Fault 11"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -861,7 +964,6 @@ parameters:
             value: "ID176 Meter communication failure"
 
       - name: "Fault 12"
-        update_interval: 30
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]
