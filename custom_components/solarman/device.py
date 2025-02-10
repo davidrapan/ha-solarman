@@ -99,7 +99,7 @@ class Device():
 
         try:
             if scount == 0:
-                self.modbus.open()
+                await self.modbus.open()
                 return result
 
             async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
