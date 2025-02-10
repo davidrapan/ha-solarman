@@ -1402,7 +1402,7 @@ parameters:
       - name: "Timed Program"
         platform: number
         rule: 1
-        registers: [0x11111]
+        registers: [0x1111]
         configurable:
           mode: box
         range:
