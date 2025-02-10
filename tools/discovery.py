@@ -1,9 +1,10 @@
 import socket
 import asyncio
 
+DISCOVERY_IP = "255.255.255.255"
 DISCOVERY_PORT = 48899
-DISCOVERY_TIMEOUT = 1
 DISCOVERY_MESSAGE = ["WIFIKIT-214028-READ".encode(), "HF-A11ASSISTHREAD".encode()]
+DISCOVERY_TIMEOUT = 1
 
 class DiscoveryProtocol:
     def __init__(self, addresses):
@@ -13,7 +14,7 @@ class DiscoveryProtocol:
 
     def connection_made(self, transport):
         self.transport = transport
-        print(f"DiscoveryProtocol: Send to {self.addresses}")
+        print(f"DiscoveryProtocol: Send {DISCOVERY_MESSAGE[0]} to {self.addresses}")
         for address in self.addresses:
             self.transport.sendto(DISCOVERY_MESSAGE[0], (address, DISCOVERY_PORT))
 
@@ -31,11 +32,10 @@ class DiscoveryProtocol:
 
 async def main():
     loop = asyncio.get_running_loop()
-    addresses = ["255.255.255.255"]
     wait = True
 
     try:
-        transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
+        transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol([DISCOVERY_IP]), family = socket.AF_INET, allow_broadcast = True)
         r = None
         while r is None or wait:
             r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
