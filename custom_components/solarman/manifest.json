@@ -9,6 +9,7 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
   "loggers": ["pymodbus"],
+  "quality_scale": "custom",
   "requirements": ["propcache", "aiofiles", "pyyaml", "pymodbus==3.8.3"],
   "version": "25.02.10_02"
 }
