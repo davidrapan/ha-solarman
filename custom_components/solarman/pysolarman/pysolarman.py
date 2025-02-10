@@ -121,11 +121,15 @@ class Solarman:
                 self._get_response = self._parse_adu_from_tcp_response
                 self._handle_frame = None
                 return True
-            _LOGGER.debug("[%s] SEQ_NO_MISMATCH: %s", self.serial, frame.hex(" "))
+            _LOGGER.debug("[%s] SEQ_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
         if not frame.endswith(PROTOCOL.END):
             _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
             return False
+        if frame[7:11] != self.serial_bytes: # Serial number correction
+            _LOGGER.debug("[%s] SERIAL_MISMATCH: %s", self.serial, frame.hex(" "))
+            self.serial_bytes = frame[7:11]
+            return True
         return True
 
     def _received_frame_response(self, frame: bytes) -> tuple[bool, bytearray]:
@@ -254,13 +258,13 @@ class Solarman:
             raise FrameError("Incorrect control code")
         if response_frame[5] != self.sequence_number:
             raise FrameError("Invalid sequence number")
-        if response_frame[7:11] != self.serial_bytes:
-            raise FrameError("Incorrect logger serial number")
         if response_frame[11:12] != PROTOCOL.FRAME_TYPE:
             raise FrameError("Invalid frame type")
         if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
             raise FrameError("Invalid checksum")
         adu = response_frame[25:-2]
+        if len(adu) < 5: # Short version of modbus exception response
+            raise FrameError(f"Modbus exception response: 0x{adu[0]:02X}")
         if adu.endswith(PROTOCOL.PLACEHOLDER1) and FramerRTU.compute_CRC(adu[:-4]).to_bytes(2, "big") == adu[-4:-2]: # Double CRC (XXXX0000) correction
             return adu[:-2]
         return adu
