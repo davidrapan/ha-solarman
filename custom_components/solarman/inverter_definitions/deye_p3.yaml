@@ -2932,7 +2932,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x276C]
 
@@ -2940,7 +2940,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x276D]
 
@@ -2967,7 +2967,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2784]
 
@@ -3026,7 +3026,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2792]
 
@@ -3034,7 +3034,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2793]
 
@@ -3061,7 +3061,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27AA]
 
@@ -3120,7 +3120,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27B8]
 
@@ -3128,7 +3128,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27B9]
 
@@ -3155,7 +3155,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27D0]
 
@@ -3214,7 +3214,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27DE]
 
@@ -3222,7 +3222,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27DF]
 
@@ -3249,7 +3249,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x27F6]
 
@@ -3308,7 +3308,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2804]
 
@@ -3316,7 +3316,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2805]
 
@@ -3343,7 +3343,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x281C]
 
@@ -3402,7 +3402,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x282A]
 
@@ -3410,7 +3410,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x282B]
 
@@ -3437,7 +3437,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2842]
 
@@ -3496,7 +3496,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2850]
 
@@ -3504,7 +3504,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: [0.01]
+        scale: 0.01
         rule: 1
         registers: [0x2851]
 
