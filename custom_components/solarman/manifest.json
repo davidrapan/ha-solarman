@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
   "loggers": ["pymodbus"],
   "requirements": ["propcache", "aiofiles", "pyyaml", "pymodbus==3.8.3"],
-  "version": "25.02.10_01"
+  "version": "25.02.10_02"
 }
