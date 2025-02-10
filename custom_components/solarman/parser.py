@@ -39,7 +39,7 @@ class ParameterParser:
             _LOGGER.debug("Fine control of request sets is enabled!")
             self._requests = profile["requests"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}")
+        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, attributes: {attr}")
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
@@ -48,6 +48,8 @@ class ParameterParser:
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
             self._code = items_codes[0]
+        
+        _LOGGER.debug(f"Items: {self._items}")
 
         l = (lambda x, y: y - x > self._min_span) if self._min_span > -1 else (lambda x, y: False)
 
