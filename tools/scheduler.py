@@ -10,18 +10,51 @@ import sys
 import yaml
 import bisect
 
+from typing import Any
+
+def bulk_inherit(target: dict, source: dict, *keys: list):
+    for k in source.keys() if len(keys) == 0 else source.keys() & keys:
+        if not k in target and (v := source.get(k)) is not None:
+            target[k] = v
+    return target
+
+def unwrap(source: dict, key: Any, mod: int = 0):
+    if (c := source.get(key)) is not None and isinstance(c, list):
+        print(c)
+        source[key] = c[mod]
+    return source
+
+def entity_key(object: dict):
+    return '_'.join(filter(None, (object["name"], object["platform"]))).lower().replace(' ', '_')
+
+def process_descriptions(item, group, table, code, mod):
+    def modify(source: dict):
+        for i in source:
+            if i in ("scale", "min", "max"):
+                unwrap(source, i, mod)
+            elif isinstance(source[i], dict):
+                modify(source[i])
+
+    if not "platform" in item:
+        item["platform"] = "sensor" if not "configurable" in item else "number"
+    item["key"] = entity_key(item)
+    g = dict(group)
+    g.pop("items")
+    bulk_inherit(item, g, *() if "registers" in item else "update_interval")
+    if not "code" in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+        item["code"] = table.get(addr, code)
+    modify(item)
+    if (sensors := item.get("sensors")) is not None:
+        for s in sensors:
+            modify(s)
+            bulk_inherit(s, item, "code", "scale")
+            if (m := s.get("multiply")) is not None:
+                modify(m)
+                bulk_inherit(m, s, "code", "scale")
+    return item
+
 def get_request_code(request):
     return request["code"] if "code" in request else request["mb_functioncode"]
-
-def process_descriptions(item, group, table, code):
-    if not "update_interval" in item and "update_interval" in group:
-        item["update_interval"] = group["update_interval"]
-    if not "code" in item and "registers" in item:
-        if "code" in group:
-            item["code"] = group["code"]
-        elif (addr := min(item["registers"])) is not None:
-            item["code"] = table[addr] if addr in table else code
-    return item
 
 def get_code(item, type, default = None):
     if "code" in item and (code := item["code"]):
@@ -75,7 +108,9 @@ if __name__ == '__main__':
 
     table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr["start"], pr["end"] + 1)} if "requests" in profile else {}
 
-    items = sorted([process_descriptions(item, group, table, _code) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1))
+    attr = {"mod": 1, "mppt": 2, "l": 3, "pack": 1}
+
+    items = [i for i in sorted([process_descriptions(item, group, table, _code, attr["mod"]) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & attr.keys())) == 0 or ((k := next(iter(a))) and i[k] <= attr[k])]
 
     _is_single_code = False
     if (items_codes := [get_code(i, "read", _code) for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):

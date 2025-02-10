@@ -48,8 +48,6 @@ class ParameterParser:
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
             self._code = items_codes[0]
-        
-        _LOGGER.debug(f"Items: {self._items}")
 
         l = (lambda x, y: y - x > self._min_span) if self._min_span > -1 else (lambda x, y: False)
 
