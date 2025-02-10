@@ -35,7 +35,7 @@ async def main():
     wait = True
 
     try:
-        transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True),
+        transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
         r = None
         while r is None or wait:
             r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
@@ -46,4 +46,5 @@ async def main():
     finally:
         transport.close()
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
