@@ -1984,6 +1984,16 @@ parameters:
         registers: [0x024F]
         icon: "mdi:current-dc"
 
+      # Battery - The current of battery 2 is S16bit (low 16 bits)
+      - name: "Battery Current 2"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x0252]
+        icon: "mdi:current-dc"
+
       # Battery - Actual capacity of the battery
       - name: "Battery Corrected Capacity"
         attribute:
