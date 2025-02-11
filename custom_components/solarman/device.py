@@ -27,8 +27,7 @@ class DeviceState():
         if reinit:
             self.updated = now
         else:
-            self.updated_interval = now - self.updated
-            self.updated = now
+            self.updated, self.updated_interval = now, now - self.updated
             self.value = 1
 
     def reevaluate(self) -> int:
