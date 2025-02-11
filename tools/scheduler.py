@@ -20,7 +20,6 @@ def bulk_inherit(target: dict, source: dict, *keys: list):
 
 def unwrap(source: dict, key: Any, mod: int = 0):
     if (c := source.get(key)) is not None and isinstance(c, list):
-        print(c)
         source[key] = c[mod]
     return source
 
