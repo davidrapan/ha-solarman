@@ -1898,7 +1898,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       # Battery - The voltage of battery 1 (L:0.01V, H:0.1V)
@@ -2802,7 +2802,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 1 "
@@ -2893,7 +2893,7 @@ parameters:
         offset: 1000
         registers: [0x2760]
         range:
-          min: 0
+          min: -99
           max: 3000
         validation:
           min: 1
@@ -2990,7 +2990,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 3 "
@@ -3084,7 +3084,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 4 "
@@ -3178,7 +3178,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 5 "
@@ -3272,7 +3272,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 6 "
@@ -3366,7 +3366,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 7 "
@@ -3460,7 +3460,7 @@ parameters:
           min: 0
           max: 3000
         validation:
-          min: 1
+          min: -99
           max: 99
 
       - name: "Battery 8 "
