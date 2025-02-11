@@ -109,7 +109,6 @@ class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
 
         if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
             self._attr_native_value = last_sensor_data.native_value
-            self._attr_native_unit_of_measurement = last_sensor_data.native_unit_of_measurement
 
     def set_state(self, state, value = None) -> bool:
         if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
