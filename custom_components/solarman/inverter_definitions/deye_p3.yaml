@@ -2777,7 +2777,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x2738]
 
@@ -2805,7 +2805,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 1 "
+      - name: "Battery 1"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -2829,22 +2829,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x2742]
         icon: "mdi:battery"
 
-      - name: "Battery 1 Cell Max Voltage"
+      - name: "Battery 1 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2746]
 
-      - name: "Battery 1 Cell Min Voltage"
+      - name: "Battery 1 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2747]
 
@@ -2871,7 +2872,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x275E]
 
@@ -2899,7 +2900,7 @@ parameters:
           min: 1
           max: 99
 
-      - name: "Battery 2 "
+      - name: "Battery 2"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -2923,22 +2924,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x2768]
         icon: "mdi:battery"
 
-      - name: "Battery 2 Cell Max Voltage"
+      - name: "Battery 2 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x276C]
 
-      - name: "Battery 2 Cell Min Voltage"
+      - name: "Battery 2 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x276D]
 
@@ -2965,7 +2967,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x2784]
 
@@ -2993,7 +2995,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 3 "
+      - name: "Battery 3"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3017,22 +3019,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x278E]
         icon: "mdi:battery"
 
-      - name: "Battery 3 Cell Max Voltage"
+      - name: "Battery 3 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2792]
 
-      - name: "Battery 3 Cell Min Voltage"
+      - name: "Battery 3 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2793]
 
@@ -3059,7 +3062,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x27AA]
 
@@ -3087,7 +3090,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 4 "
+      - name: "Battery 4"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3111,22 +3114,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x27B4]
         icon: "mdi:battery"
 
-      - name: "Battery 4 Cell Max Voltage"
+      - name: "Battery 4 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x27B8]
 
-      - name: "Battery 4 Cell Min Voltage"
+      - name: "Battery 4 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x27B9]
 
@@ -3153,7 +3157,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x27D0]
 
@@ -3181,7 +3185,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 5 "
+      - name: "Battery 5"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3205,22 +3209,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x27DA]
         icon: "mdi:battery"
 
-      - name: "Battery 5 Cell Max Voltage"
+      - name: "Battery 5 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x27DE]
 
-      - name: "Battery 5 Cell Min Voltage"
+      - name: "Battery 5 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x27DF]
 
@@ -3247,7 +3252,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x27F6]
 
@@ -3275,7 +3280,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 6 "
+      - name: "Battery 6"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3299,22 +3304,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x2800]
         icon: "mdi:battery"
 
-      - name: "Battery 6 Cell Max Voltage"
+      - name: "Battery 6 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2804]
 
-      - name: "Battery 6 Cell Min Voltage"
+      - name: "Battery 6 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2805]
 
@@ -3341,7 +3347,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x281C]
 
@@ -3369,7 +3375,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 7 "
+      - name: "Battery 7"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3393,22 +3399,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x2826]
         icon: "mdi:battery"
 
-      - name: "Battery 7 Cell Max Voltage"
+      - name: "Battery 7 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x282A]
 
-      - name: "Battery 7 Cell Min Voltage"
+      - name: "Battery 7 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x282B]
 
@@ -3435,7 +3442,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x2842]
 
@@ -3463,7 +3470,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 8 "
+      - name: "Battery 8"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -3487,22 +3494,23 @@ parameters:
         state_class: "measurement"
         uom: "Ah"
         rule: 1
+        scale: 0.1
         registers: [0x284C]
         icon: "mdi:battery"
 
-      - name: "Battery 8 Cell Max Voltage"
+      - name: "Battery 8 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2850]
 
-      - name: "Battery 8 Cell Min Voltage"
+      - name: "Battery 8 Min Cell Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: 0.001
         rule: 1
         registers: [0x2851]
 
