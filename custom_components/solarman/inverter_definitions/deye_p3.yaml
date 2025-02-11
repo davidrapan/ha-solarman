@@ -2770,7 +2770,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
+        registers:
+          [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
         icon: "mdi:battery-sync"
 
       - name: "Battery 1 Voltage"
@@ -2816,6 +2817,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 1 MOS",
+            "Battery 1 Software Version",
+            "Battery 1 Hardware Version",
+          ]
 
       - name: "Battery 1 SOH"
         state_class: "measurement"
@@ -2855,6 +2862,32 @@ parameters:
         registers: [0x2748]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 1 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2749]
+
+      - name: "Battery 1 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2750, 0x2751, 0x2752, 0x2753]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 1 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2754]
+
+      - name: "Battery 1 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2755]
+
   - group: Battery 2
     via_device: "inverter"
     update_interval: 10
@@ -2865,7 +2898,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D]
+        registers:
+          [0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D]
         icon: "mdi:battery-sync"
 
       - name: "Battery 2 Voltage"
@@ -2911,6 +2945,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 2 MOS",
+            "Battery 2 Software Version",
+            "Battery 2 Hardware Version",
+          ]
 
       - name: "Battery 2 SOH"
         state_class: "measurement"
@@ -2950,6 +2990,32 @@ parameters:
         registers: [0x276E]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 2 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x276F]
+
+      - name: "Battery 2 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2770, 0x2771, 0x2772, 0x2773]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 2 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2774]
+
+      - name: "Battery 2 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2775]
+
   - group: Battery 3
     via_device: "inverter"
     update_interval: 10
@@ -2960,7 +3026,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x277C, 0x277D, 0x277E, 0x277F, 0x2780, 0x2781, 0x2782, 0x2783]
+        registers:
+          [0x277C, 0x277D, 0x277E, 0x277F, 0x2780, 0x2781, 0x2782, 0x2783]
         icon: "mdi:battery-sync"
 
       - name: "Battery 3 Voltage"
@@ -3006,6 +3073,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 3 MOS",
+            "Battery 3 Software Version",
+            "Battery 3 Hardware Version",
+          ]
 
       - name: "Battery 3 SOH"
         state_class: "measurement"
@@ -3045,6 +3118,32 @@ parameters:
         registers: [0x2794]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 3 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2795]
+
+      - name: "Battery 3 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2796, 0x2797, 0x2798, 0x2799]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 3 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27A0]
+
+      - name: "Battery 3 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27A1]
+
   - group: Battery 4
     via_device: "inverter"
     update_interval: 10
@@ -3055,7 +3154,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x27A2, 0x27A3, 0x27A4, 0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9]
+        registers:
+          [0x27A2, 0x27A3, 0x27A4, 0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9]
         icon: "mdi:battery-sync"
 
       - name: "Battery 4 Voltage"
@@ -3101,6 +3201,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 4 MOS",
+            "Battery 4 Software Version",
+            "Battery 4 Hardware Version",
+          ]
 
       - name: "Battery 4 SOH"
         state_class: "measurement"
@@ -3140,6 +3246,32 @@ parameters:
         registers: [0x27BA]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 4 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x27BB]
+
+      - name: "Battery 4 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x27BC, 0x27BD, 0x27BE, 0x27BF]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 4 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27C0]
+
+      - name: "Battery 4 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27C1]
+
   - group: Battery 5
     via_device: "inverter"
     update_interval: 10
@@ -3150,7 +3282,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x27C8, 0x27C9, 0x27CA, 0x27CB, 0x27CC, 0x27CD, 0x27CE, 0x27CF]
+        registers:
+          [0x27C8, 0x27C9, 0x27CA, 0x27CB, 0x27CC, 0x27CD, 0x27CE, 0x27CF]
         icon: "mdi:battery-sync"
 
       - name: "Battery 5 Voltage"
@@ -3196,6 +3329,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 5 MOS",
+            "Battery 5 Software Version",
+            "Battery 5 Hardware Version",
+          ]
 
       - name: "Battery 5 SOH"
         state_class: "measurement"
@@ -3235,6 +3374,32 @@ parameters:
         registers: [0x27E0]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 5 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x27E1]
+
+      - name: "Battery 5 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x27E2, 0x27E3, 0x27E4, 0x27E5]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 5 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27E6]
+
+      - name: "Battery 5 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x27E7]
+
   - group: Battery 6
     via_device: "inverter"
     update_interval: 10
@@ -3245,7 +3410,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x27EE, 0x27EF, 0x27F0, 0x27F1, 0x27F2, 0x27F3, 0x27F4, 0x27F5]
+        registers:
+          [0x27EE, 0x27EF, 0x27F0, 0x27F1, 0x27F2, 0x27F3, 0x27F4, 0x27F5]
         icon: "mdi:battery-sync"
 
       - name: "Battery 6 Voltage"
@@ -3291,6 +3457,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 6 MOS",
+            "Battery 6 Software Version",
+            "Battery 6 Hardware Version",
+          ]
 
       - name: "Battery 6 SOH"
         state_class: "measurement"
@@ -3330,6 +3502,32 @@ parameters:
         registers: [0x2806]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 6 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2807]
+
+      - name: "Battery 6 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2808, 0x2809, 0x280A, 0x280B]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 6 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x280C]
+
+      - name: "Battery 6 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x280D]
+
   - group: Battery 7
     via_device: "inverter"
     update_interval: 10
@@ -3340,7 +3538,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x2814, 0x2815, 0x2816, 0x2817, 0x2818, 0x2819, 0x281A, 0x281B]
+        registers:
+          [0x2814, 0x2815, 0x2816, 0x2817, 0x2818, 0x2819, 0x281A, 0x281B]
         icon: "mdi:battery-sync"
 
       - name: "Battery 7 Voltage"
@@ -3386,6 +3585,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 7 MOS",
+            "Battery 7 Software Version",
+            "Battery 7 Hardware Version",
+          ]
 
       - name: "Battery 7 SOH"
         state_class: "measurement"
@@ -3425,6 +3630,32 @@ parameters:
         registers: [0x282C]
         icon: "mdi:battery-sync"
 
+      - name: "Battery 7 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x282D]
+
+      - name: "Battery 7 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x282E, 0x282F, 0x2830, 0x2831]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 7 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2832]
+
+      - name: "Battery 7 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2833]
+
   - group: Battery 8
     via_device: "inverter"
     update_interval: 10
@@ -3435,7 +3666,8 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 1
-        registers: [0x283A, 0x283B, 0x283C, 0x283D, 0x283E, 0x283F, 0x2840, 0x2841]
+        registers:
+          [0x283A, 0x283B, 0x283C, 0x283D, 0x283E, 0x283F, 0x2840, 0x2841]
         icon: "mdi:battery-sync"
 
       - name: "Battery 8 Voltage"
@@ -3481,6 +3713,12 @@ parameters:
         validation:
           min: 0
           max: 101
+        attributes:
+          [
+            "Battery 8 MOS",
+            "Battery 8 Software Version",
+            "Battery 8 Hardware Version",
+          ]
 
       - name: "Battery 8 SOH"
         state_class: "measurement"
@@ -3519,3 +3757,29 @@ parameters:
         rule: 1
         registers: [0x2852]
         icon: "mdi:battery-sync"
+
+      - name: "Battery 8 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2853]
+
+      - name: "Battery 8 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2854, 0x2855, 0x2856, 0x2857]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 8 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2858]
+
+      - name: "Battery 8 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2859]
