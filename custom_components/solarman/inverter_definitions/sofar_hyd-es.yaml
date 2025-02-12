@@ -298,10 +298,11 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Battery Capacity"
+        state_class: measurement
         uom: "Ah"
         rule: 1
         registers: [0x10B1]
-        icon: "mdi:battery"
+        icon: "mdi:battery-high"
 
       - name: Today Battery Charge
         alt: Battery Daily Charge
