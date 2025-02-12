@@ -78,7 +78,7 @@ async def lookup_profile(request, attr):
         if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
             attr[ATTR_[CONF_MOD]], attr[ATTR_[CONF_MPPT]], attr[ATTR_[CONF_PHASE]] = max(m, attr[ATTR_[CONF_MOD]]), min(t, attr[ATTR_[CONF_MPPT]]), min(p, attr[ATTR_[CONF_PHASE]])
         if device_type in (0x0005, 0x0500, 0x0006, 0x0007, 0x0600, 0x0008, 0x0601) and (response := await request(-1, set_request(0x0003, 0x2712, 0x2712))) and (p := get_addr_value(response, 0x0003, 0x2712)) is not None:
-            attr[ATTR_[CONF_PACK]] = max(p, attr[ATTR_[CONF_PACK]])
+            attr[ATTR_[CONF_PACK]] = p if attr[ATTR_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, attr[ATTR_[CONF_PACK]])
         return f
     raise Exception("Unable to read Device Type at address 0x0000")
 
