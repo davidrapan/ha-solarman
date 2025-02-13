@@ -1985,7 +1985,7 @@ parameters:
         icon: "mdi:current-dc"
 
       # Battery - The current of battery 2 is S16bit (low 16 bits)
-      - name: "Battery Current 2"
+      - name: "Battery 2 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
