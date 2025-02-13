@@ -324,7 +324,7 @@ parameters:
         friendly_name: Today's Production
         update_interval: 300
         class: "energy"
-        state_class: "measurement"
+        state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
