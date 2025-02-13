@@ -334,6 +334,8 @@ parameters:
             value: "Battery Wake-Up"
           - key: 0x0031
             value: "Backup"
+          - key: 0x0033
+            value: "Optimized Revenue & Backup"
           - key: 0x0060
             value: "Feed-In Priority"
 
@@ -822,6 +824,8 @@ parameters:
             value: "Battery Wake-Up"
           - key: 0x0031
             value: "Backup"
+          - key: 0x0033
+            value: "Optimized Revenue & Backup"
           - key: 0x0060
             value: "Feed-In Priority"
 
