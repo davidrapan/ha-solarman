@@ -282,6 +282,10 @@ class Solarman:
             elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
                 kwargs["bits"] = [kwargs["bits"]]
             _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(self._server_decoder.lookup.get(code)(dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))))
+            if pdu is None:
+                raise FrameError(f"Invalid modbus response received")
+            if pdu.function_code != code:
+                raise FrameError(f"Incorrect response w/ function code {pdu.function_code} instead of {code} received")
             if FUNCTION_CODE.READ_HOLDING_REGISTERS <= code <= FUNCTION_CODE.READ_INPUT_REGISTERS:
                 return pdu.registers
             if FUNCTION_CODE.READ_COILS <= code <= FUNCTION_CODE.READ_DISCRETE_INPUTS:
