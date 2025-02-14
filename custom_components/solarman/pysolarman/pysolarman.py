@@ -23,10 +23,13 @@ PROTOCOL.CONTROL_CODE.HEARTBEAT = 0x47
 PROTOCOL.CONTROL_CODE.REPORT = 0x48
 PROTOCOL.CONTROL_CODE_SUFFIX = bytes.fromhex("10")
 PROTOCOL.CONTROL_CODES = PROTOCOL.CONTROL_CODE.__dict__.values()
-PROTOCOL.START = bytes.fromhex("A5")
 PROTOCOL.FRAME_TYPE = bytes.fromhex("02")
-PROTOCOL.PLACEHOLDER1 = bytes.fromhex("0000") # sensor type and double crc
-PROTOCOL.PLACEHOLDER2 = bytes.fromhex("000000000000000000000000") # delivery|poweron|offset time
+PROTOCOL.STATUS = bytes.fromhex("01")
+PROTOCOL.PLACEHOLDER1 = bytes.fromhex("00")
+PROTOCOL.PLACEHOLDER2 = bytes.fromhex("0000") # sensor type and double crc
+PROTOCOL.PLACEHOLDER3 = bytes.fromhex("00000000") # offset time
+PROTOCOL.PLACEHOLDER4 = bytes.fromhex("000000000000000000000000") # delivery|poweron|offset time
+PROTOCOL.START = bytes.fromhex("A5")
 PROTOCOL.END = bytes.fromhex("15")
 
 FUNCTION_CODE = types.SimpleNamespace()
@@ -101,14 +104,6 @@ class Solarman:
         self.sequence_number = randrange(0x01, 0xFF) if self.sequence_number is None else (self.sequence_number + 1) & 0xFF
         return self.sequence_number
 
-    def _time_response_frame(self, frame: bytes) -> bytearray:
-        response_frame = self._protocol_header(10, self._get_response_code(frame[4]), frame[5:7]) + bytearray(
-            + struct.pack("<H", 0x0100) # Frame & sensor type?
-            + struct.pack("<I", int(time.time()))
-            + struct.pack("<I", 0)) # Offset?
-        response_frame[5] = (response_frame[5] + 1) & 0xFF
-        return response_frame + self._protocol_trailer(response_frame)
-
     def _received_frame_is_valid(self, frame: bytes) -> bool:
         if not frame.startswith(PROTOCOL.START):
             _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
@@ -140,7 +135,12 @@ class Solarman:
             # Maybe do_continue = True for CONTROL_CODE.DATA|INFO|REPORT and thus process packets in the future?
             control_name = [i for i in PROTOCOL.CONTROL_CODE.__dict__ if PROTOCOL.CONTROL_CODE.__dict__[i] == frame[4]][0]
             _LOGGER.debug("[%s] PROTOCOL_%s: %s", self.serial, control_name, frame.hex(" "))
-            response_frame = self._time_response_frame(frame)
+            response_frame = self._protocol_header(10, self._get_response_code(frame[4]), frame[5:7]) + bytearray(PROTOCOL.PLACEHOLDER1 # Frame Type
+                + PROTOCOL.STATUS
+                + struct.pack("<I", int(time.time()))
+                + PROTOCOL.PLACEHOLDER3) # Offset?
+            response_frame[5] = (response_frame[5] + 1) & 0xFF
+            response_frame += self._protocol_trailer(response_frame)
             _LOGGER.debug("[%s] PROTOCOL_%s RESP: %s", self.serial, control_name, response_frame.hex(" "))
         return do_continue, response_frame
 
@@ -250,8 +250,8 @@ class Solarman:
             PROTOCOL.CONTROL_CODE.REQUEST,
             struct.pack("<H", self._get_next_sequence_number())
         ) + bytearray(PROTOCOL.FRAME_TYPE
-            + PROTOCOL.PLACEHOLDER1 # sensor type
-            + PROTOCOL.PLACEHOLDER2 # delivery|poweron|offset time
+            + PROTOCOL.PLACEHOLDER2 # sensor type
+            + PROTOCOL.PLACEHOLDER4 # delivery|poweron|offset time
             + frame)
         response_frame = await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
         if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
@@ -265,7 +265,7 @@ class Solarman:
         adu = response_frame[25:-2]
         if len(adu) < 5: # Short version of modbus exception response
             raise FrameError(f"Modbus exception response: 0x{adu[0]:02X}")
-        if adu.endswith(PROTOCOL.PLACEHOLDER1) and FramerRTU.compute_CRC(adu[:-4]).to_bytes(2, "big") == adu[-4:-2]: # Double CRC (XXXX0000) correction
+        if adu.endswith(PROTOCOL.PLACEHOLDER2) and FramerRTU.compute_CRC(adu[:-4]).to_bytes(2, "big") == adu[-4:-2]: # Double CRC (XXXX0000) correction
             return adu[:-2]
         return adu
 
