@@ -262,6 +262,7 @@ parameters:
 
   - group: Battery Module 0
     hidden:
+    pack: 1
     items:
       - name: "Battery Module 0 Voltage"
         class: "voltage"
