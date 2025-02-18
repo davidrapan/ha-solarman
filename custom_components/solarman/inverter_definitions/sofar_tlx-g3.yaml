@@ -152,7 +152,7 @@ parameters:
   - group: Load
     items:
       - name: "Load Power"
-        class: "energy"
+        class: "power"
         uom: "kW"
         scale: 0.01
         rule: 1
