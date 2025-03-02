@@ -1679,12 +1679,11 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers: [0x0208, 0x0211, 0x0218, 0x0203, 0x0209, 0x020E, 0x0202]
+        registers: [0x0208, 0x0211, 0x0203, 0x0209, 0x020E, 0x0202]
         uint: enforce
         sensors:
           - registers: [0x0208]
           - registers: [0x0211]
-          - registers: [0x0218]
           - registers: [0x0203]
           - operator: subtract
             registers: [0x0209]
@@ -1708,8 +1707,6 @@ parameters:
             0x020B,
             0x0216,
             0x0217,
-            0x0219,
-            0x021A,
             0x0206,
             0x0207,
             0x020C,
@@ -1723,7 +1720,6 @@ parameters:
         sensors:
           - registers: [0x020A, 0x020B]
           - registers: [0x0216, 0x0217]
-          - registers: [0x0219, 0x021A]
           - registers: [0x0206, 0x0207]
           - operator: subtract
             registers: [0x020C, 0x020D]
