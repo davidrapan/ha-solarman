@@ -96,8 +96,8 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
         parent_device_info = self.coordinator.device.device_info.get(self.coordinator.device.config.serial)
         device_serial_number, _ = self.coordinator.data[slugify(' '.join(filter(None, (sensor["group"], "serial", "number", "sensor"))))]
         if not device_serial_number in self.coordinator.device.device_info:
-            self.coordinator.device.device_info[device_serial_number] = build_device_info(device_serial_number, None, None, parent_device_info["name"], None, None)
-            self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, self.coordinator.device.config.serial)
+            self.coordinator.device.device_info[device_serial_number] = build_device_info(str(device_serial_number), None, None, parent_device_info["name"], None, None)
+            self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, str(self.coordinator.device.config.serial))
             self.coordinator.device.device_info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
             self.coordinator.device.device_info[device_serial_number]["model"] = None
         self._attr_device_info = self.coordinator.device.device_info[device_serial_number]
