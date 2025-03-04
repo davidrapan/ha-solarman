@@ -1554,6 +1554,8 @@ parameters:
         rule: 1
         registers: [0x00ED]
         icon: "mdi:lightning-bolt-circle"
+        configurable:
+          mode: box
         range:
           min: 0
           max: 100
