@@ -186,7 +186,7 @@ class Solarman:
         self.reader_task = None
         self.reader = None
         self.writer = None
-        self.open_task = asyncio.get_running_loop().create_task(self._reconnect(), name = "OpenKeeper")
+        self._open()
 
     async def _open_connection(self) -> None:
         try:
@@ -194,23 +194,24 @@ class Solarman:
                 self.reader_task.cancel()
             self.reader, self.writer = await asyncio.wait_for(asyncio.open_connection(self.address, self.port), self.timeout)
             self.reader_task = asyncio.get_running_loop().create_task(self._conn_keeper(), name = "ConnKeeper")
-            self.open_task = None
-        except Exception as e:
-            self.reader_task = None
-            raise NoSocketAvailableError(f"Cannot open connection to {self.address}") from e
-
-    async def _reconnect(self) -> None:
-        try:
-            await self._open_connection()
             if self.data_wanted_ev.is_set():
                 _LOGGER.debug("[%s] Successful reconnection! Data expected. Will retry the last request", self.serial)
                 await self._write(self._last_frame)
             else:
-                _LOGGER.debug("[%s] Successful reconnection", self.serial)
+                _LOGGER.debug("[%s] Successful connection!", self.serial)
             self.open_task = None
         except Exception as e:
-            _LOGGER.debug(f"[{self.serial}] {e!r}")
-            await self._reconnect()
+            if self.data_wanted_ev.is_set():
+                _LOGGER.debug(f"[{self.serial}] {e!r}")
+                await self._open_connection()
+            else:
+                raise NoSocketAvailableError(f"Cannot open connection to {self.address}") from e
+
+    def _open(self):
+        if not self.connected:
+            if self.open_task:
+                self.open_task.cancel()
+            self.open_task = asyncio.get_running_loop().create_task(self._open_connection(), name = "OpenKeeper")
 
     async def _close(self) -> None:
         if self.writer:
@@ -293,9 +294,9 @@ class Solarman:
             return pdu.count
         raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
 
-    async def open(self) -> None:
-        if not self.connected:
-            self.open_task = asyncio.get_running_loop().create_task(self._open_connection(), name = "OpenKeeper")
+    async def open(self):
+        self._open()
+        if self.open_task is not None:
             await self.open_task
 
     async def close(self) -> None:
