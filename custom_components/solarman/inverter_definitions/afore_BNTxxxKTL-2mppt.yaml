@@ -15,7 +15,7 @@ default:
 parameters:
   - group: PV
     items:
-      - name: PV Power
+      - name: "PV Power"
         alt: DC Power
         mppt: 1
         description: Combined power of all inputs
@@ -35,7 +35,7 @@ parameters:
               registers: [0x000A]
         icon: "mdi:solar-power-variant"
 
-      - name: PV1 Power
+      - name: "PV1 Power"
         alt: DC1 Power
         mppt: 1
         class: "power"
@@ -68,12 +68,12 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x0008]
         icon: "mdi:solar-power-variant"
 
-      - name: PV2 Power
+      - name: "PV2 Power"
         alt: DC2 Power
         mppt: 2
         class: "power"
@@ -106,38 +106,12 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x000A]
         icon: "mdi:solar-power-variant"
 
-      - name: "Today Production"
-        friendly_name: Today's Production
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "Wh"
-        rule: 1
-        registers: [0x000F]
-        icon: "mdi:solar-power"
-
-      - name: "Total Production"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "Wh"
-        rule: 3
-        registers: [0x0015, 0x0014]
-        icon: "mdi:solar-power"
-        validation:
-          min: 0.1
-
-      - name: "Today Production time"
-        state_class: "measurement"
-        uom: "s"
-        rule: 1
-        registers: [0x0013]
-        icon: "mdi:clock-outline"
-
-  - group: Output
+  - group: Grid
     items:
       - name: "L1 Voltage"
         l: 1
@@ -174,7 +148,7 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x0004]
         icon: "mdi:home-lightning-bolt"
@@ -184,7 +158,7 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x0005]
         icon: "mdi:home-lightning-bolt"
@@ -194,10 +168,86 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 1
         registers: [0x0006]
         icon: "mdi:home-lightning-bolt"
+
+      - name: "L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0001, 0x0004]
+        sensors:
+          - registers: [0x0001]
+            multiply:
+              registers: [0x0004]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0002, 0x0005]
+        sensors:
+          - registers: [0x0002]
+            multiply:
+              registers: [0x0005]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        registers: [0x0003, 0x0006]
+        sensors:
+          - registers: [0x0003]
+            multiply:
+              registers: [0x0006]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: Power
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0011, 0x0010]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: Power losses
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        registers: [0x0007, 0x0008, 0x0009, 0x000A, 0x0010, 0x0011]
+        uint: enforce
+        sensors:
+          - registers: [0x0007]
+            scale: 0.1
+            multiply:
+              registers: [0x0008]
+              scale: 0.1
+          - registers: [0x0009]
+            scale: 0.1
+            multiply:
+              registers: [0x000A]
+              scale: 0.1
+          - operator: subtract
+            registers: [0x0011, 0x0010]
 
       - name: "Frequency"
         class: "frequency"
@@ -208,8 +258,214 @@ parameters:
         registers: [0x000B]
         icon: "mdi:home-lightning-bolt"
 
+  - group: Device
+    update_interval: 60
+    items:
+      - name: "Inverter PowerDown"
+        icon: "mdi:wrench"
+        rule: 1
+        registers: [0x0000]
+        mask: 0x2
+        lookup:
+          - key: 0
+            value: "off"
+          - key: 2
+            value: "on"
+
+      - name: "Inverter start"
+        icon: "mdi:wrench"
+        rule: 1
+        registers: [0x0000]
+        mask: 0x100
+        lookup:
+          - key: 0
+            value: "off"
+          - key: 256
+            value: "on"
+
+      - name: "Inverter grid connection"
+        icon: "mdi:wrench"
+        rule: 1
+        registers: [0x0000]
+        mask: 0x200
+        lookup:
+          - key: 0
+            value: "off"
+          - key: 512
+            value: "on"
+
+      - name: "Inverter grid state"
+        icon: "mdi:wrench"
+        rule: 1
+        registers: [0x0000]
+        mask: 0x400
+        lookup:
+          - key: 0
+            value: "Abnormal"
+          - key: 1024
+            value: "Normal"
+
+      - name: "Inverter run"
+        icon: "mdi:wrench"
+        rule: 1
+        registers: [0x0000]
+        mask: 0x2000
+        lookup:
+          - key: 0
+            value: "off"
+          - key: 8192
+            value: "on"
+
+      - name: E01
+        class: "enum"
+        rule: 1
+        registers: [0x0016]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "No error"
+          - key: 1
+            value: "IntFaultE"
+          - key: 2
+            value: "IntFaultD"
+          - key: 4
+            value: "IntFaultC"
+          - key: 8
+            value: "IntFaultB"
+          - key: 16
+            value: "IntFaultA"
+          - key: 32
+            value: "IntFaultN"
+          - key: 256
+            value: "IntFaultM"
+          - key: 512
+            value: "IntFaultL"
+          - key: 1024
+            value: "IntFaultK"
+          - key: 2048
+            value: "IntFaultJ"
+          - key: 16384
+            value: "IntFaultG"
+
+      - name: E02
+        class: "enum"
+        rule: 1
+        registers: [0x0017]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "No error"
+          - key: 256
+            value: "IntProtectT"
+          - key: 512
+            value: "IntProtectU"
+
+      - name: E03
+        class: "enum"
+        rule: 1
+        registers: [0x0018]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "No error"
+          - key: 1
+            value: "IntProtectN"
+          - key: 2
+            value: "GridV.OutLim"
+          - key: 4
+            value: "EmergencyStp"
+          - key: 8
+            value: "IntProtectM"
+          - key: 16
+            value: "IntProtectL"
+          - key: 32
+            value: "Ac.ConErr"
+          - key: 64
+            value: "IntProtectK"
+          - key: 128
+            value: "IntProtectJ"
+          - key: 256
+            value: "IntProtectS"
+          - key: 512
+            value: "IntProtectR"
+          - key: 1024
+            value: "IntProtectQ"
+          - key: 2048
+            value: "IsolationErr"
+          - key: 4096
+            value: "GFCI.Err"
+          - key: 8192
+            value: "IntProtectP"
+          - key: 16384
+            value: "PV.Reverse"
+          - key: 32768
+            value: "IntProtectO"
+
+      - name: E04
+        class: "enum"
+        rule: 1
+        registers: [0x0019]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "No error"
+          - key: 1
+            value: "GridV.OutLim"
+          - key: 2
+            value: "IntProtectC"
+          - key: 4
+            value: "GridF.OutLim"
+          - key: 8
+            value: "GridF.OutLim"
+          - key: 16
+            value: "GridV.OutLim"
+          - key: 32
+            value: "IntProtectB"
+          - key: 64
+            value: "TempOver"
+          - key: 128
+            value: "IntProtectA"
+          - key: 256
+            value: "IntProtectl"
+          - key: 512
+            value: "IntProtectH"
+          - key: 1024
+            value: "IntProtectG"
+          - key: 2048
+            value: "IntProtectF"
+          - key: 4096
+            value: "IntProtectE"
+          - key: 8192
+            value: "PVVoltOver"
+          - key: 16384
+            value: "IntProtectD"
+          - key: 32768
+            value: "GridV.OutLim"
+
+      - name: E05
+        class: "enum"
+        rule: 1
+        registers: [0x001A]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "No error"
+          - key: 256
+            value: "ExtFanErr"
+          - key: 512
+            value: "IntFanErr"
+          - key: 1024
+            value: "SPICommErr"
+          - key: 2048
+            value: "EepromErr"
+          - key: 4096
+            value: "PVBrkerOpen"
+          - key: 8192
+            value: "TempSensorErr"
+
       - name: "Temperature"
         class: "temperature"
+        state_class: "measurement"
         uom: "°C"
         scale: 0.1
         rule: 1
@@ -223,30 +479,31 @@ parameters:
         rule: 1
         registers: [0x000D]
 
-      - name: Power
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
+  - group: Meter
+    update_interval: 30
+    items:
+      - name: "Today Production"
+        friendly_name: "Today's Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
         rule: 1
-        registers: [0x0011]
-        icon: "mdi:home-lightning-bolt"
+        registers: [0x000F, 0x000E]
+        icon: "mdi:solar-power"
 
-      - name: Power losses
-        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
-        class: "power"
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        rule: 3
+        registers: [0x0015, 0x0014]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+
+      - name: "Today Production time"
         state_class: "measurement"
-        uom: "W"
+        uom: "s"
         rule: 1
-        digits: 3
-        scale: 0.1
-        registers: [0x0007, 0x0008, 0x0009, 0x000A, 0x0011]
-        uint: enforce
-        sensors:
-          - registers: [0x0007]
-            multiply:
-              registers: [0x0008]
-          - registers: [0x0009]
-            multiply:
-              registers: [0x000A]
-          - operator: subtract
-            registers: [0x0011]
+        registers: [0x0013, 0x0012]
+        icon: "mdi:clock-outline"
