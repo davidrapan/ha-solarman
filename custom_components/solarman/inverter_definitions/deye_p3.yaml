@@ -2815,6 +2815,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 1 Serial Number",
             "Battery 1 MOS",
             "Battery 1 Software Version",
             "Battery 1 Hardware Version",
@@ -2943,6 +2944,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 2 Serial Number",
             "Battery 2 MOS",
             "Battery 2 Software Version",
             "Battery 2 Hardware Version",
@@ -3071,6 +3073,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 3 Serial Number",
             "Battery 3 MOS",
             "Battery 3 Software Version",
             "Battery 3 Hardware Version",
@@ -3199,6 +3202,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 4 Serial Number",
             "Battery 4 MOS",
             "Battery 4 Software Version",
             "Battery 4 Hardware Version",
@@ -3327,6 +3331,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 5 Serial Number",
             "Battery 5 MOS",
             "Battery 5 Software Version",
             "Battery 5 Hardware Version",
@@ -3455,6 +3460,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 6 Serial Number",
             "Battery 6 MOS",
             "Battery 6 Software Version",
             "Battery 6 Hardware Version",
@@ -3583,6 +3589,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 7 Serial Number",
             "Battery 7 MOS",
             "Battery 7 Software Version",
             "Battery 7 Hardware Version",
@@ -3711,6 +3718,7 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery 8 Serial Number",
             "Battery 8 MOS",
             "Battery 8 Software Version",
             "Battery 8 Hardware Version",
