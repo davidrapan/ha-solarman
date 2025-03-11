@@ -2765,7 +2765,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
         icon: "mdi:battery-sync"
@@ -2894,7 +2894,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D]
         icon: "mdi:battery-sync"
@@ -3023,7 +3023,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x277C, 0x277D, 0x277E, 0x277F, 0x2780, 0x2781, 0x2782, 0x2783]
         icon: "mdi:battery-sync"
@@ -3152,7 +3152,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x27A2, 0x27A3, 0x27A4, 0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9]
         icon: "mdi:battery-sync"
@@ -3281,7 +3281,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x27C8, 0x27C9, 0x27CA, 0x27CB, 0x27CC, 0x27CD, 0x27CE, 0x27CF]
         icon: "mdi:battery-sync"
@@ -3410,7 +3410,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x27EE, 0x27EF, 0x27F0, 0x27F1, 0x27F2, 0x27F3, 0x27F4, 0x27F5]
         icon: "mdi:battery-sync"
@@ -3539,7 +3539,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x2814, 0x2815, 0x2816, 0x2817, 0x2818, 0x2819, 0x281A, 0x281B]
         icon: "mdi:battery-sync"
@@ -3668,7 +3668,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 1
+        rule: 5
         registers:
           [0x283A, 0x283B, 0x283C, 0x283D, 0x283E, 0x283F, 0x2840, 0x2841]
         icon: "mdi:battery-sync"
