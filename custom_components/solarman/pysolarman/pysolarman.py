@@ -282,7 +282,10 @@ class Solarman:
                 kwargs["registers"] = [kwargs["registers"]]
             elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
                 kwargs["bits"] = [kwargs["bits"]]
-            _, pdu = self._client_framer.processIncomingFrame(await self._get_response(self._server_framer.buildFrame(self._server_decoder.lookup.get(code)(dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs))))
+            response = await self._get_response(self._server_framer.buildFrame(self._server_decoder.lookup.get(code)(dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs)))
+            if response[0] != self.slave and response[1] != code:
+                raise FrameError(f"Fragmented modbus response received")
+            _, pdu = self._client_framer.processIncomingFrame(response)
             if pdu is None:
                 raise FrameError(f"Invalid modbus response received")
             if pdu.function_code != code:
