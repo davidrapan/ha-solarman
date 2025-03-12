@@ -246,7 +246,7 @@ class Solarman:
         finally:
             self.data_wanted_ev.clear()
 
-    async def _parse_adu_from_rtu_response(self, frame: bytes) -> bytes:
+    async def _parse_adu_from_rtu_response(self, frame: bytes) -> tuple[int, int, bytes]:
         request_frame = self._protocol_header(15 + len(frame),
             PROTOCOL.CONTROL_CODE.REQUEST,
             struct.pack("<H", self._get_next_sequence_number())
@@ -267,14 +267,14 @@ class Solarman:
         if len(adu) < 5: # Short version of modbus exception response
             raise FrameError(f"Modbus exception response: 0x{adu[0]:02X}")
         if adu.endswith(PROTOCOL.PLACEHOLDER2) and FramerRTU.compute_CRC(adu[:-4]).to_bytes(2, "big") == adu[-4:-2]: # Double CRC (XXXX0000) correction
-            return adu[:-2]
-        return adu
+            adu = adu[:-2]
+        return adu[0], adu[1], adu
 
-    async def _parse_adu_from_tcp_response(self, frame: bytes) -> bytes:
+    async def _parse_adu_from_tcp_response(self, frame: bytes) -> tuple[int, int, bytes]:
         adu = await self._send_receive_frame(frame)
         if 8 <= len(adu) <= 10: # Incomplete response frame correction
-            return adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
-        return adu
+            adu = adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
+        return adu[6], adu[7], adu
 
     async def execute(self, code, **kwargs):
         if code in self._server_decoder.lookup:
@@ -282,10 +282,10 @@ class Solarman:
                 kwargs["registers"] = [kwargs["registers"]]
             elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
                 kwargs["bits"] = [kwargs["bits"]]
-            response = await self._get_response(self._server_framer.buildFrame(self._server_decoder.lookup.get(code)(dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs)))
-            if response[0] != self.slave and response[1] != code:
+            slv, cde, adu = await self._get_response(self._server_framer.buildFrame(self._server_decoder.lookup.get(code)(dev_id = self.slave, transaction_id = randint(0, 65535), **kwargs)))
+            if slv != self.slave and cde != code:
                 raise FrameError(f"Fragmented modbus response received")
-            _, pdu = self._client_framer.processIncomingFrame(response)
+            _, pdu = self._client_framer.processIncomingFrame(adu)
             if pdu is None:
                 raise FrameError(f"Invalid modbus response received")
             if pdu.function_code != code:
