@@ -3787,3 +3787,261 @@ parameters:
         rule: 7
         delimiter: ""
         registers: [0x2859]
+
+  - group: Battery 9
+    via_device: "inverter"
+    update_interval: 10
+    pack: 8
+    items:
+      - name: "Battery 9 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x2860, 0x2861, 0x2862, 0x2863, 0x2864, 0x2865, 0x2866, 0x2867]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 9 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2868]
+
+      - name: "Battery 9 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2869]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 9 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x286A]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 9"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x286F]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 9 Serial Number",
+            "Battery 9 MOS",
+            "Battery 9 Software Version",
+            "Battery 9 Hardware Version",
+          ]
+
+      - name: "Battery 9 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2870]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 9 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x2872]
+        icon: "mdi:battery"
+
+      - name: "Battery 9 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2876]
+
+      - name: "Battery 9 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2877]
+
+      - name: "Battery 9 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x2878]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 9 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2879]
+
+      - name: "Battery 9 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x287A, 0x287B, 0x287C, 0x287D]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 9 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x287E]
+
+      - name: "Battery 9 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x287F]
+
+  - group: Battery 10
+    via_device: "inverter"
+    update_interval: 10
+    pack: 8
+    items:
+      - name: "Battery 10 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x2886, 0x2887, 0x2888, 0x2889, 0x288A, 0x288B, 0x288C, 0x288D]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 10 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x288E]
+
+      - name: "Battery 10 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x288F]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 10 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2890]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 10"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2895]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 10 Serial Number",
+            "Battery 10 MOS",
+            "Battery 10 Software Version",
+            "Battery 10 Hardware Version",
+          ]
+
+      - name: "Battery 10 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2896]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 10 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x2898]
+        icon: "mdi:battery"
+
+      - name: "Battery 10 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x289C]
+
+      - name: "Battery 10 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x289D]
+
+      - name: "Battery 10 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x289E]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 10 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x289F]
+
+      - name: "Battery 10 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28A0, 0x28A1, 0x28A2, 0x28A3]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 10 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28A4]
+
+      - name: "Battery 10 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28A5]
