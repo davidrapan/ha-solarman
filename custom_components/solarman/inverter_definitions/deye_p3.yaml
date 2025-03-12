@@ -179,6 +179,11 @@ parameters:
         rule: 1
         registers: [0x0050]
 
+      - name: "Asymmetry" # Active unbalance load
+        platform: switch
+        rule: 1
+        registers: [0x00ED]
+
   - group: Settings
     update_interval: 300
     items:
