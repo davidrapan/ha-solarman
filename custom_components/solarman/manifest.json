@@ -11,5 +11,5 @@
   "loggers": ["pymodbus"],
   "quality_scale": "custom",
   "requirements": ["propcache", "aiofiles", "pyyaml", "pymodbus>=3.8.3"],
-  "version": "25.03.12"
+  "version": "25.03.12_1"
 }
