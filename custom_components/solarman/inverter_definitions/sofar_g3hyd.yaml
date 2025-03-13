@@ -1104,63 +1104,23 @@ parameters:
     items:
       - name: "Alert"
         rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 12"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0410]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
-            value: "ID177 BMS over-voltage alarm"
-          - key: 2
-            value: "ID178 BMS undervoltage alarm"
-          - key: 4
-            value: "ID179 BMS high temperature alarm"
-          - key: 8
-            value: "ID180 BMS low temperature alarm"
-          - key: 16
-            value: "ID181 BMS charge/discharge overload alarm"
-          - key: 32
-            value: "ID182 BMS short circuit alarm"
-          - key: 64
-            value: "ID183 BMS version inconsistency"
-          - key: 128
-            value: "ID184 BMS CAN version inconsistency"
-          - key: 256
-            value: "ID185 BMS CAN version is too low"
-          - key: 512
-            value: "ID186 "
-          - key: 1024
-            value: "ID187 "
-          - key: 2048
-            value: "ID188 "
-          - key: 4096
-            value: "ID189 Arc device communication failure"
-          - key: 8192
-            value: "ID190 DC arc alarm fault"
-          - key: 16384
-            value: "ID191 PID repair failed"
-          - key: 32768
-            value: "ID192 PLC module heartbeat loss"
-        description: |-
-          Fault information table 1
-          Fault information table 2
-          Fault information table 3
-          Fault information table 4
-          Fault information table 5
-          Fault information table 6
-          Fault information table 7
-          Fault information table 8
-          Fault information table 9
-          Fault information table 10
-          Fault information table 11
-          Fault information table 12
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 1"
+        registers:
+          [
+            0x0405,
+            0x0406,
+            0x0407,
+            0x0408,
+            0x0409,
+            0x040A,
+            0x040B,
+            0x040C,
+            0x040D,
+            0x040E,
+            0x040F,
+            0x0410,
+          ]
+
+      - name: "Fault 1"
         rule: 1
         registers: [0x0405]
         icon: "mdi:wrench"
@@ -1203,12 +1163,7 @@ parameters:
             value: "ID15"
           - key: 32768
             value: "ID16"
-        description: |-
-          Fault information table 1
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 2"
+      - name: "Fault 2"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0406]
@@ -1247,12 +1202,7 @@ parameters:
             value: "ID31 DCI consistency error"
           - key: 32768
             value: "ID32"
-        description: |-
-          Fault information table 2
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 3"
+      - name: "Fault 3"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0407]
@@ -1291,12 +1241,7 @@ parameters:
             value: "ID047 Parallel error"
           - key: 32768
             value: "ID048 Serial number error"
-        description: |-
-          Fault information table 3
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 4"
+      - name: "Fault 4"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0408]
@@ -1335,12 +1280,7 @@ parameters:
             value: "ID063 "
           - key: 32768
             value: "ID064 "
-        description: |-
-          Fault information table 4
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 5"
+      - name: "Fault 5"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0409]
@@ -1379,12 +1319,7 @@ parameters:
             value: "ID079 "
           - key: 32768
             value: "ID080 "
-        description: |-
-          Fault information table 5
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 6"
+      - name: "Fault 6"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040A]
@@ -1423,12 +1358,7 @@ parameters:
             value: "ID095 "
           - key: 32768
             value: "ID096 "
-        description: |-
-          Fault information table 6
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 7"
+      - name: "Fault 7"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040B]
@@ -1467,12 +1397,8 @@ parameters:
             value: "ID111 Overload protection 2"
           - key: 32768
             value: "ID112 Overload protection 3"
-        description: |-
-          Fault information table 7
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 8"
+
+      - name: "Fault 8"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040C]
@@ -1511,12 +1437,7 @@ parameters:
             value: "ID127 "
           - key: 32768
             value: "ID128 "
-        description: |-
-          Fault information table 8
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 9"
+      - name: "Fault 9"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040D]
@@ -1555,12 +1476,7 @@ parameters:
             value: "ID143 Lightning protection permanent fault - AC side"
           - key: 32768
             value: "ID144 "
-        description: |-
-          Fault information table 9
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 10"
+      - name: "Fault 10"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040E]
@@ -1599,12 +1515,7 @@ parameters:
             value: "ID159 Lithium battery 3 communication error"
           - key: 32768
             value: "ID160 Lithium battery 4 communication failure"
-        description: |-
-          Fault information table 10
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 11"
+      - name: "Fault 11"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x040F]
@@ -1643,12 +1554,7 @@ parameters:
             value: "ID175 Fan 7 fault"
           - key: 32768
             value: "ID176 Meter communication failure"
-        description: |-
-          Fault information table 11
-      - name: "Alert"
-        rule: 6
-        registers: [0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 0x040A, 0x040B, 0x040C, 0x040D, 0x040E, 0x040F, 0x0410]
-        name: "Fault 12"
+      - name: "Fault 12"
         rule: 1
         icon: "mdi:wrench"
         registers: [0x0410]
@@ -1687,8 +1593,6 @@ parameters:
             value: "ID191 PID repair failed"
           - key: 32768
             value: "ID192 PLC module heartbeat loss"
-        description: |-
-          Fault information table 12
       - name: "Storage Control Mode"
         platform: select
         rule: 1
