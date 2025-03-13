@@ -3791,7 +3791,7 @@ parameters:
   - group: Battery 9
     via_device: "inverter"
     update_interval: 10
-    pack: 8
+    pack: 9
     items:
       - name: "Battery 9 Serial Number"
         update_interval: 3600
@@ -3920,7 +3920,7 @@ parameters:
   - group: Battery 10
     via_device: "inverter"
     update_interval: 10
-    pack: 8
+    pack: 10
     items:
       - name: "Battery 10 Serial Number"
         update_interval: 3600
