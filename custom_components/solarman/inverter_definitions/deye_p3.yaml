@@ -1977,7 +1977,10 @@ parameters:
         uom: "A"
         scale: 0.01
         rule: 2
-        registers: [0x024F]
+        registers: [0x024F, 0x0252]
+        sensors:
+          - registers: [0x024F]
+          - registers: [0x0252]
         icon: "mdi:current-dc"
 
       # Battery - Actual capacity of the battery
