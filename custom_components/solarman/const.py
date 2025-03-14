@@ -67,7 +67,7 @@ AUTODETECTION_DEVICE_DEYE = (AUTODETECTION_CODE_DEYE, 0x00)
 AUTODETECTION_TYPE_DEYE = (AUTODETECTION_CODE_DEYE, 0x08)
 AUTODETECTION_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 0, 0x12), (0x0004, 0x0400): ("deye_micro.yaml", 0, 0x12), (0x0005, 0x0500): ("deye_p3.yaml", 0, 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_p3.yaml", 1, 0x16) }
 
-PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
+PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml", "solis_3p-4g+.yaml": "solis_3p-4g.yaml" }
 
 ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK: CONF_PACK }
 
