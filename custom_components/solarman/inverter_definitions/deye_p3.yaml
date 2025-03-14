@@ -2205,7 +2205,7 @@ parameters:
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L1 Power"
         l: 1
-        class: "measurement"
+        class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
@@ -2215,7 +2215,7 @@ parameters:
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L2 Power"
         l: 2
-        class: "measurement"
+        class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
@@ -2225,7 +2225,7 @@ parameters:
       # Grid - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Grid L3 Power"
         l: 3
-        class: "measurement"
+        class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
@@ -2236,7 +2236,7 @@ parameters:
       - name: "Grid Power"
         l: 1
         description: Combined power of all three phases
-        class: "measurement"
+        class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 4
