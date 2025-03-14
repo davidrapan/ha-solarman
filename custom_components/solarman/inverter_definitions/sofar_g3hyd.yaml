@@ -1,38 +1,55 @@
 #
-# Sofar G3 also HYD 5-20KTL-3PH
+# Sofar Modbus protocol G3
+# Valid for:
+# - HYD 3-6K-EP
+# - HYD 5-20K-3PH
+# - HYD 5-20KTL-3PH
+# - SOFAR 5-24KTL-G3
+# - SOFAR 80-136KTL
+#
+# This works also for rebranded ZCS Azzurro 3-Phase inverters such as the 3PH
+# HYD6000 ZSS, or single phase such as 1PH HY6000 ZSS HP. Note that this won't
+# work if your ZCS inverter is connected via Connext, you have to be using a
+# Wi-Fi or Ethernet Kit such as ZSM-WIFI-USB.
 #
 # Reference: https://github.com/user-attachments/files/17180102/SOFAR-G3.External.Modbus.Protocol-EN-V1.10.20220622.xlsx
-#
-# This works also for rebranded ZCS Azzurro 3-Phase inverters such as the 3PH HYD6000 ZSS, or single phase such as 1PH HY6000 ZSS HP
-# Note that this won't work if your ZCS inverter is connected via Connext, you have to be using a Wi-Fi or Ethernet Kit such as ZSM-WIFI-USB.
+# https://github.com/davidrapan/ha-solarman/wiki/Documentation#sofar
 #
 
 default:
   update_interval: 10
   digits: 6
+
 parameters:
+
+  #Inverter{{{
   - group: Inverter
     items:
+
       - name: "Inverter status"
         rule: 1
         registers: [0x0404]
         lookup:
           - key: 0
-            value: "waiting"
+            value: "Waiting"
           - key: 1
-            value: "detection"
+            value: "Detection"
           - key: 2
-            value: "grid-connected"
+            value: "Grid-connected"
           - key: 3
-            value: "emergency power supply"
+            value: "Emergency power supply"
           - key: 4
-            value: "recoverable fault"
+            value: "Recoverable fault"
           - key: 5
-            value: "permanent fault"
+            value: "Permanent fault"
           - key: 6
-            value: "upgrade"
+            value: "Upgrade"
           - key: 7
-            value: "self-charging"
+            value: "Self-charging"
+          - key: 8
+            value: "SVG"
+          - key: 9
+            value: "PID"
         icon: "mdi:wrench"
         description: |-
           Operating status
@@ -45,73 +62,85 @@ parameters:
           6: Upgrade status
           7: Self-charging status
           8：SVG status
-          9：PID  status
+          9：PID status
+
       - name: "Ambient temperature 1"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0418]
         icon: "mdi:thermometer"
+
       - name: "Ambient temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0419]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 1"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041A]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041B]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 3"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041C]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 4"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041D]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 5"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041E]
         icon: "mdi:thermometer"
+
       - name: "Radiator temperature 6"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041F]
         icon: "mdi:thermometer"
+
       - name: "Module temperature 1"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0420]
         icon: "mdi:thermometer"
+
       - name: "Module temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0421]
         icon: "mdi:thermometer"
+
       - name: "Module temperature 3"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0422]
         icon: "mdi:thermometer"
+
       - name: "Production Time Today"
         class: "duration"
         state_class: "measurement"
@@ -121,50 +150,56 @@ parameters:
         icon: "mdi:clock"
         description: |-
           Day of power generation time
+
       - name: "Insulation resistance"
         state_class: "measurement"
         uom: "kΩ"
         rule: 1
         registers: [0x042B]
         icon: "mdi:omega"
+
       - name: "Serial Number"
         rule: 5
         registers: [0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C] # serial number 17th to 20th digits are in 0x0470 and 0x0471
         icon: "mdi:barcode"
-        description: |-
-          The 1st and 2nd digits of the serial number. The High 8-bits store the 1st digit of Serial Number, The low 8-bits Store the 2nd digit of Serial number
-          The 3rd and 4th digits of the serial number. The High 8-bits store the 3rd digit of Serial Number, The low 8-bits Store the 4th digit of Serial number
-          The 5th and 6th digits of the serial number. The High 8-bits store the5th digit of Serial Number, The low 8-bit Store the 6th digit of Serial number
-          The 7th and 8th digits of the serial number. The High 8-bits store the 7th digit of Serial Number, The low 8-bits Store the 8th digit of Serial number
-          The 9th and 10th digits of the serial number. The High 8-bits store the 9th digit of Serial Number, The low 8-bits Store the 10th digit of Serial number
-          The 11th and 12th digits of the serial number. The High 8-bits store the 11th digit of Serial Number, The low 8-bits Store the 12th digit of Serial number
-          The 13th and 14th digits of the serial number. The High 8-bits store the 13th digit of Serial Number, The low 8-bits Store the 14th digit of Serial number
-          The 15th and 16th digits of the serial number. The High 8-bits store the 15th digit of Serial Number, The low 8-bits Store the 16th digit of Serial number
+        # description: |-
+        #   The 1st and 2nd digits of the serial number. The High 8-bits store the 1st digit of Serial Number, The low 8-bits Store the 2nd digit of Serial number
+        #   The 3rd and 4th digits of the serial number. The High 8-bits store the 3rd digit of Serial Number, The low 8-bits Store the 4th digit of Serial number
+        #   The 5th and 6th digits of the serial number. The High 8-bits store the5th digit of Serial Number, The low 8-bit Store the 6th digit of Serial number
+        #   The 7th and 8th digits of the serial number. The High 8-bits store the 7th digit of Serial Number, The low 8-bits Store the 8th digit of Serial number
+        #   The 9th and 10th digits of the serial number. The High 8-bits store the 9th digit of Serial Number, The low 8-bits Store the 10th digit of Serial number
+        #   The 11th and 12th digits of the serial number. The High 8-bits store the 11th digit of Serial Number, The low 8-bits Store the 12th digit of Serial number
+        #   The 13th and 14th digits of the serial number. The High 8-bits store the 13th digit of Serial Number, The low 8-bits Store the 14th digit of Serial number
+        #   The 15th and 16th digits of the serial number. The High 8-bits store the 15th digit of Serial Number, The low 8-bits Store the 16th digit of Serial number
+
       - name: "Hardware Version"
         rule: 5
         registers: [0x044D, 0x044E]
         icon: "mdi:alpha-v"
-        description: |-
-          The 1st and 2nd digits of the Hardware Version. The High 8-bits store the 1st digit of Serial Number, The low 8-bits Store the 2nd digit of Serial number
-          The 3rd and 4th digits of the Hardware Version. The High 8-bits store the 3rd digit of Serial Number, The low 8-bits Store the 4th digit of Serial number
+        # description: |-
+        #   The 1st and 2nd digits of the Hardware Version. The High 8-bits store the 1st digit of Serial Number, The low 8-bits Store the 2nd digit of Serial number
+        #   The 3rd and 4th digits of the Hardware Version. The High 8-bits store the 3rd digit of Serial Number, The low 8-bits Store the 4th digit of Serial number
+
       - name: "Software Version Master"
         rule: 5
         registers: [0x0453, 0x0454, 0x0455, 0x0456]
         icon: "mdi:alpha-v"
-        description: |-
-          Bytes for main control chip's software version number, The lower 8 bits of the register store the ASCII code. The default value of the official version start with 'V'. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          Software version number  for main control chip. For one system, the software version number  need to be consistent for all chips. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          Non-standard customization software version number for main control chip. The standard software version should be00,For one system, the Non-standard customization  software version number  need to be consistent for all chips, otherwise it will consider as Fault.  The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          software subversion number for main control chip. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        # description: |-
+        #   Bytes for main control chip's software version number, The lower 8 bits of the register store the ASCII code. The default value of the official version start with 'V'. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   Software version number  for main control chip. For one system, the software version number  need to be consistent for all chips. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   Non-standard customization software version number for main control chip. The standard software version should be00,For one system, the Non-standard customization  software version number  need to be consistent for all chips, otherwise it will consider as Fault.  The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   software subversion number for main control chip. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+
       - name: "Software Version Slave"
         rule: 5
         registers: [0x0457, 0x0458, 0x0459, 0x045A]
         icon: "mdi:alpha-v"
-        description: |-
-          Bits for Secondary control chip's software version number, The lower 8 bits of the register store the ASCII code. The default value of the official version is'V'.The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          Software version number  for Secondary control chip. For one system, the software version number  need to be consistent for all chips. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          Non-standard customization software version number for secondary control chip. The standard software version should be00,For one system, the Non-standard customization  software version number  need to be consistent for all chips, otherwise it will consider as Fault.  The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
-          software subversion number for secondary control chip. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        # description: |-
+        #   Bits for Secondary control chip's software version number, The lower 8 bits of the register store the ASCII code. The default value of the official version is'V'.The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   Software version number  for Secondary control chip. For one system, the software version number  need to be consistent for all chips. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   Non-standard customization software version number for secondary control chip. The standard software version should be00,For one system, the Non-standard customization  software version number  need to be consistent for all chips, otherwise it will consider as Fault.  The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+        #   software subversion number for secondary control chip. The high 8 bits of the register store the higher digits; The low 8 bits of the register store the lower digits.
+
       - name: "Safety Version"
         rule: 7
         registers: [0x045B, 0x045C]
@@ -172,39 +207,46 @@ parameters:
         description: |-
           main version number for Safety regulation library
           Sub-version number for Safety regulation library
+
       - name: "Safety Firmware Version"
         rule: 5
         registers: [0x0460, 0x0461, 0x0462, 0x0463]
         icon: "mdi:alpha-v"
-        description: |-
-          Safety certification software version number stage definition bit.
-          The lower 8 bits of the register store the ASCII code. The default value of the official version is'V'.
-          The high 8 bits of the register store the high digits;
-          The lower 8 bits of the register store the lower digits.
-          The major version number of the safety certification software.
-          The major version numbers of all chips in the same system must be the same, otherwise it will be regarded as a system failure.
-          The high 8 bits of the register store the high digits;
-          The lower 8 bits of the register store the lower digits.
-          Safety certification software non-standard customized version number.
-          The version number of the standard software is 00. The non-standard customized version numbers of all chips in the same system must be the same, otherwise it will be regarded as a system failure.
-          The high 8 bits of the register store the high digits;
-          The lower 8 bits of the register store the lower digits.
-          Safety certification software version number.
-          The high 8 bits of the register store the high digits;
-          The lower 8 bits of the register store the lower digits.
+        # description: |-
+        #   Safety certification software version number stage definition bit.
+        #   The lower 8 bits of the register store the ASCII code. The default value of the official version is'V'.
+        #   The high 8 bits of the register store the high digits;
+        #   The lower 8 bits of the register store the lower digits.
+        #   The major version number of the safety certification software.
+        #   The major version numbers of all chips in the same system must be the same, otherwise it will be regarded as a system failure.
+        #   The high 8 bits of the register store the high digits;
+        #   The lower 8 bits of the register store the lower digits.
+        #   Safety certification software non-standard customized version number.
+        #   The version number of the standard software is 00. The non-standard customized version numbers of all chips in the same system must be the same, otherwise it will be regarded as a system failure.
+        #   The high 8 bits of the register store the high digits;
+        #   The lower 8 bits of the register store the lower digits.
+        #   Safety certification software version number.
+        #   The high 8 bits of the register store the high digits;
+        #   The lower 8 bits of the register store the lower digits.
+
       - name: "Safety Hardware Version"
         rule: 5
         registers: [0x0464, 0x0465]
         icon: "mdi:alpha-v"
-        description: |-
-          Safety certification hardware version number 1st and 2nd.
-          The upper 8 bits of the register store the first bit of the serial number;
-          The lower 8 bits of the register store the second bit of the serial number.
-          The 3rd and 4th digits of the hardware version number of safety certification.
-          The upper 8 bits of the register store the third bit of the serial number;
-          The lower 8 bits of the register store the 4th bit of the serial number.
+        # description: |-
+        #   Safety certification hardware version number 1st and 2nd.
+        #   The upper 8 bits of the register store the first bit of the serial number;
+        #   The lower 8 bits of the register store the second bit of the serial number.
+        #   The 3rd and 4th digits of the hardware version number of safety certification.
+        #   The upper 8 bits of the register store the third bit of the serial number;
+        #   The lower 8 bits of the register store the 4th bit of the serial number.
+
+  #}}}
+  # InverterDC{{{
   - group: InverterDC
     items:
+
+      # MPPT1{{{
       - name: "PV1 Voltage"
         class: "voltage"
         mppt: 1
@@ -216,6 +258,7 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           The first PV voltage
+
       - name: "PV1 Current"
         class: "current"
         mppt: 1
@@ -227,6 +270,7 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           The first PV current
+
       - name: "PV1 Power"
         class: "power"
         mppt: 1
@@ -238,6 +282,9 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           PV power of the first road
+
+      #}}}
+      # MPPT2{{{
       - name: "PV2 Voltage"
         class: "voltage"
         mppt: 2
@@ -249,6 +296,7 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           The second PV voltage
+
       - name: "PV2 Current"
         class: "current"
         mppt: 2
@@ -260,6 +308,7 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           The second PV current
+
       - name: "PV2 Power"
         class: "power"
         mppt: 2
@@ -271,7 +320,74 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           PV power of the 2nd road
+
+      #}}}
+      # MPPT3{{{
+      - name: "PV3 Voltage"
+        mppt: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x058a]
+        icon: "mdi:solar-power"
+
+      - name: "PV3 Current"
+        mppt: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x058b]
+        icon: "mdi:solar-power"
+
+      - name: "PV3 Power"
+        mppt: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x058c]
+        icon: "mdi:solar-power"
+
+      #}}}
+      # MPPT4{{{
+      - name: "PV4 Voltage"
+        mppt: 4
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x058d]
+        icon: "mdi:solar-power"
+
+      - name: "PV4 Current"
+        mppt: 4
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x058e]
+        icon: "mdi:solar-power"
+
+      - name: "PV4 Power"
+        mppt: 4
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x058f]
+        icon: "mdi:solar-power"
+
+      #}}}
       - name: "PV Power"
+        alt: "Power PV Total"
         class: "power"
         mppt: 1
         state class: "measurement"
@@ -282,9 +398,15 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           Total PV power
+
+  #}}}
+  # Battery{{{
   - group: Battery
     items:
+
+      # Battery 1{{{
       - name: "Battery Voltage"
+        pack: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -294,7 +416,9 @@ parameters:
         icon: "mdi:battery"
         description: |-
           No. 1 battery pack voltage
+
       - name: "Battery Current"
+        pack: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -304,7 +428,9 @@ parameters:
         icon: "mdi:current-dc"
         description: |-
           The charging and discharging current of the first battery pack. Charge is positive, discharge is negative
+
       - name: "Battery Power"
+        pack: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -314,7 +440,9 @@ parameters:
         icon: "mdi:battery-charging"
         description: |-
           The charging and discharging power of the first battery pack. Charge is positive, discharge is negative
+
       - name: "Battery Temperature"
+        pack: 1
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -323,7 +451,9 @@ parameters:
         icon: "mdi:battery"
         description: |-
           Ambient temperature of the first battery pack
+
       - name: "Battery"
+        pack: 1
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -332,7 +462,10 @@ parameters:
         icon: "mdi:battery"
         description: |-
           No. 1 battery pack SOC
-      - name: "Battery SOH"
+
+      - name: "Battery State of Health"
+        alt: "Battery SOH"
+        pack: 1
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -340,7 +473,9 @@ parameters:
         icon: "mdi:battery"
         description: |-
           No. 1 battery pack SOH
+
       - name: "Battery Number of Cycles"
+        pack: 1
         state_class: "measurement"
         uom: "cycle"
         rule: 1
@@ -348,7 +483,91 @@ parameters:
         icon: "mdi:battery"
         description: |-
           Number of cycles of the first battery pack
-      - name: "Battery DOD"
+
+      #}}}
+      # Battery 2{{{
+      - name: "Battery 2 Voltage"
+        pack: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0604]
+        icon: "mdi:battery"
+        description: |-
+          No. 2 battery pack voltage
+
+      - name: "Battery 2 Current"
+        pack: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x0605]
+        icon: "mdi:current-dc"
+        description: |-
+          The charging and discharging current of the second battery pack. Charge is positive, discharge is negative
+
+      - name: "Battery 2 Power"
+        pack: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 2
+        registers: [0x0606]
+        icon: "mdi:battery-charging"
+        description: |-
+          The charging and discharging power of the second battery pack. Charge is positive, discharge is negative
+
+      - name: "Battery 2 Temperature"
+        pack: 2
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 2
+        registers: [0x0607]
+        icon: "mdi:battery"
+        description: |-
+          Ambient temperature of the second battery pack
+
+      - name: "Battery 2"
+        pack: 2
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0608]
+        icon: "mdi:battery"
+        description: |-
+          No. 2 battery pack SOC
+
+      - name: "Battery 2 State of Health"
+        alt: "Battery 2 SOH"
+        pack: 2
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0609]
+        icon: "mdi:battery"
+        description: |-
+          No. 2 battery pack SOH
+
+      - name: "Battery 2 Number of Cycles"
+        pack: 2
+        state_class: "measurement"
+        uom: "cycle"
+        rule: 1
+        registers: [0x060A]
+        icon: "mdi:battery"
+        description: |-
+          Number of cycles of the second battery pack
+
+      #}}}
+      - name: "Battery Depth of Discharge"
+        alt: "Battery DOD"
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -356,13 +575,16 @@ parameters:
         icon: "mdi:battery"
         description: |-
           Dod indicates the max discharge power, when SOC<1-DOD, inverter will stop power discharge , inverter will stop power discharge caused by other issues.        DOD<=EOD
-      - name: "Battery EOD"
+
+      - name: "Battery End of Discharge"
+        alt: "Battery EOD"
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x104E]
         icon: "mdi:battery"
         description: "EOD indicate the max discharge power on off grid mode, when SOC<1-EOD, inverter will stop power discharge , inverter will stop power discharge caused by other issues. "
+
       - name: "Battery EPS Buffer"
         state_class: "measurement"
         uom: "%"
@@ -372,8 +594,12 @@ parameters:
         description: |-
           Battery parameters-off-grid recovery discharge hysteresis;
           EPS_Buffer is not greater than EOD
+
+  #}}}
+  # Grid{{{
   - group: Grid
     items:
+
       - name: "Grid Frequency"
         class: "frequency"
         state_class: "measurement"
@@ -384,7 +610,8 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Grid frequency
-      - name: "ActivePower_Output_Total"
+
+      - name: "ActivePower Output Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -394,7 +621,8 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Total active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_Output_Total"
+
+      - name: "ReactivePower Output Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -404,7 +632,8 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Total reactive power. The inverter end is positive for leading and negative for lagging
-      - name: "ApparentPower_Output_Total"
+
+      - name: "ApparentPower Output Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -414,17 +643,21 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Total apparent power. Discharge is positive, charge is negative
-      - name: "ActivePower_PCC_Total"
+
+      - name: "ActivePower PCC Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 10
+        # Reversing the original value to match the other ha-solarman inverters
+        # https://github.com/davidrapan/ha-solarman/discussions/458
+        scale: -10
         rule: 2
         registers: [0x0488]
         icon: "mdi:home-lightning-bolt"
         description: |-
-          Total PCC active power. Selling electricity is positive, buying electricity is negative
-      - name: "ReactivePower_PCC_Total"
+          Total PCC active power. Selling electricity is negative, buying electricity is positive
+
+      - name: "ReactivePower PCC Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -434,17 +667,23 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Total PCC reactive power. The inverter end is positive for lead and negative for lag
-      - name: "ApparentPower_PCC_Total"
+
+      - name: "ApparentPower PCC Total"
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 10
+        # Reversing the original value to match the other ha-solarman inverters
+        # https://github.com/davidrapan/ha-solarman/discussions/458
+        scale: -10
         rule: 2
         registers: [0x048A]
         icon: "mdi:home-lightning-bolt"
         description: |-
-          Total PCC apparent power. Selling electricity is positive, buying electricity is negative
-      - name: "Voltage_Phase_R"
+          Total PCC apparent power. Selling electricity is negative, buying electricity is positive
+
+      # Phase 1{{{
+      - name: "Voltage Phase L1"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -454,7 +693,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R phase grid voltage
-      - name: "Current_Output_R"
+
+      - name: "Current Output L1"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -464,7 +705,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase inverter output current
-      - name: "ActivePower_Output_R"
+
+      - name: "ActivePower Output L1"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -474,7 +717,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The R-phase inverter outputs active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_Output_R"
+
+      - name: "ReactivePower Output L1"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -484,7 +729,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The R-phase inverter outputs reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_Output_R"
+
+      - name: "PowerFactor Output L1"
+        l: 1
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -494,7 +741,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase power factor. The inverter end is positive for lead and negative for lag
-      - name: "Current_PCC_R"
+
+      - name: "Current PCC L1"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -504,7 +753,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R phase PCC current
-      - name: "ActivePower_PCC_R"
+
+      - name: "ActivePower PCC L1"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -514,7 +765,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase PCC active power
-      - name: "ReactivePower_PCC_R"
+
+      - name: "ReactivePower PCC L1"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -524,7 +777,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase PCC reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_PCC_R"
+
+      - name: "PowerFactor PCC L1"
+        l: 1
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -534,7 +789,11 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase PCC power factor. The inverter end is positive for lead and negative for lag
-      - name: "Voltage_Phase_S"
+
+      #}}}
+      # Phase 2{{{
+      - name: "Voltage Phase L2"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -544,7 +803,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase grid voltage
-      - name: "Current_Output_S"
+
+      - name: "Current Output L2"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -554,7 +815,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase inverter output current
-      - name: "ActivePower_Output_S"
+
+      - name: "ActivePower Output L2"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -564,7 +827,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The S-phase inverter outputs active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_Output_S"
+
+      - name: "ReactivePower Output L2"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -574,7 +839,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The S-phase inverter outputs reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_Output_S"
+
+      - name: "PowerFactor Output L2"
+        l: 2
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -584,7 +851,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase power factor. The inverter end is positive for lead and negative for lag
-      - name: "Current_PCC_S"
+
+      - name: "Current PCC L2"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -594,7 +863,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase PCC current
-      - name: "ActivePower_PCC_S"
+
+      - name: "ActivePower PCC L2"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -604,7 +875,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase PCC active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_PCC_S"
+
+      - name: "ReactivePower PCC L2"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -614,7 +887,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase PCC reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_PCC_S"
+
+      - name: "PowerFactor PCC L2"
+        l: 2
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -624,7 +899,11 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase PCC power factor. The inverter end is positive for lead and negative for lag
-      - name: "Voltage_Phase_T"
+
+      #}}}
+      # Phase 3{{{
+      - name: "Voltage Phase L3"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -634,7 +913,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T phase grid voltage
-      - name: "Current_Output_T"
+
+      - name: "Current Output L3"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -644,7 +925,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase inverter output current
-      - name: "ActivePower_Output_T"
+
+      - name: "ActivePower Output L3"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -654,7 +937,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The T-phase inverter outputs active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_Output_T"
+
+      - name: "ReactivePower Output L3"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -664,7 +949,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           The T-phase inverter outputs reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_Output_T"
+
+      - name: "PowerFactor Output L3"
+        l: 3
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -674,7 +961,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase power factor. The inverter end is positive for lead and negative for lag
-      - name: "Current_PCC_T"
+
+      - name: "Current PCC L3"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -684,7 +973,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T phase PCC current
-      - name: "ActivePower_PCC_T"
+
+      - name: "ActivePower PCC L3"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -694,7 +985,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase PCC active power. Discharge is positive, charge is negative
-      - name: "ReactivePower_PCC_T"
+
+      - name: "ReactivePower PCC L3"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -704,7 +997,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase PCC reactive power. The inverter end is positive for lead and negative for lag
-      - name: "PowerFactor_PCC_T"
+
+      - name: "PowerFactor PCC L3"
+        l: 3
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -714,7 +1009,10 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase PCC power factor. The inverter end is positive for lead and negative for lag
-      - name: "ActivePower_PV_Ext"
+
+      #}}}
+
+      - name: "ActivePower PV Ext"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -724,7 +1022,8 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           External power generation
-      - name: "ActivePower_Load_Sys"
+
+      - name: "ActivePower Load Sys"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -734,9 +1033,13 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           System total load power
+
+  #}}}
+  # GridEPS{{{
   - group: GridEPS
     items:
-      - name: "ActivePower_Load_Total_EPS"
+
+      - name: "ActivePower Load Total EPS"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -745,7 +1048,8 @@ parameters:
         registers: [0x0504]
         icon: "mdi:home-lightning-bolt"
         description: "Load active power. "
-      - name: "ReactivePower_Load_Total_EPS"
+
+      - name: "ReactivePower Load Total EPS"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -755,7 +1059,8 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Load consumption is positive, and feedback is negative
-      - name: "ApparentPower_Load_Total_EPS"
+
+      - name: "ApparentPower Load Total EPS"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -766,7 +1071,8 @@ parameters:
         description: |-
           Load reactive power
           Apparent power of the load. Load consumption is positive, and feedback is negative
-      - name: "Frequency_Output_EPS"
+
+      - name: "Frequency Output EPS"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -776,7 +1082,10 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Output voltage frequency
-      - name: "Voltage_Output_R_EPS"
+
+      # Phase 1{{{
+      - name: "Voltage Output L1 EPS"
+        l: 1
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -786,7 +1095,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase inverter output voltage
-      - name: "Current_Load_R_EPS"
+
+      - name: "Current Load L1 EPS"
+        l: 1
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -796,7 +1107,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R phase load current
-      - name: "ActivePower_Load_R_EPS"
+
+      - name: "ActivePower Load L1 EPS"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -806,7 +1119,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase load active power. Load consumption is positive, and feedback is negative.
-      - name: "ReactivePower_Load_R_EPS"
+
+      - name: "ReactivePower Load L1 EPS"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -816,7 +1131,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R-phase load reactive power. The inverter end is positive for lead and negative for lag
-      - name: "ApparentPower_Load_R_EPS"
+
+      - name: "ApparentPower Load L1 EPS"
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -826,7 +1143,9 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Apparent power of R-phase load. Load consumption is positive, and feedback is negative.
-      - name: "LoadPeakRatio_R_EPS"
+
+      - name: "LoadPeakRatio L1 EPS"
+        l: 1
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -836,7 +1155,11 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           R phase load peak ratio
-      - name: "Voltage_Output_S_EPS"
+
+      #}}}
+      # Phase 2{{{
+      - name: "Voltage Output L2 EPS"
+        l: 2
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -846,7 +1169,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase inverter output voltage
-      - name: "Current_Load_S_EPS"
+
+      - name: "Current Load L2 EPS"
+        l: 2
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -856,7 +1181,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase load current
-      - name: "ActivePower_Load_S_EPS"
+
+      - name: "ActivePower Load L2 EPS"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -866,7 +1193,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase load active power. Load consumption is positive, and feedback is negative.
-      - name: "ReactivePower_Load_S_EPS"
+
+      - name: "ReactivePower Load L2 EPS"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -876,7 +1205,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S-phase load reactive power. The inverter end is positive for lead and negative for lag
-      - name: "ApparentPower_Load_S_EPS"
+
+      - name: "ApparentPower Load L2 EPS"
+        l: 2
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -886,7 +1217,9 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Apparent power of S-phase load. Load consumption is positive, and feedback is negative.
-      - name: "LoadPeakRatio_S_EPS"
+
+      - name: "LoadPeakRatio L2 EPS"
+        l: 2
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -896,7 +1229,11 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           S phase load peak ratio
-      - name: "Voltage_Output_T_EPS"
+
+      #}}}
+      # Phase 3{{{
+      - name: "Voltage Output L3 EPS"
+        l: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -906,7 +1243,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase inverter output voltage
-      - name: "Current_Load_T_EPS"
+
+      - name: "Current Load L3 EPS"
+        l: 3
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -916,7 +1255,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T phase load current
-      - name: "ActivePower_Load_T_EPS"
+
+      - name: "ActivePower Load L3 EPS"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -926,7 +1267,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase load active power. Load consumption is positive, and feedback is negative.
-      - name: "ReactivePower_Load_T_EPS"
+
+      - name: "ReactivePower Load L3 EPS"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -936,7 +1279,9 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase load reactive power. The inverter end is positive for lead and negative for lag
-      - name: "ApparentPower_Load_T_EPS"
+
+      - name: "ApparentPower Load L3 EPS"
+        l: 3
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -946,7 +1291,9 @@ parameters:
         icon: "mdi:home-lightning-bolt"
         description: |-
           Apparent power of T-phase load. Load consumption is positive, and feedback is negative.
-      - name: "LoadPeakRatio_T_EPS"
+
+      - name: "LoadPeakRatio L3 EPS"
+        l: 3
         class: "powerfactor"
         state_class: "measurement"
         uom: "p.u."
@@ -956,8 +1303,14 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           T-phase load peak ratio
+
+      #}}}
+
+  #}}}
+  # Production{{{
   - group: Production
     items:
+
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
@@ -969,6 +1322,7 @@ parameters:
         icon: "mdi:solar-power"
         description: |-
           Power generation of the day
+
       - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
@@ -981,6 +1335,7 @@ parameters:
           min: 0.1
         description: |-
           Total power generation time
+
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
         class: "energy"
@@ -992,6 +1347,7 @@ parameters:
         icon: "mdi:lightning-bolt-outline"
         description: |-
           Load power consumption of the day
+
       - name: "Total Load Consumption"
         class: "energy"
         state_class: "total_increasing"
@@ -1004,6 +1360,7 @@ parameters:
           min: 0.1
         description: |-
           Total load power consumption
+
       - name: Today Energy Import
         alt: Daily Energy Bought
         friendly_name: Today's Energy Import
@@ -1016,6 +1373,7 @@ parameters:
         icon: "mdi:transmission-tower-export"
         description: |-
           Buy electricity on the day
+
       - name: Total Energy Import
         alt: Total Energy Bought
         class: "energy"
@@ -1029,6 +1387,7 @@ parameters:
           min: 0.1
         description: |-
           Total electricity purchased
+
       - name: "Today Energy Export"
         alt: Daily Energy Sold
         friendly_name: Today's Energy Export
@@ -1041,6 +1400,7 @@ parameters:
         icon: "mdi:transmission-tower-import"
         description: |-
           Electricity sold on the day
+
       - name: Total Energy Export
         alt: Total Energy Sold
         class: "energy"
@@ -1054,6 +1414,7 @@ parameters:
           min: 0.1
         description: |-
           Total electricity sold
+
       - name: "Today Battery Charge"
         friendly_name: Today's Battery Charge
         class: "energy"
@@ -1065,6 +1426,7 @@ parameters:
         icon: "mdi:battery-plus"
         description: |-
           Battery charge capacity of the day
+
       - name: "Total Battery Charge"
         class: "energy"
         state_class: "total_increasing"
@@ -1077,6 +1439,7 @@ parameters:
           min: 0.1
         description: |-
           Total battery charge
+
       - name: "Today Battery Discharge"
         friendly_name: Today's Battery Discharge
         class: "energy"
@@ -1088,6 +1451,7 @@ parameters:
         icon: "mdi:battery-minus"
         description: |-
           Battery discharge capacity of the day
+
       - name: "Total Battery Discharge"
         class: "energy"
         state_class: "total_increasing"
@@ -1100,8 +1464,12 @@ parameters:
           min: 0.1
         description: |-
           Total battery discharge
+
+  #}}}
+  # Alert{{{
   - group: Alert
     items:
+
       - name: "Alert"
         rule: 6
         registers:
@@ -1119,6 +1487,7 @@ parameters:
             0x040F,
             0x0410,
           ]
+
 
       - name: "Fault 1"
         rule: 1
@@ -1163,6 +1532,7 @@ parameters:
             value: "ID15"
           - key: 32768
             value: "ID16"
+
       - name: "Fault 2"
         rule: 1
         icon: "mdi:wrench"
@@ -1202,6 +1572,7 @@ parameters:
             value: "ID31 DCI consistency error"
           - key: 32768
             value: "ID32"
+
       - name: "Fault 3"
         rule: 1
         icon: "mdi:wrench"
@@ -1241,6 +1612,7 @@ parameters:
             value: "ID047 Parallel error"
           - key: 32768
             value: "ID048 Serial number error"
+
       - name: "Fault 4"
         rule: 1
         icon: "mdi:wrench"
@@ -1280,6 +1652,7 @@ parameters:
             value: "ID063 "
           - key: 32768
             value: "ID064 "
+
       - name: "Fault 5"
         rule: 1
         icon: "mdi:wrench"
@@ -1319,6 +1692,7 @@ parameters:
             value: "ID079 "
           - key: 32768
             value: "ID080 "
+
       - name: "Fault 6"
         rule: 1
         icon: "mdi:wrench"
@@ -1358,6 +1732,7 @@ parameters:
             value: "ID095 "
           - key: 32768
             value: "ID096 "
+
       - name: "Fault 7"
         rule: 1
         icon: "mdi:wrench"
@@ -1398,6 +1773,7 @@ parameters:
           - key: 32768
             value: "ID112 Overload protection 3"
 
+
       - name: "Fault 8"
         rule: 1
         icon: "mdi:wrench"
@@ -1437,6 +1813,7 @@ parameters:
             value: "ID127 "
           - key: 32768
             value: "ID128 "
+
       - name: "Fault 9"
         rule: 1
         icon: "mdi:wrench"
@@ -1476,6 +1853,7 @@ parameters:
             value: "ID143 Lightning protection permanent fault - AC side"
           - key: 32768
             value: "ID144 "
+
       - name: "Fault 10"
         rule: 1
         icon: "mdi:wrench"
@@ -1515,6 +1893,7 @@ parameters:
             value: "ID159 Lithium battery 3 communication error"
           - key: 32768
             value: "ID160 Lithium battery 4 communication failure"
+
       - name: "Fault 11"
         rule: 1
         icon: "mdi:wrench"
@@ -1554,6 +1933,7 @@ parameters:
             value: "ID175 Fan 7 fault"
           - key: 32768
             value: "ID176 Meter communication failure"
+
       - name: "Fault 12"
         rule: 1
         icon: "mdi:wrench"
@@ -1593,6 +1973,7 @@ parameters:
             value: "ID191 PID repair failed"
           - key: 32768
             value: "ID192 PLC module heartbeat loss"
+
       - name: "Storage Control Mode"
         platform: select
         rule: 1
@@ -1623,9 +2004,13 @@ parameters:
           5: Off-grid mode
           6：Generator mode
           Used to change the working mode.
+
+  #}}}
+  # Settings{{{
   - group: Settings
     update_interval: 300
     items:
+
       - name: Export Surplus Limitation
         platform: select
         rule: 1
@@ -1639,6 +2024,7 @@ parameters:
             value: "Balanced"
         description: |-
           Reflux Power control       input value 0, disable the reflux power     input value 1, power reflux enable with minimum power among the three phase      input value 2, power reflux enable with meaning value
+
       - name: Export Surplus Power
         platform: number
         class: "power"
@@ -1652,6 +2038,7 @@ parameters:
           max: 65535
         description: |-
           Reflux power
+
       - name: "Timed Program"
         platform: number
         rule: 1
@@ -1665,6 +2052,7 @@ parameters:
           Timed charging and discharging-rule number;
           The smaller the serial number, the higher the priority.
           After successfully writing to this register, the timing charge and discharge parameters will be updated to the parameters corresponding to the written serial number.
+
       - name: Timed Control
         platform: select
         rule: 1
@@ -1682,6 +2070,7 @@ parameters:
           Timing charge and discharge-enable control;
           Bit0: charge enable
           Bit1: Discharge enable
+
       - name: Timed Charge Start
         platform: time
         rule: 9
@@ -1689,6 +2078,7 @@ parameters:
         description: |-
           High byte. Charging start hour
           Low byte. Charging start minutes
+
       - name: Timed Charge End
         platform: time
         rule: 9
@@ -1696,6 +2086,7 @@ parameters:
         description: |-
           High byte. Charging end hour
           Low byte. Minutes after charging
+
       - name: Timed Discharge Start
         platform: time
         rule: 9
@@ -1703,6 +2094,7 @@ parameters:
         description: |-
           High byte. Discharge start hour
           Low byte. Discharge start minute
+
       - name: Timed Discharge End
         platform: time
         rule: 9
@@ -1710,6 +2102,7 @@ parameters:
         description: |-
           High byte. End of discharge hour
           Low byte. Minutes after discharge
+
       - name: "Timed Charge Power"
         platform: number
         class: "power"
@@ -1722,6 +2115,7 @@ parameters:
           max: 4294967296
         description: |-
           Timed charging and discharging-charging power
+
       - name: "Timed Discharge Power"
         platform: number
         class: "power"
@@ -1734,6 +2128,7 @@ parameters:
           max: 4294967296
         description: |-
           Timing charge and discharge-discharge power
+
       - name: Timed Set Program
         platform: button
         class: restart
@@ -1752,3 +2147,7 @@ parameters:
           0xFFFD: Operation failed, current function is forbidden
           0xFFFE: Operation failed, parameter storage failed
           0xFFFF: The operation failed, and the input parameters are incorrect
+
+  #}}}
+
+# vim: foldmethod=marker
