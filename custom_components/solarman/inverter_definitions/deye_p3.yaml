@@ -2605,6 +2605,10 @@ parameters:
           - registers: [0x02A1]
           - registers: [0x02A2]
           - registers: [0x02A3]
+        validation:
+          min: 0
+          max: [24000, 50000]
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       # PV - The power of Input 1 (L:1W, H:10W)

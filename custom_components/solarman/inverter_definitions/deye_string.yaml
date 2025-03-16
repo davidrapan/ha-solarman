@@ -119,6 +119,9 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x0010, 0x0011]
+        validation:
+          min: 0
+          max: 50000
 
       - name: "Device MPPTs"
         attribute:
@@ -165,7 +168,7 @@ parameters:
         platform: switch
         update_interval: 30
         rule: 1
-        registers: [0x002b]
+        registers: [0x002B]
         value:
           on: 0x0001
           off: 0x0002
@@ -258,6 +261,10 @@ parameters:
           - registers: [0x006F]
             multiply:
               registers: [0x0070]
+        validation:
+          min: 0
+          max: 50000
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       - name: PV1 Power
