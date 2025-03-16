@@ -179,11 +179,6 @@ parameters:
         rule: 1
         registers: [0x0050]
 
-      - name: "Asymmetry" # Active unbalance load
-        platform: switch
-        rule: 1
-        registers: [0x00ED]
-
   - group: Settings
     update_interval: 300
     items:
@@ -829,6 +824,12 @@ parameters:
         platform: "switch"
         rule: 1
         registers: [0x0091]
+
+      - name: Export Asymmetry
+        alt: Asymmetric phase feeding
+        platform: switch
+        rule: 1
+        registers: [0x00ED]
 
       - name: PV Max Power
         alt: Max Solar Power
