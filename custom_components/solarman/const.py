@@ -17,7 +17,7 @@ LOOKUP_DIRECTORY = "inverter_definitions"
 LOOKUP_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 LOOKUP_CUSTOM_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/custom/"
 
-CONF_SERIAL = "serial"
+CONF_SN = "sn"
 CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_LOOKUP_FILE = "lookup_file"
@@ -30,7 +30,7 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
-OLD_ = { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
+OLD_ = { "serial": "inverter_serial", CONF_SN: "serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
 SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"

@@ -13,14 +13,14 @@
         "title": "Konfigurace měniče",
         "data": {
           "name": "Název",
-          "serial": "Sériové číslo",
+          "sn": "Sériové číslo",
           "host": "Hostitel nebo IP adresa",
           "port": "Port",
           "lookup_file": "Profil"
         },
         "data_description": {
           "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete)",
-          "serial": "Sériové číslo zařízení (z webového rozhraní)",
+          "sn": "Sériové číslo zařízení (z webového rozhraní)",
           "host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit",
           "port": "TCP port (8899) zařízení, ke kterému se chcete připojit",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče"
@@ -52,11 +52,13 @@
       "init": {
         "title": "Konfigurace měniče",
         "data": {
+          "sn": "Sériové číslo",
           "host": "Hostitel nebo IP adresa",
           "port": "Port",
           "lookup_file": "Profil"
         },
         "data_description": {
+          "sn": "Sériové číslo zařízení (z webového rozhraní)",
           "host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit",
           "port": "TCP port (8899) zařízení, ke kterému se chcete připojit",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče"

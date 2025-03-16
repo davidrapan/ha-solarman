@@ -94,6 +94,10 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
         bulk_migrate(new_data, new_data, OLD_)
         bulk_migrate(new_options, new_options, OLD_)
         bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
+
+        new_options[CONF_SN] = new_data[CONF_SN]
+        del new_data[CONF_SN]
+
         bulk_safe_delete(new_data, OLD_)
         bulk_safe_delete(new_options, OLD_ | to_dict(CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING))
 

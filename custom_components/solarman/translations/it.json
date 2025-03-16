@@ -13,14 +13,14 @@
         "title": "Configurazione della connessione inverter",
         "data": {
           "name": "Nome del dispositivo",
-          "serial": "Numero di serie",
+          "sn": "Numero di serie",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
           "lookup_file": "Profilo"
         },
         "data_description": {
           "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
-          "serial": "Numero seriale del logger (da interfaccia web)",
+          "sn": "Numero seriale del logger (da interfaccia web)",
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
           "port": "La porta TCP (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"
@@ -52,11 +52,13 @@
       "init": {
         "title": "Configurazione della connessione inverter",
         "data": {
+          "sn": "Numero di serie",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
           "lookup_file": "Profilo"
         },
         "data_description": {
+          "sn": "Numero seriale del logger (da interfaccia web)",
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
           "port": "La porta TCP (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"

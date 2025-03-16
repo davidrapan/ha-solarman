@@ -13,14 +13,14 @@
         "title": "Inverter configuration",
         "data": {
           "name": "Device name",
-          "serial": "Serial Number",
+          "sn": "Serial Number",
           "host": "Host or IP address",
           "port": "Port",
           "lookup_file": "Profile"
         },
         "data_description": {
           "name": "This name will be prefixed to all sensors (change as you like)",
-          "serial": "Device Serial Number (retrieve from the web interface)",
+          "sn": "Device Serial Number (retrieve from the web interface)",
           "host": "The hostname or IP address of the device to connect to",
           "port": "The TCP port (8899) of the device to connect to",
           "lookup_file": "The yaml file containing inverter parameter definitions"
@@ -52,11 +52,13 @@
       "init": {
         "title": "Inverter configuration",
         "data": {
+          "sn": "Serial Number",
           "host": "Host or IP address",
           "port": "Port",
           "lookup_file": "Profile"
         },
         "data_description": {
+          "sn": "Device Serial Number (retrieve from the web interface)",
           "host": "The hostname or IP address of the device to connect to",
           "port": "The TCP port (8899) of the device to connect to",
           "lookup_file": "The yaml file containing inverter parameter definitions"

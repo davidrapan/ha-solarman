@@ -43,7 +43,7 @@ class ConfigurationProvider:
 
     @cached_property
     def serial(self):
-        return protected(self._data.get(CONF_SERIAL, self._data.get(OLD_[CONF_SERIAL])), "Configuration parameter [serial] does not have a value")
+        return protected(self._options.get(CONF_SN), "Configuration parameter [serial] does not have a value")
 
     @cached_property
     def host(self):

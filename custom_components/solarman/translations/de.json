@@ -13,14 +13,14 @@
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
           "name": "Gerätename",
-          "serial": "Seriennummer",
+          "sn": "Seriennummer",
           "host": "Host (IP-Adresse oder Hostname)",
           "port": "Port (normalerweise 8899)",
           "lookup_file": "Profil"
         },
         "data_description": {
           "name": "Prefix für alle Parameterwerte (nach Belieben zu ändern)",
-          "serial": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
+          "sn": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll",
           "port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll",
           "lookup_file": "YAML-Datei mit der Parameter-Definition"
@@ -52,11 +52,13 @@
       "init": {
         "title": "Konfiguration der Verbindung zum Wechselrichter",
         "data": {
+          "sn": "Seriennummer",
           "host": "Host (IP-Adresse oder Hostname)",
           "port": "Port (normalerweise 8899)",
           "lookup_file": "Profil"
         },
         "data_description": {
+          "sn": "Seriennummer des Geräts (über die Weboberfläche abrufbar)",
           "host": "Der Hostname oder die IP-Adresse des Geräts, mit dem eine Verbindung hergestellt werden soll",
           "port": "Der TCP-Port (8899) des Geräts, mit dem eine Verbindung hergestellt werden soll",
           "lookup_file": "YAML-Datei mit der Parameter-Definition"
