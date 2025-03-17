@@ -1047,6 +1047,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
+        scale: 0.1
         rule: 1
         registers: [0x00B5]
 
