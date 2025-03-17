@@ -910,7 +910,7 @@ parameters:
         device_class: power
         rule: 1
         registers: [0x00C3]
-        bit: 8
+        bit: 0
 
       - name: "Output Frequency"
         l: 1
