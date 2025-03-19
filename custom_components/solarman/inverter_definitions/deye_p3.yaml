@@ -722,14 +722,6 @@ parameters:
           min: 0
           max: 100
 
-      - name: SmartLoad Grid On
-        description: On Grid always on
-        platform: "switch"
-        rule: 1
-        registers: [0x00B2]
-        value:
-          bit: 6
-
   - group: Grid Parameters
     update_interval: 300
     items:
@@ -1324,6 +1316,36 @@ parameters:
             value: "Generator"
           - key: 0x0003
             value: "Both"
+
+      - name: Microinverter Export cut-off
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 0
+
+      - name: Generator Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 2
+
+      - name: Grid Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 4
+
+      - name: Generator Grid On
+        description: On Grid always on
+        name_lookup: io_mode_select
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 6
 
       - name: "Generator Peak shaving"
         platform: number
