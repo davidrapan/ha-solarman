@@ -14,7 +14,7 @@ default:
   code: 0x04
 
 parameters:
-  - group: info
+  - group: Info
     items:
       - name: Battery Software Version
         rule: 1
@@ -125,7 +125,7 @@ parameters:
           - key: 2
             value: "Grid Priority"
 
-  - group: meter
+  - group: Meter
     items:
       - name: "Total Battery Charge"
         class: "energy"
