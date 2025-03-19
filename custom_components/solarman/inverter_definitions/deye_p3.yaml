@@ -1447,16 +1447,18 @@ parameters:
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
-        attributes: ["value", "Battery BMS Fault Location"]
+        attributes: ["value"]
 
-      - name: "Battery BMS Fault Location"
-        attribute:
+      - name: "Battery Fault"
+        platform: binary_sensor
+        class: "problem"
         rule: 1
         registers: [0x00DD]
-        icon: "mdi:battery-alert"
+        icon: "mdi:battery-alert-variant"
         range:
           min: 0
           max: 65535
+        attributes: ["value"]
 
       - name: "Battery BMS Other Symbol"
         attribute:
