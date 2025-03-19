@@ -903,116 +903,77 @@ parameters:
           write: 0x06
         registers: [3243]
 
-  # Different phases for 3-phase inverters. Only some models have 3 phases, see "Inverter Model" item
-  # - R: Referent
-  # - S: Secondary
-  # - T: Tertiary
-  - group: R Phase
+  - group: Grid
     update_interval: 5
     items:
-      - name: "R-phase Grid Voltage"
+      - name: "Grid L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [3097]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:transmission-tower"
 
-      - name: "R-phase Grid Frequency"
+      - name: "Grid L1 Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
         registers: [3098]
-        icon: "mdi:sine-wave"
+        icon: "mdi:transmission-tower"
 
-      - name: "R-phase Meter Current"
+      - name: "Grid L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.001
         rule: 2
         registers: [3099]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:transmission-tower"
 
-      - name: "R-phase Grid Power"
+      - name: "Grid L1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 2
         registers: [3100]
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:transmission-tower"
 
-      - name: "R-phase Inverter Voltage"
+  - group: Output
+    update_interval: 5
+    items:
+      - name: "L1 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.1
         rule: 1
         registers: [3123]
-        icon: "mdi:home-lightning-bolt"
 
-      - name: "R-phase Inverter Current"
+      - name: "L1 Current"
         class: "current"
         state_class: "measurement"
         uom: "A"
         scale: 0.01
         rule: 2
         registers: [3124]
-        icon: "mdi:home-lightning-bolt"
 
-      - name: "R-phase Inverter Frequency"
+      - name: "L1 Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
         registers: [3125]
-        icon: "mdi:sine-wave"
 
-      - name: "R-phase Inverter Power"
+      - name: "L1 Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 2
         registers: [3126]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "R-phase Backup Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [3135]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "R-phase Backup Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.01
-        rule: 1
-        registers: [3136]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "R-phase Backup Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [3137]
-        icon: "mdi:home-lightning-bolt"
-
-      - name: "R-phase Load Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [3144]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
@@ -1033,6 +994,42 @@ parameters:
           - operator: subtract
             signed:
             registers: [3126]
+
+  - group: Load
+    update_interval: 5
+    items:
+      - name: "Load UPS L1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3135]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [3136]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3137]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load L1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3144]
 
   - group: Timed
     update_interval: 300
