@@ -1,8 +1,7 @@
 # Hinen Inverter
 #
 # Reference: https://github.com/user-attachments/files/17622814/Inverter.Modbus.RTU.Protocol.V1.62.20240927.xlsx
-#
-# Tested with Hinen H5000-EU
+# Tested with Hinen H5000-EU Single-Phase Hybrid Model Number: S05U01T00E0FP0500B0500
 
 
 info:
@@ -15,9 +14,15 @@ default:
   code: 0x04
 
 parameters:
-  - group: solar
+  - group: info
     items:
-      - name: "Lifetime Energy Production"
+      - name: Battery Software Version
+        rule: 1
+        registers: [170]
+
+  - group: Solar
+    items:
+      - name: "Total Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -26,7 +31,7 @@ parameters:
         registers: [275, 274]
         icon: "mdi:solar-power"
 
-      - name: "Current Solar Production"
+      - name: "Current Production"
         class: "energy"
         state_class: "total_increasing"
         uom: "Wh"
@@ -35,59 +40,16 @@ parameters:
         registers: [340, 339]
         icon: mdi:solar-panel
 
-      - name: "Daily Energy Production"
+      - name: "Today Production"
+        alt: Daily Production
+        friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
         uom: "kW"
         scale: 0.1
         rule: 2
         registers: [273, 272]
-        icon: mdi:sun-angle
-
-      - name: "Daily Energy Consumption"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: .1
-        rule: 2
-        registers: [301, 300]
-        icon: mdi:home
-
-      - name: "Daily Grid Feed-In"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: .1
-        rule: 2
-        registers: [305, 304]
-        icon: mdi:transmission-tower-import
-
-      - name: "Daily Grid Purchase"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: .1
-        rule: 2
-        registers: [309, 308]
-        icon: mdi:transmission-tower-export
-
-      - name: "Lifetime Grid Purchase"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: .1
-        rule: 2
-        registers: [311, 310]
-        icon: mdi:transmission-tower-export
-
-      - name: "Lifetime Grid Feed-In"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: .1
-        rule: 2
-        registers: [307, 306]
-        icon: mdi:transmission-tower-import
+        icon: "mdi:solar-power"
 
   - group: Battery
     items:
@@ -100,7 +62,8 @@ parameters:
         registers: [128]
         icon: mdi:home-battery
 
-      - name: "Battery Health"
+      - name: "Battery SoH"
+        description: Battery state of health
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -110,9 +73,9 @@ parameters:
         icon: mdi:battery-heart
 
       - name: "Battery Temperature"
-        class: "battery"
+        class: "temperature"
         state_class: "measurement"
-        uom: "°"
+        uom: "°C"
         scale: 0.1
         rule: 1
         registers: [136]
@@ -162,25 +125,9 @@ parameters:
           - key: 2
             value: "Grid Priority"
 
-      - name: "Battery Daily Charging Energy"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kW"
-        scale: 0.1
-        rule: 2
-        registers: [277, 276]
-        icon: "mdi:battery-plus"
-
-      - name: "Battery Daily Discharging Energy"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kW"
-        scale: 0.1
-        rule: 2
-        registers: [281, 280]
-        icon: "mdi:battery-minus"
-
-      - name: "Battery Lifetime Charge Energy"
+  - group: meter
+    items:
+      - name: "Total Battery Charge"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -189,7 +136,7 @@ parameters:
         registers: [279, 278]
         icon: "mdi:battery-plus"
 
-      - name: "Battery Lifetime Discharge Energy"
+      - name: "Total Battery Discharge"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -198,11 +145,81 @@ parameters:
         registers: [283, 282]
         icon: "mdi:battery-minus"
 
-      - name: "Battery State"
-        class: "enum"
-        rule: 0
-        options: ["charging", "idle", "discharging"]
-        icon: mdi:battery
+      - name: "Today Battery Charge"
+        alt: "Battery Daily Charging Energy"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 2
+        registers: [277, 276]
+        icon: "mdi:battery-plus"
+
+      - name: "Today Battery Discharge" 
+        alt: "Battery Daily Discharging Energy"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 2
+        registers: [281, 280]
+        icon: "mdi:battery-minus"
+
+      - name: "Today Load Consumption"
+        alt: Daily Load Consumption
+        friendly_name: Today's Energy Consumption
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: .1
+        rule: 2
+        registers: [301, 300]
+        icon: mdi:home
+
+      - name: "Today Energy Export"
+        alt: Daily Energy Sold
+        descripton: Today's energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: .1
+        rule: 2
+        registers: [305, 304]
+        icon: mdi:transmission-tower-import
+
+      - name: "Today Energy Import"
+        alt: Daily Energy Bought
+        friendly_name: Today's Energy Import
+        description: Today's energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: .1
+        rule: 2
+        registers: [309, 308]
+        icon: mdi:transmission-tower-export
+
+      - name: "Total Energy Import"
+        alt: Total Energy Bought
+        description: Total energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: .1
+        rule: 2
+        registers: [311, 310]
+        icon: mdi:transmission-tower-export
+
+      - name: "Total Energy Export"
+        alt: Total Energy Sold
+        description: Total energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 2
+        registers: [307, 306]
+        icon: mdi:transmission-tower-import
 
   - group: Inverter
     items:
@@ -215,8 +232,8 @@ parameters:
         registers: [77, 76]
         icon: mdi:flash
 
-      - name: "Running Status"
-        class: ""
+      - name: "Device State"
+        class: "enum"
         state_class: ""
         uom: ""
         scale: 1
@@ -240,11 +257,11 @@ parameters:
             value: "Discharging"
           - key: 7
             value: "Bypass"
-        icon: "mdi:home-lightning-bolt"
+        icon: "mdi:state-machine"
 
-      - name: "Inverter Temperature"
+      - name: "Device Temperature"
         class: "value"
-        uom: "°"
+        uom: "°C"
         scale: 0.1
         rule: 2
         registers: [132]
