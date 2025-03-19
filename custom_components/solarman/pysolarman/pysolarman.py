@@ -272,6 +272,8 @@ class Solarman:
 
     async def _parse_adu_from_tcp_response(self, frame: bytes) -> tuple[int, int, bytes]:
         adu = await self._send_receive_frame(frame)
+        if adu[:2] != frame[:2]:
+            raise FrameError(f"Modbus response w/ invalid transaction identifier received")
         if 8 <= len(adu) <= 10: # Incomplete response frame correction
             adu = adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
         return adu[6], adu[7], adu
