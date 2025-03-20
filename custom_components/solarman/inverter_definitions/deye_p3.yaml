@@ -722,14 +722,6 @@ parameters:
           min: 0
           max: 100
 
-      - name: SmartLoad Grid On
-        description: On Grid always on
-        platform: "switch"
-        rule: 1
-        registers: [0x00B2]
-        value:
-          bit: 6
-
   - group: Grid Parameters
     update_interval: 300
     items:
@@ -1325,6 +1317,36 @@ parameters:
           - key: 0x0003
             value: "Both"
 
+      - name: Microinverter Export cut-off
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 0
+
+      - name: Generator Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 2
+
+      - name: Grid Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 4
+
+      - name: Generator Grid On
+        description: On Grid always on
+        name_lookup: io_mode_select
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 6
+
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
@@ -1447,16 +1469,18 @@ parameters:
         rule: 1
         registers: [0x00DC]
         icon: "mdi:battery-alert"
-        attributes: ["value", "Battery BMS Fault Location"]
+        attributes: ["value"]
 
-      - name: "Battery BMS Fault Location"
-        attribute:
+      - name: "Battery Fault"
+        platform: binary_sensor
+        class: "problem"
         rule: 1
         registers: [0x00DD]
-        icon: "mdi:battery-alert"
+        icon: "mdi:battery-alert-variant"
         range:
           min: 0
           max: 65535
+        attributes: ["value"]
 
       - name: "Battery BMS Other Symbol"
         attribute:
