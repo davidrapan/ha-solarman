@@ -127,6 +127,15 @@ parameters:
 
   - group: Meter
     items:
+      - name: "Current Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 0.1
+        rule: 2
+        registers: [77, 76]
+        icon: mdi:flash
+
       - name: "Total Battery Charge"
         class: "energy"
         state_class: "total_increasing"
@@ -223,15 +232,6 @@ parameters:
 
   - group: Inverter
     items:
-      - name: "Current Consumption"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "Wh"
-        scale: 0.1
-        rule: 2
-        registers: [77, 76]
-        icon: mdi:flash
-
       - name: "Device State"
         class: "enum"
         state_class: ""
