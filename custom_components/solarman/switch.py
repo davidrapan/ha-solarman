@@ -61,7 +61,7 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
         return value
 
     def _native_value(self) -> int:
-        if self._value_bit is not None:
+        if self._attr_native_value is not None and self._value_bit is not None:
             return (self._attr_native_value >> self._value_bit) & 1
         return self._attr_native_value
 
