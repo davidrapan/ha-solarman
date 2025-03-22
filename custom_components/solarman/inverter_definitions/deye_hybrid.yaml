@@ -312,7 +312,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: DC3 Voltage
-        mppt: 2
+        mppt: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -750,7 +750,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -801,7 +801,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -851,7 +851,7 @@ parameters:
         registers: [0x009E]
 
       - name: "Load L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -968,7 +968,7 @@ parameters:
         registers: [0x00A5]
 
       - name: "Output L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
