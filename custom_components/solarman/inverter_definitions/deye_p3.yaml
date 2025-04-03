@@ -4084,3 +4084,261 @@ parameters:
         rule: 7
         delimiter: ""
         registers: [0x28A5]
+
+  - group: Battery 11
+    via_device: "inverter"
+    update_interval: 10
+    pack: 11
+    items:
+      - name: "Battery 11 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x28AC, 0x28AD, 0x28AE, 0x28AF, 0x28B0, 0x28B1, 0x28B2, 0x28B3]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 11 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x28B4]
+
+      - name: "Battery 11 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x28B5]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 11 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28B6]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 11"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x28BB]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 11 Serial Number",
+            "Battery 11 MOS",
+            "Battery 11 Software Version",
+            "Battery 11 Hardware Version",
+          ]
+
+      - name: "Battery 11 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x28BC]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 11 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x28BE]
+        icon: "mdi:battery"
+
+      - name: "Battery 11 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x28C2]
+
+      - name: "Battery 11 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x28C3]
+
+      - name: "Battery 11 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x28C4]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 11 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x28C5]
+
+      - name: "Battery 11 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28C6, 0x28C7, 0x28C8, 0x28C9]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 11 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28CA]
+
+      - name: "Battery 11 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28CB]
+
+  - group: Battery 12
+    via_device: "inverter"
+    update_interval: 10
+    pack: 12
+    items:
+      - name: "Battery 12 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x28D2, 0x28D3, 0x28D4, 0x28D5, 0x28D6, 0x28D7, 0x28D8, 0x28D9]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 12 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x28DA]
+
+      - name: "Battery 12 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x28DB]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 12 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28DC]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 12"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x28E1]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 12 Serial Number",
+            "Battery 12 MOS",
+            "Battery 12 Software Version",
+            "Battery 12 Hardware Version",
+          ]
+
+      - name: "Battery 12 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x28E2]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 12 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x28E4]
+        icon: "mdi:battery"
+
+      - name: "Battery 12 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x28E8]
+
+      - name: "Battery 12 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x28E9]
+
+      - name: "Battery 12 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x28EA]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 12 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x28EB]
+
+      - name: "Battery 12 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28EC, 0x28ED, 0x28EE, 0x28EF]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 12 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28F0]
+
+      - name: "Battery 12 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x28F1]
