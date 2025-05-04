@@ -111,7 +111,7 @@ class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
             self._attr_native_value = last_sensor_data.native_value
 
     def set_state(self, state, value = None) -> bool:
-        if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
+        if self._sensor_ensure_increasing and self._attr_native_value is not None and state is not None and self._attr_native_value > state > 0:
             return False
         return super().set_state(state, value)
 
