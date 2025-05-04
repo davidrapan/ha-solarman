@@ -1683,7 +1683,7 @@ parameters:
         icon: "mdi:solar-power-variant"
         range:
           min: 0
-          max: 12000
+          max: 13000
 
       - name: Time of Use
         platform: select
