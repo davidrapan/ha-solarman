@@ -2908,7 +2908,7 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2750, 0x2751, 0x2752, 0x2753]
+        registers: [0x274A, 0x274B, 0x274C, 0x274D]
         icon: "mdi:battery-alert"
         attributes: ["value"]
 
@@ -2916,13 +2916,13 @@ parameters:
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x2754]
+        registers: [0x274E]
 
       - name: "Battery 1 Hardware Version"
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x2755]
+        registers: [0x274F]
 
   - group: Battery 2
     via_device: "inverter"
@@ -3174,13 +3174,13 @@ parameters:
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x27A0]
+        registers: [0x279A]
 
       - name: "Battery 3 Hardware Version"
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x27A1]
+        registers: [0x279B]
 
   - group: Battery 4
     via_device: "inverter"
