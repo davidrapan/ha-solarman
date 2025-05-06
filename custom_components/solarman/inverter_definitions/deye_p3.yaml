@@ -1347,6 +1347,11 @@ parameters:
         value:
           bit: 6
 
+      - name: Off Grid
+        platform: switch
+        rule: 1
+        registers: [0x00B3]
+
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
