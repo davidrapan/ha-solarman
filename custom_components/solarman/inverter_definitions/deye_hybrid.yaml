@@ -2189,7 +2189,7 @@ parameters:
         icon: "mdi:generator-stationary"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: "Grid Peak shaving"
         platform: number
@@ -2200,7 +2200,7 @@ parameters:
         icon: "mdi:transmission-tower"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: Battery BMS Type
         platform: select

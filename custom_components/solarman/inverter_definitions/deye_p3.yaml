@@ -1357,10 +1357,10 @@ parameters:
         icon: "mdi:generator-stationary"
         configurable:
           min: 0
-          max: 16000
+          max: 22000
         range:
           min: 0
-          max: [16000, 1600]
+          max: [22000, 2200]
 
       - name: "Grid Peak shaving"
         platform: number
@@ -1372,10 +1372,10 @@ parameters:
         icon: "mdi:transmission-tower"
         configurable:
           min: 0
-          max: 16000
+          max: 22000
         range:
           min: 0
-          max: [16000, 1600]
+          max: [22000, 2200]
 
   - group: BMS
     items:
