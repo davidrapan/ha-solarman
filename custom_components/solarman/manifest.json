@@ -8,8 +8,7 @@
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
-  "loggers": ["pymodbus"],
   "quality_scale": "custom",
-  "requirements": ["propcache", "aiofiles", "pyyaml", "pymodbus>=3.8.3"],
+  "requirements": ["propcache", "aiofiles", "pyyaml"],
   "version": "25.03.18"
 }
