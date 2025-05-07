@@ -277,12 +277,6 @@ parameters:
           - key: 0x8000
             value: "DSP Communication Failed"
 
-      - name: "Date & Time"
-        platform: datetime
-        update_interval: 60
-        rule: 8
-        registers: [33022, 33023, 33024, 33025, 33026, 33027]
-
       - name: "Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -799,6 +793,15 @@ parameters:
         rule: 1
         registers: [43011]
         icon: "mdi:battery"
+
+  - group: Settings
+    items:
+      - name: "Date & Time"
+        platform: datetime
+        update_interval: 60
+        rule: 8
+        code: 0x03
+        registers: [43000, 43001, 43002, 43003, 43004, 43005]
 
   - group: Time of Use
     items:
