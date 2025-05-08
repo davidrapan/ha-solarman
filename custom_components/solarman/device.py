@@ -8,7 +8,7 @@ from datetime import datetime
 from .const import *
 from .common import *
 from .provider import *
-from .pysolarman.pysolarman import FUNCTION_CODE, Solarman
+from .pysolarman.pysolarman import Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,30 +46,29 @@ class Device():
         self.modbus: Solarman = None
         self.device_info: dict = {}
 
-    async def load(self):
+    async def load(self) -> None:
         try:
             self.state.update(True)
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
-            self.device_info[self.config.serial] = await self.profile.resolve(self.get)
-            _LOGGER.debug(self.device_info)
+            await self.profile.resolve(self.get)
         except TimeoutError as e:
-            raise TimeoutError(f"[{self.config.serial}] Device setup timed out") from e
+            raise TimeoutError(f"[{self.modbus.serial}] Device setup timed out") from e
         except BaseException as e:
-            raise Exception(f"[{self.config.serial}] Device setup failed. [{format_exception(e)}]") from e
+            raise Exception(f"[{self.modbus.serial}] Device setup failed. [{format_exception(e)}]") from e
 
-    def check(self, lock):
+    def check(self, lock) -> None:
         if lock and self._write_lock:
             raise UserWarning("Entity is locked!")
 
     async def shutdown(self) -> None:
         self.state.value = -1
-        _LOGGER.info(f"[{self.config.serial}] Closing connection to {self.endpoint.address}")
+        _LOGGER.info(f"[{self.modbus.serial}] Closing connection to {self.endpoint.address}")
         await self.modbus.close()
 
     async def execute(self, code, message: str, **kwargs):
-        _LOGGER.debug(f"[{self.config.serial}] {message} ...")
+        _LOGGER.debug(f"[{self.modbus.serial}] {message} ...")
 
         response = None
 
@@ -79,9 +78,9 @@ class Device():
             try:
                 response = await self.modbus.execute(code, **kwargs)
 
-                _LOGGER.debug(f"[{self.config.serial}] {message} succeeded")
+                _LOGGER.debug(f"[{self.modbus.serial}] {message} succeeded")
             except Exception as e:
-                _LOGGER.debug(f"[{self.config.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
+                _LOGGER.debug(f"[{self.modbus.serial}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
                 if isinstance(e, TimeoutError):
                     await self.endpoint.discover(True)
@@ -94,7 +93,7 @@ class Device():
         scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
+        _LOGGER.debug(f"[{self.modbus.serial}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
 
         try:
             if scount == 0:
@@ -111,20 +110,20 @@ class Device():
                     result = self.profile.parser.process(responses) if requests is None else responses
 
                     if (rcount := len(result) if result else 0) > 0:
-                        _LOGGER.debug(f"[{self.config.serial}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
+                        _LOGGER.debug(f"[{self.modbus.serial}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                         self.state.update()
 
         except Exception as e:
             if self.state.reevaluate():
-                _LOGGER.info(f"[{self.config.serial}] Closing connection to {self.endpoint.address}")
+                _LOGGER.info(f"[{self.modbus.serial}] Closing connection to {self.endpoint.address}")
                 await self.modbus.close()
                 raise
-            _LOGGER.debug(f"[{self.config.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
+            _LOGGER.debug(f"[{self.modbus.serial}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 
         return result
 
     async def exe(self, code, address, **kwargs):
-        _LOGGER.debug(f"[{self.config.serial}] Scheduling request")
+        _LOGGER.debug(f"[{self.modbus.serial}] Scheduling request")
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
