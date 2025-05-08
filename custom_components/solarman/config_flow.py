@@ -9,6 +9,7 @@ from socket import getaddrinfo, herror, gaierror, timeout
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.selector import selector
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.data_entry_flow import section
 
@@ -23,9 +24,15 @@ DATA_SCHEMA = {
 }
 
 OPTS_SCHEMA = {
-    vol.Required(CONF_SN, default = None): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 4294967295)),
-    vol.Optional(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
+    vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
+    vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}): selector({
+        "select": {
+            "mode": "dropdown",
+            "options": ["tcp", "modbus_tcp"],
+            "translation_key": "transport"
+        }
+    }),
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema(
@@ -82,20 +89,19 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 7
+    MINOR_VERSION = 8
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None:
             name = None
-            serial = None
             ip = None
             if (discovered := await Discovery(self.hass).discover()):
-                for s in discovered:
+                for s, v in discovered.items():
                     try:
-                        self._async_abort_entries_match({ CONF_SN: s })
-                        ip = discovered[(serial := s)]["ip"]
+                        self._async_abort_entries_match({ CONF_HOST: v["ip"] })
+                        ip = v["ip"]
                         break
                     except:
                         continue
@@ -105,7 +111,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                         break
                     except:
                         continue
-            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_SN: serial, CONF_HOST: ip}))
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
 
         errors = {}
 

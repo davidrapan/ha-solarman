@@ -1,7 +1,7 @@
 try:
     from socketserver import BaseRequestHandler
 except ImportError:
-    from SocketServer import BaseRequestHandler
+    from SocketServer import BaseRequestHandler # type: ignore
 from binascii import hexlify
 
 from . import log

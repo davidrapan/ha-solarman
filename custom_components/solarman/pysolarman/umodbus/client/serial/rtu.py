@@ -45,7 +45,7 @@ The lenght of this ADU is 8 bytes::
 import struct
 
 from .redundancy_check import get_crc, validate_crc
-from ...functions import (create_function_from_response_pdu,
+from ...functions import (FUNCTION_CODE, create_function_from_response_pdu,
                                expected_response_pdu_size_from_request_pdu,
                                pdu_to_function_code_or_raise_error, ReadCoils,
                                ReadDiscreteInputs, ReadHoldingRegisters,
@@ -223,3 +223,15 @@ def send_message(adu, serial_port):
         serial_port.read, expected_response_size - exception_adu_size)
 
     return parse_response_adu(response_error_adu + response_remainder, adu)
+
+
+function_code_to_function_map = {
+    FUNCTION_CODE.READ_COILS: read_coils,
+    FUNCTION_CODE.READ_DISCRETE_INPUTS: read_discrete_inputs,
+    FUNCTION_CODE.READ_HOLDING_REGISTERS: read_holding_registers,
+    FUNCTION_CODE.READ_INPUT_REGISTERS: read_input_registers,
+    FUNCTION_CODE.WRITE_SINGLE_COIL: write_single_coil,
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: write_multiple_coils,
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: write_single_register,
+    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: write_multiple_registers
+}

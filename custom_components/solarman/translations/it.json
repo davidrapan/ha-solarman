@@ -13,16 +13,15 @@
         "title": "Configurazione della connessione inverter",
         "data": {
           "name": "Nome del dispositivo",
-          "sn": "Numero di serie",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
+          "transport": "Transport protocol",
           "lookup_file": "Profilo"
         },
         "data_description": {
           "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
-          "sn": "Numero seriale del logger (da interfaccia web)",
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
-          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "port": "La porta (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"
         },
         "sections": {
@@ -52,15 +51,14 @@
       "init": {
         "title": "Configurazione della connessione inverter",
         "data": {
-          "sn": "Numero di serie",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
+          "transport": "Transport protocol",
           "lookup_file": "Profilo"
         },
         "data_description": {
-          "sn": "Numero seriale del logger (da interfaccia web)",
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
-          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "port": "La porta (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"
         },
         "sections": {
@@ -78,6 +76,15 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

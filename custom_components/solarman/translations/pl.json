@@ -13,16 +13,15 @@
         "title": "Konfiguracja po\u0142\u0105czenia falownika",
         "data": {
           "name": "Nazwa urz\u0105dzenia",
-          "sn": "Numer seryjny",
           "host": "Host (adres IP lub nazwa hosta)",
           "port": "Port (zwykle 8899)",
+          "transport": "Transport protocol",
           "lookup_file": "Profil"
         },
         "data_description": {
           "name": "Ta nazwa b\u0119dzie poprzedza\u0107 wszystkie warto\u015bci parametr\u00f3w (zmie\u0144 wedle uznania)",
-          "sn": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć",
-          "port": "Port TCP (8899) urządzenia, z którym chcesz się połączyć",
+          "port": "Port (8899) urządzenia, z którym chcesz się połączyć",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w"
         },
         "sections": {
@@ -52,15 +51,14 @@
       "init": {
         "title": "Konfiguracja po\u0142\u0105czenia falownika",
         "data": {
-          "sn": "Numer seryjny",
           "host": "Host (adres IP lub nazwa hosta)",
           "port": "Port (zwykle 8899)",
+          "transport": "Transport protocol",
           "lookup_file": "Profil"
         },
         "data_description": {
-          "sn": "Numer seryjny urz\u0105dzenia (mo\u017cna go sprawdzi\u0107 z interfejsu sieciowego)",
           "host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć",
-          "port": "Port TCP (8899) urządzenia, z którym chcesz się połączyć",
+          "port": "Port (8899) urządzenia, z którym chcesz się połączyć",
           "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w"
         },
         "sections": {
@@ -78,6 +76,15 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {
