@@ -8,10 +8,11 @@ from socket import getaddrinfo, herror, gaierror, timeout
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.selector import selector
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.data_entry_flow import section
+from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers.selector import selector
+from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 
 from .const import *
 from .common import *
@@ -91,6 +92,17 @@ def remove_defaults(user_input: dict[str, Any]):
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     MINOR_VERSION = 8
     VERSION = 1
+
+    async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
+        _LOGGER.debug(f"ConfigFlowHandler.async_step_dhcp: {discovery_info}")
+        if (device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info.macaddress))})) is not None:
+            for entry in self._async_current_entries():
+                if entry.entry_id in device.config_entries and entry.options.get(CONF_HOST) != discovery_info.ip:
+                    self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info.ip})
+                    self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
+                    return self.async_abort(reason = "already_configured")
+        await self._async_handle_discovery_without_unique_id()
+        return await self.async_step_user()
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
