@@ -82,9 +82,12 @@ parameters:
         mppt: 1
         state class: "measurement"
         uom: "W"
-        scale: 100
+        scale: 10
         rule: 1
-        registers: [0x05C4]
+        registers: [0x0586, 0x0589] # [0x05C4] IllegalDataAddressError
+        sensors:
+          - registers: [0x0586]
+          - registers: [0x0589]
         validation:
           min: 0
           max: 50000
