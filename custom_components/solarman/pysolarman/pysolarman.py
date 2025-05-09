@@ -119,17 +119,17 @@ class Solarman:
 
     def _received_frame_is_valid(self, frame: bytes) -> bool:
         if not frame.startswith(PROTOCOL.START):
-            _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] PROTOCOL_MISMATCH: {frame.hex(" ")}")
             return False
         if frame[5] != self._sequence_number:
             if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and len(frame) > 6 and (f := int.from_bytes(frame[5:6], "big") == len(frame[6:])) and (int.from_bytes(frame[8:9], "big") == len(frame[9:]) if len(frame) > 9 else f):
-                _LOGGER.debug("[%s] TCP_DETECTED: %s", self.serial, frame.hex(" "))
+                _LOGGER.debug(f"[{self.address}] TCP_DETECTED: %s", self.address, frame.hex(" "))
                 self.transport = "modbus_tcp"
                 return True
-            _LOGGER.debug("[%s] SEQ_MISMATCH: %s", self.serial, frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] SEQ_MISMATCH: {frame.hex(" ")}")
             return False
         if not frame.endswith(PROTOCOL.END):
-            _LOGGER.debug("[%s] PROTOCOL_MISMATCH: %s", self.serial, frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] PROTOCOL_MISMATCH: {frame.hex(" ")}")
             return False
         return True
 
@@ -140,14 +140,14 @@ class Solarman:
             do_continue = False
             # Maybe do_continue = True for CONTROL_CODE.DATA|INFO|REPORT and thus process packets in the future?
             control_name = [i for i in PROTOCOL.CONTROL_CODE.__dict__ if PROTOCOL.CONTROL_CODE.__dict__[i] == frame[4]][0]
-            _LOGGER.debug("[%s] PROTOCOL_%s: %s", self.serial, control_name, frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] PROTOCOL_{control_name}: {frame.hex(" ")}")
             response_frame = self._protocol_header(10, self._get_response_code(frame[4]), frame[5:7]) + bytearray(PROTOCOL.PLACEHOLDER1 # Frame Type
                 + PROTOCOL.STATUS
                 + struct.pack("<I", int(time.time()))
                 + PROTOCOL.PLACEHOLDER3) # Offset?
             response_frame[5] = (response_frame[5] + 1) & 0xFF
             response_frame += self._protocol_trailer(response_frame)
-            _LOGGER.debug("[%s] PROTOCOL_%s RESP: %s", self.serial, control_name, response_frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] PROTOCOL_{control_name} RESP: {response_frame.hex(" ")}")
         return do_continue, response_frame
 
     async def _write(self, data: bytes) -> None:
@@ -160,7 +160,7 @@ class Solarman:
                     raise NoSocketAvailableError("Connection already closed") from e
                 case OSError() if e.errno == errno.EHOSTUNREACH:
                     raise TimeoutError from e
-            _LOGGER.exception("[%s] Write error: %s", self.serial, e)
+            _LOGGER.exception(f"[{self.address}] Write error: {e!r}")
 
     async def _handle_protocol_frame(self, frame):
         if (do_continue := self._received_frame_is_valid(frame)):
@@ -174,16 +174,16 @@ class Solarman:
             try:
                 data = await self.reader.read(1024)
             except ConnectionResetError:
-                _LOGGER.debug("[%s] Connection is reset by the peer. Will try to restart the connection", self.serial)
+                _LOGGER.debug(f"[{self.address}] Connection is reset by the peer. Will try to restart the connection")
                 break
             if data == b"":
-                _LOGGER.debug("[%s] Connection closed by the remote. Will try to restart the connection", self.serial)
+                _LOGGER.debug(f"[{self.address}] Connection closed by the remote. Will try to restart the connection")
                 break
             if self._handle_frame is not None and not await self._handle_frame(data):
                 # Skip...
                 continue
             if not self.data_wanted_ev.is_set():
-                _LOGGER.debug("[%s] Data received but nobody waits for it... Discarded", self.serial)
+                _LOGGER.debug(f"[{self.address}] Data received but nobody waits for it... Discarded")
                 continue
             if not self.data_queue.empty():
                 _ = self.data_queue.get_nowait()
@@ -201,17 +201,17 @@ class Solarman:
             self.reader, self.writer = await asyncio.wait_for(asyncio.open_connection(self.address, self.port), self.timeout)
             self.reader_task = asyncio.get_running_loop().create_task(self._conn_keeper(), name = "ConnKeeper")
             if self.data_wanted_ev.is_set():
-                _LOGGER.debug("[%s] Successful reconnection! Data expected. Will retry the last request", self.serial)
+                _LOGGER.debug(f"[{self.address}] Successful reconnection! Data expected. Will retry the last request")
                 await self._write(self._last_frame)
             else:
-                _LOGGER.debug("[%s] Successful connection!", self.serial)
+                _LOGGER.debug(f"[{self.address}] Successful connection!")
             self.open_task = None
         except Exception as e:
             if self.data_wanted_ev.is_set():
-                _LOGGER.debug(f"[{self.serial}] {e!r}")
+                _LOGGER.debug(f"[{self.address}] {e!r}")
                 await self._open_connection()
             else:
-                raise NoSocketAvailableError(f"Cannot open connection to {self.address}") from e
+                raise NoSocketAvailableError(f"[{self.address}] Cannot open connection") from e
 
     def _open(self):
         if not self.connected:
@@ -224,18 +224,18 @@ class Solarman:
             try:
                 await self._write(b"")
             except (NoSocketAvailableError, TimeoutError, ConnectionResetError) as e:
-                _LOGGER.debug(f"[{self.serial}] {e} can be during closing ignored")
+                _LOGGER.debug(f"[{self.address}] {e} can be during closing ignored")
             finally:
                 try:
                     self.writer.close()
                     await self.writer.wait_closed()
                 except (AttributeError, OSError) as e: # OSError happens when is host unreachable
-                    _LOGGER.debug(f"[{self.serial}] {e} can be during closing ignored")
+                    _LOGGER.debug(f"[{self.address}] {e} can be during closing ignored")
                 self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
         await self.open()
-        _LOGGER.debug("[%s] SENT: %s", self.serial, frame.hex(" "))
+        _LOGGER.debug(f"[{self.address}] SENT: {frame.hex(" ")}")
         self.data_wanted_ev.set()
         self._last_frame = frame
         try:
@@ -243,10 +243,10 @@ class Solarman:
             while True:
                 try:
                     response_frame = await asyncio.wait_for(self.data_queue.get(), self.timeout)
-                    _LOGGER.debug("[%s] RECD: %s", self.serial, response_frame.hex(" "))
+                    _LOGGER.debug(f"[{self.address}] RECD: {response_frame.hex(" ")}")
                     return response_frame
                 except TimeoutError:
-                    _LOGGER.debug("[%s] Peer not responding. Closing connection", self.serial)
+                    _LOGGER.debug(f"[{self.address}] Peer not responding. Closing connection")
                     await self._close()
                     continue
         finally:
@@ -265,7 +265,7 @@ class Solarman:
         response_frame = await _get_rtu_response(frame)
         if self.serial_bytes == PROTOCOL.PLACEHOLDER3:
             self.serial = response_frame[7:11]
-            _LOGGER.debug("[%s] SERIAL_SET: %s", self.serial, response_frame.hex(" "))
+            _LOGGER.debug(f"[{self.address}] SERIAL_SET: {response_frame.hex(" ")}")
             response_frame = await _get_rtu_response(frame)
         if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
             raise FrameError("Incorrect control code")
@@ -297,9 +297,9 @@ class Solarman:
             elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
                 kwargs["bits"] = [kwargs["bits"]]
             _, _, pdu = await self._get_response(self._lookup.get(code)(slave_id = self.slave, starting_address = kwargs["address"], argument = kwargs["count"] if "count" in kwargs else kwargs["registers"]))
-            _LOGGER.debug("[%s] PDU: %s", self.serial, pdu)
+            _LOGGER.debug(f"[{self.address}] PDU: {pdu}")
             return pdu
-        raise Exception("[%s] Used invalid modbus function code %d", self.serial, code)
+        raise Exception(f"[{self.address}] Used invalid modbus function code %d", code)
 
     async def open(self):
         self._open()
