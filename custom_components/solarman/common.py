@@ -103,8 +103,8 @@ def build_device_info(entry_id, serial, mac, host, info, name):
             manufacturer = dev_man[0].capitalize()
             model = dev_man[1].upper()
 
-    device_info["identifiers"] = ({(DOMAIN, entry_id)} if entry_id else {}) | ({(DOMAIN, serial)} if serial else {})
-    device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else {}
+    device_info["identifiers"] = ({(DOMAIN, entry_id)} if entry_id else set()) | ({(DOMAIN, serial)} if serial else set())
+    device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else set()
     device_info["configuration_url"] = f"http://{host}/config_hide.html" if host else None
     device_info["serial_number"] = serial if serial else None
     device_info["manufacturer"] = manufacturer
