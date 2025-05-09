@@ -209,10 +209,10 @@ parameters:
           - key: "default"
             value: "Error"
 
-      - name: "Device Fault"
+      - name: "Device Fault 1"
         class: "enum"
         rule: 3
-        registers: [0x0067, 0x0068, 0x0069, 0x006A]
+        registers: [0x0067]
         icon: "mdi:message-alert-outline"
         lookup:
           - key: 0x0000
@@ -227,6 +227,8 @@ parameters:
             value: "DC Bus UnderVoltage"
           - key: 0x10
             value: "DC Bus2 Uneven Voltage"
+          - key: 0x14
+            value: "???"
           - key: 0x20
             value: "DC A path OverCurrent"
           - key: 0x40
@@ -245,10 +247,33 @@ parameters:
             value: "Arc Fault Reservation"
           - key: 0x2000
             value: "Grid Current Sample Abnormality"
-          - key: 0x2030000
+          - key: "default"
+            value: "Error"
+
+      - name: "Device Fault 2"
+        class: "enum"
+        rule: 3
+        registers: [0x0068]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0x0000
+            value: "OK"
+          - key: 0x191
             value: "Grid phase failure or No Relay Connection"
           - key: "default"
             value: "Error"
+
+      - name: "Device Debug 1"
+        class: "enum"
+        rule: 3
+        registers: [0x0069]
+        icon: "mdi:message-alert-outline"
+
+      - name: "Device Debug 2"
+        class: "enum"
+        rule: 3
+        registers: [0x006A]
+        icon: "mdi:message-alert-outline"
 
   - group: PV
     items:
