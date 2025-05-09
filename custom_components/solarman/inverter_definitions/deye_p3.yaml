@@ -2856,7 +2856,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 1 MosMax Temperature"
+      - name: "Battery 1 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -2864,21 +2864,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x273D]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 1 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x273E]
         range:
           min: 0
           max: 3000
@@ -3060,7 +3045,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 2 MosMax Temperature"
+      - name: "Battery 2 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3068,21 +3053,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x2763]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 2 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x2764]
         range:
           min: 0
           max: 3000
@@ -3249,7 +3219,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 3 MosMax Temperature"
+      - name: "Battery 3 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3257,21 +3227,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x2789]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 3 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x278A]
         range:
           min: 0
           max: 3000
@@ -3438,7 +3393,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 4 MosMax Temperature"
+      - name: "Battery 4 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3446,21 +3401,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x27AF]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 4 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x27B0]
         range:
           min: 0
           max: 3000
@@ -3627,7 +3567,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 5 MosMax Temperature"
+      - name: "Battery 5 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3635,21 +3575,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x27D5]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 5 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x27D6]
         range:
           min: 0
           max: 3000
@@ -3816,7 +3741,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 6 MosMax Temperature"
+      - name: "Battery 6 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3824,21 +3749,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x27FB]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 6 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x27FC]
         range:
           min: 0
           max: 3000
@@ -4005,7 +3915,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 7 MosMax Temperature"
+      - name: "Battery 7 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4013,21 +3923,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x2821]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 7 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x2822]
         range:
           min: 0
           max: 3000
@@ -4194,7 +4089,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 8 MosMax Temperature"
+      - name: "Battery 8 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4202,21 +4097,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x2847]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 8 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x2848]
         range:
           min: 0
           max: 3000
@@ -4383,7 +4263,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 9 MosMax Temperature"
+      - name: "Battery 9 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4391,21 +4271,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x286D]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 9 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x286E]
         range:
           min: 0
           max: 3000
@@ -4572,7 +4437,7 @@ parameters:
           min: -99
           max: 99      
 
-      - name: "Battery 10 MosMax Temperature"
+      - name: "Battery 10 MOS Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4580,21 +4445,6 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x2893]
-        range:
-          min: 0
-          max: 3000
-        validation:
-          min: -99
-          max: 99
-
-      - name: "Battery 10 HeatMem Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        offset: 1000
-        registers: [0x2894]
         range:
           min: 0
           max: 3000
@@ -4731,6 +4581,51 @@ parameters:
           min: -99
           max: 99
 
+      - name: "Battery 11 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28B7]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 11 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28B8]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 11 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28B9]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
       - name: "Battery 11"
         class: "battery"
         state_class: "measurement"
@@ -4853,6 +4748,51 @@ parameters:
         rule: 1
         offset: 1000
         registers: [0x28DC]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 12 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28DD]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 12 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28DE]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 12 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x28DF]
         range:
           min: 0
           max: 3000
