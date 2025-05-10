@@ -34,7 +34,7 @@ parameters:
           - key: 6
             value: "Upgrade"
           - key: 7
-            value: "self-charging"
+            value: "Self-charging"
           - key: 8
             value: "SVG"
           - key: 9
