@@ -781,10 +781,21 @@ parameters:
         icon: "mdi:battery-arrow-down"
 
       - name: "Backup Mode SOC"
+        platform: number
         state_class: "measurement"
+        code:
+          read: 0x03
+          write: 0x06
         uom: "%"
         rule: 1
         registers: [43024]
+        range: 
+          min: 0
+          max: 100
+        configurable:
+          min: 0
+          max: 100
+          step: 1
         icon: "mdi:battery"
 
       - name: "Overdischarge SOC"

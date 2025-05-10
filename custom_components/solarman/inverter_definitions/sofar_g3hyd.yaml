@@ -1,10 +1,81 @@
 #
 # Sofar G3 moddbus protocol
 #
-# Reference: https://github.com/user-attachments/files/17180102/SOFAR-G3.External.Modbus.Protocol-EN-V1.10.20220622.xlsx
+# Reference: https://github.com/user-attachments/files/18220633/SOFAR_Modbus_Protocol_English_G3_V1.22.only.3PH.xlsx
 #
 # Also works w/ rebranded ZCS Azzurro 3-Phase inverters such as the 3PH HYD6000 ZSS, or single phase such as 1PH HY6000 ZSS HP
 # Note that this won't work if your ZCS inverter is connected via Connext, you have to be using a Wi-Fi or Ethernet Kit such as ZSM-WIFI-USB.
+#
+# Some registers require bulk writes, here are some examples how to control battery (dis)charge in passive mode. (Create button helpers in /config/helpers)
+#
+# ---- Start of passive mode automation ----
+# alias: "Passive mode"
+# description: ""
+# triggers:
+#   - trigger: state
+#     entity_id:
+#       - input_button.passive_mode
+# conditions: []
+# actions:
+#   - action: solarman.write_multiple_registers
+#     data:
+#       device: 
+#       address: 4487
+#       values:
+#         - 0       # Register 4487 / 0x1187 H, Passive: Grid power
+#         - 0       # Register 4488 / 0x1188 L, Passive: Grid power
+#         - 65535   # Register 4489 / 0x1189 H, Passive: Minimum Battery power (-20000)
+#         - 45536   # Register 4490 / 0x118A L, Passive: Minimum Battery power (-20000)
+#         - 0       # Register 4491 / 0x118B H, Passive: Maximum Battery power (20000)
+#         - 20000   # Register 4492 / 0x118C L, Passive: Maximum Battery power (20000)
+# mode: single
+# ---- End of passive mode automation ----
+#
+# ---- Start of force discharge automation ----
+# alias: "Passive: Force discharge"
+# description: ""
+# triggers:
+#   - trigger: state
+#     entity_id:
+#       - input_button.passive_force_discharge
+# conditions: []
+# actions:
+#   - action: solarman.write_multiple_registers
+#     data:
+#       device: 
+#       address: 4487
+#       values:
+#         - 0
+#         - 0
+#         - 65535
+#         - 45536
+#         - 65535
+#         - 45536
+# mode: single
+# ---- End of force discharge automation ----
+#
+# ---- Start of force charge automation ----
+# alias: "Passive: Force charge"
+# description: ""
+# triggers:
+#   - trigger: state
+#     entity_id:
+#       - input_button.passive_force_charge
+# conditions: []
+# actions:
+#   - action: solarman.write_multiple_registers
+#     data:
+#       device: 
+#       address: 4487
+#       values:
+#         - 0
+#         - 0
+#         - 0
+#         - 20000
+#         - 0
+#         - 20000
+# mode: single
+# ---- End of force charge automation ----
 #
 
 default:
@@ -493,6 +564,7 @@ parameters:
         registers: [0x0487]
 
       - name: "ActivePower_PCC_Total"
+        alt: "Grid power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -504,6 +576,7 @@ parameters:
         registers: [0x0488]
 
       - name: "ReactivePower_PCC_Total"
+        alt: "Grid reactive power"
         class: "reactive_power"
         state_class: "measurement"
         uom: "kvar"
@@ -512,6 +585,7 @@ parameters:
         registers: [0x0489]
 
       - name: "ApparentPower_PCC_Total"
+        alt: "Grid apparent power"
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
@@ -774,6 +848,7 @@ parameters:
         registers: [0x04AE]
 
       - name: "ActivePower_Load_Sys"
+        alt: "Load power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1520,6 +1595,9 @@ parameters:
           - bit: 191
             value: "ID192 PLC module heartbeat loss"
 
+  - group: Settings
+    update_interval: 300
+    items:
       - name: "Storage Control Mode"
         platform: select
         rule: 1
@@ -1539,11 +1617,7 @@ parameters:
             value: "Off-Grid"
           - key: 6
             value: "Generator"
-        icon: "mdi:power-settings"
 
-  - group: Settings
-    update_interval: 300
-    items:
       - name: Export Surplus Limitation
         platform: select
         rule: 1
@@ -1618,7 +1692,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         rule: 1
-        registers: [0x1117, 0x1118]
+        registers: [0x1118, 0x1117]
         range:
           min: 0
           max: 4294967296
@@ -1629,7 +1703,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         rule: 1
-        registers: [0x1119, 0x111A]
+        registers: [0x111A, 0x1119]
         range:
           min: 0
           max: 4294967296
@@ -1641,3 +1715,38 @@ parameters:
         code:
           write: 0x06
         registers: [0x111F]
+
+  - group: Passive mode settings
+    items:
+      - name: "Passive: Grid power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x1188, 0x1187]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Minimum Battery power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118A, 0x1189]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Maximum Battery power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118C, 0x118B]
+        range:
+          min: -2147483648 
+          max: 2147483647
