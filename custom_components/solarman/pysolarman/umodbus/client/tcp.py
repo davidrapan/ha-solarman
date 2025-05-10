@@ -119,7 +119,7 @@ def _create_mbap_header(slave_id, pdu):
     return struct.pack('>HHHB', transaction_id, 0, length, slave_id)
 
 
-def read_coils(slave_id, starting_address, argument):
+def read_coils(slave_id, starting_address, quantity):
     """ Return ADU for Modbus function code 01: Read Coils.
 
     :param slave_id: Number of slave.
@@ -127,12 +127,12 @@ def read_coils(slave_id, starting_address, argument):
     """
     function = ReadCoils()
     function.starting_address = starting_address
-    function.quantity = argument
+    function.quantity = quantity
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def read_discrete_inputs(slave_id, starting_address, argument):
+def read_discrete_inputs(slave_id, starting_address, quantity):
     """ Return ADU for Modbus function code 02: Read Discrete Inputs.
 
     :param slave_id: Number of slave.
@@ -140,12 +140,12 @@ def read_discrete_inputs(slave_id, starting_address, argument):
     """
     function = ReadDiscreteInputs()
     function.starting_address = starting_address
-    function.quantity = argument
+    function.quantity = quantity
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def read_holding_registers(slave_id, starting_address, argument):
+def read_holding_registers(slave_id, starting_address, quantity):
     """ Return ADU for Modbus function code 03: Read Holding Registers.
 
     :param slave_id: Number of slave.
@@ -153,12 +153,12 @@ def read_holding_registers(slave_id, starting_address, argument):
     """
     function = ReadHoldingRegisters()
     function.starting_address = starting_address
-    function.quantity = argument
+    function.quantity = quantity
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def read_input_registers(slave_id, starting_address, argument):
+def read_input_registers(slave_id, starting_address, quantity):
     """ Return ADU for Modbus function code 04: Read Input Registers.
 
     :param slave_id: Number of slave.
@@ -166,12 +166,12 @@ def read_input_registers(slave_id, starting_address, argument):
     """
     function = ReadInputRegisters()
     function.starting_address = starting_address
-    function.quantity = argument
+    function.quantity = quantity
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def write_single_coil(slave_id, address, argument):
+def write_single_coil(slave_id, address, value):
     """ Return ADU for Modbus function code 05: Write Single Coil.
 
     :param slave_id: Number of slave.
@@ -179,12 +179,12 @@ def write_single_coil(slave_id, address, argument):
     """
     function = WriteSingleCoil()
     function.address = address
-    function.value = argument
+    function.value = value
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def write_single_register(slave_id, address, argument):
+def write_single_register(slave_id, address, value):
     """ Return ADU for Modbus function code 06: Write Single Register.
 
     :param slave_id: Number of slave.
@@ -192,12 +192,12 @@ def write_single_register(slave_id, address, argument):
     """
     function = WriteSingleRegister()
     function.address = address
-    function.value = argument
+    function.value = value
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def write_multiple_coils(slave_id, starting_address, argument):
+def write_multiple_coils(slave_id, starting_address, values):
     """ Return ADU for Modbus function code 15: Write Multiple Coils.
 
     :param slave_id: Number of slave.
@@ -205,12 +205,12 @@ def write_multiple_coils(slave_id, starting_address, argument):
     """
     function = WriteMultipleCoils()
     function.starting_address = starting_address
-    function.values = argument
+    function.values = values
 
     return _create_request_adu(slave_id, function.request_pdu)
 
 
-def write_multiple_registers(slave_id, starting_address, argument):
+def write_multiple_registers(slave_id, starting_address, values):
     """ Return ADU for Modbus function code 16: Write Multiple Registers.
 
     :param slave_id: Number of slave.
@@ -218,7 +218,7 @@ def write_multiple_registers(slave_id, starting_address, argument):
     """
     function = WriteMultipleRegisters()
     function.starting_address = starting_address
-    function.values = argument
+    function.values = values
 
     return _create_request_adu(slave_id, function.request_pdu)
 
@@ -270,12 +270,12 @@ def send_message(adu, sock):
 
 
 function_code_to_function_map = {
-    FUNCTION_CODE.READ_COILS: read_coils,
-    FUNCTION_CODE.READ_DISCRETE_INPUTS: read_discrete_inputs,
-    FUNCTION_CODE.READ_HOLDING_REGISTERS: read_holding_registers,
-    FUNCTION_CODE.READ_INPUT_REGISTERS: read_input_registers,
-    FUNCTION_CODE.WRITE_SINGLE_COIL: write_single_coil,
-    FUNCTION_CODE.WRITE_SINGLE_REGISTER: write_single_register,
-    FUNCTION_CODE.WRITE_MULTIPLE_COILS: write_multiple_coils,
-    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: write_multiple_registers
+    FUNCTION_CODE.READ_COILS: lambda slave_id, address, count, **kwargs: read_coils(slave_id, address, count),
+    FUNCTION_CODE.READ_DISCRETE_INPUTS: lambda slave_id, address, count, **kwargs: read_discrete_inputs(slave_id, address, count),
+    FUNCTION_CODE.READ_HOLDING_REGISTERS: lambda slave_id, address, count, **kwargs: read_holding_registers(slave_id, address, count),
+    FUNCTION_CODE.READ_INPUT_REGISTERS: lambda slave_id, address, count, **kwargs: read_input_registers(slave_id, address, count),
+    FUNCTION_CODE.WRITE_SINGLE_COIL: lambda slave_id, address, data, **kwargs: write_single_coil(slave_id, address, data),
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: lambda slave_id, address, data, **kwargs: write_single_register(slave_id, address, data),
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: lambda slave_id, address, data, **kwargs: write_multiple_coils(slave_id, address, data),
+    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: lambda slave_id, address, data, **kwargs: write_multiple_registers(slave_id, address, data)
 }

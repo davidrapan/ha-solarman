@@ -282,23 +282,19 @@ class Solarman:
             raise FrameError(f"Invalid modbus frame")
         if adu.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(adu[:-4]) == adu[-4:-2]: # Double CRC (XXXX0000) correction
             adu = adu[:-2]
-        return adu[0], adu[1], rtu.parse_response_adu(adu, frame)
+        return rtu.parse_response_adu(adu, frame)
 
     async def _parse_adu_from_tcp_response(self, frame: bytes) -> tuple[int, int, bytes]:
         adu = await self._send_receive_frame(frame)
         if 8 <= len(adu) <= 10: # Incomplete response frame correction
             adu = adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
-        return adu[6], adu[7], tcp.parse_response_adu(adu, frame)
+        return tcp.parse_response_adu(adu, frame)
 
     async def execute(self, code, **kwargs):
-        if code in self._lookup:
-            if "registers" in kwargs and not isinstance(kwargs["registers"], list):
-                kwargs["registers"] = [kwargs["registers"]]
-            elif "bits" in kwargs and not isinstance(kwargs["bits"], list):
-                kwargs["bits"] = [kwargs["bits"]]
-            _, _, pdu = await self._get_response(self._lookup.get(code)(slave_id = self.slave, starting_address = kwargs["address"], argument = kwargs["count"] if "count" in kwargs else kwargs["registers"]))
-            _LOGGER.debug(f"[{self.address}] PDU: {pdu}")
-            return pdu
+        if (func := self._lookup.get(code)) is not None:
+            data = await self._get_response(func(self.slave, **kwargs))
+            _LOGGER.debug(f"[{self.address}] Data: {data}")
+            return data
         raise Exception(f"[{self.address}] Used invalid modbus function code %d", code)
 
     async def open(self):

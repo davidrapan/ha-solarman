@@ -67,7 +67,7 @@ class Device():
         _LOGGER.info(f"[{self.modbus.address}] Closing connection to {self.endpoint.address}")
         await self.modbus.close()
 
-    async def execute(self, code, message: str, **kwargs):
+    async def execute(self, message: str, **kwargs):
         _LOGGER.debug(f"[{self.modbus.address}] {message} ...")
 
         response = None
@@ -76,7 +76,7 @@ class Device():
         while attempts_left > 0 and response is None:
             attempts_left -= 1
             try:
-                response = await self.modbus.execute(code, **kwargs)
+                response = await self.modbus.execute(**kwargs)
 
                 _LOGGER.debug(f"[{self.modbus.address}] {message} succeeded")
             except Exception as e:
@@ -105,7 +105,7 @@ class Device():
                     for request in scheduled:
                         code, address, end = get_request_code(request), get_request_start(request), get_request_end(request)
                         count = end - address + 1
-                        responses[(code, address)] = await self.execute(code, f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", address = address, count = count)
+                        responses[(code, address)] = await self.execute(f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", code = code, address = address, count = count)
 
                     result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -127,4 +127,4 @@ class Device():
 
         async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
             async with self._semaphore:
-                return await self.execute(code, f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", address = address, **kwargs)
+                return await self.execute(f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", code = code, address = address, **kwargs)
