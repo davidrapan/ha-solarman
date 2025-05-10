@@ -403,6 +403,7 @@ parameters:
         registers: [0x0488]
         icon: "mdi:home-lightning-bolt"
       - name: "ReactivePower_PCC_Total"
+        alt: "Grid power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -643,6 +644,7 @@ parameters:
         registers: [0x04AE]
         icon: "mdi:lightning-bolt-outline"
       - name: "ActivePower_Load_Sys"
+        alt: "Load power"
         class: "power"
         state_class: "measurement"
         uom: "W"
