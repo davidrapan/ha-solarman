@@ -1,7 +1,7 @@
 #
 # Megarevo R6-15KH3 | 6.6~16.5kW | Three Phase | Hybrid Inverter
 #
-# Reference: ???
+# Reference: https://github.com/user-attachments/files/20112528/Hybrid.Inverter_Modbus.Protocol.xlsx
 #
 # Megarevo Inverters using Solarman v5 via Solarman App pcap - Full Register Map Not Complete Yet
 # Expected to Work with most of the Megarevo Inverters (including EG4 8k)
@@ -31,6 +31,20 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x3141]
+
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3145]
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        registers: [0x3146]
 
       - name: "Battery Power"
         class: "power"

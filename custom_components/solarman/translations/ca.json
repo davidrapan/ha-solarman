@@ -13,16 +13,15 @@
         "title": "Configuració de l'inversor",
         "data": {
           "name": "Nom del dispositiu",
-          "serial": "Número de sèrie",
           "host": "Amfitrió o adreça IP",
           "port": "Port",
+          "transport": "Transport protocol",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius",
-          "serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
           "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "port": "El port (8899) del dispositiu, per a connectar-s'hi",
           "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
         },
         "sections": {
@@ -54,11 +53,12 @@
         "data": {
           "host": "Amfitrió o adreça IP",
           "port": "Port",
+          "transport": "Transport protocol",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "port": "El port (8899) del dispositiu, per a connectar-s'hi",
           "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
         },
         "sections": {
@@ -76,6 +76,15 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

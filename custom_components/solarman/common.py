@@ -89,23 +89,24 @@ async def yaml_open(file):
 def process_profile(filename):
     return filename if not filename in PROFILE_REDIRECT else PROFILE_REDIRECT[filename]
 
-def build_device_info(serial, mac, host, name, info, filename):
+def build_device_info(entry_id, serial, mac, host, info, name):
     device_info = DeviceInfo()
     manufacturer = "Solarman"
     model = "Stick Logger"
 
-    if info and "model" in info:
-        if "manufacturer" in info:
-            manufacturer = info["manufacturer"]
-        model = info["model"]
-    elif filename and '_' in filename and (dev_man := filename.replace(".yaml", "").split('_')):
-        manufacturer = dev_man[0].capitalize()
-        model = dev_man[1].upper()
+    if info:
+        if "model" in info:
+            if "manufacturer" in info:
+                manufacturer = info["manufacturer"]
+            model = info["model"]
+        elif (filename := info.get("filename")) is not None and '_' in filename and (dev_man := filename.replace(".yaml", "").split('_')):
+            manufacturer = dev_man[0].capitalize()
+            model = dev_man[1].upper()
 
-    device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else {}
-    device_info["identifiers"] = {(DOMAIN, serial)}
+    device_info["identifiers"] = ({(DOMAIN, entry_id)} if entry_id else set()) | ({(DOMAIN, serial)} if serial else set())
+    device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else set()
     device_info["configuration_url"] = f"http://{host}/config_hide.html" if host else None
-    device_info["serial_number"] = serial
+    device_info["serial_number"] = serial if serial else None
     device_info["manufacturer"] = manufacturer
     device_info["model"] = model
     device_info["name"] = name

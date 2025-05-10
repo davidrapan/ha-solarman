@@ -1,5 +1,5 @@
 #
-# Solis 3P5~10K-4G | 5~10kW | 2 MPPT | Three Phase Inverter
+# Solis 3P5~10K-4G | 5~10kW | Three Phase Inverter
 #
 # Reference: https://ginlongsolis.freshdesk.com/support/solutions/articles/36000340158-modbus-communication-for-solis-inverters
 #
@@ -83,7 +83,7 @@ parameters:
         scale: 0.001
         rule: 3
         registers: [3007, 3006]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
         class: "voltage"
@@ -93,7 +93,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [3021]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Current"
         class: "current"
@@ -103,7 +103,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [3022]
-        icon: "mdi:current-dc"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
         class: "power"
@@ -119,6 +119,7 @@ parameters:
           - operator: multiply
             scale: 0.0001
             registers: [3022]
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -128,7 +129,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [3023]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Current"
         class: "current"
@@ -138,7 +139,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [3024]
-        icon: "mdi:current-dc"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Power"
         class: "power"
@@ -154,6 +155,43 @@ parameters:
           - operator: multiply
             scale: 0.0001
             registers: [3024]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Voltage"
+        class: "voltage"
+        mppt: 3
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3025]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Current"
+        class: "current"
+        mppt: 3
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [3026]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Power"
+        class: "power"
+        mppt: 3
+        state_class: "measurement"
+        uom: "kW"
+        rule: 1
+        digits: 3
+        registers: [3025, 3026]
+        sensors:
+          - registers: [3025]
+            scale: 0.1
+          - operator: multiply
+            scale: 0.0001
+            registers: [3026]
+        icon: "mdi:solar-power-variant"
 
   - group: Load
     items:

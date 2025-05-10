@@ -10,7 +10,7 @@ from homeassistant.exceptions import ServiceValidationError
 
 from .const import *
 from .coordinator import Device, Coordinator
-from .pysolarman.pysolarman import FUNCTION_CODE
+from .pysolarman.umodbus.functions import FUNCTION_CODE
 
 _LOGGER = logging.getLogger(__name__)
 
