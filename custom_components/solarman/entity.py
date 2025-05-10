@@ -143,10 +143,13 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         self.code = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
+        self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.device.check(self._write_lock)
         if isinstance(value, int):
+            if value < 0:
+                value = value + self.maxint
             if value > 0xFFFF:
                 value = list(split_p16b(value))
             if len(self.registers) > 1:
