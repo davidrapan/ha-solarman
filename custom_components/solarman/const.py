@@ -17,9 +17,9 @@ LOOKUP_DIRECTORY = "inverter_definitions"
 LOOKUP_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/"
 LOOKUP_CUSTOM_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTORY}/custom/"
 
-CONF_SERIAL = "serial"
 CONF_HOST = "host"
 CONF_PORT = "port"
+CONF_TRANSPORT = "transport"
 CONF_LOOKUP_FILE = "lookup_file"
 CONF_ADDITIONAL_OPTIONS = "additional_options"
 CONF_MOD = "mod"
@@ -30,7 +30,7 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
-OLD_ = { CONF_SERIAL: "inverter_serial", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
+OLD_ = { "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
 SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"
@@ -43,7 +43,8 @@ DIGITS = "digits"
 DEFAULT_ = {
     "name": "Inverter",
     CONF_HOST: "",
-    CONF_PORT: 8899, 
+    CONF_PORT: 8899,
+    CONF_TRANSPORT: "tcp",
     CONF_MB_SLAVE_ID: 1,
     CONF_LOOKUP_FILE: "Auto",
     CONF_MOD: False,
@@ -67,7 +68,7 @@ AUTODETECTION_DEVICE_DEYE = (AUTODETECTION_CODE_DEYE, 0x00)
 AUTODETECTION_TYPE_DEYE = (AUTODETECTION_CODE_DEYE, 0x08)
 AUTODETECTION_DEYE = { (0x0002, 0x0200): ("deye_string.yaml", 0, 0x12), (0x0003, 0x0300): ("deye_hybrid.yaml", 0, 0x12), (0x0004, 0x0400): ("deye_micro.yaml", 0, 0x12), (0x0005, 0x0500): ("deye_p3.yaml", 0, 0x16), (0x0006, 0x0007, 0x0600, 0x0008, 0x0601): ("deye_p3.yaml", 1, 0x16) }
 
-PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml" }
+PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_hyd-es.yaml", "hyd-zss-hp-3k-6k.yaml": "zcs_azzurro-hyd-zss-hp.yaml", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml", "solis_3p-4g+.yaml": "solis_3p-4g.yaml" }
 
 ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK: CONF_PACK }
 

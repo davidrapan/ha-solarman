@@ -77,7 +77,7 @@ class Discovery:
         if self._ip:
             _LOGGER.debug(f"_discover: Broadcasting on {self._ip}")
             self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
-            if len(self._devices) > 0 and not self._serial in self._devices:
+            if len(self._devices) > 0 and self._serial is not None and not self._serial in self._devices:
                 self._devices = {}
             if ping_only:
                 return self._devices

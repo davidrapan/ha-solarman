@@ -6,7 +6,7 @@ from functools import partial
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.entity_registry import async_migrate_entries
 
@@ -53,7 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     #
     _LOGGER.debug(f"async_setup_entry: async_migrate_entries")
 
-    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config.name, config.serial))
+    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config_entry))
 
     # Forward setup
     #
@@ -94,6 +94,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
         bulk_migrate(new_data, new_data, OLD_)
         bulk_migrate(new_options, new_options, OLD_)
         bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
+        if new_options.get("sn", new_data.get("sn", 1)) == 0:
+            new_options[CONF_TRANSPORT] = "modbus_tcp"
         bulk_safe_delete(new_data, OLD_)
         bulk_safe_delete(new_options, OLD_ | to_dict(CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING))
 
@@ -105,3 +107,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
     _LOGGER.info("Migration to configuration version %s.%s was successful", config_entry.version, config_entry.minor_version)
 
     return True
+
+async def async_remove_config_entry_device(hass: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: dr.DeviceEntry) -> bool:
+    _LOGGER.debug(f"async_remove_config_entry_device({config_entry.as_dict()}, {device_entry.as_dict()})")
+
+    return not any(identifier for identifier in device_entry.identifiers if identifier[0] == DOMAIN and identifier[1] == config_entry.entry_id or identifier[1] == config_entry.runtime_data.device.modbus.serial)

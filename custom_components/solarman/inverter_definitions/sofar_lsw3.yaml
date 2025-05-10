@@ -11,6 +11,25 @@ default:
 parameters:
   - group: PV
     items:
+      - name: "PV Power"
+        alt: DC Power
+        mppt: 1
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        scale: 10
+        registers: [0x000A, 0x000B]
+        sensors:
+          - registers: [0x000A]
+          - registers: [0x000B]
+        validation:
+          min: 0
+          max: 50000
+          invalidate_all:
+        icon: "mdi:solar-power-variant"
+
       - name: "PV1 Power"
         class: "power"
         mppt: 1
@@ -19,7 +38,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x000A]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Power"
         class: "power"
@@ -29,7 +48,7 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x000B]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
         class: "voltage"
@@ -39,7 +58,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0006]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
         class: "voltage"
@@ -49,7 +68,7 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0008]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV1 Current"
         class: "current"
@@ -59,7 +78,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0007]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: "PV2 Current"
         class: "current"
@@ -69,7 +88,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0009]
-        icon: "mdi:solar-power"
+        icon: "mdi:solar-power-variant"
 
       - name: Today Production
         friendly_name: Today's Production

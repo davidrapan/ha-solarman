@@ -119,6 +119,9 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x0010, 0x0011]
+        validation:
+          min: 0
+          max: 24000
 
       - name: "Device MPPTs"
         attribute:
@@ -166,7 +169,7 @@ parameters:
         platform: switch
         update_interval: 30
         rule: 1
-        registers: [0x002b]
+        registers: [0x002B]
         value:
           on: 0x0001
           off: 0x0002
@@ -258,6 +261,10 @@ parameters:
           - registers: [0x00BB]
           - registers: [0x00BC]
           - registers: [0x00BD]
+        validation:
+          min: 0
+          max: 24000
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
@@ -305,7 +312,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: DC3 Voltage
-        mppt: 2
+        mppt: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -743,7 +750,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -794,7 +801,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -844,7 +851,7 @@ parameters:
         registers: [0x009E]
 
       - name: "Load L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -903,7 +910,7 @@ parameters:
         device_class: power
         rule: 1
         registers: [0x00C3]
-        bit: 8
+        bit: 0
 
       - name: "Output Frequency"
         l: 1
@@ -961,7 +968,7 @@ parameters:
         registers: [0x00A5]
 
       - name: "Output L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -1040,6 +1047,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
+        scale: 0.1
         rule: 1
         registers: [0x00B5]
 
@@ -1675,7 +1683,7 @@ parameters:
         icon: "mdi:solar-power-variant"
         range:
           min: 0
-          max: 12000
+          max: 13000
 
       - name: Time of Use
         platform: select
@@ -2142,17 +2150,41 @@ parameters:
           - key: 0x0003
             value: "Both"
 
-      - name: SmartLoad Grid On
+      - name: Microinverter Export cut-off
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 0
+
+      - name: Generator Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 4
+
+      - name: Grid Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 8
+
+      - name: Generator Grid On
         description: On Grid always on
+        name_lookup: io_mode_select
         platform: "switch"
         rule: 1
         registers: [0x0118]
         value:
           bit: 12
 
-  - group: Grid, Generator and BMS
-    update_interval: 300
-    items:
+      - name: Off Grid
+        platform: switch
+        rule: 1
+        registers: [0x0119]
+
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
@@ -2162,7 +2194,7 @@ parameters:
         icon: "mdi:generator-stationary"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: "Grid Peak shaving"
         platform: number
@@ -2173,7 +2205,7 @@ parameters:
         icon: "mdi:transmission-tower"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: Battery BMS Type
         platform: select

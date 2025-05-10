@@ -31,7 +31,7 @@ requests:
     code: 0x04
 
 parameters:
-  - group: Production
+  - group: PV
     items:
       - name: "PV Power"
         class: "power"
@@ -41,8 +41,74 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0215]
-        icon: "mdi:solar-power"
+        validation:
+          min: 0
+          max: 50
+          invalidate_all:
+        icon: "mdi:solar-power-variant"
 
+      - name: "PV1 Power"
+        class: "power"
+        mppt: 1
+        state_class: "measurement"
+        uom: "kW"
+        scale: 0.01
+        rule: 1
+        registers: [0x0252]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        class: "power"
+        mppt: 2
+        state_class: "measurement"
+        uom: "kW"
+        scale: 0.01
+        rule: 1
+        registers: [0x0255]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Voltage"
+        class: "voltage"
+        mppt: 1
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0250]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        mppt: 2
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0253]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        class: "current"
+        mppt: 1
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0251]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        class: "current"
+        mppt: 2
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0254]
+        icon: "mdi:solar-power-variant"
+
+  - group: Production
+    items:
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
