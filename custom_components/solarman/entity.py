@@ -152,12 +152,12 @@ class SolarmanWritableEntity(SolarmanEntity):
                 value = value + self.maxint
             if value > 0xFFFF:
                 value = list(split_p16b(value))
-            if len(self.registers) > 1:
+            if len(self.registers) > 1 or self.code > FUNCTION_CODE.WRITE_SINGLE_REGISTER:
                 value = ensure_list(value)
         if isinstance(value, list):
             while len(self.registers) > len(value):
                 value.insert(0, 0)
-        if await self.coordinator.device.exe(self.code, address = self.register, registers = value) > 0 and state is not None:
+        if await self.coordinator.device.exe(self.code, address = self.register, data = value) > 0 and state is not None:
             self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))
