@@ -385,7 +385,6 @@ parameters:
   - group: Battery
     items:
       - name: "Battery Voltage"
-        pack: 0
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -394,7 +393,6 @@ parameters:
         registers: [0x0604]
 
       - name: "Battery Current"
-        pack: 0
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -404,7 +402,6 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Battery Power"
-        pack: 0
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -413,7 +410,6 @@ parameters:
         registers: [0x0606]
 
       - name: "Battery Temperature"
-        pack: 0
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -421,7 +417,6 @@ parameters:
         registers: [0x0607]
 
       - name: "Battery"
-        pack: 0
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -430,7 +425,6 @@ parameters:
 
       - name: "Battery SOH"
         alt: "Battery State of Health"
-        pack: 0
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -438,7 +432,6 @@ parameters:
         icon: "mdi:battery-heart"
 
       - name: "Battery Number of Cycles"
-        pack: 0
         state_class: "measurement"
         uom: "cycle"
         rule: 1
@@ -505,29 +498,6 @@ parameters:
         rule: 1
         registers: [0x060A]
         icon: "mdi:battery-sync"
-
-      - name: "Battery DOD"
-        alt: "Battery Depth of Discharge"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x104D]
-        icon: "mdi:battery"
-
-      - name: "Battery EOD"
-        alt: "Battery End of Discharge"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x104E]
-        icon: "mdi:battery"
-
-      - name: "Battery EPS Buffer"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x1052]
-        icon: "mdi:battery-low"
 
   - group: Grid
     items:
@@ -1598,25 +1568,28 @@ parameters:
   - group: Settings
     update_interval: 300
     items:
-      - name: "Storage Control Mode"
-        platform: select
+      - name: "Battery DOD"
+        alt: "Battery Depth of Discharge"
+        state_class: "measurement"
+        uom: "%"
         rule: 1
-        registers: [0x1110]
-        lookup:
-          - key: 0
-            value: "Self Use"
-          - key: 1
-            value: "Time of Use"
-          - key: 2
-            value: "Optimized Revenue"
-          - key: 3
-            value: "Passive"
-          - key: 4
-            value: "Peak Shaving"
-          - key: 5
-            value: "Off-Grid"
-          - key: 6
-            value: "Generator"
+        registers: [0x104D]
+        icon: "mdi:battery"
+
+      - name: "Battery EOD"
+        alt: "Battery End of Discharge"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104E]
+        icon: "mdi:battery"
+
+      - name: "Battery EPS Buffer"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1052]
+        icon: "mdi:battery-low"
 
       - name: Export Surplus Limitation
         platform: select
@@ -1641,6 +1614,26 @@ parameters:
         range:
           min: 0
           max: 65535
+
+      - name: "Storage Control Mode"
+        platform: select
+        rule: 1
+        registers: [0x1110]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Time of Use"
+          - key: 2
+            value: "Optimized Revenue"
+          - key: 3
+            value: "Passive"
+          - key: 4
+            value: "Peak Shaving"
+          - key: 5
+            value: "Off-Grid"
+          - key: 6
+            value: "Generator"
 
       - name: "Timed Program"
         platform: number
