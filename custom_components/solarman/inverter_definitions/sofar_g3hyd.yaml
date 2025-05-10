@@ -24,10 +24,10 @@
 #       values:
 #         - 0       # Register 4487 / 0x1187 H, Passive: Grid power
 #         - 0       # Register 4488 / 0x1188 L, Passive: Grid power
-#         - 65535   # Register 4489 / 0x1189 H, Passive: Battery Minimum power (-20000)
-#         - 45536   # Register 4490 / 0x118A L, Passive: Battery Minimum power (-20000)
-#         - 0       # Register 4491 / 0x118B H, Passive: Battery Maximum power (20000)
-#         - 20000   # Register 4492 / 0x118C L, Passive: Battery Maximum power (20000)
+#         - 65535   # Register 4489 / 0x1189 H, Passive: Minimum Battery power (-20000)
+#         - 45536   # Register 4490 / 0x118A L, Passive: Minimum Battery power (-20000)
+#         - 0       # Register 4491 / 0x118B H, Passive: Maximum Battery power (20000)
+#         - 20000   # Register 4492 / 0x118C L, Passive: Maximum Battery power (20000)
 # mode: single
 # ---- End of passive mode automation ----
 #
