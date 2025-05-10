@@ -275,7 +275,7 @@ function_code_to_function_map = {
     FUNCTION_CODE.READ_HOLDING_REGISTERS: read_holding_registers,
     FUNCTION_CODE.READ_INPUT_REGISTERS: read_input_registers,
     FUNCTION_CODE.WRITE_SINGLE_COIL: write_single_coil,
-    FUNCTION_CODE.WRITE_SINGLE_REGISTER: write_multiple_coils,
-    FUNCTION_CODE.WRITE_MULTIPLE_COILS: write_single_register,
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: write_single_register,
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: write_multiple_coils,
     FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: write_multiple_registers
 }
