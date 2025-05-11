@@ -1714,7 +1714,6 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers: [0x0208, 0x0211, 0x0203, 0x0209, 0x020E, 0x0202]
         uint: enforce
         sensors:
           - registers: [0x0208]
@@ -1736,21 +1735,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x020A,
-            0x020B,
-            0x0216,
-            0x0217,
-            0x0206,
-            0x0207,
-            0x020C,
-            0x020D,
-            0x020F,
-            0x0210,
-            0x0204,
-            0x0205,
-          ]
         uint: enforce
         sensors:
           - registers: [0x020A, 0x020B]
@@ -2012,7 +1996,6 @@ parameters:
         uom: "A"
         scale: 0.01
         rule: 2
-        registers: [0x024F, 0x0252]
         sensors:
           - signed:
             registers: [0x024F]
@@ -2388,7 +2371,6 @@ parameters:
         rule: 1
         digits: 0
         scale: [1, 10]
-        registers: [0x024E, 0x02A0, 0x02A1, 0x02A2, 0x02A3, 0x027C, 0x02B6]
         uint: enforce
         sensors:
           - signed:
@@ -2628,7 +2610,6 @@ parameters:
         rule: 1
         digits: 0
         scale: [1, 10]
-        registers: [0x02A0, 0x02A1, 0x02A2, 0x02A3]
         sensors:
           - registers: [0x02A0]
           - registers: [0x02A1]

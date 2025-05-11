@@ -22,7 +22,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x0586, 0x0589]
         scale: 10
         sensors:
           - registers: [0x0586]

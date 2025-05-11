@@ -47,7 +47,6 @@ parameters:
         rule: 2
         digits: 3
         scale: 0.1
-        registers: [0x0101, 0x0102]
         sensors:
           - registers: [0x0101]
           - operator: multiply

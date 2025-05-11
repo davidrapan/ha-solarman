@@ -84,7 +84,7 @@ parameters:
         uom: "W"
         scale: 10
         rule: 1
-        registers: [0x0586, 0x0589] # [0x05C4] IllegalDataAddressError
+        #registers: [0x05C4] IllegalDataAddressError
         sensors:
           - registers: [0x0586]
           - registers: [0x0589]

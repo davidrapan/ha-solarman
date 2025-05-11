@@ -21,7 +21,6 @@ parameters:
         uom: "W"
         scale: 0.1
         rule: 1
-        registers: [0x3B01, 0x3B02]
         sensors:
           - registers: [0x3B01]
           - registers: [0x3B02]
@@ -132,7 +131,6 @@ parameters:
         uom: "W"
         scale: 0.1
         rule: 2
-        registers: [0x381E, 0x381D, 0x3828, 0x3827]
         uint: enforce
         sensors:
           - signed:
@@ -155,7 +153,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x3909, 0x3908, 0x3B01, 0x3B02, 0x381E, 0x381D]
         uint: enforce
         sensors:
           - registers: [0x3B01]
@@ -268,21 +265,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x389A,
-            0x3899,
-            0x38A0,
-            0x389F,
-            0x3831,
-            0x3830,
-            0x3897,
-            0x3896,
-            0x389D,
-            0x389C,
-            0x3894,
-            0x3893,
-          ]
         uint: enforce
         sensors:
           - registers: [0x389A, 0x3899]

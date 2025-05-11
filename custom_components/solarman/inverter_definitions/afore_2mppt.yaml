@@ -232,7 +232,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x022A, 0x0229, 0x020B, 0x020A]
         uint: enforce
         sensors:
           - registers: [0x022A, 0x0229]

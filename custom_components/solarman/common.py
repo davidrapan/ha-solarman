@@ -152,6 +152,13 @@ def process_descriptions(item, group, table, code, mod):
     item["key"] = entity_key(item)
     g = dict(group)
     g.pop("items")
+    if not "registers" in item and (sensors := item.get("sensors")):
+        registers = item.setdefault("registers", [])
+        for s in sensors:
+            if (r := s.get("registers")):
+                registers.extend(r)
+                if (m := s.get("multiply")) and (m_r := m.get("registers")):
+                    registers.extend(m_r)
     bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
     if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)

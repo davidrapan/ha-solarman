@@ -221,21 +221,6 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x316B,
-            0x316C,
-            0x316F,
-            0x3170,
-            0x3153,
-            0x3154,
-            0x3155,
-            0x3156,
-            0x316D,
-            0x316E,
-            0x3157,
-            0x3158,
-          ]
         uint: enforce
         sensors:
           - registers: [0x316B, 0x316C]
@@ -257,21 +242,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x317D,
-            0x317E,
-            0x3181,
-            0x3182,
-            0x3165,
-            0x3166,
-            0x3167,
-            0x3168,
-            0x3181,
-            0x3182,
-            0x3169,
-            0x3170,
-          ]
         uint: enforce
         sensors:
           - registers: [0x317D, 0x317E]

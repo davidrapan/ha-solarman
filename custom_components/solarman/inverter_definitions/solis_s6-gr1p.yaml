@@ -147,7 +147,7 @@ parameters:
         registers: [3041]
         icon: "mdi:thermometer"
 
-  # Sensors below are outside of modbus request ranges.
+  # Registers below are outside of modbus request ranges.
   # If enabling, ensure to amend the request start register.
   #    - name: "Inverter ID"
   #      rule: 5

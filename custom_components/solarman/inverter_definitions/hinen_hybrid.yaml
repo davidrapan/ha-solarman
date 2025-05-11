@@ -276,7 +276,7 @@ parameters:
         friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
-        uom: "kW"
+        uom: "kWh"
         scale: .1
         rule: 2
         registers: [273, 272]
