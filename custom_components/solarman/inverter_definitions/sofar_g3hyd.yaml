@@ -78,26 +78,34 @@
 # ---- End of force charge automation ----
 #
 
+info:
+  manufacturer: Sofar
+  model: G3
+
 default:
   update_interval: 10
   digits: 6
 
 parameters:
-  - group: Inverter
+  - group: Device
     items:
       - name: "Inverter status"
+        class: "enum"
         rule: 1
         registers: [0x0404]
         icon: "mdi:state-machine"
+        range:
+          min: 0
+          max: 9
         lookup:
           - key: 0
             value: "Waiting"
           - key: 1
             value: "Detection"
           - key: 2
-            value: "Grid-connected"
+            value: "On-grid"
           - key: 3
-            value: "Emergency power supply"
+            value: "Emergency power"
           - key: 4
             value: "Recoverable fault"
           - key: 5
@@ -116,77 +124,66 @@ parameters:
         uom: "°C"
         rule: 2
         registers: [0x0418]
-        icon: "mdi:thermometer"
 
       - name: "Ambient temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0419]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 1"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041A]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041B]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 3"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041C]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 4"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041D]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 5"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041E]
-        icon: "mdi:thermometer"
 
       - name: "Radiator temperature 6"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x041F]
-        icon: "mdi:thermometer"
 
       - name: "Module temperature 1"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0420]
-        icon: "mdi:thermometer"
 
       - name: "Module temperature 2"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0421]
-        icon: "mdi:thermometer"
 
       - name: "Module temperature 3"
         class: "temperature"
         uom: "°C"
         rule: 2
         registers: [0x0422]
-        icon: "mdi:thermometer"
 
       - name: "Production Time Today"
         class: "duration"
@@ -1154,7 +1151,186 @@ parameters:
         validation:
           min: 0.1
 
-  - group: State
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: "Battery DOD"
+        alt: "Battery Depth of Discharge"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104D]
+        icon: "mdi:battery"
+
+      - name: "Battery EOD"
+        alt: "Battery End of Discharge"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104E]
+        icon: "mdi:battery"
+
+      - name: "Battery EPS Buffer"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1052]
+        icon: "mdi:battery-low"
+
+      - name: Export Surplus Limitation
+        platform: select
+        rule: 1
+        registers: [0x1023]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Enabled"
+          - key: 0x0002
+            value: "Balanced"
+
+      - name: Export Surplus Power
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 100
+        rule: 1
+        registers: [0x1024]
+        range:
+          min: 0
+          max: 65535
+
+      - name: "Storage Control Mode"
+        platform: select
+        rule: 1
+        registers: [0x1110]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Time of Use"
+          - key: 2
+            value: "Optimized Revenue"
+          - key: 3
+            value: "Passive"
+          - key: 4
+            value: "Peak Shaving"
+          - key: 5
+            value: "Off-Grid"
+          - key: 6
+            value: "Generator"
+
+      - name: "Timed Program"
+        platform: number
+        rule: 1
+        registers: [0x1111]
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 3
+
+      - name: Timed Control
+        platform: select
+        rule: 1
+        registers: [0x1112]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Charge"
+          - key: 2
+            value: "Discharge"
+          - key: 3
+            value: "Both"
+
+      - name: Timed Charge Start
+        platform: time
+        rule: 9
+        registers: [0x1113]
+
+      - name: Timed Charge End
+        platform: time
+        rule: 9
+        registers: [0x1114]
+
+      - name: Timed Discharge Start
+        platform: time
+        rule: 9
+        registers: [0x1115]
+
+      - name: Timed Discharge End
+        platform: time
+        rule: 9
+        registers: [0x1116]
+
+      - name: "Timed Charge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x1118, 0x1117]
+        range:
+          min: 0
+          max: 4294967296
+
+      - name: "Timed Discharge Power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x111A, 0x1119]
+        range:
+          min: 0
+          max: 4294967296
+
+      - name: Timed Set Program
+        platform: button
+        class: restart
+        rule: 0
+        code:
+          write: 0x06
+        registers: [0x111F]
+
+  - group: Passive mode settings
+    items:
+      - name: "Passive: Grid power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x1188, 0x1187]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Minimum Battery power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118A, 0x1189]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Maximum Battery power"
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118C, 0x118B]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+  - group: Device Fault
     items:
       - name: "Device Fault"
         class: "enum"
@@ -1176,6 +1352,8 @@ parameters:
             0x0410,
           ]
         lookup:
+          - key: 0
+            value: "OK"
           - bit: 0
             value: "ID01 Grid Overvoltage Protection"
           - bit: 1
@@ -1564,182 +1742,3 @@ parameters:
             value: "ID191 PID repair failed"
           - bit: 191
             value: "ID192 PLC module heartbeat loss"
-
-  - group: Settings
-    update_interval: 300
-    items:
-      - name: "Battery DOD"
-        alt: "Battery Depth of Discharge"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x104D]
-        icon: "mdi:battery"
-
-      - name: "Battery EOD"
-        alt: "Battery End of Discharge"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x104E]
-        icon: "mdi:battery"
-
-      - name: "Battery EPS Buffer"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x1052]
-        icon: "mdi:battery-low"
-
-      - name: Export Surplus Limitation
-        platform: select
-        rule: 1
-        registers: [0x1023]
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Enabled"
-          - key: 0x0002
-            value: "Balanced"
-
-      - name: Export Surplus Power
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        scale: 100
-        rule: 1
-        registers: [0x1024]
-        range:
-          min: 0
-          max: 65535
-
-      - name: "Storage Control Mode"
-        platform: select
-        rule: 1
-        registers: [0x1110]
-        lookup:
-          - key: 0
-            value: "Self Use"
-          - key: 1
-            value: "Time of Use"
-          - key: 2
-            value: "Optimized Revenue"
-          - key: 3
-            value: "Passive"
-          - key: 4
-            value: "Peak Shaving"
-          - key: 5
-            value: "Off-Grid"
-          - key: 6
-            value: "Generator"
-
-      - name: "Timed Program"
-        platform: number
-        rule: 1
-        registers: [0x1111]
-        configurable:
-          mode: box
-        range:
-          min: 0
-          max: 3
-
-      - name: Timed Control
-        platform: select
-        rule: 1
-        registers: [0x1112]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Charge"
-          - key: 2
-            value: "Discharge"
-          - key: 3
-            value: "Both"
-
-      - name: Timed Charge Start
-        platform: time
-        rule: 9
-        registers: [0x1113]
-
-      - name: Timed Charge End
-        platform: time
-        rule: 9
-        registers: [0x1114]
-
-      - name: Timed Discharge Start
-        platform: time
-        rule: 9
-        registers: [0x1115]
-
-      - name: Timed Discharge End
-        platform: time
-        rule: 9
-        registers: [0x1116]
-
-      - name: "Timed Charge Power"
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x1118, 0x1117]
-        range:
-          min: 0
-          max: 4294967296
-
-      - name: "Timed Discharge Power"
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x111A, 0x1119]
-        range:
-          min: 0
-          max: 4294967296
-
-      - name: Timed Set Program
-        platform: button
-        class: restart
-        rule: 0
-        code:
-          write: 0x06
-        registers: [0x111F]
-
-  - group: Passive mode settings
-    items:
-      - name: "Passive: Grid power"
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 2
-        registers: [0x1188, 0x1187]
-        range:
-          min: -2147483648 
-          max: 2147483647
-
-      - name: "Passive: Minimum Battery power"
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 2
-        registers: [0x118A, 0x1189]
-        range:
-          min: -2147483648 
-          max: 2147483647
-
-      - name: "Passive: Maximum Battery power"
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 2
-        registers: [0x118C, 0x118B]
-        range:
-          min: -2147483648 
-          max: 2147483647
