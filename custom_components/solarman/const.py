@@ -30,7 +30,7 @@ CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
-OLD_ = { "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
+OLD_ = { "name": "name", "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
 SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"
