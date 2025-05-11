@@ -1377,10 +1377,10 @@ parameters:
         icon: "mdi:transmission-tower"
         configurable:
           min: 0
-          max: 22000
+          max: 50000
         range:
           min: 0
-          max: [22000, 2200]
+          max: [50000, 5000]
 
   - group: BMS
     items:
