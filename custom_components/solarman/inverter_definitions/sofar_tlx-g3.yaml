@@ -33,7 +33,7 @@ parameters:
           - key: 2
             value: "On-grid"
           - key: 3
-            value: "Emergency power"
+            value: "Emergency power supply"
           - key: 4
             value: "Recoverable fault"
           - key: 5
@@ -75,6 +75,7 @@ parameters:
         icon: "mdi:omega"
 
   - group: PV
+    update_interval: 5
     items:
       - name: "PV Power"
         class: "power"
@@ -154,6 +155,7 @@ parameters:
         icon: "mdi:solar-power-variant"
 
   - group: Load
+    update_interval: 5
     items:
       - name: "Frequency"
         class: "frequency"
@@ -227,6 +229,7 @@ parameters:
         icon: "mdi:alpha-a-circle-outline"
 
   - group: Energy
+    update_interval: 30
     items:
       - name: "Today Production"
         friendly_name: Today's Production

@@ -487,20 +487,12 @@ parameters:
         rule: 2
         offset: 0
         registers: [4058]
-        icon: "mdi:thermometer"
 
-      # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         platform: binary_sensor
         device_class: running
         rule: 1
         registers: [4056]
-
-      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-      - name: ""
-        platform: switch
-        rule: 1
-        registers: [20030]
 
   - group: Alarm
     items:
@@ -514,7 +506,13 @@ parameters:
             value: "No Alert"
 
   - group: Settings
+    update_interval: 300
     items:
+      - name: ""
+        platform: switch
+        rule: 1
+        registers: [20030]
+
       - name: "Battery Type"
         attribute:
         rule: 2

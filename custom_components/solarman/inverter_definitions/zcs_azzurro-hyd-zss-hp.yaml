@@ -7,12 +7,11 @@
 #
 
 default:
-  update_interval: 60
+  update_interval: 10
   digits: 6
 
 parameters:
   - group: Device
-    update_interval: 5
     items:
       - name: "Device State"
         class: "enum"
@@ -30,7 +29,7 @@ parameters:
           - key: 2
             value: "On-grid"
           - key: 3
-            value: "Emergency power"
+            value: "Emergency power supply"
           - key: 4
             value: "Recoverable fault"
           - key: 5
@@ -71,6 +70,9 @@ parameters:
         rule: 2
         registers: [0x0683]
 
+  - group: Info
+    update_interval: 3600
+    items:
       - name: "Serial Number"
         update_interval: 60
         rule: 5
@@ -290,8 +292,7 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        # change this to 1 if it doesn't work
-        rule: 2
+        rule: 2  # change this to 1 if it doesn't work
         registers: [0x0607]
 
       - name: "Total Battery Charge"
@@ -511,7 +512,6 @@ parameters:
           min: 0.1
 
   - group: Device Fault
-    update_interval: 10
     items:
       - name: "Device Fault"
         class: "enum"

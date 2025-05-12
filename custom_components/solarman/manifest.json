@@ -11,5 +11,5 @@
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
   "quality_scale": "custom",
   "requirements": ["propcache", "aiofiles", "pyyaml"],
-  "version": "25.05.10"
+  "version": "25.05.12"
 }

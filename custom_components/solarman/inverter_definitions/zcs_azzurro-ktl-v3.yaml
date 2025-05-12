@@ -31,7 +31,7 @@ parameters:
           - key: 2
             value: "On-grid"
           - key: 3
-            value: "Emergency power"
+            value: "Emergency power supply"
           - key: 4
             value: "Recoverable fault"
           - key: 5
@@ -72,6 +72,7 @@ parameters:
         registers: [0x0683]
 
   - group: PV
+    update_interval: 5
     items:
       - name: "PV Power"
         description: "Combined power of all inputs"
@@ -152,6 +153,7 @@ parameters:
         icon: "mdi:solar-power"
 
   - group: Load
+    update_interval: 5
     items:
       - name: "Frequency"
         class: "frequency"
@@ -232,6 +234,7 @@ parameters:
         icon: "mdi:solar-power"
 
   - group: Energy
+    update_interval: 30
     items:
       - name: Today Production
         friendly_name: Today's Production
