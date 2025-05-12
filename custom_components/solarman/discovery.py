@@ -5,6 +5,7 @@ import logging
 import asyncio
 
 from ipaddress import IPv4Network
+from datetime import datetime, timedelta
 
 from homeassistant.core import HomeAssistant
 from homeassistant.components import network
@@ -39,7 +40,10 @@ class DiscoveryProtocol:
         _LOGGER.debug(f"DiscoveryProtocol: Connection closed")
 
 class Discovery:
+    semaphore = asyncio.Semaphore(1)
     networks = None
+    devices = None
+    d_when = None
 
     def __init__(self, hass: HomeAssistant, ip = None, serial = None):
         self._hass = hass
@@ -65,6 +69,7 @@ class Discovery:
 
     async def _discover_all(self):
         if Discovery.networks is None:
+            _LOGGER.debug(f"_discover_all: network.async_get_adapters")
             Discovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
         _LOGGER.debug(f"_discover_all: Broadcasting on {Discovery.networks}")
@@ -82,13 +87,11 @@ class Discovery:
             if ping_only:
                 return self._devices
 
-        attempts_left = 1
-        while len(self._devices) == 0 and attempts_left > 0:
-            attempts_left -= 1
-
-            self._devices = {item[0]: item[1] async for item in self._discover_all()}
-
-            if len(self._devices) == 0:
-                _LOGGER.debug(f"discover: {f'attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'}'}")
+        if not self._devices:
+            async with Discovery.semaphore:
+                if Discovery.devices is not None and (datetime.now() - Discovery.d_when) < timedelta(seconds = 10):
+                    return Discovery.devices
+                Discovery.devices = self._devices = {item[0]: item[1] async for item in self._discover_all()}
+                Discovery.d_when = datetime.now()
 
         return self._devices
