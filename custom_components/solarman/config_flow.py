@@ -101,6 +101,10 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                     self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info.ip})
                     self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
                     return self.async_abort(reason = "already_configured")
+        try:
+            self._async_abort_entries_match({ CONF_HOST: discovery_info.ip })
+        except:
+            return self.async_abort(reason = "already_configured")
         await self._async_handle_discovery_without_unique_id()
         return await self.async_step_user()
 
