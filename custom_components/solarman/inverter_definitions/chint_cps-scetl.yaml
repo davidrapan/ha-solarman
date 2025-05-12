@@ -642,7 +642,6 @@ parameters:
         state_class: "total_increasing"
         uom: "kWh"
         rule: 3
-        registers: [0x1022, 0x1021, 0x104C]
         icon: "mdi:solar-power"
         sensors:
           - registers: [0x1022, 0x1021]
@@ -753,7 +752,6 @@ parameters:
         uom: "W"
         scale: 0.1
         rule: 3
-        registers: [0x1049, 0x1048, 0x200A, 0x2009, 0x1038, 0x1037]
         uint: enforce
         sensors:
           - registers: [0x1049, 0x1048]
@@ -789,22 +787,6 @@ parameters:
         rule: 3
         digits: 2
         scale: 0.01
-        registers:
-          [
-            0x1307,
-            0x1306,
-            0x1022,
-            0x1021,
-            0x104C,
-            0x2010,
-            0x200F,
-            0x1309,
-            0x1308,
-            0x1311,
-            0x1310,
-            0x200E,
-            0x200D,
-          ]
         uint: enforce
         sensors:
           - registers: [0x1307, 0x1306]
@@ -837,21 +819,6 @@ parameters:
         rule: 1
         scale: 0.01
         digits: 1
-        registers:
-          [
-            0x1333,
-            0x1332,
-            0x1028,
-            0x1027,
-            0x2010,
-            0x200F,
-            0x1335,
-            0x1334,
-            0x1337,
-            0x1336,
-            0x200C,
-            0x200B,
-          ]
         uint: enforce
         sensors:
           - registers: [0x1333, 0x1332]

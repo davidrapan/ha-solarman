@@ -11,6 +11,116 @@ default:
   digits: 6
 
 parameters:
+  - group: Device
+    update_interval: 5
+    items:
+      - name: "Device State"
+        class: "enum"
+        rule: 1
+        registers: [0x0404]
+        icon: "mdi:state-machine"
+        range:
+          min: 0
+          max: 9
+        lookup:
+          - key: 0
+            value: "Waiting"
+          - key: 1
+            value: "Detection"
+          - key: 2
+            value: "On-grid"
+          - key: 3
+            value: "Emergency power"
+          - key: 4
+            value: "Recoverable fault"
+          - key: 5
+            value: "Permanent fault"
+          - key: 6
+            value: "Upgrade"
+          - key: 7
+            value: "Self-charging"
+          - key: 8
+            value: "SVG"
+          - key: 9
+            value: "PID"
+
+      - name: "Ambient temperature"
+        class: "temperature"
+        uom: "°C"
+        rule: 2
+        registers: [0x0418]
+
+      - name: "Heatsink temperature"
+        class: "temperature"
+        uom: "°C"
+        rule: 2
+        registers: [0x041A]
+
+      - name: "Insulation resistance"
+        update_interval: 30
+        state_class: "measurement"
+        uom: "kΩ"
+        rule: 1
+        registers: [0x042B]
+        icon: "mdi:omega"
+
+      - name: "Temperature"
+        class: "temperature"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0683]
+
+      - name: "Serial Number"
+        update_interval: 60
+        rule: 5
+        registers: [
+            0x0445,
+            0x0446,
+            0x0447,
+            0x0448,
+            0x0449,
+            0x044A,
+            0x044B,
+            0x044C,
+          ] # serial number 17th to 20th digits are in 0x0470 and 0x0471
+
+      - name: "Hardware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x044D, 0x044E]
+        icon: "mdi:alpha-v"
+
+      - name: "Software Version Master"
+        update_interval: 60
+        rule: 5
+        registers: [0x0453, 0x0454, 0x0455, 0x0456]
+        icon: "mdi:alpha-v"
+
+      - name: "Software Version Slave"
+        update_interval: 60
+        rule: 5
+        registers: [0x0457, 0x0458, 0x0459, 0x045A]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x045B, 0x045C]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Firmware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x0460, 0x0461, 0x0462, 0x0463]
+        icon: "mdi:alpha-v"
+
+      - name: "Safety Hardware Version"
+        update_interval: 60
+        rule: 5
+        registers: [0x0464, 0x0465]
+        icon: "mdi:alpha-v"
+
   - group: PV
     update_interval: 5
     items:
@@ -22,11 +132,14 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x0586, 0x0589]
         scale: 10
         sensors:
           - registers: [0x0586]
           - registers: [0x0589]
+        validation:
+          min: 0
+          max: 50000
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
@@ -180,7 +293,6 @@ parameters:
         # change this to 1 if it doesn't work
         rule: 2
         registers: [0x0607]
-        icon: "mdi:thermometer"
 
       - name: "Total Battery Charge"
         alt: "Battery Charge Total"
@@ -326,10 +438,12 @@ parameters:
         registers: [0x0507]
         icon: "mdi:home-lightning-bolt"
 
+  - group: Energy
+    update_interval: 30
+    items:
       - name: "Today Energy Import"
         alt: Energy Purchase Today
         friendly_name: Today's Energy Import
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -340,7 +454,6 @@ parameters:
 
       - name: "Total Energy Import"
         alt: "Energy Purchase Total"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -354,7 +467,6 @@ parameters:
       - name: "Today Energy Export"
         alt: Energy Selling Today
         friendly_name: Today's Energy Export
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -365,7 +477,6 @@ parameters:
 
       - name: "Total Energy Export"
         alt: "Energy Selling Total"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -379,7 +490,6 @@ parameters:
       - name: "Today Load Consumption"
         alt: "Today Power Consumption"
         friendly_name: "Today's Load Consumption"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -390,7 +500,6 @@ parameters:
 
       - name: "Total Load Consumption"
         alt: "Total Power Consumption"
-        update_interval: 30
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -401,110 +510,13 @@ parameters:
         validation:
           min: 0.1
 
-  - group: Device
-    update_interval: 5
+  - group: Device Fault
+    update_interval: 10
     items:
-      - name: "Device State"
+      - name: "Device Fault"
         class: "enum"
-        rule: 1
-        registers: [0x0404]
-        icon: "mdi:state-machine"
-        lookup:
-          - key: 0x0000
-            value: "Waiting"
-          - key: 0x0001
-            value: "Checking grid"
-          - key: 0x0002
-            value: "Grid connected"
-          - key: 0x0003
-            value: "Emergency power supply"
-          - key: 0x0004
-            value: "Recoverable fault"
-          - key: 0x0005
-            value: "Permanent fault"
-          - key: 0x0006
-            value: "Upgrade"
-          - key: 0x0007
-            value: "Self-charging"
-
-      - name: "Temperature"
-        class: "temperature"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x0683]
-        icon: "mdi:thermometer"
-
-      - name: "Ambient temperature"
-        class: "temperature"
-        uom: "°C"
-        rule: 2
-        registers: [0x0418]
-        icon: "mdi:thermometer"
-
-      - name: "Heatsink temperature"
-        class: "temperature"
-        uom: "°C"
-        rule: 2
-        registers: [0x041A]
-        icon: "mdi:thermometer"
-
-      - name: "Insulation Resistance"
-        update_interval: 30
-        state_class: "measurement"
-        uom: "kΩ"
-        rule: 1
-        registers: [0x042B]
-        icon: "mdi:omega"
-
-      - name: "Serial Number"
-        update_interval: 60
-        rule: 5
-        registers: [0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C] # serial number 17th to 20th digits are in 0x0470 and 0x0471
-        icon: "mdi:barcode"
-
-      - name: "Hardware Version"
-        update_interval: 60
-        rule: 5
-        registers: [0x044D, 0x044E]
-        icon: "mdi:alpha-v"
-
-      - name: "Software Version Master"
-        update_interval: 60
-        rule: 5
-        registers: [0x0453, 0x0454, 0x0455, 0x0456]
-        icon: "mdi:alpha-v"
-
-      - name: "Software Version Slave"
-        update_interval: 60
-        rule: 5
-        registers: [0x0457, 0x0458, 0x0459, 0x045A]
-        icon: "mdi:alpha-v"
-
-      - name: "Safety Version"
-        update_interval: 60
-        rule: 5
-        registers: [0x045B, 0x045C]
-        icon: "mdi:alpha-v"
-
-      - name: "Safety Firmware Version"
-        update_interval: 60
-        rule: 5
-        registers: [0x0460, 0x0461, 0x0462, 0x0463]
-        icon: "mdi:alpha-v"
-
-      - name: "Safety Hardware Version"
-        update_interval: 60
-        rule: 5
-        registers: [0x0464, 0x0465]
-        icon: "mdi:alpha-v"
-
-  - group: Alarm
-    update_interval: 5
-    items:
-      - name: "Device Alarm"
-        update_interval: 30
-        rule: 6
+        rule: 3
+        icon: "mdi:message-alert-outline"
         registers:
           [
             0x0405,
@@ -520,485 +532,394 @@ parameters:
             0x040F,
             0x0410,
           ]
-
-      - name: "Fault 1"
-        rule: 1
-        registers: [0x0405]
-        icon: "mdi:wrench"
         lookup:
           - key: 0
-            value: "No error"
-          - key: 1
-            value: "ID01 Grid Over Voltage Protection"
-          - key: 2
-            value: "ID02 Grid Under Voltage Protection"
-          - key: 4
-            value: "ID03 Grid Over Frequency Protection"
-          - key: 8
-            value: "ID04 Grid Under Frequency Protection"
+            value: "OK"
+          - bit: 0
+            value: "ID01 Grid Overvoltage Protection"
+          - bit: 1
+            value: "ID02 Grid Undervoltage Protection"
+          - bit: 2
+            value: "ID03 Grid Overfrequency Protection"
+          - bit: 3
+            value: "ID04 Grid Underfrequency Protection"
           - key: 10
-            value: "Off-Grid"
-          - key: 16
+            value: "LOOKUP" # off-grid
+          - key: 14
+            value: "ID03 Grid Overfrequency Protection" # also ID14 Grid voltage unbalance
+          - bit: 4
             value: "ID05 Leakage current fault"
-          - key: 32
+          - bit: 5
             value: "ID06 High penetration error"
-          - key: 64
+          - bit: 6
             value: "ID07 Low penetration error"
-          - key: 128
+          - bit: 7
             value: "ID08 Islanding error"
-          - key: 256
+          - bit: 8
             value: "ID09 Grid voltage transient value overvoltage 1"
-          - key: 512
+          - bit: 9
             value: "ID10 Grid voltage transient value overvoltage 2"
-          - key: 1024
+          - bit: 10
             value: "ID11 Grid line voltage error"
-          - key: 2048
+          - bit: 11
             value: "ID12 Inverter voltage error"
-          - key: 4096
+          - bit: 12
             value: "ID13 Anti-backflow overload"
-          - key: 8192
-            value: "ID14"
-          - key: 16384
-            value: "ID15"
-          - key: 32768
-            value: "ID16"
-
-      - name: "Fault 2"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0406]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 13
+            value: "ID14 Grid line voltage unbalance"
+          - bit: 14
+            value: "ID15 Inverter transient overvoltage"
+          - bit: 15
+            value: "ID16 Sudden grid phase change"
+          - bit: 16
             value: "ID17 Grid current sampling error"
-          - key: 2
+          - bit: 17
             value: "ID18 Grid current DC component sampling error (AC side)"
-          - key: 4
+          - bit: 18
             value: "ID19 Grid voltage sampling error (DC side)"
-          - key: 8
+          - bit: 19
             value: "ID20 Grid voltage sampling error (AC side)"
-          - key: 16
+          - bit: 20
             value: "ID21 Leakage current sampling error (DC side)"
-          - key: 32
+          - bit: 21
             value: "ID22 Leakage current sampling error (AC side)"
-          - key: 64
+          - bit: 22
             value: "ID23 Load voltage DC component sampling error"
-          - key: 128
+          - bit: 23
             value: "ID24 DC input current sampling error"
-          - key: 256
+          - bit: 24
             value: "ID25 DC component sampling error of grid current (DC side)"
-          - key: 512
+          - bit: 25
             value: "ID26 DC input branch current sampling error"
-          - key: 1024
-            value: "ID27"
-          - key: 2048
-            value: "ID28"
-          - key: 4096
+          - bit: 26
+            value: "ID27 PV low impedance to ground"
+          - bit: 27
+            value: "ID28 PID abnormal output"
+          - bit: 28
             value: "ID29 Leakage current consistency error"
-          - key: 8192
+          - bit: 29
             value: "ID30 Grid voltage consistency error"
-          - key: 16384
+          - bit: 30
             value: "ID31 DCI consistency error"
-          - key: 32768
-            value: "ID32"
-
-      - name: "Fault 3"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0407]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 31
+            value: "ID32 Neutral ground fault"
+          - bit: 32
             value: "ID033 SPI communication error (DC side)"
-          - key: 2
+          - bit: 33
             value: "ID034 SPI communication error (AC side)"
-          - key: 4
+          - bit: 34
             value: "ID035 Chip error (DC side)"
-          - key: 8
+          - bit: 35
             value: "ID036 Chip error (AC side)"
-          - key: 16
+          - bit: 36
             value: "ID037 Auxiliary power error"
-          - key: 32
+          - bit: 37
             value: "ID038 Inverter soft start failure"
-          - key: 64
-            value: "ID039 "
-          - key: 128
-            value: "ID040 "
-          - key: 256
+          - bit: 38
+            value: "ID039 Arc shutdown protection"
+          - bit: 39
+            value: "ID040 Weak light detection failure"
+          - bit: 40
             value: "ID041 Relay detection failure"
-          - key: 512
+          - bit: 41
             value: "ID042 Low insulation impedance"
-          - key: 1024
+          - bit: 42
             value: "ID043 Grounding error"
-          - key: 2048
+          - bit: 43
             value: "ID044 Input mode setting error"
-          - key: 4096
+          - bit: 44
             value: "ID045 CT error"
-          - key: 8192
+          - bit: 45
             value: "ID046 Input reversal error"
-          - key: 16384
+          - bit: 46
             value: "ID047 Parallel error"
-          - key: 32768
+          - bit: 47
             value: "ID048 Serial number error"
-
-      - name: "Fault 4"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0408]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 48
             value: "ID049 Battery temperature protection"
-          - key: 2
-            value: "ID050 Heat sink 1 temperature protection"
-          - key: 4
+          - bit: 49
+            value: "ID050 Heatsink 1 temperature protection"
+          - bit: 50
             value: "ID051 Heater 2 temperature protection"
-          - key: 8
+          - bit: 51
             value: "ID052 Heater 3 temperature protection"
-          - key: 16
+          - bit: 52
             value: "ID053 Heatsink 4 temperature protection"
-          - key: 32
-            value: "ID054 Heatsink 5 temperature protection"
-          - key: 64
+          - bit: 53
+            value: "ID054 Radiator 5 temperature protection"
+          - bit: 54
             value: "ID055 Radiator 6 temperature protection"
-          - key: 128
-            value: "ID056 "
-          - key: 256
+          - bit: 55
+            value: "ID056 Reserved"
+          - bit: 56
             value: "ID057 Ambient temperature 1 protection"
-          - key: 512
+          - bit: 57
             value: "ID058 Ambient temperature 2 protection"
-          - key: 1024
+          - bit: 58
             value: "ID059 Module 1 temperature protection"
-          - key: 2048
+          - bit: 59
             value: "ID060 Module 2 temperature protection"
-          - key: 4096
+          - bit: 60
             value: "ID061 Module 3 temperature protection"
-          - key: 8192
+          - bit: 61
             value: "ID062 Module temperature difference is too large"
-          - key: 16384
-            value: "ID063 "
-          - key: 32768
-            value: "ID064 "
-
-      - name: "Fault 5"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0409]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 62
+            value: "ID063 Reserved"
+          - bit: 63
+            value: "ID064 Reserved"
+          - bit: 64
             value: "ID065 Bus voltage RMS unbalance"
-          - key: 2
-            value: "ID066 Bus voltage transient   value unbalance"
-          - key: 4
-            value: "ID067 Undervoltage of busbar during grid connection"
-          - key: 8
+          - bit: 65
+            value: "ID066 Bus voltage transient value unbalance"
+          - bit: 66
+            value: "ID067 Bus undervoltage during grid connection"
+          - bit: 67
             value: "ID068 Bus bar low voltage"
-          - key: 16
+          - bit: 68
             value: "ID069 PV overvoltage"
-          - key: 32
-            value: "ID070 Battery over-voltage"
-          - key: 64
-            value: "ID071 LLCBus overvoltage protection"
-          - key: 128
+          - bit: 69
+            value: "ID070 Battery overvoltage"
+          - bit: 70
+            value: "ID071 LLC bus overvoltage protection"
+          - bit: 71
             value: "ID072 Inverter bus voltage RMS software overvoltage"
-          - key: 256
+          - bit: 72
             value: "ID073 Inverter bus voltage transient value software overvoltage"
-          - key: 512
+          - bit: 73
             value: "ID074 Flying Cross Capacitor Overvoltage Protection"
-          - key: 1024
+          - bit: 74
             value: "ID075 Flying Cross capacitor undervoltage protection"
-          - key: 2048
-            value: "ID076 "
-          - key: 4096
-            value: "ID077 "
-          - key: 8192
-            value: "ID078 "
-          - key: 16384
-            value: "ID079 "
-          - key: 32768
-            value: "ID080 "
-
-      - name: "Fault 6"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040A]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 75
+            value: "ID076 Reserved"
+          - bit: 76
+            value: "ID077 Reserved"
+          - bit: 77
+            value: "ID078 Reserved"
+          - bit: 78
+            value: "ID079 Reserved"
+          - bit: 79
+            value: "ID080 Reserved"
+          - bit: 80
             value: "ID081 Battery overcurrent software protection"
-          - key: 2
-            value: "ID082 Dci overcurrent protection"
-          - key: 4
+          - bit: 81
+            value: "ID082 DCI overcurrent protection"
+          - bit: 82
             value: "ID083 Output transient current protection"
-          - key: 8
-            value: "ID084 BuckBoost software overcurrent"
-          - key: 16
+          - bit: 83
+            value: "ID084 Buck-Boost software overcurrent"
+          - bit: 84
             value: "ID085 Output RMS current protection"
-          - key: 32
+          - bit: 85
             value: "ID086 PV instantaneous current overcurrent software protection"
-          - key: 64
+          - bit: 86
             value: "ID087 PV parallel uneven current"
-          - key: 128
+          - bit: 87
             value: "ID088 Output current unbalance"
-          - key: 256
+          - bit: 88
             value: "ID089 PV software overcurrent protection"
-          - key: 512
+          - bit: 89
             value: "ID090 Balanced circuit overcurrent protection"
-          - key: 1024
+          - bit: 90
             value: "ID091 Resonance protection"
-          - key: 2048
-            value: "ID092 "
-          - key: 4096
-            value: "ID093 "
-          - key: 8192
-            value: "ID094 "
-          - key: 16384
-            value: "ID095 "
-          - key: 32768
-            value: "ID096 "
-
-      - name: "Fault 7"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040B]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 91
+            value: "ID092 Reserved"
+          - bit: 92
+            value: "ID093 Reserved"
+          - bit: 93
+            value: "ID094 Reserved"
+          - bit: 94
+            value: "ID095 Reserved"
+          - bit: 95
+            value: "ID096 Reserved"
+          - bit: 96
             value: "ID097 LLC bus hardware overvoltage"
-          - key: 2
+          - bit: 97
             value: "ID098 Inverter bus hardware overvoltage"
-          - key: 4
-            value: "ID099 BuckBoost hardware overcurrent"
-          - key: 8
+          - bit: 98
+            value: "ID099 Buck-Boost hardware overcurrent"
+          - bit: 99
             value: "ID100 Battery hardware overcurrent"
-          - key: 16
-            value: "ID101 "
-          - key: 32
+          - bit: 100
+            value: "ID101 Reserved"
+          - bit: 101
             value: "ID102 PV hardware overcurrent"
-          - key: 64
+          - bit: 102
             value: "ID103 AC output hardware overcurrent"
-          - key: 128
-            value: "ID104 "
-          - key: 256
-            value: "ID105 Power meter error"
-          - key: 512
+          - bit: 103
+            value: "ID104 Hardware differential overcurrent"
+          - bit: 104
+            value: "ID105 Meter communication error"
+          - bit: 105
             value: "ID106 Serial number model error"
-          - key: 1024
-            value: "ID107 "
-          - key: 2048
-            value: "ID108 "
-          - key: 4096
-            value: "ID109 "
-          - key: 8192
+          - bit: 106
+            value: "ID107 Hardware version mismatch"
+          - bit: 107
+            value: "ID108 Reserved"
+          - bit: 108
+            value: "ID109 Reserved"
+          - bit: 109
             value: "ID110 Overload protection 1"
-          - key: 16384
+          - bit: 110
             value: "ID111 Overload protection 2"
-          - key: 32768
+          - bit: 111
             value: "ID112 Overload protection 3"
-
-      - name: "Fault 8"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040C]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
-            value: "ID113 Overtemperature derating"
-          - key: 2
+          - bit: 112
+            value: "ID113 Overtemperature load shedding"
+          - bit: 113
             value: "ID114 Frequency down load"
-          - key: 4
+          - bit: 114
             value: "ID115 Frequency loading"
-          - key: 8
+          - bit: 115
             value: "ID116 Voltage down load"
-          - key: 16
+          - bit: 116
             value: "ID117 Voltage loading"
-          - key: 32
-            value: "ID118 "
-          - key: 64
-            value: "ID119 "
-          - key: 128
-            value: "ID120 "
-          - key: 256
+          - bit: 117
+            value: "ID118 Low temperature load shedding"
+          - bit: 118
+            value: "ID119 Reserved"
+          - bit: 119
+            value: "ID120 Reserved"
+          - bit: 120
             value: "ID121 Lightning protection failure (DC)"
-          - key: 512
+          - bit: 121
             value: "ID122 Lightning protection failure (AC)"
-          - key: 1024
-            value: "ID123 "
-          - key: 2048
+          - bit: 122
+            value: "ID123 Reserved"
+          - bit: 123
             value: "ID124 Battery low voltage protection"
-          - key: 4096
+          - bit: 124
             value: "ID125 Battery low voltage shutdown"
-          - key: 8192
+          - bit: 125
             value: "ID126 Battery low voltage pre-alarm"
-          - key: 16384
-            value: "ID127 "
-          - key: 32768
-            value: "ID128 "
-
-      - name: "Fault 9"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040D]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
-            value: "ID129 Output hardware overcurrent permanent fault"
-          - key: 2
+          - bit: 126
+            value: "ID127 Reserved"
+          - bit: 127
+            value: "ID128 Reserved"
+          - bit: 128
+            value: "ID129 AC output hardware overcurrent permanent fault"
+          - bit: 129
             value: "ID130 Bus overvoltage permanent fault"
-          - key: 4
-            value: "ID131 Bus hardware over-voltage permanent fault"
-          - key: 8
+          - bit: 130
+            value: "ID131 Bus hardware overvoltage permanent fault"
+          - bit: 131
             value: "ID132 PV uneven flow permanent fault"
-          - key: 16
+          - bit: 132
             value: "ID133 Battery overcurrent permanent fault in EPS mode"
-          - key: 32
+          - bit: 133
             value: "ID134 Output transient overcurrent permanent fault"
-          - key: 64
-            value: "ID135 Output current unbalance permanent fault"
-          - key: 128
-            value: "ID136 "
-          - key: 256
+          - bit: 134
+            value: "ID135 AC current unbalance permanent fault"
+          - bit: 135
+            value: "ID136 Inverter soft start failure fault"
+          - bit: 136
             value: "ID137 Input mode setting error permanent fault"
-          - key: 512
+          - bit: 137
             value: "ID138 Input overcurrent permanent fault"
-          - key: 1024
+          - bit: 138
             value: "ID139 Input hardware overcurrent permanent fault"
-          - key: 2048
+          - bit: 139
             value: "ID140 Relay permanent fault"
-          - key: 4096
+          - bit: 140
             value: "ID141 Bus unbalance permanent fault"
-          - key: 8192
-            value: "ID142 Lightning protection permanent fault - DC side"
-          - key: 16384
-            value: "ID143 Lightning protection permanent fault - AC side"
-          - key: 32768
-            value: "ID144 "
-
-      - name: "Fault 10"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040E]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 141
+            value: "ID142 Lightning protection permanent fault (DC side)"
+          - bit: 142
+            value: "ID143 Lightning protection permanent fault (AC side)"
+          - bit: 143
+            value: "ID144 Grid relay fault"
+          - bit: 144
             value: "ID145 USB fault"
-          - key: 2
+          - bit: 145
             value: "ID146 WIFI fault"
-          - key: 4
+          - bit: 146
             value: "ID147 Bluetooth fault"
-          - key: 8
+          - bit: 147
             value: "ID148 RTC clock fault"
-          - key: 16
+          - bit: 148
             value: "ID149 Communication board EEPROM error"
-          - key: 32
+          - bit: 149
             value: "ID150 Communication board FLASH error"
-          - key: 64
-            value: "ID151 "
-          - key: 128
+          - bit: 150
+            value: "ID151 The battery is partially disconnected"
+          - bit: 151
             value: "ID152 Safety regulation version error"
-          - key: 256
+          - bit: 152
             value: "ID153 SCI communication error (DC side)"
-          - key: 512
+          - bit: 153
             value: "ID154 SCI communication error (AC side)"
-          - key: 1024
+          - bit: 154
             value: "ID155 SCI communication error (convergence board side)"
-          - key: 2048
+          - bit: 155
             value: "ID156 Software version inconsistency"
-          - key: 4096
+          - bit: 156
             value: "ID157 Lithium battery 1 communication error"
-          - key: 8192
-            value: "ID158 Li-ion battery 2 communication error"
-          - key: 16384
+          - bit: 157
+            value: "ID158 Lithium battery 2 communication error"
+          - bit: 158
             value: "ID159 Lithium battery 3 communication error"
-          - key: 32768
-            value: "ID160 Lithium battery 4 communication failure"
-
-      - name: "Fault 11"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x040F]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 159
+            value: "ID160 Lithium battery 4 communication error"
+          - bit: 160
             value: "ID161 Forced shutdown"
-          - key: 2
+          - bit: 161
             value: "ID162 Remote shutdown"
-          - key: 4
+          - bit: 162
             value: "ID163 Drms0 shutdown"
-          - key: 8
-            value: "ID164 "
-          - key: 16
+          - bit: 163
+            value: "ID164 Power station communication failure shutdown"
+          - bit: 164
             value: "ID165 Remote down load"
-          - key: 32
+          - bit: 165
             value: "ID166 Logic interface down load"
-          - key: 64
+          - bit: 166
             value: "ID167 Anti-Reverse Flow Downgrade"
-          - key: 128
-            value: "ID168 "
-          - key: 256
+          - bit: 167
+            value: "ID168 Reserved"
+          - bit: 168
             value: "ID169 Fan 1 failure"
-          - key: 512
+          - bit: 169
             value: "ID170 Fan 2 failure"
-          - key: 1024
+          - bit: 170
             value: "ID171 Fan 3 failure"
-          - key: 2048
+          - bit: 171
             value: "ID172 Fan 4 failure"
-          - key: 4096
+          - bit: 172
             value: "ID173 Fan 5 failure"
-          - key: 8192
+          - bit: 173
             value: "ID174 Fan 6 failure"
-          - key: 16384
-            value: "ID175 Fan 7 fault"
-          - key: 32768
+          - bit: 174
+            value: "ID175 Fan 7 failure"
+          - bit: 175
             value: "ID176 Meter communication failure"
-
-      - name: "Fault 12"
-        rule: 1
-        icon: "mdi:wrench"
-        registers: [0x0410]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
-            value: "ID177 BMS over-voltage alarm"
-          - key: 2
-            value: "ID178 BMS undervoltage alarm"
-          - key: 4
-            value: "ID179 BMS high temperature alarm"
-          - key: 8
-            value: "ID180 BMS low temperature alarm"
-          - key: 16
-            value: "ID181 BMS charge/discharge overload alarm"
-          - key: 32
-            value: "ID182 BMS short circuit alarm"
-          - key: 64
+          - bit: 176
+            value: "ID177 BMS overvoltage protection"
+          - bit: 177
+            value: "ID178 BMS undervoltage protection"
+          - bit: 178
+            value: "ID179 BMS high temperature protection"
+          - bit: 179
+            value: "ID180 BMS low temperature protection"
+          - bit: 180
+            value: "ID181 BMS overcurrent protection"
+          - bit: 181
+            value: "ID182 BMS short circuit protection"
+          - bit: 182
             value: "ID183 BMS version inconsistency"
-          - key: 128
+          - bit: 183
             value: "ID184 BMS CAN version inconsistency"
-          - key: 256
+          - bit: 184
             value: "ID185 BMS CAN version is too low"
-          - key: 512
-            value: "ID186 "
-          - key: 1024
-            value: "ID187 "
-          - key: 2048
-            value: "ID188 "
-          - key: 4096
+          - bit: 185
+            value: "ID186 Battery discharge overtemperature protection"
+          - bit: 186
+            value: "ID187 Battery discharge low temperature protection"
+          - bit: 187
+            value: "ID188 Battery charging overtemperature protection"
+          - bit: 188
             value: "ID189 Arc device communication failure"
-          - key: 8192
-            value: "ID190 DC arc alarm fault"
-          - key: 16384
+          - bit: 189
+            value: "ID190 Battery charging low temperature protection"
+          - bit: 190
             value: "ID191 PID repair failed"
-          - key: 32768
+          - bit: 191
             value: "ID192 PLC module heartbeat loss"

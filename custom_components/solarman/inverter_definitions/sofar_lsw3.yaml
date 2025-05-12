@@ -20,7 +20,6 @@ parameters:
         uom: "W"
         rule: 1
         scale: 10
-        registers: [0x000A, 0x000B]
         sensors:
           - registers: [0x000A]
           - registers: [0x000B]

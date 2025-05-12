@@ -126,7 +126,6 @@ parameters:
         rule: 1
         digits: 1
         uint: enforce
-        registers: [3005, 3004, 3007, 3006]
         sensors:
           - signed:
             registers: [3005, 3004]
@@ -215,7 +214,6 @@ parameters:
         uom: "kW"
         rule: 1
         digits: 3
-        registers: [3021, 3022]
         sensors:
           - registers: [3021]
             scale: 0.1
@@ -250,7 +248,6 @@ parameters:
         uom: "kW"
         rule: 1
         digits: 3
-        registers: [3023, 3024]
         sensors:
           - registers: [3023]
             scale: 0.1

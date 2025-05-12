@@ -287,8 +287,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers:
-          [0x006D, 0x006E, 0x006F, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074]
         sensors:
           - registers: [0x006D]
             multiply:
@@ -317,7 +315,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006D, 0x006E]
         sensors:
           - registers: [0x006D]
             multiply:
@@ -355,7 +352,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006F, 0x0070]
         sensors:
           - registers: [0x006F]
             multiply:
@@ -393,7 +389,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0071, 0x0072]
         sensors:
           - registers: [0x0071]
             multiply:
@@ -431,7 +426,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0073, 0x0074]
         sensors:
           - registers: [0x0073]
             multiply:
@@ -810,19 +804,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers:
-          [
-            0x006D,
-            0x006E,
-            0x006F,
-            0x0070,
-            0x0071,
-            0x0072,
-            0x0073,
-            0x0074,
-            0x0056,
-            0x0057,
-          ]
         uint: enforce
         sensors:
           - registers: [0x006D]

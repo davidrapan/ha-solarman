@@ -9,7 +9,7 @@ from socket import getaddrinfo, herror, gaierror, timeout
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
-from homeassistant.data_entry_flow import section
+from homeassistant.data_entry_flow import section, AbortFlow
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.selector import selector
 from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
@@ -90,7 +90,7 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 8
+    MINOR_VERSION = 9
     VERSION = 1
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
@@ -119,10 +119,14 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                         continue
                 for i in range(0, 1000):
                     try:
-                        self._async_abort_entries_match({ CONF_NAME: (name := ' '.join(filter(None, (DEFAULT_[CONF_NAME], None if not i else str(i if i != 1 else 2))))) })
+                        for entry in self._async_current_entries(include_ignore = False):
+                            if entry.title == (name := ' '.join(filter(None, (DEFAULT_[CONF_NAME], None if not i else str(i if i != 1 else 2))))):
+                                raise AbortFlow("already_configured")
                         break
                     except:
                         continue
+                else:
+                    name = None
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
 
         errors = {}
@@ -130,7 +134,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         if validate_connection(user_input, errors):
             await self.async_set_unique_id(None)
             self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
-            return self.async_create_entry(title = user_input[CONF_NAME], data = filter_by_keys(user_input, DATA_SCHEMA), options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
+            return self.async_create_entry(title = user_input[CONF_NAME], data = {}, options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
 
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: connection validation failed: {user_input}")
 
@@ -155,7 +159,7 @@ class OptionsFlowHandler(OptionsFlow):
         errors = {}
 
         if validate_connection(user_input, errors):
-            return self.async_create_entry(title = self.entry.data[CONF_NAME], data = remove_defaults(user_input))
+            return self.async_create_entry(data = remove_defaults(user_input))
 
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: connection validation failed: {user_input}")
 

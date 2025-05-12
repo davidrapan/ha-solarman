@@ -77,7 +77,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0001, 0x0004]
         sensors:
           - registers: [0x0001]
             multiply:
@@ -91,7 +90,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0002, 0x0005]
         sensors:
           - registers: [0x0002]
             multiply:
@@ -105,7 +103,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0003, 0x0006]
         sensors:
           - registers: [0x0003]
             multiply:
@@ -132,7 +129,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C]
         sensors:
           - registers: [0x0007]
             multiply:
@@ -154,7 +150,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0007, 0x0008]
         sensors:
           - registers: [0x0007]
             multiply:
@@ -192,7 +187,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x0009, 0x000A]
         sensors:
           - registers: [0x0009]
             multiply:
@@ -230,7 +224,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x000B, 0x000C]
         sensors:
           - registers: [0x000B]
             multiply:
@@ -291,7 +284,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 3
-        registers: [0x0007, 0x0008, 0x0009, 0x000A, 0x0012, 0x0013]
         uint: enforce
         sensors:
           - registers: [0x0007]

@@ -16,12 +16,39 @@ default:
   digits: 4
 
 parameters:
-  - group: Info
-    update_interval: 3600
+  - group: Device
+    update_interval: 5
     items:
-      - name: Battery Software Version
+      - name: "Device State"
+        class: "enum"
         rule: 1
-        registers: [170]
+        registers: [0]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "Stand-by"
+          - key: 1
+            value: "Grid-connected"
+          - key: 2
+            value: "Off-grid"
+          - key: 3
+            value: "FAULT"
+          - key: 4
+            value: "Update mode"
+          - key: 5
+            value: "Charging"
+          - key: 6
+            value: "Discharging"
+          - key: 7
+            value: "Bypass"
+
+      - name: "Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: .1
+        rule: 2
+        registers: [132]
 
   - group: PV
     update_interval: 5
@@ -268,7 +295,14 @@ parameters:
           - key: 0x0001
             value: "Lithium"
 
-  - group: Meter
+  - group: Info
+    update_interval: 3600
+    items:
+      - name: Battery Software Version
+        rule: 1
+        registers: [170]
+
+  - group: Energy
     update_interval: 30
     items:
       - name: "Today Production"
@@ -276,7 +310,7 @@ parameters:
         friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
-        uom: "kW"
+        uom: "kWh"
         scale: .1
         rule: 2
         registers: [273, 272]
@@ -287,7 +321,7 @@ parameters:
         state_class: "total_increasing"
         uom: "kWh"
         scale: .1
-        rule: 1
+        rule: 2
         registers: [275, 274]
         icon: "mdi:solar-power"
 
@@ -392,37 +426,60 @@ parameters:
         registers: [311, 310]
         icon: mdi:transmission-tower-export
 
-  - group: Inverter
-    update_interval: 5
-    items:
-      - name: "Device State"
-        class: "enum"
-        rule: 1
-        registers: [0]
-        lookup:
-          - key: 0
-            value: "Stand-by"
-          - key: 1
-            value: "Grid-connected"
-          - key: 2
-            value: "Off-grid"
-          - key: 3
-            value: "FAULT"
-          - key: 4
-            value: "Update mode"
-          - key: 5
-            value: "Charging"
-          - key: 6
-            value: "Discharging"
-          - key: 7
-            value: "Bypass"
-        icon: "mdi:state-machine"
-
-      - name: "Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: .1
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
         rule: 2
-        registers: [132]
-        icon: "mdi:thermometer"
+        digits: 1
+        scale: .1
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [309, 308]
+          - signed:
+            registers: [273, 272]
+          - signed:
+            registers: [281, 280]
+          - operator: subtract
+            signed:
+            registers: [305, 304]
+          - operator: subtract
+            signed:
+            registers: [301, 300]
+          - operator: subtract
+            signed:
+            registers: [277, 276]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 2
+        digits: 1
+        scale: .1
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [311, 310]
+          - signed:
+            registers: [275, 274]
+          - signed:
+            registers: [283, 282]
+          - operator: subtract
+            signed:
+            registers: [307, 306]
+          - operator: subtract
+            signed:
+            registers: [303, 302]
+          - operator: subtract
+            signed:
+            registers: [279, 278]
+        validation:
+          min: 1

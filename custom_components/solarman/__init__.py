@@ -102,7 +102,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
         if not new_options.get(CONF_ADDITIONAL_OPTIONS):
             del new_options[CONF_ADDITIONAL_OPTIONS]
 
-        hass.config_entries.async_update_entry(config_entry, unique_id = None, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
+        hass.config_entries.async_update_entry(config_entry, unique_id = None, data = new_data, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
 
     _LOGGER.info("Migration to configuration version %s.%s was successful", config_entry.version, config_entry.minor_version)
 

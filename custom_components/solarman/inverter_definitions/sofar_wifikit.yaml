@@ -468,6 +468,8 @@ parameters:
             value: "Timed"
           - key: 0x0003
             value: "Passive"
+          - key: 0x0004
+            value: "Peak Shaving"
 
       - name: Timed Charge Start
         platform: time

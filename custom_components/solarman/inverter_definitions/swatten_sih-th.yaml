@@ -218,7 +218,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [4067, 4068, 10022, 4081, 4082]
         uint: enforce
         sensors:
           - signed:
@@ -314,7 +313,6 @@ parameters:
   #        uom: "kWh"
   #        rule: 1
   #        digits: 1
-  #        registers: [10036, 10002, 10026, 10045, 10040, ???]
   #        uint: enforce
   #        sensors:
   #          - scale: 0.1
@@ -342,20 +340,6 @@ parameters:
   #        uom: "kWh"
   #        rule: 3
   #        digits: 1
-  #        registers:
-  #          [
-  #            10037,
-  #            10038,
-  #            10003,
-  #            10004,
-  #            10027,
-  #            10028,
-  #            10046,
-  #            10047,
-  #            10041,
-  #            10042,
-  #            ???,
-  #          ]
   #        uint: enforce
   #        sensors:
   #          - scale: 0.1

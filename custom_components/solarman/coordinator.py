@@ -38,7 +38,7 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def async_config_entry_first_refresh(self) -> None:
         await super().async_config_entry_first_refresh()
-        device_info = build_device_info(self.device.config.config_entry.entry_id, str(self.device.modbus.serial), self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.name)
+        device_info = build_device_info(self.device.config.config_entry.entry_id, str(self.device.modbus.serial), self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
         self.device.device_info[self.device.config.config_entry.entry_id] = device_info
         _LOGGER.debug(device_info)
 
