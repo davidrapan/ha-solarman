@@ -105,7 +105,7 @@ parameters:
           - key: 2
             value: "On-grid"
           - key: 3
-            value: "Emergency power"
+            value: "Emergency power supply"
           - key: 4
             value: "Recoverable fault"
           - key: 5
@@ -200,6 +200,9 @@ parameters:
         registers: [0x042B]
         icon: "mdi:omega"
 
+  - group: Info
+    update_interval: 3600
+    items:
       - name: "Serial Number"
         rule: 5
         registers: [
@@ -244,6 +247,7 @@ parameters:
         icon: "mdi:alpha-v"
 
   - group: PV
+    update_interval: 5
     items:
       - name: "PV1 Voltage"
         class: "voltage"
@@ -380,6 +384,7 @@ parameters:
         icon: "mdi:solar-power-variant"
 
   - group: Battery
+    update_interval: 5
     items:
       - name: "Battery Voltage"
         class: "voltage"
@@ -497,6 +502,7 @@ parameters:
         icon: "mdi:battery-sync"
 
   - group: Grid
+    update_interval: 5
     items:
       - name: "Grid Frequency"
         class: "frequency"
@@ -824,6 +830,7 @@ parameters:
         registers: [0x04AF]
 
   - group: GridEPS
+    update_interval: 5
     items:
       - name: "ActivePower_Load_Total_EPS"
         class: "power"
@@ -1019,7 +1026,8 @@ parameters:
         rule: 2
         registers: [0x051F]
 
-  - group: Production
+  - group: Energy
+    update_interval: 30
     items:
       - name: "Today Production"
         friendly_name: Today's Production
