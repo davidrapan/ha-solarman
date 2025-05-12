@@ -579,6 +579,7 @@ parameters:
         sensors:
           - registers: [0x004C]
           - registers: [0x006C]
+          - registers: [0x003E]
           - registers: [0x0047]
           - operator: subtract
             registers: [0x004D]
@@ -600,6 +601,7 @@ parameters:
         sensors:
           - registers: [0x004E, 0x0050]
           - registers: [0x0060, 0x0061]
+          - registers: [0x005C, 0x005F]
           - registers: [0x004A, 0x004B]
           - operator: subtract
             registers: [0x0051, 0x0052]
