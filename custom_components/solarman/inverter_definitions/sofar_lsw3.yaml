@@ -381,206 +381,174 @@ parameters:
             value: "Reserve"
           - key: 29
             value: "Reserve"
-        icon: ""
 
-  - group: Alert
+  - group: Alarm
     items:
-      - name: "Fault 1"
+      - name: "Device Fault"
+        class: "enum"
         rule: 1
-        registers: [0x0001]
+        registers: [0x0001, 0x0002, 0x0003, 0x0004, 0x0005]
+        icon: "mdi:message-alert-outline"
         lookup:
           - key: 0
-            value: "No error"
-          - key: 1
+            value: "OK"
+          - bit: 0
             value: "ID01 Grid Over Voltage Protection"
-          - key: 2
+          - bit: 1
             value: "ID02 Grid Under Voltage Protection"
-          - key: 4
+          - bit: 2
             value: "ID03 Grid Over Frequency Protection"
-          - key: 8
+          - bit: 3
             value: "ID04 Grid Under Frequency Protection"
-          - key: 16
+          - bit: 4
             value: "ID05 PV Under Voltage Protection"
-          - key: 32
+          - bit: 5
             value: "ID06 Grid Low Voltage Ride through"
-          - key: 64
+          - bit: 6
             value: "ID07"
-          - key: 128
+          - bit: 7
             value: "ID08"
-          - key: 256
+          - bit: 8
             value: "ID09 PV Over Voltage Protection"
-          - key: 512
+          - bit: 9
             value: "ID10 PV Input Current Unbalanced"
-          - key: 1024
+          - bit: 10
             value: "ID11 PV Input Mode wrong configuration"
-          - key: 2048
+          - bit: 11
             value: "ID12 Ground-Fault circuit interrupters fault"
-          - key: 4096
+          - bit: 12
             value: "ID13 Phase sequence fault"
-          - key: 8192
+          - bit: 13
             value: "ID14 Hardware boost over current protection"
-          - key: 16384
+          - bit: 14
             value: "ID15 Hardware AC over current protection"
-          - key: 32768
+          - bit: 15
             value: "ID16 Grid current is too high"
-        icon: "mdi:wrench"
-
-      - name: "Fault 2"
-        rule: 1
-        registers: [0x0002]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 16
             value: "ID17 Grid current sampling error"
-          - key: 2
+          - bit: 17
             value: "ID18 DCI sampling error"
-          - key: 4
+          - bit: 18
             value: "ID19 Grid voltage sampling error"
-          - key: 8
+          - bit: 19
             value: "ID20 GFCI device sampling error"
-          - key: 16
+          - bit: 20
             value: "ID21 Main chip fault"
-          - key: 32
+          - bit: 21
             value: "ID22 Hardware auxiliary power fault"
-          - key: 64
+          - bit: 22
             value: "ID23 Bus voltage zero fault"
-          - key: 128
+          - bit: 23
             value: "ID24 Output current not balanced"
-          - key: 256
+          - bit: 24
             value: "ID25 Bus under voltage protection"
-          - key: 512
+          - bit: 25
             value: "ID26 Bus over voltage protection"
-          - key: 1024
+          - bit: 26
             value: "ID27 Bus voltage unbalanced"
-          - key: 2048
+          - bit: 27
             value: "ID28 DCI is too high"
-          - key: 4096
+          - bit: 28
             value: "ID29 Grid current is too high"
-          - key: 8192
+          - bit: 29
             value: "ID30 Input current is too high"
-          - key: 16384
+          - bit: 30
             value: "ID31"
-          - key: 32768
+          - bit: 31
             value: "ID32"
-        icon: "mdi:wrench"
-
-      - name: "Fault 3"
-        rule: 1
-        registers: [0x0003]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 32
             value: "ID33 Reserved"
-          - key: 2
+          - bit: 33
             value: "ID34 Reserved"
-          - key: 4
+          - bit: 34
             value: "ID35 Reserved"
-          - key: 8
+          - bit: 35
             value: "ID36 Reserved"
-          - key: 16
+          - bit: 36
             value: "ID37 Reserved"
-          - key: 32
+          - bit: 37
             value: "ID38 Reserved"
-          - key: 64
+          - bit: 38
             value: "ID39 Reserved"
-          - key: 128
+          - bit: 39
             value: "ID40 Reserved"
-          - key: 256
+          - bit: 40
             value: "ID41 Reserved"
-          - key: 512
+          - bit: 41
             value: "ID42 Reserved"
-          - key: 1024
+          - bit: 42
             value: "ID43 Reserved"
-          - key: 2048
+          - bit: 43
             value: "ID44 Reserved"
-          - key: 4096
+          - bit: 44
             value: "ID45 Reserved"
-          - key: 8192
+          - bit: 45
             value: "ID46 Reserved"
-          - key: 16384
+          - bit: 46
             value: "ID47 Reserved"
-          - key: 32768
+          - bit: 47
             value: "ID48 Reserved"
-        icon: "mdi:wrench"
-
-      - name: "Fault 4"
-        rule: 1
-        registers: [0x0004]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 48
             value: "ID49 Grid voltage sampling value between master and slave DSP vary widely"
-          - key: 2
+          - bit: 49
             value: "ID50 Grid frequency sampling value between master and slave DSP vary widely"
-          - key: 4
+          - bit: 50
             value: "ID51 DCI sampling value between master and slave DSP vary widely"
-          - key: 8
+          - bit: 51
             value: "ID52 GFCI sampling value between master and slave DSP vary widely"
-          - key: 16
+          - bit: 52
             value: "ID53 Communication failure between master and slave DSP failure"
-          - key: 32
+          - bit: 53
             value: "ID53 Communication failure between slave and communication board"
-          - key: 64
+          - bit: 54
             value: "ID55 Relay fault"
-          - key: 128
+          - bit: 55
             value: "ID56 Insulation resistance between PV array and the earth is too low"
-          - key: 256
+          - bit: 56
             value: "ID57 Inverter temp is too high"
-          - key: 512
+          - bit: 57
             value: "ID58 Boost temp is too high"
-          - key: 1024
+          - bit: 58
             value: "ID59 Environment temp is too high"
-          - key: 2048
+          - bit: 59
             value: "ID60 Brak podłączenie falownika do kabla PE"
-          - key: 4096
+          - bit: 60
             value: "ID61 Reserved"
-          - key: 8192
+          - bit: 61
             value: "ID62 Reserved"
-          - key: 16384
+          - bit: 62
             value: "ID63 Reserved"
-          - key: 32768
+          - bit: 63
             value: "ID64 Reserved"
-        icon: "mdi:wrench"
-
-      - name: "Fault 5"
-        rule: 1
-        registers: [0x0005]
-        lookup:
-          - key: 0
-            value: "No error"
-          - key: 1
+          - bit: 64
             value: "ID65 Grid current is too high and causes unrecoverable fault"
-          - key: 2
+          - bit: 65
             value: "ID66 Bus voltage is too high and causes unrecoverable fault"
-          - key: 4
+          - bit: 66
             value: "ID67 Grid current is unbalanced and causes unrecoverable fault"
-          - key: 8
+          - bit: 67
             value: "ID68 Input current is unbalanced and causes unrecoverable fault"
-          - key: 16
+          - bit: 68
             value: "ID69 Bus voltage is unbalanced and causes unrecoverable fault"
-          - key: 32
+          - bit: 69
             value: "ID70 Grid current is too high and causes unrecoverable fault"
-          - key: 64
+          - bit: 70
             value: "ID65 PV Input Mode Configuration is wrong and causes unrecoverable fault"
-          - key: 128
+          - bit: 71
             value: "ID72 Reserved"
-          - key: 256
+          - bit: 72
             value: "ID73 Reserved"
-          - key: 512
+          - bit: 73
             value: "ID74 Input current is too high and causes unrecoverable fault"
-          - key: 1024
+          - bit: 74
             value: "ID75 Error reading from EEPROM"
-          - key: 2048
+          - bit: 75
             value: "ID76 Error writing to EEPROM"
-          - key: 4096
+          - bit: 76
             value: "ID77 Relay fauilure causes unrecoverable fault"
-          - key: 8192
+          - bit: 77
             value: "ID78 Reserved"
-          - key: 16384
+          - bit: 78
             value: "ID79 Reserved"
-          - key: 32768
+          - bit: 79
             value: "ID80 Reserved"
-        icon: "mdi:wrench"

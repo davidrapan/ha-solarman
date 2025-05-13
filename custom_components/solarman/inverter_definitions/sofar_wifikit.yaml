@@ -977,7 +977,7 @@ parameters:
         icon: "mdi:message-alert-outline"
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - bit: 0
             value: "ID01 Grid Over Voltage Protection"
           - bit: 1
