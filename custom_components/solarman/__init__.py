@@ -109,6 +109,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
     return True
 
 async def async_remove_config_entry_device(hass: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: dr.DeviceEntry) -> bool:
-    _LOGGER.debug(f"async_remove_config_entry_device({config_entry.as_dict()}, {device_entry.as_dict()})")
+    _LOGGER.debug(f"async_remove_config_entry_device({config_entry.as_dict()}, {device_entry})")
 
     return not any(identifier for identifier in device_entry.identifiers if identifier[0] == DOMAIN and identifier[1] == config_entry.entry_id or identifier[1] == config_entry.runtime_data.device.modbus.serial)

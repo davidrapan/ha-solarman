@@ -659,22 +659,6 @@ parameters:
         rule: 1
         registers: [5405]
 
-      - name: "Cell 0 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5406]
-
-      - name: "Cell 0 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5407]
-
       - name: "Cell 0 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -914,22 +898,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6173]
-
-      - name: "Cell 0 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6174]
-
-      - name: "Cell 0 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6175]
 
   - group: Battery Module 1 Cells
     update_interval: 30
@@ -1176,22 +1144,6 @@ parameters:
         rule: 1
         registers: [5435]
 
-      - name: "Cell 1 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5436]
-
-      - name: "Cell 1 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5437]
-
       - name: "Cell 1 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -1431,22 +1383,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6203]
-
-      - name: "Cell 1 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6204]
-
-      - name: "Cell 1 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6205]
 
   - group: Battery Module 2 Cells
     update_interval: 30
@@ -1693,22 +1629,6 @@ parameters:
         rule: 1
         registers: [5465]
 
-      - name: "Cell 2 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5466]
-
-      - name: "Cell 2 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5467]
-
       - name: "Cell 2 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -1948,22 +1868,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6233]
-
-      - name: "Cell 2 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6234]
-
-      - name: "Cell 2 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6235]
 
   - group: Battery Module 3 Cells
     update_interval: 30
@@ -2210,22 +2114,6 @@ parameters:
         rule: 1
         registers: [5495]
 
-      - name: "Cell 3 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5496]
-
-      - name: "Cell 3 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5497]
-
       - name: "Cell 3 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -2466,22 +2354,6 @@ parameters:
         rule: 2
         registers: [6263]
 
-      - name: "Cell 3 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6264]
-
-      - name: "Cell 3 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6265]
-
   - group: Battery Module 4 Cells
     update_interval: 30
     hidden:
@@ -2549,7 +2421,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5473]
+        registers: [5503]
 
       - name: "Cell 4 - 8 Voltage"
         class: "voltage"
@@ -2726,22 +2598,6 @@ parameters:
         scale: 0.001
         rule: 1
         registers: [5525]
-
-      - name: "Cell 4 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5526]
-
-      - name: "Cell 4 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5527]
 
       - name: "Cell 4 - 0 Temperature"
         class: "temperature"
@@ -2982,22 +2838,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6293]
-
-      - name: "Cell 4 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6294]
-
-      - name: "Cell 4 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6295]
 
   - group: Battery Module 5 Cells
     update_interval: 30
@@ -3244,22 +3084,6 @@ parameters:
         rule: 1
         registers: [5555]
 
-      - name: "Cell 5 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5556]
-
-      - name: "Cell 5 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5557]
-
       - name: "Cell 5 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3499,22 +3323,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6323]
-
-      - name: "Cell 5 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6324]
-
-      - name: "Cell 5 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6325]
 
   - group: Battery Module 6 Cells
     update_interval: 30
@@ -3761,22 +3569,6 @@ parameters:
         rule: 1
         registers: [5585]
 
-      - name: "Cell 6 - 30 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5586]
-
-      - name: "Cell 6 - 31 Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.001
-        rule: 1
-        registers: [5587]
-
       - name: "Cell 6 - 0 Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4016,19 +3808,3 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [6353]
-
-      - name: "Cell 6 - 30 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6354]
-
-      - name: "Cell 6 - 31 Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [6355]
