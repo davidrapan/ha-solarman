@@ -117,7 +117,7 @@ parameters:
         registers: [0x0014, 0x0015]
         validation:
           min: 0
-          max: [24000, 50000]
+          max: [24000, 80000]
 
       - name: "Device MPPTs"
         attribute:
@@ -345,7 +345,7 @@ parameters:
           mode: box
         range:
           min: 0
-          max: 240
+          max: 350
 
       - name: "Battery Max Discharging Current"
         platform: number
@@ -359,7 +359,7 @@ parameters:
           mode: box
         range:
           min: 0
-          max: 240
+          max: 350
 
       - name: "Battery Operation Mode"
         platform: "select"
@@ -625,7 +625,7 @@ parameters:
           mode: box
         range:
           min: 0
-          max: 240
+          max: 350
 
       - name: "Battery Generator Charging"
         platform: "switch"
@@ -806,10 +806,10 @@ parameters:
         registers: [0x008F]
         configurable:
           min: 0
-          max: [24000, 50000]
+          max: [24000, 80000]
         range:
           min: 0
-          max: [24000, 5000]
+          max: [24000, 8000]
 
       - name: Export Surplus
         alt: Solar Sell
@@ -835,10 +835,10 @@ parameters:
         icon: "mdi:solar-power-variant"
         configurable:
           min: 0
-          max: [15600, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [15600, 5000]
+          max: [32000, 12800]
 
       - name: Time of Use
         platform: select
@@ -956,10 +956,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 2 Power
         platform: number
@@ -972,10 +972,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 3 Power
         platform: number
@@ -988,10 +988,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 4 Power
         platform: number
@@ -1004,10 +1004,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 5 Power
         platform: number
@@ -1020,10 +1020,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 6 Power
         platform: number
@@ -1036,10 +1036,10 @@ parameters:
         icon: mdi:sun-clock
         configurable:
           min: 0
-          max: [12000, 50000]
+          max: [32000, 128000]
         range:
           min: 0
-          max: [12000, 5000]
+          max: [32000, 12800]
 
       - name: Program 1 Voltage
         platform: number
@@ -1377,10 +1377,10 @@ parameters:
         icon: "mdi:transmission-tower"
         configurable:
           min: 0
-          max: 50000
+          max: 80000
         range:
           min: 0
-          max: [50000, 5000]
+          max: [80000, 8000]
 
   - group: BMS
     items:
@@ -2617,7 +2617,7 @@ parameters:
           - registers: [0x02A3]
         validation:
           min: 0
-          max: [24000, 50000]
+          max: [32000, 12800]
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
