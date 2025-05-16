@@ -108,6 +108,7 @@ REQUEST_CODE = "code"
 REQUEST_CODE_ALT = "mb_functioncode"
 REQUEST_START = "start"
 REQUEST_END = "end"
+REQUEST_COUNT = "count"
 
 SERVICES_PARAM_DEVICE = "device"
 SERVICES_PARAM_ADDRESS = "address"

@@ -67,8 +67,8 @@ class Device():
         _LOGGER.info(f"[{self.modbus.address}] Closing connection to {self.endpoint.address}")
         await self.modbus.close()
 
-    async def execute(self, message: str, **kwargs):
-        _LOGGER.debug(f"[{self.modbus.address}] {message} ...")
+    async def execute(self, code, address, **kwargs):
+        _LOGGER.debug(f"[{self.modbus.address}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs} ...")
 
         response = None
 
@@ -78,11 +78,9 @@ class Device():
                 while attempts_left > 0 and response is None:
                     attempts_left -= 1
                     try:
-                        response = await self.modbus.execute(**kwargs)
-
-                        _LOGGER.debug(f"[{self.modbus.address}] {message} succeeded")
+                        response = await self.modbus.execute(code, address = address, **kwargs)
                     except Exception as e:
-                        _LOGGER.debug(f"[{self.modbus.address}] {message} failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
+                        _LOGGER.debug(f"[{self.modbus.address}] Request failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
 
                         if isinstance(e, TimeoutError):
                             await self.endpoint.discover(True)
@@ -101,11 +99,11 @@ class Device():
             if scount == 0:
                 await self.modbus.open()
                 return result
+            
+            _LOGGER.debug(f"[{self.modbus.address}] Requests: {scheduled}")
 
-            for request in scheduled:
-                code, address, end = get_request_code(request), get_request_start(request), get_request_end(request)
-                count = end - address + 1
-                responses[(code, address)] = await self.execute(f"Querying {code:02} ❘ 0x{code:02X} ~ {address:04} - {end:04} ❘ 0x{address:04X} - 0x{end:04X} #{count:03}", code = code, address = address, count = count)
+            for code, address, _, count in ((get_request_code(request), request[REQUEST_START], request[REQUEST_END], request[REQUEST_COUNT]) for request in scheduled):
+                responses[(code, address)] = await self.execute(code, address, count = count)
 
             result = self.profile.parser.process(responses) if requests is None else responses
 
@@ -121,8 +119,3 @@ class Device():
             _LOGGER.debug(f"[{self.modbus.address}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 
         return result
-
-    async def exe(self, code, address, **kwargs):
-        _LOGGER.debug(f"[{self.modbus.address}] Scheduling request")
-
-        return await self.execute(f"Call {code:02} ❘ 0x{code:02X} ~ {address} ❘ 0x{address:04X}: {kwargs}", code = code, address = address, **kwargs)

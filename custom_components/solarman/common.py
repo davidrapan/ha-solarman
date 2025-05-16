@@ -68,7 +68,7 @@ def ensure_list_safe_len(value: list):
     return ensure_list(value), len(value) if value is not None and isinstance(value, list) else (1 if isinstance(value, dict) and value else 0)
 
 def set_request(code, start, end):
-    return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end }
+    return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
 
 async def lookup_profile(request, attr):
     if (response := await request(-1, set_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
@@ -229,17 +229,11 @@ def get_number(value, digits: int = -1):
 def get_request_code(request):
     return request[REQUEST_CODE] if REQUEST_CODE in request else request[REQUEST_CODE_ALT]
 
-def get_request_start(request):
-    return request[REQUEST_START]
-
-def get_request_end(request):
-    return request[REQUEST_END]
-
 def get_tuple(tuple, index = 0):
     return tuple[index] if tuple else None
 
 def get_battery_power_capacity(capacity, voltage):
-    return capacity * voltage / 1000
+    return capacity * voltage / 1000 / 1.16 # Calibration coefficient
 
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
