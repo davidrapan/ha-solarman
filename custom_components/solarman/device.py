@@ -1,14 +1,12 @@
 import logging
 import asyncio
-import threading
-import concurrent.futures
 
 from datetime import datetime
 
 from .const import *
 from .common import *
 from .provider import *
-from .pysolarman.pysolarman import Solarman
+from .pysolarman.pysolarman import NoSocketAvailableError, Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -70,24 +68,24 @@ class Device():
     async def execute(self, code, address, **kwargs):
         _LOGGER.debug(f"[{self.modbus.address}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs} ...")
 
-        response = None
+        exception = None
 
-        async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-            async with self._semaphore:
-                attempts_left = ACTION_ATTEMPTS
-                while attempts_left > 0 and response is None:
-                    attempts_left -= 1
-                    try:
-                        response = await self.modbus.execute(code, address = address, **kwargs)
-                    except Exception as e:
-                        _LOGGER.debug(f"[{self.modbus.address}] Request failed, attempts left: {attempts_left}{'' if attempts_left > 0 else ', aborting.'} [{format_exception(e)}]")
+        try:
+            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
+                async with self._semaphore:
+                    while True:
+                        try:
+                            return await self.modbus.execute(code, address = address, **kwargs)
+                        except Exception as e:
+                            _LOGGER.debug(f"[{self.modbus.address}] Request failed. [{format_exception((exception := e))}]")
+                            if isinstance(e, TimeoutError):
+                                await self.endpoint.discover(True)
+                            await asyncio.sleep(1)
 
-                        if isinstance(e, TimeoutError):
-                            await self.endpoint.discover(True)
-                        if not attempts_left > 0:
-                            raise
-
-        return response
+        except TimeoutError as e:
+            if exception:
+                raise exception from e
+            raise
 
     async def get(self, runtime = 0, requests = None):
         scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
@@ -111,11 +109,11 @@ class Device():
                 _LOGGER.debug(f"[{self.modbus.address}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                 self.state.update()
 
+            return result
+
         except Exception as e:
             if self.state.reevaluate():
                 _LOGGER.info(f"[{self.modbus.address}] Closing connection")
                 await self.modbus.close()
                 raise
             _LOGGER.debug(f"[{self.modbus.address}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
-
-        return result
