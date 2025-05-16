@@ -1350,6 +1350,9 @@ parameters:
       - name: Off Grid
         platform: switch
         rule: 1
+        range:
+          min: 0
+          max: 1
         registers: [0x00B3]
 
       - name: "Generator Peak shaving"
