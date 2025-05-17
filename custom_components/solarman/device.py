@@ -109,11 +109,11 @@ class Device():
                 _LOGGER.debug(f"[{self.modbus.address}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                 self.state.update()
 
-            return result
-
         except Exception as e:
             if self.state.reevaluate():
                 _LOGGER.info(f"[{self.modbus.address}] Closing connection")
                 await self.modbus.close()
                 raise
             _LOGGER.debug(f"[{self.modbus.address}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
+
+        return result
