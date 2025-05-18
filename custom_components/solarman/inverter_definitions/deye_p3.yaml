@@ -13,7 +13,7 @@
 
 info:
   manufacturer: Deye
-  model: [SG04LP3, SG01HP3]
+  model: [SG0?LP3, SG0?HP3]
 
 default:
   update_interval: 60
