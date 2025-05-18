@@ -51,7 +51,7 @@ def async_register(hass: HomeAssistant) -> None:
         count = call.data.get(SERVICES_PARAM_COUNT)
 
         try:
-            if (response := await device.exe(code, address = address, count = count)) is not None:
+            if (response := await device.execute(code, address, count = count)) is not None:
                 for i in range(0, count):
                     yield address + i, response[i]
         except Exception as e:
@@ -73,7 +73,7 @@ def async_register(hass: HomeAssistant) -> None:
         device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await device.exe(FUNCTION_CODE.WRITE_SINGLE_REGISTER, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), data = call.data.get(SERVICES_PARAM_VALUE))
+            await device.execute(FUNCTION_CODE.WRITE_SINGLE_REGISTER, call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), data = call.data.get(SERVICES_PARAM_VALUE))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
@@ -83,7 +83,7 @@ def async_register(hass: HomeAssistant) -> None:
         device = get_device(call.data.get(SERVICES_PARAM_DEVICE))
 
         try:
-            await device.exe(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), data = call.data.get(SERVICES_PARAM_VALUES))
+            await device.execute(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER)), data = call.data.get(SERVICES_PARAM_VALUES))
         except Exception as e:
             raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
