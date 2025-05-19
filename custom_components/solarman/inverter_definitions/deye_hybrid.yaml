@@ -8,7 +8,7 @@
 
 info:
   manufacturer: Deye
-  model: SG0?LP1
+  model: SG0*LP1
 
 default:
   update_interval: 5
@@ -523,23 +523,23 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "Today Generation"
+      - name: Generator Energy - today
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x003E]
-        icon: "mdi:generator-stationary"
 
-      - name: "Total Generation"
+      - name: Generator Energy
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [0x005C, 0x005F]
-        icon: "mdi:generator-stationary"
         validation:
           min: 0.1
 
@@ -580,6 +580,8 @@ parameters:
           - registers: [0x004C]
           - registers: [0x006C]
           - registers: [0x003E]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x0047]
           - operator: subtract
             registers: [0x004D]
@@ -602,6 +604,8 @@ parameters:
           - registers: [0x004E, 0x0050]
           - registers: [0x0060, 0x0061]
           - registers: [0x005C, 0x005F]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x004A, 0x004B]
           - operator: subtract
             registers: [0x0051, 0x0052]
@@ -2158,6 +2162,8 @@ parameters:
       - name: Generator Grid On
         description: On Grid always on
         name_lookup: io_mode_select
+        enabled_lookup:
+          io_mode_select: [Generator, SmartLoad]
         platform: "switch"
         rule: 1
         registers: [0x0118]

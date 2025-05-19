@@ -12,7 +12,6 @@ import voluptuous as vol
 from typing import Any
 
 from homeassistant.util import slugify
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
@@ -139,7 +138,7 @@ def unwrap(source: dict, key: Any, mod: int = 0):
 def entity_key(object: dict):
     return slugify('_'.join(filter(None, (object["name"], object["platform"]))))
 
-def process_descriptions(item, group, table, code, mod):
+def preprocess_descriptions(item, group, table, code, mod):
     def modify(source: dict):
         for i in source:
             if i in ("scale", "min", "max"):
@@ -171,6 +170,29 @@ def process_descriptions(item, group, table, code, mod):
                 modify(m)
                 bulk_inherit(m, s, REQUEST_CODE, "scale")
     return item
+
+def postprocess_descriptions(coordinator, platform):
+    def not_enabled(description):
+        return (l := description.get("enabled_lookup")) is not None and (k := list(l)[0]) is not None and (v := coordinator.data.get(k)) is not None and not v in l[k]
+
+    descriptions = coordinator.device.profile.parser.get_entity_descriptions(platform)
+
+    _LOGGER.debug(f"postprocess_descriptions for {platform} platform: {descriptions}")
+
+    for description in descriptions:
+        if not_enabled(description):
+            continue
+        
+        if (nlookup := description.get("name_lookup")) is not None and (prefix := coordinator.data.get(nlookup)) is not None:
+            description["name"] = replace_first(description["name"], get_tuple(prefix))
+            description["key"] = entity_key(description)
+
+        if (sensors := description.get("sensors")) is not None:
+            for sensor in list(sensors):
+                if not_enabled(sensor):
+                    sensors.remove(sensor)
+
+        yield description
 
 def get_code(item, type, default = None):
     if REQUEST_CODE in item and (code := item[REQUEST_CODE]):
@@ -233,7 +255,7 @@ def get_tuple(tuple, index = 0):
     return tuple[index] if tuple else None
 
 def get_battery_power_capacity(capacity, voltage):
-    return capacity * voltage / 1000 / 1.16 # Calibration coefficient
+    return capacity * voltage / 1000
 
 def get_battery_cycles(charge, capacity, voltage):
     return charge / get_battery_power_capacity(capacity, voltage)
