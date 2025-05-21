@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 import yaml
 import logging
 import asyncio
@@ -10,6 +11,7 @@ import aiofiles
 import voluptuous as vol
 
 from typing import Any
+from functools import wraps
 
 from homeassistant.util import slugify
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
@@ -17,6 +19,19 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, Device
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
+
+def throttle(delay = 1):
+    def decorator(f):
+        last_called = [0]
+
+        @wraps(f)
+        async def wrapper(*args, **kwargs):
+            if (d := delay - (time.time() - last_called[0])) > 0:
+                    await asyncio.sleep(d)
+            last_called[0] = time.time()
+            return await f(*args, **kwargs)
+        return wrapper
+    return decorator
 
 def protected(value, error):
     if value is None:

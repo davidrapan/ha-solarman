@@ -14,6 +14,8 @@ from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
+from ..common import throttle
+
 _LOGGER = logging.getLogger(__name__)
 
 PROTOCOL = types.SimpleNamespace()
@@ -194,6 +196,7 @@ class Solarman:
         self.writer = None
         self._open()
 
+    @throttle()
     async def _open_connection(self) -> None:
         try:
             if self.reader_task:
