@@ -27,7 +27,7 @@ def throttle(delay = 1):
         @wraps(f)
         async def wrapper(*args, **kwargs):
             if (d := delay - (time.time() - last_called[0])) > 0:
-                    await asyncio.sleep(d)
+                await asyncio.sleep(d)
             last_called[0] = time.time()
             return await f(*args, **kwargs)
         return wrapper
@@ -188,7 +188,7 @@ def preprocess_descriptions(item, group, table, code, mod):
 
 def postprocess_descriptions(coordinator, platform):
     def not_enabled(description):
-        return (l := description.get("enabled_lookup")) is not None and (k := list(l)[0]) is not None and (v := coordinator.data.get(k)) is not None and not v in l[k]
+        return (l := description.get("enabled_lookup")) is not None and (k := list(l)[0]) is not None and (v := coordinator.data.get(k)) is not None and not get_tuple(v) in l[k]
 
     descriptions = coordinator.device.profile.parser.get_entity_descriptions(platform)
 
