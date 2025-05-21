@@ -14,6 +14,8 @@ from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
+from ..common import throttle
+
 _LOGGER = logging.getLogger(__name__)
 
 PROTOCOL = types.SimpleNamespace()
@@ -194,6 +196,7 @@ class Solarman:
         self.writer = None
         self._open()
 
+    @throttle()
     async def _open_connection(self) -> None:
         try:
             if self.reader_task:
@@ -224,13 +227,13 @@ class Solarman:
             try:
                 await self._write(b"")
             except (NoSocketAvailableError, TimeoutError, ConnectionResetError) as e:
-                _LOGGER.debug(f"[{self.address}] {e} can be during closing ignored")
+                _LOGGER.debug(f"[{self.address}] {e!r} can be during closing ignored")
             finally:
                 try:
                     self.writer.close()
                     await self.writer.wait_closed()
                 except (AttributeError, OSError) as e: # OSError happens when is host unreachable
-                    _LOGGER.debug(f"[{self.address}] {e} can be during closing ignored")
+                    _LOGGER.debug(f"[{self.address}] {e!r} can be during closing ignored")
                 self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:

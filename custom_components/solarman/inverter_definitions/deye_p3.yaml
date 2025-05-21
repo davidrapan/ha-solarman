@@ -13,7 +13,7 @@
 
 info:
   manufacturer: Deye
-  model: [SG04LP3, SG01HP3]
+  model: [SG0*LP3, SG0*HP3]
 
 default:
   update_interval: 60
@@ -1341,6 +1341,8 @@ parameters:
       - name: Generator Grid On
         description: On Grid always on
         name_lookup: io_mode_select
+        enabled_lookup:
+          io_mode_select: [Generator, SmartLoad]
         platform: "switch"
         rule: 1
         registers: [0x00B2]
@@ -1663,24 +1665,23 @@ parameters:
         validation:
           min: 0.1
 
-      - name: Today Generation
-        alt: Daily Generation
+      - name: Generator Energy - today
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x0218]
-        icon: "mdi:generator-stationary"
 
-      - name: "Total Generation"
+      - name: Generator Energy
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [0x0219, 0x021A]
-        icon: "mdi:generator-stationary"
         validation:
           min: 0.1
 
@@ -1721,6 +1722,9 @@ parameters:
         sensors:
           - registers: [0x0208]
           - registers: [0x0211]
+          - registers: [0x0218]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x0203]
           - operator: subtract
             registers: [0x0209]
@@ -1742,6 +1746,9 @@ parameters:
         sensors:
           - registers: [0x020A, 0x020B]
           - registers: [0x0216, 0x0217]
+          - registers: [0x0219, 0x021A]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x0206, 0x0207]
           - operator: subtract
             registers: [0x020C, 0x020D]

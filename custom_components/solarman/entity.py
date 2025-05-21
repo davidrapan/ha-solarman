@@ -40,11 +40,6 @@ def create_entity(creator, description):
     try:
         entity = creator(description)
 
-        if description is not None and (nlookup := description.get("name_lookup")) is not None and (prefix := entity.coordinator.data.get(nlookup)) is not None:
-            description["name"] = replace_first(description["name"], get_tuple(prefix))
-            description["key"] = entity_key(description)
-            entity = creator(description)
-
         entity.update()
 
         return entity
