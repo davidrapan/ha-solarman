@@ -140,6 +140,15 @@ class SolarmanWritableEntity(SolarmanEntity):
         self.register = min(self.registers) if len(self.registers) > 0 else None
         self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
 
+    @property
+    def _get_attr_native_value(self):
+        if self._attr_native_value is None:
+            raise RuntimeError(
+                f"{self.name}: Cannot write value when _attr_native_value is None. "
+                "This likely means the entity has not received data from the device"
+            )
+        return self._attr_native_value
+
     async def write(self, value, state = None) -> None:
         #self.coordinator.device.check(self._write_lock)
         data = value
