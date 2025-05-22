@@ -6,7 +6,7 @@ from datetime import datetime
 from .const import *
 from .common import *
 from .provider import *
-from .pysolarman.pysolarman import NoSocketAvailableError, Solarman
+from .pysolarman.pysolarman import Solarman
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,7 +80,6 @@ class Device():
                             _LOGGER.debug(f"[{self.modbus.address}] Request failed. [{format_exception((exception := e))}]")
                             if isinstance(e, TimeoutError):
                                 await self.endpoint.discover(True)
-                            await asyncio.sleep(1)
 
         except TimeoutError as e:
             if exception:

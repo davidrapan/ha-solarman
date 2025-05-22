@@ -293,6 +293,7 @@ class Solarman:
             adu = adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
         return tcp.parse_response_adu(adu, frame)
 
+    @throttle()
     async def execute(self, code, **kwargs):
         if (func := self._lookup.get(code)) is not None:
             data = await self._get_response(func(self.slave, **kwargs))
