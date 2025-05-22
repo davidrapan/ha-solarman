@@ -43,7 +43,7 @@ def create_entity(creator, description):
         entity.update()
 
         return entity
-    except BaseException as e:
+    except Exception as e:
         _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
         raise
 

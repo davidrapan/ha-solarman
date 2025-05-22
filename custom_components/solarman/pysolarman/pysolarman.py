@@ -40,9 +40,6 @@ PROTOCOL.END = bytes.fromhex("15")
 class FrameError(Exception):
     """Frame Validation Error"""
 
-class NoSocketAvailableError(Exception):
-    """No Socket Available Error"""
-
 class Solarman:
     def __init__(self, address, port, transport, serial, slave, timeout):
         self.address = address
@@ -153,15 +150,16 @@ class Solarman:
         return do_continue, response_frame
 
     async def _write(self, data: bytes) -> None:
+        await self.open()
         try:
             self.writer.write(data)
             await self.writer.drain()
         except Exception as e:
             match e:
                 case AttributeError():
-                    raise NoSocketAvailableError("Connection already closed") from e
+                    raise ConnectionError("Connection is closed") from e
                 case OSError() if e.errno == errno.EHOSTUNREACH:
-                    raise TimeoutError from e
+                    raise TimeoutError("Peer is unreachable") from e
             _LOGGER.exception(f"[{self.address}] Write error: {e!r}")
 
     async def _handle_protocol_frame(self, frame):
@@ -179,13 +177,13 @@ class Solarman:
                 _LOGGER.debug(f"[{self.address}] Connection is reset by the peer. Will try to restart the connection")
                 break
             if data == b"":
-                _LOGGER.debug(f"[{self.address}] Connection closed by the remote. Will try to restart the connection")
+                _LOGGER.debug(f"[{self.address}] Connection closed. Will try to restart the connection")
                 break
             if self._handle_frame is not None and not await self._handle_frame(data):
                 # Skip...
                 continue
             if not self.data_wanted_ev.is_set():
-                _LOGGER.debug(f"[{self.address}] Data received but nobody waits for it... Discarded")
+                _LOGGER.debug(f"[{self.address}] Data received, but nothing waits for it")
                 continue
             if not self.data_queue.empty():
                 _ = self.data_queue.get_nowait()
@@ -214,7 +212,7 @@ class Solarman:
                 _LOGGER.debug(f"[{self.address}] {e!r}")
                 await self._open_connection()
             else:
-                raise NoSocketAvailableError(f"[{self.address}] Cannot open connection") from e
+                raise ConnectionError("Cannot open connection") from e
 
     def _open(self):
         if not self.connected:
@@ -226,7 +224,7 @@ class Solarman:
         if self.writer:
             try:
                 await self._write(b"")
-            except (NoSocketAvailableError, TimeoutError, ConnectionResetError) as e:
+            except (ConnectionError, TimeoutError) as e:
                 _LOGGER.debug(f"[{self.address}] {e!r} can be during closing ignored")
             finally:
                 try:
@@ -237,7 +235,6 @@ class Solarman:
                 self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
-        await self.open()
         _LOGGER.debug(f"[{self.address}] SENT: {frame.hex(" ")}")
         self.data_wanted_ev.set()
         self._last_frame = frame
@@ -249,9 +246,7 @@ class Solarman:
                     _LOGGER.debug(f"[{self.address}] RECD: {response_frame.hex(" ")}")
                     return response_frame
                 except TimeoutError:
-                    _LOGGER.debug(f"[{self.address}] Peer not responding. Closing connection")
                     await self._close()
-                    continue
         finally:
             self.data_wanted_ev.clear()
 
@@ -299,7 +294,7 @@ class Solarman:
             data = await self._get_response(func(self.slave, **kwargs))
             _LOGGER.debug(f"[{self.address}] Data: {data}")
             return data
-        raise Exception(f"[{self.address}] Used invalid modbus function code %d", code)
+        raise Exception(f"Invalid modbus function code {code:02}")
 
     async def open(self):
         self._open()
@@ -307,6 +302,8 @@ class Solarman:
             await self.open_task
 
     async def close(self) -> None:
+        _LOGGER.debug(f"[{self.address}] Closing connection")
+
         try:
             if self.open_task:
                 self.open_task.cancel()

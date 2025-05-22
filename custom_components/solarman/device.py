@@ -53,8 +53,8 @@ class Device():
             await self.profile.resolve(self.get)
         except TimeoutError as e:
             raise TimeoutError(f"[{self.modbus.address}] Device setup timed out") from e
-        except BaseException as e:
-            raise Exception(f"[{self.modbus.address}] Device setup failed. [{format_exception(e)}]") from e
+        except Exception as e:
+            raise Exception(f"[{self.modbus.address}] Device setup failed") from e
 
     def check(self, lock) -> None:
         if lock and self._write_lock:
@@ -62,7 +62,6 @@ class Device():
 
     async def shutdown(self) -> None:
         self.state.value = -1
-        _LOGGER.info(f"[{self.modbus.address}] Closing connection to {self.endpoint.address}")
         await self.modbus.close()
 
     async def execute(self, code, address, **kwargs):
@@ -110,7 +109,6 @@ class Device():
 
         except Exception as e:
             if self.state.reevaluate():
-                _LOGGER.info(f"[{self.modbus.address}] Closing connection")
                 await self.modbus.close()
                 raise
             _LOGGER.debug(f"[{self.modbus.address}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
