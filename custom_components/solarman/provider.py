@@ -75,7 +75,7 @@ class EndPointProvider:
 
     @cached_property
     def connection(self):
-        return self.address, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_TIMEOUT
+        return self.address, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_INTERVAL
 
     @cached_property
     def ipaddress(self):

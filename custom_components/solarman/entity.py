@@ -43,7 +43,7 @@ def create_entity(creator, description):
         entity.update()
 
         return entity
-    except BaseException as e:
+    except Exception as e:
         _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
         raise
 
@@ -139,6 +139,15 @@ class SolarmanWritableEntity(SolarmanEntity):
         self.code = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
         self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
+
+    @property
+    def _get_attr_native_value(self):
+        if self._attr_native_value is None:
+            raise RuntimeError(
+                f"{self.name}: Cannot write value when _attr_native_value is None. "
+                "This likely means the entity has not received data from the device"
+            )
+        return self._attr_native_value
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.device.check(self._write_lock)

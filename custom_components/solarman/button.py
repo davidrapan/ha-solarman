@@ -46,7 +46,7 @@ class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
 
     def _to_native_value(self, value: int) -> int:
         if self._value_bit:
-            return (self._attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 
+            return (self._get_attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 
         return value
 
     async def async_press(self) -> None:

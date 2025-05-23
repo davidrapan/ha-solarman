@@ -52,18 +52,17 @@ class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
 
     def _to_native_value(self, value: int) -> int:
         if self._value_bit is not None:
-            return (self._attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit) 
+            return (self._get_attr_native_value & ~(1 << self._value_bit)) | (value << self._value_bit)
         return value
-
-    def _native_value(self) -> int:
-        if self._attr_native_value is not None and self._value_bit is not None:
-            return (self._attr_native_value >> self._value_bit) & 1
-        return self._attr_native_value
 
     @property
     def is_on(self) -> bool | None:
         """Return True if entity is on."""
-        return self._native_value() != self._value_off
+        return (
+            self._attr_native_value >> self._value_bit & 1
+            if self._attr_native_value is not None and self._value_bit is not None
+            else self._attr_native_value
+        ) != self._value_off
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the entity on."""
