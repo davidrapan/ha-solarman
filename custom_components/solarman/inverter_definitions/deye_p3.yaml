@@ -2627,7 +2627,7 @@ parameters:
           - registers: [0x02A3]
         validation:
           min: 0
-          max: [32000, 12800]
+          max: [32000, 128000]
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
