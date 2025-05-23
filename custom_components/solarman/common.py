@@ -22,13 +22,12 @@ _LOGGER = logging.getLogger(__name__)
 
 def throttle(delay = 1):
     def decorator(f):
-        last_called = [0]
-
+        l = [0]
         @wraps(f)
         async def wrapper(*args, **kwargs):
-            if (d := delay - (time.time() - last_called[0])) > 0:
+            if (d := delay - (time.time() - l[0])) > 0:
                 await asyncio.sleep(d)
-            last_called[0] = time.time()
+            l[0] = time.time()
             return await f(*args, **kwargs)
         return wrapper
     return decorator
@@ -85,13 +84,13 @@ def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
 
 async def lookup_profile(request, attr):
-    if (response := await request(-1, set_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
+    if (response := await request("?", set_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))
         if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in AUTODETECTION_DEYE_P1[0]:
             attr[ATTR_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, attr[ATTR_[CONF_PHASE]])
         if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
             attr[ATTR_[CONF_MOD]], attr[ATTR_[CONF_MPPT]], attr[ATTR_[CONF_PHASE]] = max(m, attr[ATTR_[CONF_MOD]]), min(t, attr[ATTR_[CONF_MPPT]]), min(p, attr[ATTR_[CONF_PHASE]])
-        if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]) and (response := await request(-1, set_request(*AUTODETECTION_BATTERY_REQUEST_DEYE))) and (p := get_addr_value(response, *AUTODETECTION_BATTERY_NUMBER_DEYE)) is not None:
+        if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]) and (response := await request("?", set_request(*AUTODETECTION_BATTERY_REQUEST_DEYE))) and (p := get_addr_value(response, *AUTODETECTION_BATTERY_NUMBER_DEYE)) is not None:
             attr[ATTR_[CONF_PACK]] = p if attr[ATTR_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, attr[ATTR_[CONF_PACK]])
         return f
     raise Exception("Unable to read Device Type at address 0x0000")
@@ -141,6 +140,9 @@ def group_when(iterable, predicate):
             x = i + 1
         i += 1
     yield iterable[x:size]
+
+def format(value):
+    return value if not isinstance(value, (bytes, bytearray)) else value.hex(" ")
 
 def format_exception(e):
     return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
