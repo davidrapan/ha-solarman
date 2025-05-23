@@ -150,7 +150,6 @@ class Solarman:
         return do_continue, response_frame
 
     async def _write(self, data: bytes) -> None:
-        await self.open()
         try:
             self.writer.write(data)
             await self.writer.drain()
@@ -235,9 +234,10 @@ class Solarman:
                 self.writer = None
 
     async def _send_receive_frame(self, frame: bytes) -> bytes:
-        _LOGGER.debug(f"[{self.address}] SENT: {frame.hex(" ")}")
+        await self.open()
         self.data_wanted_ev.set()
         self._last_frame = frame
+        _LOGGER.debug(f"[{self.address}] SENT: {frame.hex(" ")}")
         try:
             await self._write(frame)
             while True:
