@@ -65,38 +65,26 @@ class Device():
         await self.modbus.close()
 
     async def execute(self, code, address, **kwargs):
-        _LOGGER.debug(f"[{self.modbus.address}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs} ...")
-
-        exception = None
+        _LOGGER.debug(f"[{self.modbus.address}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs}")
 
         try:
-            async with asyncio.timeout(TIMINGS_UPDATE_TIMEOUT):
-                async with self._semaphore:
-                    while True:
-                        try:
-                            return await self.modbus.execute(code, address = address, **kwargs)
-                        except Exception as e:
-                            _LOGGER.debug(f"[{self.modbus.address}] Request failed. [{format_exception((exception := e))}]")
-                            if isinstance(e, TimeoutError):
-                                await self.endpoint.discover(True)
-
-        except TimeoutError as e:
-            if exception:
-                raise exception from e
+            return await self.modbus.execute(code, address, **kwargs)
+        except TimeoutError:
+            await self.endpoint.discover(True)
             raise
 
     async def get(self, runtime = 0, requests = None):
         scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
 
-        _LOGGER.debug(f"[{self.modbus.address}] Scheduling {scount} query request{'s' if scount != 1 else ''}. ^{runtime}")
+        _LOGGER.debug(f"[{self.modbus.address}] Scheduling {scount} query request{'s' if scount != 1 else ''}. #{runtime}")
 
         try:
             if scount == 0:
                 await self.modbus.open()
                 return result
             
-            _LOGGER.debug(f"[{self.modbus.address}] Requests: {scheduled}")
+            _LOGGER.debug(f"[{self.modbus.address}] Scheduled: {scheduled}")
 
             for code, address, _, count in ((get_request_code(request), request[REQUEST_START], request[REQUEST_END], request[REQUEST_COUNT]) for request in scheduled):
                 responses[(code, address)] = await self.execute(code, address, count = count)
