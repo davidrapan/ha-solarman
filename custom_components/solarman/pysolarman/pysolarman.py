@@ -322,7 +322,7 @@ class Solarman:
 
     @log_return("DATA")
     async def execute(self, code, address, **kwargs):
-        if (f := self._lookup.get(code)) is None:
+        if code not in self._lookup:
             raise Exception(f"Invalid modbus function code {code:02}")
 
         exception = None
@@ -332,7 +332,7 @@ class Solarman:
                 async with self._semaphore:
                     while True:
                         try:
-                            return await self._get_response(f(self.slave, address, **kwargs))
+                            return await self._get_response(self._lookup.get(code)(self.slave, address, **kwargs))
                         except Exception as e:
                             _LOGGER.debug(f"[{self.address}] FAIL: {(exception := e)!r}")
 
