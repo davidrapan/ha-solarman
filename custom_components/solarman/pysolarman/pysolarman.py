@@ -74,7 +74,8 @@ class Solarman:
         self._writer: asyncio.StreamWriter | None = None
         self._semaphore: asyncio.Semaphore = asyncio.Semaphore(1)
         self._data_queue: asyncio.Queue = asyncio.Queue(maxsize = 1)
-        self._data_wanted: synchronize.Event = Event()
+        self._data_event: synchronize.Event = Event()
+        self._last_frame: bytes | None = None
 
     @staticmethod
     def _get_response_code(code: int) -> int:
@@ -201,13 +202,13 @@ class Solarman:
             if self._handle_frame is not None and not await self._handle_frame(data):
                 # Skip...
                 continue
-            if not self._data_wanted.is_set():
+            if not self._data_event.is_set():
                 _LOGGER.debug(f"[{self.host}] Data received too late")
                 continue
             if not self._data_queue.empty():
                 _ = self._data_queue.get_nowait()
             self._data_queue.put_nowait(data)
-            self._data_wanted.clear()
+            self._data_event.clear()
         self._keeper = None
         self._reader = None
         self._writer = None
@@ -216,14 +217,16 @@ class Solarman:
     @throttle()
     async def _open_connection(self) -> None:
         try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout * 3 - 1)
+            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
             self._keeper = create_task(self._keeper_loop())
-            if self._data_wanted.is_set():
+            if self._data_event.is_set():
                 _LOGGER.debug(f"[{self.host}] Successful reconnection! Data expected. Will retry the last request")
                 await self._write(self._last_frame)
             else:
                 _LOGGER.debug(f"[{self.host}] Successful connection!")
         except Exception as e:
+            if self._last_frame is None:
+                raise ConnectionError("Cannot open connection") from e
             _LOGGER.debug(f"[{self.host}] Cannot open connection: {e!r}")
             await self._open_connection()
 
@@ -242,7 +245,7 @@ class Solarman:
                 finally:
                     self._writer = None
 
-    @throttle()
+    @throttle(0.2)
     @log_call("SENT")
     @log_return("RECV")
     async def _send_receive_frame(self, frame: bytes) -> bytes:
@@ -251,17 +254,17 @@ class Solarman:
             await self._keeper
 
         self._last_frame = frame
-        self._data_wanted.set()
+        self._data_event.set()
 
         try:
             await self._write(frame)
             while True:
                 try:
-                    return await asyncio.wait_for(self._data_queue.get(), self.timeout * 2 - 3)
+                    return await asyncio.wait_for(self._data_queue.get(), self.timeout * 3 - 1)
                 except TimeoutError:
                     await self._close()
         finally:
-            self._data_wanted.clear()
+            self._data_event.clear()
 
     async def _parse_adu_from_rtu_response(self, frame: bytes) -> tuple[int, int, bytes]:
         async def _get_rtu_response(frame: bytes) -> bytes:
