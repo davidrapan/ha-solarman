@@ -32,6 +32,12 @@ def throttle(delay = 1):
         return wrapper
     return decorator
 
+async def async_execute(x):
+    return await asyncio.get_running_loop().run_in_executor(None, x)
+
+def create_task(coro, *, name=None, context=None):
+    return asyncio.get_running_loop().create_task(coro, name = name, context = context)
+
 def protected(value, error):
     if value is None:
         raise vol.Invalid(error)
@@ -39,10 +45,6 @@ def protected(value, error):
 
 def get_current_file_name(value):
     return result[-1] if len(result := value.rsplit('.', 1)) > 0 else ""
-
-async def async_execute(x):
-    loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(None, x)
 
 async def async_listdir(path, prefix = ""):
     return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []

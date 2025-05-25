@@ -70,23 +70,23 @@ class EndPointProvider:
         return getattr(self.config, attr)
 
     @cached_property
-    def address(self):
-        return self.host
+    def host(self):
+        return self.config.host
 
     @cached_property
     def connection(self):
-        return self.address, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_INTERVAL
+        return self.host, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_INTERVAL
 
     @cached_property
-    def ipaddress(self):
+    def ip(self):
         try:
             return IPv4Address(self.host)
         except AddressValueError:
             return IPv4Address(socket.gethostbyname(self.host))    
 
     async def discover(self, ping_only = False):
-        if self.ipaddress.is_private and (discover := await Discovery(self.hass, self.address).discover(ping_only)):
-            if (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == str(self.ipaddress)]), None)))) is not None:
+        if self.ip.is_private and (discover := await Discovery(self.hass, self.host).discover(ping_only)):
+            if (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == str(self.ip)]), None)))) is not None:
                 self.host = device["ip"]
                 self.mac = device["mac"]
                 self.serial = s

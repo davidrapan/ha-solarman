@@ -52,9 +52,9 @@ class Device():
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
         except TimeoutError as e:
-            raise TimeoutError(f"[{self.modbus.address}] Device setup timed out") from e
+            raise TimeoutError(f"[{self.modbus.host}] Device setup timed out") from e
         except Exception as e:
-            raise Exception(f"[{self.modbus.address}] Device setup failed") from e
+            raise Exception(f"[{self.modbus.host}] Device setup failed") from e
 
     def check(self, lock) -> None:
         if lock and self._write_lock:
@@ -65,7 +65,7 @@ class Device():
         await self.modbus.close()
 
     async def execute(self, code, address, **kwargs):
-        _LOGGER.debug(f"[{self.modbus.address}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs}")
+        _LOGGER.debug(f"[{self.modbus.host}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs}")
 
         try:
             return await self.modbus.execute(code, address, **kwargs)
@@ -74,17 +74,16 @@ class Device():
             raise
 
     async def get(self, runtime = 0, requests = None):
-        scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
         responses, result = {}, {}
+        scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
 
-        _LOGGER.debug(f"[{self.modbus.address}] Scheduling {scount} query request{'s' if scount != 1 else ''}. #{runtime}")
+        if scount == 0:
+            return result
+
+        _LOGGER.debug(f"[{self.modbus.host}] Scheduling {scount} query request{'s' if scount != 1 else ''}. #{runtime}")
 
         try:
-            if scount == 0:
-                await self.modbus.open()
-                return result
-            
-            _LOGGER.debug(f"[{self.modbus.address}] Scheduled: {scheduled}")
+            _LOGGER.debug(f"[{self.modbus.host}] Scheduled: {scheduled}")
 
             for code, address, _, count in ((get_request_code(request), request[REQUEST_START], request[REQUEST_END], request[REQUEST_COUNT]) for request in scheduled):
                 responses[(code, address)] = await self.execute(code, address, count = count)
@@ -92,13 +91,13 @@ class Device():
             result = self.profile.parser.process(responses) if requests is None else responses
 
             if (rcount := len(result) if result else 0) > 0:
-                _LOGGER.debug(f"[{self.modbus.address}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
+                _LOGGER.debug(f"[{self.modbus.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
                 self.state.update()
 
         except Exception as e:
             if self.state.reevaluate():
                 await self.modbus.close()
                 raise
-            _LOGGER.debug(f"[{self.modbus.address}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
+            _LOGGER.debug(f"[{self.modbus.host}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 
         return result
