@@ -104,6 +104,9 @@ parameters:
         rule: 3
         registers: [0x3153, 0x3154]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -113,6 +116,10 @@ parameters:
         rule: 3
         registers: [0x3165, 0x3166]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
   - group: Grid
     items:

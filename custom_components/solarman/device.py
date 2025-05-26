@@ -97,6 +97,7 @@ class Device():
         except Exception as e:
             if self.state.reevaluate():
                 await self.modbus.close()
+                self.profile.parser.reset()
                 raise
             _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
 
