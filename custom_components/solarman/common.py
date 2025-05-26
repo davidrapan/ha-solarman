@@ -20,6 +20,17 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
+def retry():
+    def decorator(f):
+        @wraps(f)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await f(*args, **kwargs)
+            except:
+                return await f(*args, **kwargs)
+        return wrapper
+    return decorator
+
 def throttle(delay: float = 1):
     def decorator(f):
         l = [0]
@@ -80,7 +91,7 @@ def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
 def ensure_list_safe_len(value: list):
-    return ensure_list(value), len(value) if value is not None and isinstance(value, list) else (1 if isinstance(value, dict) and value else 0)
+    return ensure_list(value), len(value) if isinstance(value, list) else (1 if isinstance(value, dict) else 0)
 
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }

@@ -352,9 +352,6 @@ parameters:
         rule: 1
         registers: [0x003C]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Total Production"
         persistent:
@@ -368,7 +365,7 @@ parameters:
         validation:
           min: 0.1
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
