@@ -42,7 +42,7 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         except TimeoutError:
             raise
         except Exception as e:
-            raise UpdateFailed(repr(e)) from e
+            raise UpdateFailed(str(e)) from e
 
     async def async_config_entry_first_refresh(self) -> None:
         await super().async_config_entry_first_refresh()

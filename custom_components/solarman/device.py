@@ -52,9 +52,9 @@ class Device():
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
         except TimeoutError as e:
-            raise TimeoutError(f"Timeout setuping {self.config.name}: {e:r}") from e
+            raise TimeoutError(f"Timeout setuping {self.config.name}: {e!r}") from e
         except Exception as e:
-            raise Exception(f"Failed setuping {self.config.name}: {e:r}") from e
+            raise Exception(f"Failed setuping {self.config.name}: {e!r}") from e
 
     def check(self, lock) -> None:
         if lock and self._write_lock:
