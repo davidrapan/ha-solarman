@@ -20,7 +20,7 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-def throttle(delay = 1):
+def throttle(delay: float = 1):
     def decorator(f):
         l = [0]
         @wraps(f)

@@ -10,6 +10,7 @@ from multiprocessing import Event
 from random import randrange
 from functools import wraps
 
+from .umodbus.functions import FUNCTION_CODES
 from .umodbus.exceptions import error_code_to_exception_map
 from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
@@ -109,11 +110,9 @@ class Solarman:
     def transport(self, value: str) -> None:
         self._transport = value
         if value == "tcp":
-            self._lookup = rtu.function_code_to_function_map
             self._get_response = self._parse_adu_from_rtu_response
             self._handle_frame = self._handle_protocol_frame
         else:
-            self._lookup = tcp.function_code_to_function_map
             self._get_response = self._parse_adu_from_tcp_response
             self._handle_frame = None
 
@@ -209,9 +208,6 @@ class Solarman:
                 _ = self._data_queue.get_nowait()
             self._data_queue.put_nowait(data)
             self._data_event.clear()
-        self._keeper = None
-        self._reader = None
-        self._writer = None
         self._keeper = create_task(self._open_connection())
 
     @throttle()
@@ -236,16 +232,18 @@ class Solarman:
                 await self._write(b"")
             except (ConnectionError, TimeoutError) as e:
                 _LOGGER.debug(f"[{self.host}] {e!r} can be during closing ignored")
-            finally:
-                try:
-                    self._writer.close()
-                    await self._writer.wait_closed()
-                except (AttributeError, OSError) as e: # OSError happens when is host unreachable
-                    _LOGGER.debug(f"[{self.host}] {e!r} can be during closing ignored")
-                finally:
-                    self._writer = None
 
-    @throttle(0.2)
+            try:
+                self._writer.close()
+                await self._writer.wait_closed()
+            except (AttributeError, OSError) as e: # OSError happens when is host unreachable
+                _LOGGER.debug(f"[{self.host}] {e!r} can be during closing ignored")
+
+            self._writer = None
+
+        self._reader = None
+
+    @throttle(0.1)
     @log_call("SENT")
     @log_return("RECV")
     async def _send_receive_frame(self, frame: bytes) -> bytes:
@@ -266,7 +264,7 @@ class Solarman:
         finally:
             self._data_event.clear()
 
-    async def _parse_adu_from_rtu_response(self, frame: bytes) -> tuple[int, int, bytes]:
+    async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
         async def _get_rtu_response(frame: bytes) -> bytes:
             request_frame = self._protocol_header(15 + len(frame),
                 PROTOCOL.CONTROL_CODE.REQUEST,
@@ -276,61 +274,53 @@ class Solarman:
                 + PROTOCOL.PLACEHOLDER4 # delivery|poweron|offset time
                 + frame)
             return await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
-        response_frame = await _get_rtu_response(frame)
+        req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
+        res = await _get_rtu_response(req)
         if self.serial_bytes == PROTOCOL.PLACEHOLDER3:
-            self.serial = response_frame[7:11]
-            _LOGGER.debug(f"[{self.host}] SERIAL_SET: {response_frame.hex(" ")}")
-            response_frame = await _get_rtu_response(frame)
-        if response_frame[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
+            self.serial = res[7:11]
+            _LOGGER.debug(f"[{self.host}] SERIAL_SET: {res.hex(" ")}")
+            res = await _get_rtu_response(req)
+        if res[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
             raise FrameError("Incorrect control code")
-        if response_frame[5] != self._sequence_number:
+        if res[5] != self._sequence_number:
             raise FrameError("Invalid sequence number")
-        if response_frame[11:12] != PROTOCOL.FRAME_TYPE:
+        if res[11:12] != PROTOCOL.FRAME_TYPE:
             raise FrameError("Invalid frame type")
-        if response_frame[-2] != self._calculate_checksum(response_frame[1:-2]):
+        if res[-2] != self._calculate_checksum(res[1:-2]):
             raise FrameError("Invalid checksum")
-        adu = response_frame[25:-2]
-        if len(adu) < 5: # Short version of modbus exception (undocumented)
-            if len (adu) > 0 and (err := error_code_to_exception_map.get(adu[0])):
+        res = res[25:-2]
+        if len(res) < 5: # Short version of modbus exception (undocumented)
+            if len (res) > 0 and (err := error_code_to_exception_map.get(res[0])):
                 raise FrameError(f"Modbus exception: {err.__name__}")
             raise FrameError(f"Invalid modbus frame")
-        if adu.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(adu[:-4]) == adu[-4:-2]: # Double CRC (XXXX0000) correction
-            adu = adu[:-2]
-        return rtu.parse_response_adu(adu, frame)
+        if res.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(res[:-4]) == res[-4:-2]: # Double CRC (XXXX0000) correction
+            res = res[:-2]
+        return rtu.parse_response_adu(res, req)
 
-    async def _parse_adu_from_tcp_response(self, frame: bytes) -> tuple[int, int, bytes]:
-        adu = await self._send_receive_frame(frame)
-        if 8 <= len(adu) <= 10: # Incomplete response frame correction
-            adu = adu[:5] + b'\x06' + adu[6:] + (frame[len(adu):10] if len(frame) > 12 else (b'\x00' * (10 - len(adu)))) + b'\x00\x01'
-        return tcp.parse_response_adu(adu, frame)
+    async def _parse_adu_from_tcp_response(self, code: int, address: int, **kwargs) -> list[int]:
+        req = tcp.function_code_to_function_map[code](self.slave, address, **kwargs)
+        res = await self._send_receive_frame(req)
+        if 8 <= len(res) <= 10: # Incomplete response correction
+            res = res[:5] + b'\x06' + res[6:] + (req[len(res):10] if len(req) > 12 else (b'\x00' * (10 - len(res)))) + b'\x00\x01'
+        return tcp.parse_response_adu(res, req)
 
     @log_return("DATA")
     async def execute(self, code, address, **kwargs):
-        if code not in self._lookup:
+        if code not in FUNCTION_CODES:
             raise Exception(f"Invalid modbus function code {code:02}")
 
-        exception = None
-
-        try:
-            async with asyncio.timeout(self.timeout * 4):
-                async with self._semaphore:
-                    while True:
-                        try:
-                            return await self._get_response(self._lookup.get(code)(self.slave, address, **kwargs))
-                        except Exception as e:
-                            _LOGGER.debug(f"[{self.host}] FAIL: {(exception := e)!r}")
-
-        except TimeoutError as e:
-            if exception:
-                raise exception from e
-            raise
+        async with asyncio.timeout(self.timeout * 4):
+            async with self._semaphore:
+                try:
+                    return await self._get_response(code, address, **kwargs)
+                except:
+                    return await self._get_response(code, address, **kwargs)
 
     @log_call("Closing connection")
     async def close(self) -> None:
-        try:
-            if self._keeper:
-                self._keeper.cancel()
-            await self._close()
-        finally:
-            self._keeper = None
-            self._reader = None
+        if self.connected:
+            self._keeper.cancel()
+
+        self._keeper = None
+
+        await self._close()
