@@ -1038,6 +1038,9 @@ parameters:
         rule: 3
         registers: [0x0685, 0x0684]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -1049,6 +1052,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption

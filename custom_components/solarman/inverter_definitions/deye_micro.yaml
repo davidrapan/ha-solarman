@@ -463,6 +463,9 @@ parameters:
         rule: 1
         registers: [0x003C]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Today Production 1"
         friendly_name: Today's Production 1
@@ -474,6 +477,9 @@ parameters:
         rule: 1
         registers: [0x0041]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Today Production 2"
         friendly_name: Today's Production 2
@@ -485,6 +491,9 @@ parameters:
         rule: 1
         registers: [0x0042]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Today Production 3"
         friendly_name: Today's Production 3
@@ -496,6 +505,9 @@ parameters:
         rule: 1
         registers: [0x0043]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Today Production 4"
         friendly_name: Today's Production 4
@@ -507,6 +519,9 @@ parameters:
         rule: 1
         registers: [0x0044]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         persistent:
@@ -519,6 +534,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production 1"
         mppt: 2
@@ -532,6 +549,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production 2"
         mppt: 2
@@ -545,6 +564,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production 3"
         mppt: 3
@@ -558,6 +579,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production 4"
         mppt: 4
@@ -571,6 +594,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
   - group: Settings
     items:

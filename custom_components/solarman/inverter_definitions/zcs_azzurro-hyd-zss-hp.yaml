@@ -214,6 +214,9 @@ parameters:
         rule: 3
         registers: [0x0685, 0x0684]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         update_interval: 30
@@ -226,6 +229,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
   - group: Battery
     update_interval: 5

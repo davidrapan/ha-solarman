@@ -29,12 +29,20 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_shutdown(self) -> None:
         _LOGGER.debug("async_shutdown")
         await super().async_shutdown()
-        await self.device.shutdown()
+        try:
+            await self.device.shutdown()
+        except Exception as e:
+            _LOGGER.exception(f"Unexpected error shutting down {self.name}")
 
     async def _async_setup(self) -> None:
         _LOGGER.debug("_async_setup")
         await super()._async_setup()
-        await self.device.load()
+        try:
+            await self.device.setup()
+        except TimeoutError:
+            raise
+        except Exception as e:
+            raise UpdateFailed(repr(e)) from e
 
     async def async_config_entry_first_refresh(self) -> None:
         await super().async_config_entry_first_refresh()
@@ -49,4 +57,4 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._counter = count(0, int(self._update_interval_seconds))
             if isinstance(e, TimeoutError):
                 raise
-            raise UpdateFailed(e) from e
+            raise UpdateFailed(repr(e)) from e

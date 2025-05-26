@@ -96,6 +96,9 @@ parameters:
         rule: 1
         registers: [0x382F]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -105,6 +108,10 @@ parameters:
         rule: 3
         registers: [0x3831, 0x3830]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total production time"
         class: "duration"

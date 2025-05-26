@@ -20,6 +20,7 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
+        self._last_result = {}
         self._result = {}
 
         if "default" in profile:
@@ -98,6 +99,9 @@ class ParameterParser:
 
         return [set_request(self._code if self._is_single_code else r[0][0], r[0][1], r[-1][1]) for r in groups]
 
+    def reset(self):
+        self._last_result = {}
+
     def in_range(self, value, definition):
         if (range := definition.get("range")) is not None:
             if ((min := range.get("min")) is not None and value < min) or ((max := range.get("max")) is not None and value > max):
@@ -108,10 +112,20 @@ class ParameterParser:
 
     def do_validate(self, key, value, rule):
         if ((min := rule.get("min")) is not None and min > value) or ((max := rule.get("max")) is not None and max < value):
-            _LOGGER.debug(f"Value: {value} of {key} validation failed: {rule}")
+            _LOGGER.debug(f"{key}: {value} validation failed. Conditions: {rule}")
             if "invalidate_all" in rule:
-                raise ValueError(f"Invalidate complete dataset - {value} of {key} validation failed: {rule}")
+                raise ValueError(f"Invalidate complete dataset. {key}: {value} validation failed. Conditions: {rule}")
             return False
+
+        if dev := rule.get("dev"):
+            if (last_value := self._last_result.get(key)) is not None:
+                if abs(value - last_value) > dev:
+                    _LOGGER.debug(f"{key}: {value} validation failed, last value: {last_value}. Conditions: {rule}")
+                    if "dev_invalidate_all" in rule:
+                        raise ValueError(f"Invalidate complete dataset. {key}: {value} validation failed. Conditions: {rule}")
+                    return False
+
+            self._last_result[key] = value
 
         return True
 

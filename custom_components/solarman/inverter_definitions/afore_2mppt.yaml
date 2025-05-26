@@ -106,6 +106,9 @@ parameters:
         rule: 1
         registers: [0x03E8]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -115,6 +118,9 @@ parameters:
         rule: 1
         registers: [0x03F7, 0x03F6]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
   - group: Output
     items:

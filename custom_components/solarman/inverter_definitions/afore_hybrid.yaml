@@ -658,6 +658,9 @@ parameters:
         rule: 1
         registers: [0x03EF, 0x03EE]
         icon: mdi:solar-power
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -669,6 +672,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Production B"
         class: "energy"
@@ -680,6 +685,8 @@ parameters:
         icon: mdi:solar-power
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Total Energy Export"
         class: "energy"

@@ -295,6 +295,9 @@ parameters:
         rule: 1
         registers: [3014]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          dev_invalidate_all:
 
       - name: "Monthly Production"
         class: "energy"
@@ -321,3 +324,5 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          dev_invalidate_all:
