@@ -81,9 +81,6 @@ parameters:
         rule: 1
         registers: [0x301c]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Today Production 1"
         friendly_name: Today's Production 1
@@ -95,9 +92,6 @@ parameters:
         rule: 1
         registers: [0x301f]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Today Production 2"
         friendly_name: Today's Production 2
@@ -109,9 +103,6 @@ parameters:
         rule: 1
         registers: [0x3022]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -124,7 +115,7 @@ parameters:
         validation:
           min: 0.1
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
   - group: Grid
     items:

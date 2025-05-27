@@ -109,9 +109,6 @@ parameters:
         rule: 1
         registers: [3036]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Monthly Production"
         update_interval: 30
@@ -121,9 +118,6 @@ parameters:
         rule: 3
         registers: [3038, 3037]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Yearly Production"
         update_interval: 30
@@ -133,9 +127,6 @@ parameters:
         rule: 3
         registers: [3040, 3039]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Total Production"
         alt: "Cumulative Production"
@@ -150,7 +141,7 @@ parameters:
         validation:
           min: 0.1
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
   - group: Power Grid
     items:

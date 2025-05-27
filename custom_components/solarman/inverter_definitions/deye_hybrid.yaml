@@ -563,6 +563,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: Today Losses
         alt: Daily Losses

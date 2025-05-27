@@ -636,9 +636,6 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x1028, 0x1027]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
         class: "energy"
@@ -653,7 +650,7 @@ parameters:
         validation:
           min: 0.001
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
       - name: "Generator Operating Time" # aka "Total Generation Time"
         class: "duration"

@@ -166,9 +166,6 @@ parameters:
         rule: 3
         registers: [0x3153]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Today Energy Import"
         friendly_name: Today's Energy Import
@@ -221,7 +218,7 @@ parameters:
         validation:
           min: 0.1
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
       - name: "Total Energy Import"
         class: "energy"

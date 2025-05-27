@@ -52,9 +52,9 @@ class Device():
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
         except TimeoutError as e:
-            raise TimeoutError(f"Timeout setuping {self.config.name}: {e:r}") from e
+            raise TimeoutError(f"Timeout setuping {self.config.name}: {e!r}") from e
         except Exception as e:
-            raise Exception(f"Failed setuping {self.config.name}: {e:r}") from e
+            raise Exception(f"Failed setuping {self.config.name}: {e!r}") from e
 
     def check(self, lock) -> None:
         if lock and self._write_lock:
@@ -73,9 +73,17 @@ class Device():
             await self.endpoint.discover(True)
             raise
 
+    @retry()
+    async def execute_bulk(self, requests, scheduled):
+        responses = {}
+
+        for code, address, _, count in ((get_request_code(request), request[REQUEST_START], request[REQUEST_END], request[REQUEST_COUNT]) for request in scheduled):
+            responses[(code, address)] = await self.execute(code, address, count = count)
+
+        return self.profile.parser.process(responses) if requests is None else responses
+
     async def get(self, runtime = 0, requests = None):
-        responses, result = {}, {}
-        scheduled, scount = ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests)
+        scheduled, scount, result = *ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests), {}
 
         if scount == 0:
             return result
@@ -85,10 +93,7 @@ class Device():
         try:
             _LOGGER.debug(f"[{self.endpoint.host}] Scheduled: {scheduled}")
 
-            for code, address, _, count in ((get_request_code(request), request[REQUEST_START], request[REQUEST_END], request[REQUEST_COUNT]) for request in scheduled):
-                responses[(code, address)] = await self.execute(code, address, count = count)
-
-            result = self.profile.parser.process(responses) if requests is None else responses
+            result = await self.execute_bulk(requests, scheduled)
 
             if (rcount := len(result) if result else 0) > 0:
                 _LOGGER.debug(f"[{self.endpoint.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")

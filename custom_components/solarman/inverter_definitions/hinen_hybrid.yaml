@@ -315,9 +315,6 @@ parameters:
         rule: 2
         registers: [273, 272]
         icon: "mdi:solar-power"
-        validation:
-          dev: 100
-          dev_invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -330,7 +327,7 @@ parameters:
         validation:
           min: .1
           dev: 100
-          dev_invalidate_all:
+          invalidate_all: 2
 
       - name: "Today Battery Charge"
         alt: "Battery Daily Charging Energy"

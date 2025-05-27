@@ -16,7 +16,7 @@ from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
-from ..common import throttle, create_task, format
+from ..common import retry, throttle, create_task, format
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -304,6 +304,10 @@ class Solarman:
             res = res[:5] + b'\x06' + res[6:] + (req[len(res):10] if len(req) > 12 else (b'\x00' * (10 - len(res)))) + b'\x00\x01'
         return tcp.parse_response_adu(res, req)
 
+    @retry()
+    async def get_response(self, code: int, address: int, **kwargs) -> list[int]:
+        return await self._get_response(code, address, **kwargs)
+
     @log_return("DATA")
     async def execute(self, code, address, **kwargs):
         if code not in FUNCTION_CODES:
@@ -311,10 +315,7 @@ class Solarman:
 
         async with asyncio.timeout(self.timeout * 4):
             async with self._semaphore:
-                try:
-                    return await self._get_response(code, address, **kwargs)
-                except:
-                    return await self._get_response(code, address, **kwargs)
+                return await self.get_response(code, address, **kwargs)
 
     @log_call("Closing connection")
     async def close(self) -> None:
