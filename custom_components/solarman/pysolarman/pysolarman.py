@@ -309,7 +309,7 @@ class Solarman:
         return await self._get_response(code, address, **kwargs)
 
     @log_return("DATA")
-    async def execute(self, code, address, **kwargs):
+    async def execute(self, code: int, address: int, **kwargs) -> list[int]:
         if code not in FUNCTION_CODES:
             raise Exception(f"Invalid modbus function code {code:02}")
 

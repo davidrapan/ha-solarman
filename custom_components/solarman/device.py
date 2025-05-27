@@ -1,7 +1,7 @@
 import logging
 import asyncio
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .const import *
 from .common import *
@@ -12,30 +12,32 @@ _LOGGER = logging.getLogger(__name__)
 
 class DeviceState():
     def __init__(self):
-        self.updated = datetime.now()
-        self.updated_interval = 0
-        self.value = -1
+        self.updated: datetime = datetime.now()
+        self.updated_interval: timedelta = 0
+        self.value: int = -1
 
     @property
     def print(self):
         return "Connected" if self.value > 0 else "Disconnected"
 
-    def update(self, reinit: bool = False):
+    def update(self, init: bool = False, exception: Exception | None = None) -> bool:
         now = datetime.now()
-        if reinit:
-            self.updated = now
+        last_value = self.value
+        if not init:
+            if not exception:
+                self.updated, self.updated_interval = now, now - self.updated
+                self.value = 1
+            else:
+                self.value = 0 if self.value == 1 else -1
         else:
-            self.updated, self.updated_interval = now, now - self.updated
-            self.value = 1
-
-    def reevaluate(self) -> int:
-        self.value = 0 if self.value == 1 else -1
+            self.updated = now
+        if self.value != last_value:
+            _LOGGER.debug(f"Device state changed to {self.print}: {self.value}")
         return self.value == -1
 
 class Device():
     def __init__(self, config: ConfigurationProvider):
-        self._semaphore = asyncio.Semaphore(1)
-        self._write_lock = True
+        self._write_lock: bool = True
 
         self.state: DeviceState = DeviceState()
         self.config: ConfigurationProvider = config
@@ -46,7 +48,6 @@ class Device():
 
     async def setup(self) -> None:
         try:
-            self.state.update(True)
             self.endpoint = await EndPointProvider(self.config).discover()
             self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
@@ -55,6 +56,8 @@ class Device():
             raise TimeoutError(f"Timeout setuping {self.config.name}: {e!r}") from e
         except Exception as e:
             raise Exception(f"Failed setuping {self.config.name}: {e!r}") from e
+        finally:
+            self.state.update(True)
 
     def check(self, lock) -> None:
         if lock and self._write_lock:
@@ -88,22 +91,19 @@ class Device():
         if scount == 0:
             return result
 
-        _LOGGER.debug(f"[{self.endpoint.host}] Scheduling {scount} query request{'s' if scount != 1 else ''}. #{runtime}")
+        _LOGGER.debug(f"[{self.endpoint.host}] Scheduling {scount} query request{'s' if scount != 1 else ''}: {scheduled} #{runtime}")
 
         try:
-            _LOGGER.debug(f"[{self.endpoint.host}] Scheduled: {scheduled}")
-
             result = await self.execute_bulk(requests, scheduled)
-
-            if (rcount := len(result) if result else 0) > 0:
-                _LOGGER.debug(f"[{self.endpoint.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}. [Previous State: {self.state.print} ({self.state.value})]")
-                self.state.update()
-
         except Exception as e:
-            if self.state.reevaluate():
+            if self.state.update(exception = e):
                 await self.modbus.close()
                 self.profile.parser.reset()
                 raise
-            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data. [Previous State: {self.state.print} ({self.state.value}), {format_exception(e)}]")
+            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {e!r}")
+
+        if (rcount := len(result) if result else 0):
+            _LOGGER.debug(f"[{self.endpoint.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}")
+            self.state.update()
 
         return result
