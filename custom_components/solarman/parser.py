@@ -121,8 +121,8 @@ class ParameterParser:
             if value and (last_value := self._last_result.get(key)) is not None and abs(value - last_value) > dev:
                 _LOGGER.debug(f"{key}: {value} validation failed, last value: {last_value}. Conditions: {rule}")
                 invalid |= 2
-
-            self._last_result[key] = value
+            else:
+                self._last_result[key] = value
 
         if invalid > 0 and "invalidate_all" in rule and ((inv := rule.get("invalidate_all")) is None or invalid & inv):
             raise ValueError(f"Invalidate complete dataset. {key}: {value} validation failed. Conditions: {rule}")
