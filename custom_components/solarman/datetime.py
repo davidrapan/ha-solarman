@@ -52,7 +52,7 @@ class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
             if self._attr_native_value:
                 return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
         except Exception as e:
-            _LOGGER.debug(f"SolarmanDateTimeEntity.native_value of {self._attr_name}: {format_exception(e)}")
+            _LOGGER.debug(f"SolarmanDateTimeEntity.native_value of {self._attr_name}: {e!r}")
         return None
 
     async def async_set_value(self, value: datetime) -> None:

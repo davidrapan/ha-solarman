@@ -63,7 +63,7 @@ class Discovery:
         except TimeoutError:
             pass
         except Exception as e:
-            _LOGGER.debug(f"_discover exception: {format_exception(e)}")
+            _LOGGER.debug(f"_discover exception: {e!r}")
         finally:
             transport.close()
 

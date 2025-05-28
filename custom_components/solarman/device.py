@@ -52,11 +52,9 @@ class Device():
             self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
-        except TimeoutError as e:
-            raise TimeoutError(f"Timeout setuping {self.config.name}: {e!r}") from e
         except Exception as e:
-            raise Exception(f"Failed setuping {self.config.name}: {e!r}") from e
-        finally:
+            raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {e!r}"}") from e
+        else:
             self.state.update(True)
 
     def check(self, lock) -> None:
@@ -100,7 +98,7 @@ class Device():
                 await self.modbus.close()
                 self.profile.parser.reset()
                 raise
-            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if isinstance(e, TimeoutError) else "Error"} fetching {self.config.name} data: {e!r}")
+            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} fetching {self.config.name} data{"" if x else f": {e!r}"}")
 
         if (rcount := len(result) if result else 0):
             _LOGGER.debug(f"[{self.endpoint.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}")

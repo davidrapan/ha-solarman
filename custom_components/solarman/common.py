@@ -157,8 +157,8 @@ def group_when(iterable, predicate):
 def format(value):
     return value if not isinstance(value, (bytes, bytearray)) else value.hex(" ")
 
-def format_exception(e):
-    return re.sub(r"\s+", " ", f"{type(e).__name__}{f': {e}' if f'{e}' else ''}")
+def strepr(value):
+    return s if (s := str(value)) else repr(value)
 
 def unwrap(source: dict, key: Any, mod: int = 0):
     if (c := source.get(key)) is not None and isinstance(c, list):

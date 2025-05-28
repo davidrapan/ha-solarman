@@ -69,7 +69,7 @@ def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, A
     except (gaierror, timeout):
         errors["base"] = "cannot_connect"
     except Exception as e:
-        _LOGGER.exception(f"validate_connection: {format_exception(e)}")
+        _LOGGER.exception(f"validate_connection: {e!r}")
         errors["base"] = "unknown"
     else:
         _LOGGER.debug(f"validate_connection: validation passed: {user_input}")
