@@ -108,12 +108,18 @@ async def lookup_profile(request, attr):
         return f
     raise Exception("Unable to read Device Type at address 0x0000")
 
+def process_profile(filename, attr):
+    if filename in PROFILE_REDIRECT and (r := PROFILE_REDIRECT[filename]):
+        if ':' not in r:
+            return r
+        if (s := r.split(':')) and (a := s[1].split('=')):
+            attr[a[0]] = bool(a[1])
+            return s[0]
+    return filename
+
 async def yaml_open(file):
     async with aiofiles.open(file) as f:
         return yaml.safe_load(await f.read())
-
-def process_profile(filename):
-    return filename if not filename in PROFILE_REDIRECT else PROFILE_REDIRECT[filename]
 
 def build_device_info(entry_id, serial, mac, host, info, name):
     device_info = DeviceInfo()
