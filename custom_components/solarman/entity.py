@@ -44,7 +44,7 @@ def create_entity(creator, description):
 
         return entity
     except Exception as e:
-        _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
+        _LOGGER.error(f"Configuring {description} failed. [{e!r}]")
         raise
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
@@ -52,7 +52,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
         super().__init__(coordinator)
         self._attr_device_info = self.coordinator.device.device_info.get(self.coordinator.device.config.config_entry.entry_id)
         self._attr_state: StateType = STATE_UNKNOWN
-        self._attr_native_value: StateType | str | date | datetime | time | float | Decimal = None
+        self._attr_native_value: StateType | str | date | datetime | time | float | Decimal | None = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
         self._attr_value: None = None
 

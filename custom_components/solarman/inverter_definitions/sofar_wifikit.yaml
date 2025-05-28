@@ -1,20 +1,18 @@
 #
-# Sofar 
+# Sofar ME3000SP | HYD3000/4000/5000/6000-ES
 #
 # Reference: https://github.com/user-attachments/files/16641716/SOFARSOLAR.ModBus-RTU.Communication.Protocol.pdf
 #
 # Tested with Solarman ME3000SP with an embedded
-# "wifikit" logger. Might work for other devices
-# too.
-#
-# The ME3000SP is basically a glorified battery
-# charger - it is not directly connected to any
-# production infrastructure, but can calculate
-# generated energy based on any CT clamps it is
-# connected to. For most people this entity will
+# "wifikit" logger. The ME3000SP is basically
+# a glorified battery charger - it is not directly
+# connected to any production infrastructure, but can
+# calculate generated energy based on any CT clamps
+# it is connected to. For most people this entity will
 # be a generally accurate representation of their
 # PV panel output, but since this tracks production
 # from _any_ source, it is named generically.
+# Might work for other devices too.
 #
 
 default:
@@ -307,7 +305,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
-        scale: 0.01
+        scale: [0.01, 0.1]
         rule: 1
         registers: [0x020E]
 
@@ -1144,6 +1142,98 @@ parameters:
       - name: "Device Communication Board inner message"
         rule: 1
         registers: [0x0242]
+
+  - group: Other
+    items:
+      - name: "Buck Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x022F]
+
+      - name: "Grid R Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0230]
+
+      - name: "Grid R Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0231]
+
+      - name: "Grid S Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0232]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Grid S Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0233]
+
+      - name: "Grid T Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0234]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Grid T Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0235]
+        icon: "mdi:lightning-bolt"
+
+      - name: "PV Current"
+        class: "current"
+        mppt: 1
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0236]
+        icon: "mdi:lightning-bolt"
+
+      - name: "DC Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "mA"
+        rule: 1
+        registers: [0x023B]
+
+      - name: "DC Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x023C]
 
   - group: Info
     update_interval: 3600

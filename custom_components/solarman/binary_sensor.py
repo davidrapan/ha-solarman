@@ -48,16 +48,16 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
         super().__init__(coordinator, {"key": "connection_binary_sensor", "name": "Connection"})
         self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY 
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_state = -1
 
     @property
     def available(self) -> bool:
-        return True
+        return self._attr_state is not None
 
     @property
     def is_on(self) -> bool | None:
-        return self._attr_state > 0 if self._attr_state is not None else False
+        return self._attr_state > 0
 
     def update(self):
         self.set_state(self.coordinator.device.state.value)
-        self._attr_extra_state_attributes["updated"] = self.coordinator.device.state.updated.strftime("%m/%d/%Y, %H:%M:%S")
-        # Maybe set the timestamp using HA's datetime format???
+        self._attr_extra_state_attributes["updated"] = self.coordinator.device.state.updated.timestamp()

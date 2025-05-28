@@ -72,10 +72,11 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         self._attr_native_unit_of_measurement = "s"
         self._attr_state_class = "duration"
         self._attr_icon = "mdi:update"
+        self._attr_native_value = 0
 
     @property
     def available(self) -> bool:
-        return self._attr_native_value > 0
+        return self._attr_native_value is not None
 
     def update(self):
         self.set_state(self.coordinator.device.state.updated_interval.total_seconds())
