@@ -278,21 +278,21 @@ class Solarman:
         res = await _get_rtu_response(req)
         if self.serial_bytes == PROTOCOL.PLACEHOLDER3:
             self.serial = res[7:11]
-            _LOGGER.debug(f"[{self.host}] SERIAL_SET: {res.hex(" ")}")
+            _LOGGER.debug(f"[{self.host}] SERIAL_SET: {self.serial}")
             res = await _get_rtu_response(req)
         if res[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
-            raise FrameError("Incorrect control code")
+            raise FrameError("Invalid control code")
         if res[5] != self._sequence_number:
             raise FrameError("Invalid sequence number")
         if res[11:12] != PROTOCOL.FRAME_TYPE:
-            raise FrameError("Invalid frame type")
+            _LOGGER.debug(f"[{self.host}] UNEXPECTED_FRAME_TYPE: {int.from_bytes(res[11:12])}")
         if res[-2] != self._calculate_checksum(res[1:-2]):
             raise FrameError("Invalid checksum")
         res = res[25:-2]
         if len(res) < 5: # Short version of modbus exception (undocumented)
-            if len (res) > 0 and (err := error_code_to_exception_map.get(res[0])):
-                raise FrameError(f"Modbus exception: {err.__name__}")
-            raise FrameError(f"Invalid modbus frame")
+            if len (res) > 0 and (modbusError := error_code_to_exception_map.get(res[0])):
+                raise modbusError()
+            raise FrameError("Invalid modbus frame")
         if res.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(res[:-4]) == res[-4:-2]: # Double CRC (XXXX0000) correction
             res = res[:-2]
         return rtu.parse_response_adu(res, req)
