@@ -319,9 +319,10 @@ class Solarman:
 
     @log_call("Closing connection")
     async def close(self) -> None:
-        if self.connected:
-            self._keeper.cancel()
+        async with self._semaphore:
+            if self.connected:
+                self._keeper.cancel()
 
-        self._keeper = None
+            self._keeper = None
 
-        await self._close()
+            await self._close()
