@@ -85,7 +85,7 @@ ATTR_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK: 
 # - from 5s for power sensors for example (deye_sg04lp3, ..)
 # - up to 5m (deye_sg04lp3, ..) or 10m (kstar_hybrid, ..) for static valus like Serial Number, etc.
 #
-# Changing of this value does not affects the amount of stored data by HA beyond recorder's retention period
+# Changing of this value does not affects the amount of stored data beyond recorder's retention period
 # On the contrary changing this value can break:
 # - Request scheduling according "update_interval" properties set in profiles
 # - Behavior of services
