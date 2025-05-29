@@ -226,6 +226,24 @@ parameters:
         registers: [0x3835]
         icon: "mdi:omega"
 
+      - name: "Today Energy Import"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x3898]
+        icon: "mdi:transmission-tower-export"
+ 
+      - name: "Today Energy Export"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x3895]
+        icon: "mdi:transmission-tower-import"
+
       - name: Total Energy Import
         description: Total energy imported from the grid
         class: "energy"
