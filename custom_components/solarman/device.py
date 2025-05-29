@@ -37,14 +37,15 @@ class DeviceState():
 
 class Device():
     def __init__(self, config: ConfigurationProvider):
-        self._write_lock: bool = True
+        self.config = config
 
-        self.state: DeviceState = DeviceState()
-        self.config: ConfigurationProvider = config
-        self.endpoint: EndPointProvider = None
-        self.profile: ProfileProvider = None
-        self.modbus: Solarman = None
-        self.device_info: dict = {}
+        self._write_lock = True
+
+        self.state = DeviceState()
+        self.endpoint: EndPointProvider | None = None
+        self.profile: ProfileProvider | None = None
+        self.modbus: Solarman | None = None
+        self.device_info = {}
 
     async def setup(self) -> None:
         try:
