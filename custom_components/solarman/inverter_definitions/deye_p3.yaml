@@ -1934,19 +1934,19 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Off"
-          - key: 0x0001
+          - key: [0x0001, 0x0003]
             value: "Inverter"
-          - key: 0x0004
+          - key: [0x0004, 0x0006]
             value: "Grid"
-          - key: 0x0005
+          - key: [0x0005, 0x0007]
             value: "Inverter-Grid"
           - key: 0x0008
             value: "Generator"
-          - key: 0x0009
+          - key: [0x0009, 0x000B]
             value: "Inverter-Gen"
-          - key: 0x000C
+          - key: [0x000C, 0x000E]
             value: "Grid-Generator"
-          - key: 0x000D
+          - key: [0x000D, 0x000F]
             value: "Inv-Grid-Gen"
           - key: "default"
             value: "Power Supply"
