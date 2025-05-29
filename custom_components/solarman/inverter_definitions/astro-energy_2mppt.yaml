@@ -1,0 +1,173 @@
+info:
+  manufacturer: Astro-Energy
+  model: TM-L series
+
+default:
+  update_interval: 5
+  max_size: 60
+
+parameters:
+  - group: PV
+    items:
+      - name: PV Power
+        alt: DC Power
+        mppt: 1
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0000]
+            multiply:
+              registers: [0x0005]
+              scale: 0.01
+          - registers: [0x0001]
+            multiply:
+              registers: [0x0006]
+              scale: 0.01
+        validation:
+          min: 0
+          max: 4000
+          invalidate_all:
+        icon: "mdi:solar-power-variant"
+
+      - name: PV1 Power
+        alt: DC1 Power
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0000]
+            multiply:
+              registers: [0x0005]
+              scale: 0.01
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Voltage"
+        alt: DC1 Voltage
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0000]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        alt: DC1 Current
+        mppt: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0005]
+        icon: "mdi:solar-power-variant"
+
+      - name: PV2 Power
+        alt: DC2 Power
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0001]
+            multiply:
+              registers: [0x0006]
+              scale: 0.01
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        alt: DC2 Voltage
+        mppt: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0001]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        alt: DC2 Current
+        mppt: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x0006]
+        icon: "mdi:solar-power-variant"
+
+      - name: "Energy"
+        persistent:
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 1
+        registers: [0x0014]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
+
+  - group: Grid
+    items:
+      - name: "Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [0x0009]
+
+      - name: "Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x000B]
+
+      - name: "Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x000D]
+
+      - name: "Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 2
+        registers: [0x000F]
+
+      - name: "Temperature"
+        class: "temperature"
+        uom: "°C"
+        state_class: "measurement"
+        scale: 0.01
+        rule: 1
+        registers: [0x0016]
+
+  - group: Info
+    items:
+      - name: "MPPTs"
+        rule: 1
+        registers: [0x0017]
