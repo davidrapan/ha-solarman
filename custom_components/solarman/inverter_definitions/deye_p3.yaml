@@ -162,6 +162,7 @@ parameters:
         range:
           min: 0
           max: 1000
+          default: 0
 
       - name: "Date & Time"
         platform: datetime
@@ -740,6 +741,8 @@ parameters:
 
       - name: "PV Min Power"
         description: "Minimum PV power to start generator"
+        enabled_lookup:
+          io_mode_select: [Generator]
         platform: number
         class: "power"
         state_class: "measurement"
@@ -834,6 +837,14 @@ parameters:
         range:
           min: 0
           max: [32000, 12800]
+
+      - name: MPPT multi-point scanning
+        description: Find the MPP even when there are partial shading conditions on the solar panels
+        platform: "switch"
+        rule: 1
+        registers: [0x0155]
+        value:
+          bit: 2
 
       - name: Time of Use
         platform: select
@@ -1352,6 +1363,74 @@ parameters:
           max: 1
         registers: [0x00B3]
 
+      - name: Grid Frequency
+        platform: "select"
+        rule: 1
+        registers: [0x00B7]
+        lookup:
+          - key: 0x0
+            value: 50 Hz
+          - key: 0x1
+            value: 60 Hz
+
+      - name: "Grid voltage protection - high"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x00B9]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid voltage protection - low"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x00BA]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid frequency protection - high"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x00BB]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Grid frequency protection - low"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x00BC]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: Generator Grid side
+        description: The generator is connected to the grid input
+        platform: "switch"
+        rule: 1
+        registers: [0x00BD]
+
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
@@ -1381,6 +1460,41 @@ parameters:
         range:
           min: 0
           max: [80000, 8000]
+
+      - name: "Grid Max Export power"
+        platform: number
+        class: "power"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x00E7]
+        range:
+          min: 0
+          max: 8000
+
+      - name: "Grid Max Import power"
+        platform: number
+        class: "power"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x00E9]
+        range:
+          min: 0
+          max: 8000
+
+      - name: AC Coupling
+        description: Couple inverters and batteries using AC lines
+        platform: "select"
+        rule: 1
+        registers: [0x00EA]
+        lookup:
+          - key: 0
+            value: Disabled
+          - bit: 0
+            value: Grid
+          - bit: 1
+            value: Load
 
   - group: BMS
     items:
