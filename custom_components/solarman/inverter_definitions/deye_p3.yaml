@@ -1,12 +1,7 @@
 #
-# SUN-5/6/8/10/12K-SG04LP3 and SUN-5/6/8/10/12/15/20/25K-SG01HP3-EU-AM2 | 5-12kW and 5-25kW | Three Phase | 2 MPPT | Hybrid Inverter | LV and HV Battery Supported
+# SUN-5/6/8/10/12K-SG04LP3 and SUN-5/6/8/10/12/15/20/25K-SG01HP3-EU-AM2 | 5-32kW and 5-128kW | Three Phase | 4 MPPT | Hybrid Inverter | LV and HV Battery Supported
 #
 # Reference: https://github.com/user-attachments/files/16798469/MODBUS.RTU.V105.1-20231006.pdf and https://github.com/user-attachments/files/16597916/MODBUSRTU.V104.3.1.1111_SG01-HP3-AM2.pdf
-#
-# Registers
-# The 0-59 register address is a readable register type, 0x03 function code.
-# The 60-499 register address is a read-write register type 0x10 function code.
-# The 500-2000 register address is a readable register type 0x03 function code.
 #
 # Tested with 25K-SG01HP3 12K-SG04LP3 and LSW3_15_FFFF_1.0.91R Stick Logger
 #
@@ -1338,7 +1333,7 @@ parameters:
         value:
           bit: 4
 
-      - name: Generator Grid On
+      - name: Generator On-Grid
         description: On Grid always on
         name_lookup: io_mode_select
         enabled_lookup:

@@ -2161,7 +2161,7 @@ parameters:
         value:
           bit: 8
 
-      - name: Generator Grid On
+      - name: Generator On-Grid
         description: On Grid always on
         name_lookup: io_mode_select
         enabled_lookup:
