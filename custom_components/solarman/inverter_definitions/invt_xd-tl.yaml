@@ -226,27 +226,23 @@ parameters:
         registers: [0x3835]
         icon: "mdi:omega"
 
-      - name: "Today Imported Energy"
+      - name: "Today Energy Import"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x3898]
-        icon: "mdi:home-import-outline"
-        validation:
-          min: 0.1
+        icon: "mdi:transmission-tower-export"
  
-      - name: "Today Exported Energy"
+      - name: "Today Energy Export"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x3895]
-        icon: "mdi:home-export-outline"
-        validation:
-          min: 0.1
+        icon: "mdi:transmission-tower-import"
 
       - name: Total Energy Import
         description: Total energy imported from the grid
@@ -326,7 +322,7 @@ parameters:
             value: "Off-Grid"
         icon: "mdi:wrench"
 
-      - name: "Inverter Module Temperature"
+      - name: "Device Module Temperature"
         class: "temperature"
         uom: "°C"
         scale: 0.1
@@ -334,7 +330,7 @@ parameters:
         registers: [0x3822]
         icon: "mdi:thermometer"
 
-      - name: "Inverter Temperature"
+      - name: "Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -343,7 +339,7 @@ parameters:
         registers: [0x3826]
         icon: "mdi:thermometer"
 
-      - name: "Ambient Temperature"
+      - name: "Device Ambient Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -418,7 +414,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x3909, 0x3908]
-        icon: "mdi:battery-charging"
 
       - name: "Battery Voltage"
         class: "voltage"
@@ -427,7 +422,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x390A]
-        icon: "mdi:voltage"
 
       - name: "Today Battery Charge"
         class: "energy"
@@ -476,7 +470,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3922]
-        icon: "mdi:solar-power"
 
       - name: "Battery State"
         class: "enum"
@@ -485,11 +478,11 @@ parameters:
         icon: "mdi:battery"
         lookup:
           - key: 0
-            value: "Idle"
+            value: "idle"
           - key: 1
-            value: "Charging"
+            value: "charging"
           - key: 2
-            value: "Discharging"
+            value: "discharging"
 
   - group: Alert & Fault
     items:
@@ -567,24 +560,6 @@ parameters:
       - name: "Device Alarm bit"
         rule: 1
         registers: [0x380C, 0x380B]
-
-      - name: "Alarm Main Code"
-        class: ""
-        state_class: ""      
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x3807]
-        icon: "mdi:alert"
-    
-      - name: "Alarm Sub Code"
-        class: ""
-        state_class: ""      
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x3808]
-        icon: "mdi:alert"
 
       - name: "Device Fault"
         class: "enum"
@@ -673,24 +648,6 @@ parameters:
             value: "ID 43-01 Current Leakage sensor Fault"
           - key: 2949121
             value: "ID 45-01 Auxiliary Power OFF"
-        icon: "mdi:alert-octagon"
-
-      - name: "Fault Main Code"
-        class: ""
-        state_class: ""      
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x3809]
-        icon: "mdi:alert-octagon"
-
-      - name: "Fault Sub Code"
-        class: ""
-        state_class: ""      
-        uom: ""
-        scale: 1
-        rule: 1
-        registers: [0x380A]
         icon: "mdi:alert-octagon"
 
       - name: "Device Fault bit"
