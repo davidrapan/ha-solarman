@@ -16,24 +16,24 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class DiscoveryProtocol:
-    def __init__(self, addresses):
+    def __init__(self, addresses: list[str] | str):
         self.addresses = addresses
-        self.responses = asyncio.Queue()
-        self.transport = None
+        self.responses: asyncio.Queue = asyncio.Queue()
+        self.transport: asyncio.DatagramTransport | None = None
 
-    def connection_made(self, transport):
+    def connection_made(self, transport: asyncio.DatagramTransport):
         self.transport = transport
         _LOGGER.debug(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in ensure_list(self.addresses):
             self.transport.sendto(DISCOVERY_MESSAGE[0], (address, DISCOVERY_PORT))
 
-    def datagram_received(self, d, _):
+    def datagram_received(self, d: bytes, a: str):
         if len(data := d.decode().split(',')) == 3:
             serial = int(data[2])
             self.responses.put_nowait((serial, {"ip": data[0], "mac": data[1]}))
-            _LOGGER.debug(f"DiscoveryProtocol: [{data[0]}, {data[1]}, {serial}]")
+            _LOGGER.debug(f"DiscoveryProtocol: {a} [{data[0]}, {data[1]}, {serial}]")
 
-    def error_received(self, e):
+    def error_received(self, e: OSError):
         _LOGGER.debug(f"DiscoveryProtocol: Error received: {e}")
 
     def connection_lost(self, _):
@@ -41,22 +41,22 @@ class DiscoveryProtocol:
 
 class Discovery:
     semaphore = asyncio.Semaphore(1)
-    networks = None
-    devices = None
-    d_when = None
+    networks: list[IPv4Network] | None = None
+    devices: dict | None = None
+    d_when: datetime | None = None
 
-    def __init__(self, hass: HomeAssistant, ip = None, serial = None):
+    def __init__(self, hass: HomeAssistant, ip: str | None = None, serial: int | None = None):
         self._hass = hass
         self._ip = ip
         self._serial = serial
         self._devices = {}
 
-    async def _discover(self, ips = IP_BROADCAST, wait = False):
+    async def _discover(self, ips: list[str] | str = IP_BROADCAST, wait: bool = False):
         loop = asyncio.get_running_loop()
 
         try:
             transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(ips), family = socket.AF_INET, allow_broadcast = True)
-            r = None
+            r: tuple = None
             while r is None or wait:
                 r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
                 yield r
@@ -76,7 +76,7 @@ class Discovery:
         async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
             yield item
 
-    async def discover(self, ping_only = False):
+    async def discover(self, ping_only: bool = False):
         self._devices = {}
 
         if self._ip:

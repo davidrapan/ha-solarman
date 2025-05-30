@@ -63,19 +63,19 @@ class FrameError(Exception):
 
 class Solarman:
     def __init__(self, host: str, port: int | str, transport: str, serial: int, slave: int, timeout: int):
-        self.host: str = host
-        self.port: int | str = port
-        self.transport: str = transport
-        self.serial: int = serial
-        self.slave: int = slave
-        self.timeout: int = timeout
+        self.host = host
+        self.port = port
+        self.transport = transport
+        self.serial = serial
+        self.slave = slave
+        self.timeout = timeout
 
         self._keeper: asyncio.Task | None = None
         self._reader: asyncio.StreamReader | None = None
         self._writer: asyncio.StreamWriter | None = None
-        self._semaphore: asyncio.Semaphore = asyncio.Semaphore(1)
-        self._data_queue: asyncio.Queue = asyncio.Queue(maxsize = 1)
-        self._data_event: synchronize.Event = Event()
+        self._semaphore = asyncio.Semaphore(1)
+        self._data_queue = asyncio.Queue(maxsize = 1)
+        self._data_event = Event()
         self._last_frame: bytes | None = None
 
     @staticmethod

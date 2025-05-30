@@ -102,11 +102,10 @@ class ParameterParser:
     def reset(self):
         self._last_result = {}
 
-    def in_range(self, value, definition):
-        if (range := definition.get("range")) is not None:
-            if ((min := range.get("min")) is not None and value < min) or ((max := range.get("max")) is not None and value > max):
-                _LOGGER.debug(f"Value: {value} of {definition["registers"]} is out of range: {range}")
-                return False
+    def in_range(self, key, value, rule):
+        if ((min := rule.get("min")) is not None and value < min) or ((max := rule.get("max")) is not None and value > max):
+            _LOGGER.debug(f"{key}: {value} is outside of valid range: {rule}")
+            return False
 
         return True
 
@@ -177,8 +176,8 @@ class ParameterParser:
             value += (temp & 0xFFFF) << shift
             shift += 16
 
-        if not self.in_range(value, definition):
-            return None
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
 
         if (mask := definition.get("mask")) is not None:
             value &= mask
@@ -220,8 +219,8 @@ class ParameterParser:
         if value > (maxint >> 1):
             value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
-        if not self.in_range(value, definition):
-            return None
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
 
         if (offset := definition.get("offset")) is not None:
             value -= offset
@@ -258,9 +257,9 @@ class ParameterParser:
                         value += n
             
             if (validation := s.get("validation")) is not None and not self.do_validate(s["registers"], n, validation):
-                if not "default" in validation:
+                if (d := validation.get("default")) is None:
                     continue
-                n = validation["default"]
+                n = d
 
         return value
 
@@ -278,9 +277,9 @@ class ParameterParser:
             return
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
-            if not "default" in validation:
+            if (d := validation.get("default")) is None:
                 return
-            value = validation["default"]
+            value = d
 
         self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
@@ -297,9 +296,9 @@ class ParameterParser:
         key = definition["key"]
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
-            if not "default" in validation:
+            if (d := validation.get("default")) is None:
                 return
-            value = validation["default"]
+            value = d
 
         self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 

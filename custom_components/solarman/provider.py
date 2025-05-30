@@ -63,8 +63,8 @@ class ConfigurationProvider:
 @dataclass
 class EndPointProvider:
     config: ConfigurationProvider
-    mac: str = ""
-    serial: int = 0
+    mac = ""
+    serial = 0
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.config, attr)
@@ -96,8 +96,8 @@ class EndPointProvider:
 class ProfileProvider:
     config: ConfigurationProvider
     endpoint: EndPointProvider
-    parser: ParameterParser = None
-    info: dict[str, str] = None
+    parser: ParameterParser | None = None
+    info: dict[str, str] | None = None
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.config, attr)

@@ -158,6 +158,7 @@ parameters:
         range:
           min: 0
           max: 1000
+          default: 0
 
       - name: "Date & Time"
         platform: datetime
@@ -1594,6 +1595,8 @@ parameters:
     items:
       - name: "PV Min Power"
         description: "Minimum PV power to start generator"
+        enabled_lookup:
+          io_mode_select: [Generator]
         platform: number
         class: "power"
         state_class: "measurement"
@@ -2161,7 +2164,7 @@ parameters:
         value:
           bit: 8
 
-      - name: Generator Grid On
+      - name: Generator On-Grid
         description: On Grid always on
         name_lookup: io_mode_select
         enabled_lookup:
@@ -2179,6 +2182,74 @@ parameters:
           min: 0
           max: 1
         registers: [0x0119]
+
+      - name: Grid Frequency
+        platform: "select"
+        rule: 1
+        registers: [0x011D]
+        lookup:
+          - key: 0x0
+            value: 50 Hz
+          - key: 0x1
+            value: 60 Hz
+
+      - name: "Grid voltage protection - high"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x011F]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid voltage protection - low"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0120]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid frequency protection - high"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0121]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Grid frequency protection - low"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0122]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: Generator Grid side
+        description: The generator is connected to the grid input
+        platform: "switch"
+        rule: 1
+        registers: [0x0123]
 
       - name: "Generator Peak shaving"
         platform: number
