@@ -1,11 +1,9 @@
 import time
 import types
-import errno
 import struct
 import logging
 import asyncio
 
-from multiprocessing import synchronize
 from multiprocessing import Event
 from random import randrange
 from functools import wraps
@@ -173,13 +171,12 @@ class Solarman:
         try:
             self._writer.write(data)
             await self._writer.drain()
+        except AttributeError as e:
+            raise ConnectionError("Connection is closed") from e
+        except OSError as e:
+            raise TimeoutError("Peer is unreachable") from e
         except Exception as e:
-            match e:
-                case AttributeError():
-                    raise ConnectionError("Connection is closed") from e
-                case OSError() if e.errno == errno.EHOSTUNREACH:
-                    raise TimeoutError("Peer is unreachable") from e
-            _LOGGER.exception(f"[{self.host}] Write error: {e!r}")
+            raise e
 
     async def _handle_protocol_frame(self, frame):
         if (do_continue := self._received_frame_is_valid(frame)):
@@ -247,12 +244,13 @@ class Solarman:
     @log_call("SENT")
     @log_return("RECV")
     async def _send_receive_frame(self, frame: bytes) -> bytes:
-        if not self.connected:
-            self._keeper = create_task(self._open_connection())
+        if not self._writer:
+            if not self.connected:
+                self._keeper = create_task(self._open_connection())
             await self._keeper
 
-        self._last_frame = frame
         self._data_event.set()
+        self._last_frame = frame
 
         try:
             await self._write(frame)
