@@ -93,7 +93,7 @@ class ParameterParser:
                             bisect.insort(registers, register)
 
         if len(registers) == 0:
-            return {}
+            return []
 
         groups = group_when(registers, self._lambda if self._is_single_code or all_same([r[0] for r in registers]) else self._lambda_code_aware)
 

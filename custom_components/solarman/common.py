@@ -91,7 +91,7 @@ def ensure_list(value):
     return value if isinstance(value, list) else [value]
 
 def ensure_list_safe_len(value: list):
-    return ensure_list(value), len(value) if isinstance(value, list) else (1 if isinstance(value, dict) else 0)
+    return ensure_list(value), len(value) if isinstance(value, list) else (1 if isinstance(value, dict) and value else 0)
 
 def set_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
