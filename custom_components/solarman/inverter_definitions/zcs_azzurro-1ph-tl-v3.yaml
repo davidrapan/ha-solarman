@@ -291,7 +291,7 @@ parameters:
         registers: [0x0001]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 1
             value: "ID01 Grid Over Voltage Protection"
           - key: 2
@@ -331,7 +331,7 @@ parameters:
         registers: [0x0002]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 1
             value: "ID17 Grid current sampling error"
           - key: 2
@@ -371,7 +371,7 @@ parameters:
         registers: [0x0003]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 1
             value: "ID33 Reserved"
           - key: 2
@@ -411,7 +411,7 @@ parameters:
         registers: [0x0004]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 1
             value: "ID49 Grid voltage sampling value between master and slave DSP vary widely"
           - key: 2
@@ -451,7 +451,7 @@ parameters:
         registers: [0x0005]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 1
             value: "ID65 Grid current is too high and causes unrecoverable fault"
           - key: 2

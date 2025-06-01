@@ -969,6 +969,8 @@ parameters:
             value: "ID106 Battery low temperature protection while discharging"
           - key: 107
             value: "ID107 Battery low temperature protection while charging"
+          - key: default
+            value: Problem
 
       - name: "Device Fault"
         class: "enum"
@@ -1138,6 +1140,8 @@ parameters:
             value: "ID79 Reserved"
           - bit: 79
             value: "ID80 Reserved"
+          - key: default
+            value: Problem
 
       - name: "Device Communication Board inner message"
         rule: 1

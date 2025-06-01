@@ -484,7 +484,7 @@ parameters:
           - key: 2
             value: "discharging"
 
-  - group: Alert & Fault
+  - group: Alarm
     items:
       - name: "Device Alarm"
         class: "enum"
@@ -492,7 +492,7 @@ parameters:
         registers: [0x3808, 0x3807]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 65537
             value: "ID 01-01 FAN 1"
           - key: 65538
@@ -555,6 +555,8 @@ parameters:
             value: "ID 03-19 String 19"
           - key: 196628
             value: "ID 03-20 String 20"
+          - key: default
+            value: Problem
         icon: "mdi:alert"
 
       - name: "Device Alarm bit"
@@ -567,7 +569,7 @@ parameters:
         registers: [0x380A, 0x3809]
         lookup:
           - key: 0
-            value: "No error"
+            value: "OK"
           - key: 65537
             value: "ID 01-01 PV Electricity Down"
           - key: 65538
@@ -648,6 +650,8 @@ parameters:
             value: "ID 43-01 Current Leakage sensor Fault"
           - key: 2949121
             value: "ID 45-01 Auxiliary Power OFF"
+          - key: default
+            value: Problem
         icon: "mdi:alert-octagon"
 
       - name: "Device Fault bit"

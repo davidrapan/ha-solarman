@@ -1340,7 +1340,7 @@ parameters:
           min: -2147483648 
           max: 2147483647
 
-  - group: Device Fault
+  - group: Alarm
     items:
       - name: "Device Fault"
         class: "enum"
@@ -1752,3 +1752,5 @@ parameters:
             value: "ID191 PID repair failed"
           - bit: 191
             value: "ID192 PLC module heartbeat loss"
+          - key: default
+            value: Problem

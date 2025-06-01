@@ -206,8 +206,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       - name: "Device Fault"
         class: "enum"
@@ -247,8 +247,8 @@ parameters:
             value: "Grid Current Sample Abnormality"
           - key: 0x2030000
             value: "Grid phase failure or No Relay Connection"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: PV
     items:

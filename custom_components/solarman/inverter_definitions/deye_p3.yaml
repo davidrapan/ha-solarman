@@ -1948,7 +1948,7 @@ parameters:
             value: "Grid-Generator"
           - key: [0x000D, 0x000F]
             value: "Inv-Grid-Gen"
-          - key: "default"
+          - key: default
             value: "Power Supply"
 
       - name: "Grid"
@@ -1987,8 +1987,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       # Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
@@ -2015,8 +2015,8 @@ parameters:
             value: "AC current leakage failure"
           - bit: 63
             value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: Battery
     items:
