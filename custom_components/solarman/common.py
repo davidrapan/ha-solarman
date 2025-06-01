@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-import re
+import ast
 import time
 import yaml
 import logging
@@ -112,8 +112,10 @@ def process_profile(filename, attr):
     if filename in PROFILE_REDIRECT and (r := PROFILE_REDIRECT[filename]):
         if ':' not in r:
             return r
-        if (s := r.split(':')) and (a := s[1].split('=')):
-            attr[a[0]] = bool(a[1])
+        if (s := r.split(':')):
+            for a in s[1].split('&'):
+                if (p := a.split('=')) and len(p) == 2:
+                    attr[p[0]] = ast.literal_eval(p[1])
             return s[0]
     return filename
 

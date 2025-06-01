@@ -137,12 +137,12 @@ parameters:
         icon: "mdi:home-lightning-bolt"
 
       - name: "Output reactive power"
+        class: "reactive_power"
         state_class: "measurement"
-        uom: "kVar"
+        uom: "kvar"
         scale: 0.01
         rule: 1
         registers: [0x000D]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Grid frequency"
         class: "frequency"
@@ -151,7 +151,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x000E]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "L1 Voltage"
         l: 1
@@ -161,7 +160,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x000F]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "L1 Current"
         l: 1
@@ -171,7 +169,6 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0010]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "L2 Voltage"
         l: 2
@@ -237,7 +234,6 @@ parameters:
         uom: "°C"
         rule: 1
         registers: [0x001B]
-        icon: "mdi:thermometer"
 
       - name: "Inverter inner temperature"
         class: "temperature"
@@ -245,7 +241,6 @@ parameters:
         uom: "°C"
         rule: 1
         registers: [0x001C]
-        icon: "mdi:thermometer"
 
       - name: "Inverter bus voltage"
         class: "voltage"
@@ -254,7 +249,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x001D]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "PV1 voltage sample by slave CPU"
         class: "voltage"
@@ -264,7 +258,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x001E]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "PV1 current sample by slave CPU"
         class: "current"
@@ -274,50 +267,42 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x001F]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Countdown time"
         state_class: "measurement"
         uom: "s"
         rule: 1
         registers: [0x0020]
-        icon: ""
 
       - name: "Inverter alert message"
         rule: 1
         registers: [0x0021]
-        icon: ""
 
       - name: "Input mode"
         rule: 1
         registers: [0x0022]
-        icon: ""
 
       - name: "Communication Board inner message"
         rule: 1
         registers: [0x0023]
-        icon: ""
 
       - name: "Insulation of PV1+ to ground"
         state_class: "measurement"
         mppt: 1
         rule: 1
         registers: [0x0024]
-        icon: ""
 
       - name: "Insulation of PV2+ to ground"
         state_class: "measurement"
         mppt: 2
         rule: 1
         registers: [0x0025]
-        icon: ""
 
       - name: "Insulation of PV- to ground"
         state_class: "measurement"
         mppt: 1
         rule: 1
         registers: [0x0026]
-        icon: ""
 
       - name: "Country"
         rule: 1
@@ -389,8 +374,8 @@ parameters:
       - name: "Device Fault"
         class: "enum"
         rule: 1
-        registers: [0x0001, 0x0002, 0x0003, 0x0004, 0x0005]
         icon: "mdi:message-alert-outline"
+        registers: [0x0001, 0x0002, 0x0003, 0x0004, 0x0005]
         lookup:
           - key: 0
             value: "OK"
