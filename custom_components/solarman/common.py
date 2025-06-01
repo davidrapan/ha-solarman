@@ -26,7 +26,7 @@ def retry():
         async def wrapper(*args, **kwargs):
             try:
                 return await f(*args, **kwargs)
-            except:
+            except Exception:
                 return await f(*args, **kwargs)
         return wrapper
     return decorator
