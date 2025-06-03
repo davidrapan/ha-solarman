@@ -71,7 +71,7 @@ class Device():
             await self.endpoint.discover(True)
             raise
 
-    @retry()
+    @retry(ignore = TimeoutError)
     async def execute_bulk(self, requests, scheduled):
         responses = {}
 

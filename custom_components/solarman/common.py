@@ -20,12 +20,14 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-def retry():
+def retry(ignore: tuple = ()):
     def decorator(f):
         @wraps(f)
         async def wrapper(*args, **kwargs):
             try:
                 return await f(*args, **kwargs)
+            except ignore:
+                raise
             except Exception:
                 return await f(*args, **kwargs)
         return wrapper
