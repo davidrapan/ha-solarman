@@ -662,7 +662,7 @@ parameters:
             value: "charging"
           - key: 1
             value: "discharging"
-          - key: "default"
+          - key: default
             value: "idle"
         icon: "mdi:battery"
 

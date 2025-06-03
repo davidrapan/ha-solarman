@@ -1,5 +1,4 @@
 import logging
-import asyncio
 
 from datetime import datetime, timedelta
 
@@ -22,7 +21,6 @@ class DeviceState():
 
     def update(self, init: bool = False, exception: Exception | None = None) -> bool:
         now = datetime.now()
-        last_value = self.value
         if not init:
             if not exception:
                 self.updated, self.updated_interval = now, now - self.updated
@@ -31,15 +29,13 @@ class DeviceState():
                 self.value = 0 if self.value == 1 else -1
         else:
             self.updated = now
-        if self.value != last_value:
-            _LOGGER.debug(f"Device state changed to {self.print}: {self.value}")
         return self.value == -1
 
 class Device():
     def __init__(self, config: ConfigurationProvider):
         self.config = config
 
-        self._write_lock = True
+        #self._write_lock = True
 
         self.state = DeviceState()
         self.endpoint: EndPointProvider | None = None
@@ -58,9 +54,9 @@ class Device():
         else:
             self.state.update(True)
 
-    def check(self, lock) -> None:
-        if lock and self._write_lock:
-            raise UserWarning("Entity is locked!")
+    #def check(self, lock) -> None:
+    #    if lock and self._write_lock:
+    #        raise UserWarning("Entity is locked!")
 
     async def shutdown(self) -> None:
         self.state.value = -1
@@ -72,10 +68,10 @@ class Device():
         try:
             return await self.modbus.execute(code, address, **kwargs)
         except TimeoutError:
-            await self.endpoint.discover(True)
+            await self.endpoint.discover()
             raise
 
-    @retry()
+    @retry(ignore = TimeoutError)
     async def execute_bulk(self, requests, scheduled):
         responses = {}
 

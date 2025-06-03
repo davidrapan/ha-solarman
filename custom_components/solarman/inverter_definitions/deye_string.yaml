@@ -211,8 +211,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       - name: "Device Fault"
         class: "enum"
@@ -238,8 +238,8 @@ parameters:
             value: "AC current leakage failure"
           - bit: 63
             value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: PV
     items:

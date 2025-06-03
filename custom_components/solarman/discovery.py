@@ -25,19 +25,20 @@ class DiscoveryProtocol:
         self.transport = transport
         _LOGGER.debug(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in ensure_list(self.addresses):
-            self.transport.sendto(DISCOVERY_MESSAGE[0], (address, DISCOVERY_PORT))
+            for message in DISCOVERY_MESSAGE:
+                self.transport.sendto(message, (address, DISCOVERY_PORT))
 
-    def datagram_received(self, d: bytes, a: str):
+    def datagram_received(self, d: bytes, a: tuple[str, int]):
         if len(data := d.decode().split(',')) == 3:
             serial = int(data[2])
             self.responses.put_nowait((serial, {"ip": data[0], "mac": data[1]}))
-            _LOGGER.debug(f"DiscoveryProtocol: {a} [{data[0]}, {data[1]}, {serial}]")
+            _LOGGER.debug(f"DiscoveryProtocol: {a}: [{data[0]}, {data[1]}, {serial}]")
 
     def error_received(self, e: OSError):
-        _LOGGER.debug(f"DiscoveryProtocol: Error received: {e}")
+        _LOGGER.debug(f"DiscoveryProtocol: {e!r}")
 
     def connection_lost(self, _):
-        _LOGGER.debug(f"DiscoveryProtocol: Connection closed")
+        pass
 
 class Discovery:
     semaphore = asyncio.Semaphore(1)
@@ -45,17 +46,15 @@ class Discovery:
     devices: dict | None = None
     d_when: datetime | None = None
 
-    def __init__(self, hass: HomeAssistant, ip: str | None = None, serial: int | None = None):
+    def __init__(self, hass: HomeAssistant):
         self._hass = hass
-        self._ip = ip
-        self._serial = serial
         self._devices = {}
 
-    async def _discover(self, ips: list[str] | str = IP_BROADCAST, wait: bool = False):
+    async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False):
         loop = asyncio.get_running_loop()
 
         try:
-            transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(ips), family = socket.AF_INET, allow_broadcast = True)
+            transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
             r: tuple = None
             while r is None or wait:
                 r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
@@ -63,7 +62,7 @@ class Discovery:
         except TimeoutError:
             pass
         except Exception as e:
-            _LOGGER.debug(f"_discover exception: {e!r}")
+            _LOGGER.debug(f"_discover: {e!r}")
         finally:
             transport.close()
 
@@ -72,20 +71,16 @@ class Discovery:
             _LOGGER.debug(f"_discover_all: network.async_get_adapters")
             Discovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
 
-        _LOGGER.debug(f"_discover_all: Broadcasting on {Discovery.networks}")
         async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
             yield item
 
-    async def discover(self, ping_only: bool = False):
+    async def discover(self, address: str | None = None):
         self._devices = {}
 
-        if self._ip:
-            _LOGGER.debug(f"_discover: Broadcasting on {self._ip}")
-            self._devices = {item[0]: item[1] async for item in self._discover(self._ip)}
-            if len(self._devices) > 0 and self._serial is not None and not self._serial in self._devices:
-                self._devices = {}
-            if ping_only:
-                return self._devices
+        if address:
+            if (devices := {item[0]: item[1] async for item in self._discover(address)}) and any([v["ip"] == address for v in devices.values()]):
+                self._devices = devices
+            return self._devices
 
         if not self._devices:
             async with Discovery.semaphore:

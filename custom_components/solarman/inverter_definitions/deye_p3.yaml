@@ -1948,7 +1948,7 @@ parameters:
             value: "Grid-Generator"
           - key: [0x000D, 0x000F]
             value: "Inv-Grid-Gen"
-          - key: "default"
+          - key: default
             value: "Power Supply"
 
       - name: "Grid"
@@ -1987,8 +1987,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       # Fault message (word 1, 2, 3 & 4) [0, 65535]
       - name: "Device Fault"
@@ -2015,8 +2015,8 @@ parameters:
             value: "AC current leakage failure"
           - bit: 63
             value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: Battery
     items:
@@ -2517,47 +2517,47 @@ parameters:
   - group: UPS
     update_interval: 5
     items:
-      # Load UPS output - The power of phase A is U16bit (low 16 bits) + U16bit (high 16 bits)
+      # Load UPS output - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load UPS L1 Power"
         l: 1
         hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 3
+        rule: 4
         registers: [0x0280, 0x02B8]
         icon: "mdi:home-lightning-bolt"
 
-      # Load UPS output - The power of phase B is U16bit (low 16 bits) + U16bit (high 16 bits)
+      # Load UPS output - The power of phase B is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load UPS L2 Power"
         l: 2
         hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 3
+        rule: 4
         registers: [0x0281, 0x02B9]
         icon: "mdi:home-lightning-bolt"
 
-      # Load UPS output - The power of phase C is U16bit (low 16 bits) + U16bit (high 16 bits)
+      # Load UPS output - The power of phase C is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load UPS L3 Power"
         l: 3
         hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 3
+        rule: 4
         registers: [0x0282, 0x02BA]
         icon: "mdi:home-lightning-bolt"
 
-      # Load UPS output - The power is U16bit (low 16 bits) + U16bit (high 16 bits)
+      # Load UPS output - The power is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load UPS Power"
         l: 1
         hidden:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 3
+        rule: 4
         registers: [0x0283, 0x02BB]
         icon: "mdi:home-lightning-bolt"
 

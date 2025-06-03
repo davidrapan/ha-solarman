@@ -397,6 +397,8 @@ parameters:
             value: "IntFaultJ"
           - key: 16384
             value: "IntFaultG"
+          - key: default
+            value: Problem
 
       - name: "Device Alarm"
         class: "enum"
@@ -484,3 +486,5 @@ parameters:
             value: "IntProtectT"
           - key: 36028797018963968
             value: "IntProtectU"
+          - key: default
+            value: Problem

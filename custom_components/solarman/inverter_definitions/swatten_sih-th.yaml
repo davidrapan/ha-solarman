@@ -477,8 +477,7 @@ parameters:
           - key: 0x4001
             value: "Emergency charging operation"
           - key: 4864
-            value: "Off"
-          - key: "default"
+            default:
             value: "Off"
 
       - name: "Temperature"
