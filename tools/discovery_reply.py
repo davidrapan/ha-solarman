@@ -19,6 +19,12 @@ class DiscoveryProtocol:
             print(f"DiscoveryProtocol: Received {data} from {addr}")
             self.transport.sendto(f"{iface_inet["addr"]},{iface_link["addr"].replace(':', '').upper()},1234567890".encode(), addr)
 
+    def error_received(self, e: OSError):
+        print(f"DiscoveryProtocol: {e!r}")
+
+    def connection_lost(self, _):
+        print(f"DiscoveryProtocol: Connection closed")
+
 async def main():
     loop = asyncio.get_running_loop()
     transport, _ = await loop.create_datagram_endpoint(DiscoveryProtocol, local_addr = (DISCOVERY_IP, DISCOVERY_PORT), family = socket.AF_INET, allow_broadcast = True)

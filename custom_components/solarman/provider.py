@@ -84,8 +84,8 @@ class EndPointProvider:
         except AddressValueError:
             return IPv4Address(socket.gethostbyname(self.host))    
 
-    async def discover(self, ping_only = False):
-        if self.ip.is_private and (discover := await Discovery(self.hass, self.host).discover(ping_only)):
+    async def discover(self):
+        if self.ip.is_private and (discover := await Discovery(self.hass).discover(str(self.ip))):
             if (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == str(self.ip)]), None)))) is not None:
                 self.host = device["ip"]
                 self.mac = device["mac"]

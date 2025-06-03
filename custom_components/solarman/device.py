@@ -68,7 +68,7 @@ class Device():
         try:
             return await self.modbus.execute(code, address, **kwargs)
         except TimeoutError:
-            await self.endpoint.discover(True)
+            await self.endpoint.discover()
             raise
 
     @retry(ignore = TimeoutError)
