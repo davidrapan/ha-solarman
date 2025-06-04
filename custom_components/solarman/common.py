@@ -183,24 +183,14 @@ def preprocess_descriptions(item, group, table, code, parameters):
         for i in source:
             if i in ("scale", "min", "max"):
                 unwrap(source, i, parameters["mod"])
+            if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
+                unwrap(source, i, parameters["mod"])
             elif isinstance(source[i], dict):
                 modify(source[i])
 
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
     item["key"] = entity_key(item)
-    g = dict(group)
-    g.pop("items")
-    if not "registers" in item and (sensors := item.get("sensors")):
-        registers = item.setdefault("registers", [])
-        for s in sensors:
-            if (r := s.get("registers")):
-                registers.extend(r)
-                if (m := s.get("multiply")) and (m_r := m.get("registers")):
-                    registers.extend(m_r)
-    bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
-    if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
-        item[REQUEST_CODE] = table.get(addr, code)
     modify(item)
     if (sensors := item.get("sensors")) is not None:
         for s in sensors:
@@ -209,6 +199,18 @@ def preprocess_descriptions(item, group, table, code, parameters):
             if (m := s.get("multiply")) is not None:
                 modify(m)
                 bulk_inherit(m, s, REQUEST_CODE, "scale")
+    if not "registers" in item and (sensors := item.get("sensors")):
+        registers = item.setdefault("registers", [])
+        for s in sensors:
+            if (r := s.get("registers")):
+                registers.extend(r)
+                if (m := s.get("multiply")) and (m_r := m.get("registers")):
+                    registers.extend(m_r)
+    g = dict(group)
+    g.pop("items")
+    bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
+    if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+        item[REQUEST_CODE] = table.get(addr, code)
     return item
 
 def postprocess_descriptions(coordinator, platform):

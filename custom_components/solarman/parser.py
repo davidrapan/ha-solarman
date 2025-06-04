@@ -169,7 +169,10 @@ class ParameterParser:
         value = 0
         shift = 0
 
-        for r in definition["registers"]:
+        if not (registers := definition.get("registers")):
+            return None
+
+        for r in registers:
             if (temp := get_addr_value(data, code, r)) is None:
                 return None
 
@@ -207,7 +210,10 @@ class ParameterParser:
         value = 0
         shift = 0
 
-        for r in definition["registers"]:
+        if not (registers := definition.get("registers")):
+            return None
+
+        for r in registers:
             if (temp := get_addr_value(data, code, r)) is None:
                 return None
 

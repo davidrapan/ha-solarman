@@ -26,29 +26,19 @@ def unwrap(source: dict, key: Any, mod: int = 0):
 def entity_key(object: dict):
     return '_'.join(filter(None, (object["name"], object["platform"]))).lower().replace(' ', '_')
 
-def preprocess_descriptions(item, group, table, code, mod):
+def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in source:
             if i in ("scale", "min", "max"):
-                unwrap(source, i, mod)
+                unwrap(source, i, parameters["mod"])
+            if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
+                unwrap(source, i, parameters["mod"])
             elif isinstance(source[i], dict):
                 modify(source[i])
 
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
     item["key"] = entity_key(item)
-    g = dict(group)
-    g.pop("items")
-    if not "registers" in item and (sensors := item.get("sensors")):
-        registers = item.setdefault("registers", [])
-        for s in sensors:
-            if (r := s.get("registers")):
-                registers.extend(r)
-                if (m := s.get("multiply")) and (m_r := m.get("registers")):
-                    registers.extend(m_r)
-    bulk_inherit(item, g, *() if "registers" in item else "update_interval")
-    if not "code" in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
-        item["code"] = table.get(addr, code)
     modify(item)
     if (sensors := item.get("sensors")) is not None:
         for s in sensors:
@@ -57,6 +47,18 @@ def preprocess_descriptions(item, group, table, code, mod):
             if (m := s.get("multiply")) is not None:
                 modify(m)
                 bulk_inherit(m, s, "code", "scale")
+    if not "registers" in item and (sensors := item.get("sensors")):
+        registers = item.setdefault("registers", [])
+        for s in sensors:
+            if (r := s.get("registers")):
+                registers.extend(r)
+                if (m := s.get("multiply")) and (m_r := m.get("registers")):
+                    registers.extend(m_r)
+    g = dict(group)
+    g.pop("items")
+    bulk_inherit(item, g, *() if "registers" in item else "update_interval")
+    if not "code" in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+        item["code"] = table.get(addr, code)
     return item
 
 def get_request_code(request):
@@ -114,9 +116,9 @@ if __name__ == '__main__':
 
     table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr["start"], pr["end"] + 1)} if "requests" in profile else {}
 
-    attr = {"mod": 1, "mppt": 2, "l": 3, "pack": 1}
+    parameters = {"mod": 0, "mppt": 2, "l": 3, "pack": 1}
 
-    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, attr["mod"]) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & attr.keys())) == 0 or all(i[k] <= attr[k] for k in a)]
+    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
     _is_single_code = False
     if (items_codes := [get_code(i, "read", _code) for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
@@ -130,6 +132,9 @@ if __name__ == '__main__':
             if "realtime" in i or (runtime % (i["update_interval"] if "update_interval" in i else _update_interval) == 0):
                 if "registers" in i:
                     print(i["name"])
+                    print(i["registers"])
+                    if "sensors" in i:
+                        print(i["sensors"])
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
                             bisect.insort(registers, register)

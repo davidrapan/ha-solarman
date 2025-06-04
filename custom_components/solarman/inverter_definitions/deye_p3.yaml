@@ -1833,7 +1833,7 @@ parameters:
         sensors:
           - registers: [0x0208]
           - registers: [0x0211]
-          - registers: [0x0218]
+          - registers: [[], [0x0218]]
             enabled_lookup:
               io_mode_select: [Generator, Microinverter]
           - registers: [0x0203]
@@ -1857,7 +1857,7 @@ parameters:
         sensors:
           - registers: [0x020A, 0x020B]
           - registers: [0x0216, 0x0217]
-          - registers: [0x0219, 0x021A]
+          - registers: [[], [0x0219, 0x021A]]
             enabled_lookup:
               io_mode_select: [Generator, Microinverter]
           - registers: [0x0206, 0x0207]
