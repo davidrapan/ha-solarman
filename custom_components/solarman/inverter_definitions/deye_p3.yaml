@@ -2904,7 +2904,7 @@ parameters:
 
   - group: Battery 1
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 1
     items:
       - name: "Battery 1 Serial Number"
@@ -3078,7 +3078,7 @@ parameters:
 
   - group: Battery 2
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 2
     items:
       - name: "Battery 2 Serial Number"
@@ -3252,7 +3252,7 @@ parameters:
 
   - group: Battery 3
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 3
     items:
       - name: "Battery 3 Serial Number"
@@ -3426,7 +3426,7 @@ parameters:
 
   - group: Battery 4
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 4
     items:
       - name: "Battery 4 Serial Number"
@@ -3600,7 +3600,7 @@ parameters:
 
   - group: Battery 5
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 5
     items:
       - name: "Battery 5 Serial Number"
@@ -3774,7 +3774,7 @@ parameters:
 
   - group: Battery 6
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 6
     items:
       - name: "Battery 6 Serial Number"
@@ -3948,7 +3948,7 @@ parameters:
 
   - group: Battery 7
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 7
     items:
       - name: "Battery 7 Serial Number"
@@ -4122,7 +4122,7 @@ parameters:
 
   - group: Battery 8
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 8
     items:
       - name: "Battery 8 Serial Number"
@@ -4296,7 +4296,7 @@ parameters:
 
   - group: Battery 9
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 9
     items:
       - name: "Battery 9 Serial Number"
@@ -4470,7 +4470,7 @@ parameters:
 
   - group: Battery 10
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 10
     items:
       - name: "Battery 10 Serial Number"
@@ -4644,7 +4644,7 @@ parameters:
 
   - group: Battery 11
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 11
     items:
       - name: "Battery 11 Serial Number"
@@ -4818,7 +4818,7 @@ parameters:
 
   - group: Battery 12
     via_device: "inverter"
-    update_interval: 10
+    update_interval: 300
     pack: 12
     items:
       - name: "Battery 12 Serial Number"
@@ -4989,3 +4989,1395 @@ parameters:
         rule: 7
         delimiter: ""
         registers: [0x28F1]
+
+  - group: Battery 13
+    via_device: "inverter"
+    update_interval: 300
+    pack: 13
+    items:
+      - name: "Battery 13 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x28F8, 0x28F9, 0x28FA, 0x28FB, 0x28FC, 0x28FD, 0x28FE, 0x28FF]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 13 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2900]
+
+      - name: "Battery 13 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2901]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 13 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2902]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 13 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2903]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 13 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2904]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 13 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2905]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 13"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2907]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 13 Serial Number",
+            "Battery 13 MOS",
+            "Battery 13 Software Version",
+            "Battery 13 Hardware Version",
+          ]
+
+      - name: "Battery 13 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2908]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 13 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x290A]
+        icon: "mdi:battery"
+
+      - name: "Battery 13 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x290E]
+
+      - name: "Battery 13 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x290F]
+
+      - name: "Battery 13 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x2910]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 13 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2911]
+
+      - name: "Battery 13 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2912, 0x2913, 0x2914, 0x2915]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 13 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2916]
+
+      - name: "Battery 13 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2917]
+
+  - group: Battery 14
+    via_device: "inverter"
+    update_interval: 300
+    pack: 14
+    items:
+      - name: "Battery 14 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x291E, 0x291F, 0x2920, 0x2921, 0x2922, 0x2923, 0x2924, 0x2925]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 14 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2926]
+
+      - name: "Battery 14 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2927]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 14 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2928]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 14 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2929]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 14 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x292A]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 14 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x292B]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 14"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x292D]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 14 Serial Number",
+            "Battery 14 MOS",
+            "Battery 14 Software Version",
+            "Battery 14 Hardware Version",
+          ]
+
+      - name: "Battery 14 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x292E]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 14 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x2930]
+        icon: "mdi:battery"
+
+      - name: "Battery 14 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2934]
+
+      - name: "Battery 14 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2935]
+
+      - name: "Battery 14 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x2936]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 14 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2937]
+
+      - name: "Battery 14 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2938, 0x2939, 0x293A, 0x293B]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 14 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x293C]
+
+      - name: "Battery 14 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x293D]
+
+  - group: Battery 15
+    via_device: "inverter"
+    update_interval: 300
+    pack: 15
+    items:
+      - name: "Battery 15 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x2942, 0x2943, 0x2944, 0x2945, 0x2946, 0x2947, 0x2948, 0x2949]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 15 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x294A]
+
+      - name: "Battery 15 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x294B]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 15 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x294C]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 15 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x294D]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 15 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x294E]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 15 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x294F]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 15"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2951]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 15 Serial Number",
+            "Battery 15 MOS",
+            "Battery 15 Software Version",
+            "Battery 15 Hardware Version",
+          ]
+
+      - name: "Battery 15 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2952]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 15 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x2954]
+        icon: "mdi:battery"
+
+      - name: "Battery 15 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2958]
+
+      - name: "Battery 15 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2959]
+
+      - name: "Battery 15 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x295A]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 15 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x295B]
+
+      - name: "Battery 15 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x295C, 0x295D, 0x295E, 0x295F]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 15 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2960]
+
+      - name: "Battery 15 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2961]
+
+  - group: Battery 16
+    via_device: "inverter"
+    update_interval: 300
+    pack: 16
+    items:
+      - name: "Battery 16 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x2968, 0x2969, 0x296A, 0x296B, 0x296C, 0x296D, 0x296E, 0x296F]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 16 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2970]
+
+      - name: "Battery 16 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2971]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 16 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2972]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 16 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2973]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 16 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2974]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 16 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2975]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 16"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2977]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 16 Serial Number",
+            "Battery 16 MOS",
+            "Battery 16 Software Version",
+            "Battery 16 Hardware Version",
+          ]
+
+      - name: "Battery 16 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2978]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 16 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x297A]
+        icon: "mdi:battery"
+
+      - name: "Battery 16 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x297E]
+
+      - name: "Battery 16 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x297F]
+
+      - name: "Battery 16 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x2980]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 16 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2981]
+
+      - name: "Battery 16 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2982, 0x2983, 0x2984, 0x2985]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 16 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2986]
+
+      - name: "Battery 16 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2987]
+
+  - group: Battery 17
+    via_device: "inverter"
+    update_interval: 300
+    pack: 17
+    items:
+      - name: "Battery 17 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x298E, 0x298F, 0x2990, 0x2991, 0x2992, 0x2993, 0x2994, 0x2995]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 17 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2996]
+
+      - name: "Battery 17 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2997]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 17 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2998]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 17 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2999]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 17 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x299A]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99      
+
+      - name: "Battery 17 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x299B]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 17"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x299D]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 17 Serial Number",
+            "Battery 17 MOS",
+            "Battery 17 Software Version",
+            "Battery 17 Hardware Version",
+          ]
+
+      - name: "Battery 17 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x299E]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 17 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x29A0]
+        icon: "mdi:battery"
+
+      - name: "Battery 17 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29A4]
+
+      - name: "Battery 17 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29A5]
+
+      - name: "Battery 17 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x29A6]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 17 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x29A7]
+
+      - name: "Battery 17 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29A8, 0x29A9, 0x29AA, 0x29AB]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 17 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29AC]
+
+      - name: "Battery 17 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29AD]
+
+  - group: Battery 18
+    via_device: "inverter"
+    update_interval: 300
+    pack: 18
+    items:
+      - name: "Battery 18 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x29B4, 0x29B5, 0x29B6, 0x29B7, 0x29B8, 0x29B9, 0x29BA, 0x29BB]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 18 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x29BC]
+
+      - name: "Battery 18 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x29BD]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 18 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29BE]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 18 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29BF]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+      
+      - name: "Battery 18 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29C0]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 18 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29C1]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 18"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x29C3]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 18 Serial Number",
+            "Battery 18 MOS",
+            "Battery 18 Software Version",
+            "Battery 18 Hardware Version",
+          ]
+
+      - name: "Battery 18 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x29C4]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 18 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x29C6]
+        icon: "mdi:battery"
+
+      - name: "Battery 18 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29CA]
+
+      - name: "Battery 18 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29CB]
+
+      - name: "Battery 18 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x29CC]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 18 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x29CD]
+
+      - name: "Battery 18 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29CE, 0x29CF, 0x29D0, 0x29D1]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 18 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29D2]
+
+      - name: "Battery 18 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29D3]
+
+  - group: Battery 19
+    via_device: "inverter"
+    update_interval: 300
+    pack: 19
+    items:
+      - name: "Battery 19 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x29DA, 0x29DB, 0x29DC, 0x29DD, 0x29DE, 0x29DF, 0x29E0, 0x29E1]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 19 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x29E2]
+
+      - name: "Battery 19 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x29E3]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 19 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29E4]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 19 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29E5]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 19 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29E6]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 19 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x29E7]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 19"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x29E9]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery 19 Serial Number",
+            "Battery 19 MOS",
+            "Battery 19 Software Version",
+            "Battery 19 Hardware Version",
+          ]
+
+      - name: "Battery 19 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x29EA]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 19 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x29EC]
+        icon: "mdi:battery"
+
+      - name: "Battery 19 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29F0]
+
+      - name: "Battery 19 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x29F1]
+
+      - name: "Battery 19 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x29F2]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 19 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x29F3]
+
+      - name: "Battery 19 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29F4, 0x29F5, 0x29F6, 0x29F7]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 19 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29F8]
+
+      - name: "Battery 19 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x29F9]
+
+  - group: Battery 20
+    via_device: "inverter"
+    update_interval: 300
+    pack: 20
+    items:
+      - name: "Battery 20 Serial Number"
+        update_interval: 3600
+        attribute:
+        state_class: "measurement"
+        rule: 5
+        registers:
+          [0x2A00, 0x2A01, 0x2A02, 0x2A03, 0x2A04, 0x2A05, 0x2A06, 0x2A07]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 20 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2A08]
+
+      - name: "Battery 20 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x2A09]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 20 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2A0A]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 20 Max Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2A0B]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 20 Min Cell Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2A0C]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 20 MOS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x2A0D]
+        range:
+          min: 0
+          max: 3000
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 20"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2A0F]
+        icon: "mdi:battery"
+        validation:
+        min: 0
+        max: 101
+        attributes:
+          [
+            "Battery 20 Serial Number",
+            "Battery 20 MOS",
+            "Battery 20 Software Version",
+            "Battery 20 Hardware Version",
+          ]
+
+      - name: "Battery 20 SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x2A10]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery 20 Capacity"
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        scale: 0.1
+        registers: [0x2A12]
+        icon: "mdi:battery"
+
+      - name: "Battery 20 Max Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2A16]
+
+      - name: "Battery 20 Min Cell Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [0x2A17]
+
+      - name: "Battery 20 Cycles"
+        state_class: "total_increasing"
+        rule: 1
+        registers: [0x2A18]
+        icon: "mdi:battery-sync"
+
+      - name: "Battery 20 MOS"
+        attribute:
+        rule: 1
+        icon: "mdi:state-machine"
+        registers: [0x2A19]
+
+      - name: "Battery 20 Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2A1A, 0x2A1B, 0x2A1C, 0x2A1D]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 20 Software Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2A1E]
+
+      - name: "Battery 20 Hardware Version"
+        attribute:
+        rule: 7
+        delimiter: ""
+        registers: [0x2A1F]
