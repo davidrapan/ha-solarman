@@ -29,7 +29,7 @@
           "additional_options": {
             "name": "Additional options",
             "data": {
-              "mod": "Scale modifier",
+              "mod": "Modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
               "pack": "Number of Battery packs",
@@ -67,7 +67,7 @@
           "additional_options": {
             "name": "Additional options",
             "data": { 
-              "mod": "Scale modifier",
+              "mod": "Modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
               "pack": "Number of Battery packs",

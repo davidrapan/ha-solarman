@@ -172,7 +172,7 @@ def strepr(value):
 
 def unwrap(source: dict, key: Any, mod: int = 0):
     if (c := source.get(key)) is not None and isinstance(c, list):
-        source[key] = c[mod]
+        source[key] = c[mod] if mod < len(c) else c[-1]
     return source
 
 def entity_key(object: dict):
@@ -180,11 +180,13 @@ def entity_key(object: dict):
 
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
-        for i in source:
+        for i in dict(source):
             if i in ("scale", "min", "max"):
-                unwrap(source, i, parameters["mod"])
+                unwrap(source, i, parameters[CONF_MOD])
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
-                unwrap(source, i, parameters["mod"])
+                unwrap(source, i, parameters[CONF_MOD])
+                if not source[i]:
+                    source["disabled"] = True
             elif isinstance(source[i], dict):
                 modify(source[i])
 
@@ -209,7 +211,7 @@ def preprocess_descriptions(item, group, table, code, parameters):
     g = dict(group)
     g.pop("items")
     bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
-    if not REQUEST_CODE in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+    if not REQUEST_CODE in item and (r := item.get("registers")) and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
     return item
 

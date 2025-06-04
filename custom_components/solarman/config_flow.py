@@ -38,7 +38,7 @@ OPTS_SCHEMA = {
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema(
             {
-                vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MOD]}): bool,
+                vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MOD]}): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 2)),
                 vol.Optional(CONF_MPPT, default = DEFAULT_[CONF_MPPT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
                 vol.Optional(CONF_PHASE, default = DEFAULT_[CONF_PHASE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
                 vol.Optional(CONF_PACK, default = DEFAULT_[CONF_PACK], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PACK]}): vol.All(vol.Coerce(int), vol.Range(min = -1, max = 20)),
@@ -90,8 +90,8 @@ def remove_defaults(user_input: dict[str, Any]):
     return user_input
 
 class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
-    MINOR_VERSION = 9
-    VERSION = 1
+    MINOR_VERSION = 0
+    VERSION = 2
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_dhcp: {discovery_info}")

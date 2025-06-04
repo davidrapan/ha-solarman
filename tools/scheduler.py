@@ -20,7 +20,7 @@ def bulk_inherit(target: dict, source: dict, *keys: list):
 
 def unwrap(source: dict, key: Any, mod: int = 0):
     if (c := source.get(key)) is not None and isinstance(c, list):
-        source[key] = c[mod]
+        source[key] = c[mod] if mod < len(c) else c[-1]
     return source
 
 def entity_key(object: dict):
@@ -28,11 +28,13 @@ def entity_key(object: dict):
 
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
-        for i in source:
+        for i in dict(source):
             if i in ("scale", "min", "max"):
                 unwrap(source, i, parameters["mod"])
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
                 unwrap(source, i, parameters["mod"])
+                if not source[i]:
+                    source["disabled"] = True
             elif isinstance(source[i], dict):
                 modify(source[i])
 
@@ -57,7 +59,7 @@ def preprocess_descriptions(item, group, table, code, parameters):
     g = dict(group)
     g.pop("items")
     bulk_inherit(item, g, *() if "registers" in item else "update_interval")
-    if not "code" in item and (r := item.get("registers")) is not None and (addr := min(r)) is not None:
+    if not "code" in item and (r := item.get("registers")) and (addr := min(r)) is not None:
         item["code"] = table.get(addr, code)
     return item
 
@@ -118,7 +120,7 @@ if __name__ == '__main__':
 
     parameters = {"mod": 0, "mppt": 2, "l": 3, "pack": 1}
 
-    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
+    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
     _is_single_code = False
     if (items_codes := [get_code(i, "read", _code) for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):

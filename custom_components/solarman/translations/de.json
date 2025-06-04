@@ -28,7 +28,7 @@
           "additional_options": {
             "name": "Zusätzliche Optionen",
             "data": {
-              "mod": "Skalierungsmodifikator",
+              "mod": "Modifikator",
               "mppt": "Anzahl der MPPTs",
               "phase": "Anzahl der Phasen",
               "pack": "Anzahl Akkupacks",
@@ -65,7 +65,7 @@
           "additional_options": {
             "name": "Zusätzliche Optionen",
             "data": {
-              "mod": "Skalierungsmodifikator",
+              "mod": "Modifikator",
               "mppt": "Anzahl der MPPTs",
               "phase": "Anzahl der Phasen",
               "pack": "Anzahl Akkupacks",

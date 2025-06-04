@@ -28,7 +28,7 @@
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
-              "mod": "Modificador d'escala",
+              "mod": "Modificador",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "pack": "Nombre de paquets de bateries",
@@ -65,7 +65,7 @@
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
-              "mod": "Modificador d'escala",
+              "mod": "Modificador",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "pack": "Nombre de paquets de bateries",

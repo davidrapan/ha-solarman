@@ -99,7 +99,10 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
         bulk_safe_delete(new_data, OLD_)
         bulk_safe_delete(new_options, OLD_ | to_dict(CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING))
 
-        if not new_options.get(CONF_ADDITIONAL_OPTIONS):
+        if a := new_options.get(CONF_ADDITIONAL_OPTIONS):
+            if isinstance(m := a.get(CONF_MOD), bool):
+                m = int(m)
+        else:
             del new_options[CONF_ADDITIONAL_OPTIONS]
 
         hass.config_entries.async_update_entry(config_entry, unique_id = None, data = new_data, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)

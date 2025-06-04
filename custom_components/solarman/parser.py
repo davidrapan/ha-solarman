@@ -44,7 +44,7 @@ class ParameterParser:
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
+        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -74,7 +74,7 @@ class ParameterParser:
         self._result[key] = (state, value)
 
     def get_entity_descriptions(self, platform: str):
-        return [i for i in self._items if self.is_valid(i) and not "attribute" in i and i.get("platform") == platform]
+        return [i for i in self._items if self.is_valid(i) and self.is_enabled(i) and not "attribute" in i and i.get("platform") == platform]
 
     def schedule_requests(self, runtime = 0):
         self._result = {}
