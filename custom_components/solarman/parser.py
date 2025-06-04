@@ -12,7 +12,7 @@ from .common import *
 _LOGGER = logging.getLogger(__name__)
 
 class ParameterParser:
-    def __init__(self, profile, attr):
+    def __init__(self, profile, parameters):
         self._update_interval = DEFAULT_[UPDATE_INTERVAL]
         self._is_single_code = DEFAULT_[IS_SINGLE_CODE]
         self._code = DEFAULT_[REGISTERS_CODE]
@@ -40,11 +40,11 @@ class ParameterParser:
             _LOGGER.debug("Fine control of request sets is enabled!")
             self._requests = profile["requests"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, attributes: {attr}")
+        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, attr["mod"]) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & attr.keys())) == 0 or all(i[k] <= attr[k] for k in a)]
+        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code

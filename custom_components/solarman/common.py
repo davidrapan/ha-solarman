@@ -98,26 +98,26 @@ def ensure_list_safe_len(value: list):
 def create_request(code, start, end):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
 
-async def lookup_profile(request, attr):
+async def lookup_profile(request, parameters):
     if (response := await request("?", create_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))
         if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in AUTODETECTION_DEYE_P1[0]:
-            attr[ATTR_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, attr[ATTR_[CONF_PHASE]])
+            parameters[PARAM_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, parameters[PARAM_[CONF_PHASE]])
         if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
-            attr[ATTR_[CONF_MOD]], attr[ATTR_[CONF_MPPT]], attr[ATTR_[CONF_PHASE]] = max(m, attr[ATTR_[CONF_MOD]]), min(t, attr[ATTR_[CONF_MPPT]]), min(p, attr[ATTR_[CONF_PHASE]])
+            parameters[PARAM_[CONF_MOD]], parameters[PARAM_[CONF_MPPT]], parameters[PARAM_[CONF_PHASE]] = max(m, parameters[PARAM_[CONF_MOD]]), min(t, parameters[PARAM_[CONF_MPPT]]), min(p, parameters[PARAM_[CONF_PHASE]])
         if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]) and (response := await request("?", create_request(*AUTODETECTION_BATTERY_REQUEST_DEYE))) and (p := get_addr_value(response, *AUTODETECTION_BATTERY_NUMBER_DEYE)) is not None:
-            attr[ATTR_[CONF_PACK]] = p if attr[ATTR_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, attr[ATTR_[CONF_PACK]])
+            parameters[PARAM_[CONF_PACK]] = p if parameters[PARAM_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, parameters[PARAM_[CONF_PACK]])
         return f
     raise Exception("Unable to read Device Type at address 0x0000")
 
-def process_profile(filename, attr):
+def process_profile(filename, parameters):
     if filename in PROFILE_REDIRECT and (r := PROFILE_REDIRECT[filename]):
         if ':' not in r:
             return r
         if (s := r.split(':')):
             for a in s[1].split('&'):
                 if (p := a.split('=')) and len(p) == 2:
-                    attr[p[0]] = ast.literal_eval(p[1])
+                    parameters[p[0]] = ast.literal_eval(p[1])
             return s[0]
     return filename
 
@@ -178,11 +178,11 @@ def unwrap(source: dict, key: Any, mod: int = 0):
 def entity_key(object: dict):
     return slugify('_'.join(filter(None, (object["name"], object["platform"]))))
 
-def preprocess_descriptions(item, group, table, code, mod):
+def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in source:
             if i in ("scale", "min", "max"):
-                unwrap(source, i, mod)
+                unwrap(source, i, parameters["mod"])
             elif isinstance(source[i], dict):
                 modify(source[i])
 
