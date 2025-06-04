@@ -131,10 +131,7 @@ if __name__ == '__main__':
         if "name" in i and "rule" in i and not "disabled" in i and i["rule"] > 0:
             if "realtime" in i or (runtime % (i["update_interval"] if "update_interval" in i else _update_interval) == 0):
                 if "registers" in i:
-                    print(i["name"])
-                    print(i["registers"])
-                    if "sensors" in i:
-                        print(i["sensors"])
+                    #print(f"{i["name"]}: {i["registers"]}")
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
                             bisect.insort(registers, register)
