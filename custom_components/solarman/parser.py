@@ -243,6 +243,11 @@ class ParameterParser:
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
                 n *= c
 
+            if (validation := s.get("validation")) is not None and not self.do_validate(s["registers"], n, validation):
+                if (d := validation.get("default")) is None:
+                    continue
+                n = d
+
             if (o := s.get("operator")) is None:
                 value += n
             else:
@@ -255,11 +260,6 @@ class ParameterParser:
                         value /= n
                     case _:
                         value += n
-            
-            if (validation := s.get("validation")) is not None and not self.do_validate(s["registers"], n, validation):
-                if (d := validation.get("default")) is None:
-                    continue
-                n = d
 
         return value
 
