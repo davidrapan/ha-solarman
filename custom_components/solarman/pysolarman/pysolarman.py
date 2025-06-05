@@ -207,7 +207,7 @@ class Solarman:
             self._data_event.clear()
         self._keeper = create_task(self._open_connection())
 
-    @throttle()
+    @throttle(0.2)
     async def _open_connection(self) -> None:
         try:
             self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
@@ -220,7 +220,6 @@ class Solarman:
         except Exception as e:
             if self._last_frame is None:
                 raise ConnectionError("Cannot open connection") from e
-            _LOGGER.debug(f"[{self.host}] Cannot open connection: {e!r}")
             await self._open_connection()
 
     async def _close(self) -> None:
@@ -311,7 +310,7 @@ class Solarman:
         if code not in FUNCTION_CODES:
             raise Exception(f"Invalid modbus function code {code:02}")
 
-        async with asyncio.timeout(self.timeout * 4):
+        async with asyncio.timeout(self.timeout * 6):
             async with self._semaphore:
                 return await self.get_response(code, address, **kwargs)
 

@@ -104,7 +104,7 @@ class ParameterParser:
 
     def in_range(self, key, value, rule):
         if ((min := rule.get("min")) is not None and value < min) or ((max := rule.get("max")) is not None and value > max):
-            _LOGGER.debug(f"{key}: {value} is outside of valid range: {rule}")
+            _LOGGER.debug(f"{key}: {value} is outside of range: {rule}")
             return False
 
         return True

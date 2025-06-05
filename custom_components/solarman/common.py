@@ -192,27 +192,35 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
+
     item["key"] = entity_key(item)
+
     modify(item)
-    if (sensors := item.get("sensors")) is not None:
+
+    if (sensors := item.get("sensors")) and (registers := item.setdefault("registers", [])) is not None:
+        registers.clear()
         for s in sensors:
             modify(s)
-            bulk_inherit(s, item, REQUEST_CODE, "scale")
-            if (m := s.get("multiply")) is not None:
-                modify(m)
-                bulk_inherit(m, s, REQUEST_CODE, "scale")
-    if not "registers" in item and (sensors := item.get("sensors")):
-        registers = item.setdefault("registers", [])
-        for s in sensors:
-            if (r := s.get("registers")):
+            if r := s.get("registers"):
                 registers.extend(r)
-                if (m := s.get("multiply")) and (m_r := m.get("registers")):
-                    registers.extend(m_r)
+                if m := s.get("multiply"):
+                    modify(m)
+                    if m_r := m.get("registers"):
+                        registers.extend(m_r)
+
     g = dict(group)
     g.pop("items")
     bulk_inherit(item, g, *() if "registers" in item else REQUEST_UPDATE_INTERVAL)
+
     if not REQUEST_CODE in item and (r := item.get("registers")) and (addr := min(r)) is not None:
         item[REQUEST_CODE] = table.get(addr, code)
+
+    if sensors := item.get("sensors"):
+        for s in sensors:
+            bulk_inherit(s, item, REQUEST_CODE, "scale")
+            if m := s.get("multiply"):
+                bulk_inherit(m, s, REQUEST_CODE, "scale")
+
     return item
 
 def postprocess_descriptions(coordinator, platform):
