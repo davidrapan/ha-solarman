@@ -739,10 +739,10 @@ parameters:
           - key: 0x5
             value: LN:100VAC LL:173VAC
 
-      - name: "PV Min Power"
-        description: "Minimum PV power to start generator"
+      - name: "Generator Min PV Power"
+        name_lookup: "io_mode_select"
         enabled_lookup:
-          io_mode_select: [Generator]
+          io_mode_select: [Generator, SmartLoad]
         platform: number
         class: "power"
         state_class: "measurement"
@@ -821,7 +821,8 @@ parameters:
         rule: 1
         registers: [0x00ED]
 
-      - name: PV Max Power
+      - name: PV Power
+        description: Max PV power limiter
         alt: Max Solar Power
         platform: number
         class: "power"
