@@ -3028,6 +3028,17 @@ parameters:
         registers: [0x2742]
         icon: "mdi:battery"
 
+      - name: "Battery 1 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2746]
+          - operator: subtract
+            registers: [0x2747]
+
       - name: "Battery 1 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3060,8 +3071,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x274A, 0x274B, 0x274C, 0x274D]
+        registers: [0x274A, 0x274B]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 1 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x274C, 0x274D]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 1 Software Version"
@@ -3202,6 +3221,17 @@ parameters:
         registers: [0x2768]
         icon: "mdi:battery"
 
+      - name: "Battery 2 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x276C]
+          - operator: subtract
+            registers: [0x276D]
+
       - name: "Battery 2 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3234,8 +3264,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2770, 0x2771, 0x2772, 0x2773]
+        registers: [0x2770, 0x2771]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 2 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2772, 0x2773]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 2 Software Version"
@@ -3376,6 +3414,17 @@ parameters:
         registers: [0x278E]
         icon: "mdi:battery"
 
+      - name: "Battery 3 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2792]
+          - operator: subtract
+            registers: [0x2793]
+
       - name: "Battery 3 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3408,8 +3457,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2796, 0x2797, 0x2798, 0x2799]
+        registers: [0x2796, 0x2797]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+      
+      - name: "Battery 3 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2798, 0x2799]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 3 Software Version"
@@ -3550,6 +3607,17 @@ parameters:
         registers: [0x27B4]
         icon: "mdi:battery"
 
+      - name: "Battery 4 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x27B8]
+          - operator: subtract
+            registers: [0x27B9]
+
       - name: "Battery 4 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3582,8 +3650,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x27BC, 0x27BD, 0x27BE, 0x27BF]
+        registers: [0x27BC, 0x27BD]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 4 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x27BE, 0x27BF]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 4 Software Version"
@@ -3724,6 +3800,17 @@ parameters:
         registers: [0x27DA]
         icon: "mdi:battery"
 
+      - name: "Battery 5 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x27DE]
+          - operator: subtract
+            registers: [0x27DF]
+
       - name: "Battery 5 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3756,8 +3843,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x27E2, 0x27E3, 0x27E4, 0x27E5]
+        registers: [0x27E2, 0x27E3]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 5 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x27E4, 0x27E5]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 5 Software Version"
@@ -3898,6 +3993,17 @@ parameters:
         registers: [0x2800]
         icon: "mdi:battery"
 
+      - name: "Battery 6 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2804]
+          - operator: subtract
+            registers: [0x2805]
+
       - name: "Battery 6 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -3930,8 +4036,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2808, 0x2809, 0x280A, 0x280B]
+        registers: [0x2808, 0x2809]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 6 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x280A, 0x280B]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 6 Software Version"
@@ -4072,6 +4186,17 @@ parameters:
         registers: [0x2826]
         icon: "mdi:battery"
 
+      - name: "Battery 7 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x282A]
+          - operator: subtract
+            registers: [0x282B]
+
       - name: "Battery 7 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4104,8 +4229,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x282E, 0x282F, 0x2830, 0x2831]
+        registers: [0x282E, 0x282F]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 7 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2830, 0x2831]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 7 Software Version"
@@ -4246,6 +4379,17 @@ parameters:
         registers: [0x284C]
         icon: "mdi:battery"
 
+      - name: "Battery 8 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2850]
+          - operator: subtract
+            registers: [0x2851]
+
       - name: "Battery 8 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4278,8 +4422,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2854, 0x2855, 0x2856, 0x2857]
+        registers: [0x2854, 0x2855]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 8 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2856, 0x2857]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 8 Software Version"
@@ -4420,6 +4572,17 @@ parameters:
         registers: [0x2872]
         icon: "mdi:battery"
 
+      - name: "Battery 9 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2876]
+          - operator: subtract
+            registers: [0x2877]
+
       - name: "Battery 9 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4452,8 +4615,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x287A, 0x287B, 0x287C, 0x287D]
+        registers: [0x287A, 0x287B]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 9 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x287C, 0x287D]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 9 Software Version"
@@ -4594,6 +4765,17 @@ parameters:
         registers: [0x2898]
         icon: "mdi:battery"
 
+      - name: "Battery 10 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x289C]
+          - operator: subtract
+            registers: [0x289D]
+
       - name: "Battery 10 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4626,8 +4808,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x28A0, 0x28A1, 0x28A2, 0x28A3]
+        registers: [0x28A0, 0x28A1]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 10 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28A2, 0x28A3]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 10 Software Version"
@@ -4768,6 +4958,17 @@ parameters:
         registers: [0x28BE]
         icon: "mdi:battery"
 
+      - name: "Battery 11 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x28C2]
+          - operator: subtract
+            registers: [0x28C3]
+
       - name: "Battery 11 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4800,8 +5001,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x28C6, 0x28C7, 0x28C8, 0x28C9]
+        registers: [0x28C6, 0x28C7]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 11 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28C8, 0x28C9]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 11 Software Version"
@@ -4942,6 +5151,17 @@ parameters:
         registers: [0x28E4]
         icon: "mdi:battery"
 
+      - name: "Battery 12 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x28E8]
+          - operator: subtract
+            registers: [0x28E9]
+
       - name: "Battery 12 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -4974,8 +5194,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x28EC, 0x28ED, 0x28EE, 0x28EF]
+        registers: [0x28EC, 0x28ED]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 12 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x28EE, 0x28EF]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 12 Software Version"
@@ -5116,6 +5344,17 @@ parameters:
         registers: [0x290A]
         icon: "mdi:battery"
 
+      - name: "Battery 13 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x290E]
+          - operator: subtract
+            registers: [0x290F]
+
       - name: "Battery 13 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -5148,8 +5387,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2912, 0x2913, 0x2914, 0x2915]
+        registers: [0x2912, 0x2913]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 13 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2914, 0x2915]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 13 Software Version"
@@ -5290,6 +5537,17 @@ parameters:
         registers: [0x2930]
         icon: "mdi:battery"
 
+      - name: "Battery 14 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2934]
+          - operator: subtract
+            registers: [0x2935]
+
       - name: "Battery 14 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -5322,8 +5580,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2938, 0x2939, 0x293A, 0x293B]
+        registers: [0x2938, 0x2939]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 14 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x293A, 0x293B]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 14 Software Version"
@@ -5464,6 +5730,17 @@ parameters:
         registers: [0x2954]
         icon: "mdi:battery"
 
+      - name: "Battery 15 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2958]
+          - operator: subtract
+            registers: [0x2959]
+
       - name: "Battery 15 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -5496,8 +5773,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x295C, 0x295D, 0x295E, 0x295F]
+        registers: [0x295C, 0x295D]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 15 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x295E, 0x295F]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 15 Software Version"
@@ -5638,6 +5923,17 @@ parameters:
         registers: [0x297A]
         icon: "mdi:battery"
 
+      - name: "Battery 16 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x297E]
+          - operator: subtract
+            registers: [0x297F]
+
       - name: "Battery 16 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -5670,8 +5966,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2982, 0x2983, 0x2984, 0x2985]
+        registers: [0x2982, 0x2983]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 16 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2984, 0x2985]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 16 Software Version"
@@ -5812,6 +6116,17 @@ parameters:
         registers: [0x29A0]
         icon: "mdi:battery"
 
+      - name: "Battery 17 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x29A4]
+          - operator: subtract
+            registers: [0x29A5]
+
       - name: "Battery 17 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -5844,8 +6159,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x29A8, 0x29A9, 0x29AA, 0x29AB]
+        registers: [0x29A8, 0x29A9]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 17 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29AA, 0x29AB]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 17 Software Version"
@@ -5986,6 +6309,17 @@ parameters:
         registers: [0x29C6]
         icon: "mdi:battery"
 
+      - name: "Battery 18 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x29CA]
+          - operator: subtract
+            registers: [0x29CB]
+
       - name: "Battery 18 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -6018,8 +6352,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x29CE, 0x29CF, 0x29D0, 0x29D1]
+        registers: [0x29CE, 0x29CF]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 18 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29D0, 0x29D1]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 18 Software Version"
@@ -6160,6 +6502,17 @@ parameters:
         registers: [0x29EC]
         icon: "mdi:battery"
 
+      - name: "Battery 19 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x29F0]
+          - operator: subtract
+            registers: [0x29F1]
+
       - name: "Battery 19 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -6192,8 +6545,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x29F4, 0x29F5, 0x29F6, 0x29F7]
+        registers: [0x29F4, 0x29F5]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 19 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x29F6, 0x29F7]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 19 Software Version"
@@ -6334,6 +6695,17 @@ parameters:
         registers: [0x2A12]
         icon: "mdi:battery"
 
+      - name: "Battery 20 Imbalance"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        sensors:
+          - registers: [0x2A16]
+          - operator: subtract
+            registers: [0x2A17]
+
       - name: "Battery 20 Max Cell Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -6366,8 +6738,16 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x2A1A, 0x2A1B, 0x2A1C, 0x2A1D]
+        registers: [0x2A1A, 0x2A1B]
         icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery 20 Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x2A1C, 0x2A1D]
+        icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
       - name: "Battery 20 Software Version"
