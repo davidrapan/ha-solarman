@@ -550,6 +550,113 @@ parameters:
         validation:
           min: 0.1
 
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: Export Surplus Limitation
+        platform: select
+        rule: 1
+        registers: [0x1023]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Enabled"
+          - key: 0x0002
+            value: "Balanced"
+
+      - name: Export Surplus Power
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 100
+        rule: 1
+        registers: [0x1024]
+        range:
+          min: 0
+          max: 65535
+
+      - name: "Battery DOD"
+        pack: 1
+        alt: "Battery Depth of Discharge"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104D]
+        icon: "mdi:battery"
+
+      - name: "Battery EOD"
+        pack: 1
+        alt: "Battery End of Discharge"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x104E]
+        icon: "mdi:battery"
+
+      - name: "Battery EPS Buffer"
+        pack: 1
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1052]
+        icon: "mdi:battery-low"
+
+      - name: "Storage Control Mode"
+        pack: 1
+        platform: select
+        rule: 1
+        registers: [0x1110]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Time of Use"
+          - key: 2
+            value: "Optimized Revenue"
+          - key: 3
+            value: "Passive"
+          - key: 4
+            value: "Peak Shaving"
+          - key: 5
+            value: "Off-Grid"
+          - key: 6
+            value: "Generator"
+
+      - name: "Passive: Grid power"
+        pack: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x1188, 0x1187]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Minimum Battery power"
+        pack: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118A, 0x1189]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
+      - name: "Passive: Maximum Battery power"
+        pack: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x118C, 0x118B]
+        range:
+          min: -2147483648 
+          max: 2147483647
+
   - group: Alarm
     items:
       - name: "Device Fault"
