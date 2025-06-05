@@ -3,8 +3,8 @@
 #
 # Reference: https://github.com/user-attachments/files/16641716/SOFARSOLAR.ModBus-RTU.Communication.Protocol.pdf
 #
-# Tested with Solarman ME3000SP with an embedded
-# "wifikit" logger. The ME3000SP is basically
+# Tested with Sofar ME 3000-SP with an embedded
+# "wifikit" logger. The device is basically
 # a glorified battery charger - it is not directly
 # connected to any production infrastructure, but can
 # calculate generated energy based on any CT clamps
@@ -337,7 +337,7 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        rule: 1  # if it doesn't work change this to 2
+        rule: 1  # if it doesn't work change to 2
         registers: [0x0211]
 
       - name: "Countdown time"
