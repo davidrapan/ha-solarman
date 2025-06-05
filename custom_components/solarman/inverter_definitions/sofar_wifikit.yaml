@@ -827,147 +827,147 @@ parameters:
         lookup:
           - key: 0
             value: "OK"
-          - key: 1
+          - bit: 0
             value: "ID01 The power grid voltage is too high"
-          - key: 2
+          - bit: 1
             value: "ID02 The power grid voltage is too low"
-          - key: 3
+          - bit: 2
             value: "ID03 The power grid frequency is too high"
-          - key: 4
+          - bit: 3
             value: "ID04 The power grid frequency is too low"
-          - key: 5
+          - bit: 4
             value: "ID05 The battery voltage is too high"
-          - key: 7
+          - bit: 6
             value: "ID07 Grid low voltage ride through fault"
-          - key: 8
+          - bit: 7
             value: "ID08 The PV voltage is too high"
-          - key: 9
+          - bit: 8
             value: "ID09 LLCBus voltage is too high and has triggered hardware protection"
-          - key: 10
+          - bit: 9
             value: "ID10 Boost voltage is too high and has triggered hardware protection"
-          - key: 11
+          - bit: 10
             value: "ID11 BuckBoost current is too high and has triggered hardware protection"
-          - key: 12
+          - bit: 11
             value: "ID12 The battery current is too high and has triggered hardware protection"
-          - key: 13
+          - bit: 12
             value: "ID13 The GFCI sampling value between the master DSP and slave DSP is not consistent"
-          - key: 14
+          - bit: 13
             value: "ID14 The PV current is too high and has triggered hardware protection"
-          - key: 15
+          - bit: 14
             value: "ID15 The grid current is too high and has triggered hardware protection"
-          - key: 16
+          - bit: 15
             value: "ID16 Input current is not balanced"
-          - key: 17
+          - bit: 16
             value: "ID17 Grid current sampling error"
-          - key: 18
+          - bit: 17
             value: "ID18 DCI sampling error"
-          - key: 19
+          - bit: 18
             value: "ID19 Grid voltage sampling error"
-          - key: 20
+          - bit: 19
             value: "ID20 GFCI sampling error"
-          - key: 21
+          - bit: 20
             value: "ID21 Master chip fault"
-          - key: 22
+          - bit: 21
             value: "ID22 Auxiliary voltage error"
-          - key: 25
+          - bit: 24
             value: "ID25 LLCBus voltage is too high"
-          - key: 26
+          - bit: 25
             value: "ID26 Bus voltage is too high and has triggered software protection"
-          - key: 27
+          - bit: 26
             value: "ID27 Battery current is too high"
-          - key: 28
+          - bit: 27
             value: "ID28 The DCI is too high"
-          - key: 29
+          - bit: 28
             value: "ID29 The grid current is too high"
-          - key: 30
+          - bit: 29
             value: "ID30 Bunk current is too high"
-          - key: 31
+          - bit: 30
             value: "ID31 The output current is too high"
-          - key: 32
+          - bit: 31
             value: "ID32 The input current is too high"
-          - key: 33
+          - bit: 32
             value: "ID33 Incorrect input mode"
-          - key: 48
+          - bit: 47
             value: "ID48 The GFCI sampling value between the master DSP and slave DSP is not consistent"
-          - key: 49
+          - bit: 48
             value: "ID49 The grid voltage sampling value between the master DSP and slave DSP is no consistent"
-          - key: 50
+          - bit: 49
             value: "ID50 The grid frequency sampling value between the master DSP and slave DSP is no consistent"
-          - key: 51
+          - bit: 50
             value: "ID51 The DCI sampling value between the master DSP and slave DSP is no consistent"
-          - key: 52
+          - bit: 51
             value: "ID52 HYD-ES inverter can't communicate with Lithium battery BMS correctly"
-          - key: 53
+          - bit: 52
             value: "ID53 SPI communication fault"
-          - key: 54
+          - bit: 53
             value: "ID54 SCI communication fault"
-          - key: 55
+          - bit: 54
             value: "ID55 Relays fault"
-          - key: 56
+          - bit: 55
             value: "ID56 Insulation resistance is too low"
-          - key: 57
+          - bit: 56
             value: "ID57 Battery temperature is too high"
-          - key: 58
+          - bit: 57
             value: "ID58 Heat sink temperature is too high"
-          - key: 59
+          - bit: 58
             value: "ID59 Environment temperature is too high"
-          - key: 60
+          - bit: 59
             value: "ID60 PE connectFault"
-          - key: 65
+          - bit: 64
             value: "ID65 The grid current is too high and has caused unrecoverable hardware fault"
-          - key: 66
+          - bit: 65
             value: "ID66 The bus voltage is too high and has caused unrecoverable fault"
-          - key: 67
+          - bit: 66
             value: "ID67 Unrecoverable fault of battery overcurrent in EPS mode"
-          - key: 68
+          - bit: 67
             value: "ID68 The input current is unbalanced and has triggered an unrecoverable fault"
-          - key: 70
+          - bit: 69
             value: "ID70 The grid current is too high and has triggered an unrecoverable fault"
-          - key: 73
+          - bit: 72
             value: "ID73 The input current is too high and has triggered an unrecoverable fault"
-          - key: 74
+          - bit: 73
             value: "ID74 Incorrect input mode"
-          - key: 75
+          - bit: 74
             value: "ID75 Unrecoverable EEPROM write"
-          - key: 76
+          - bit: 75
             value: "ID76 Unrecoverable EEPROM read"
-          - key: 77
+          - bit: 76
             value: "ID77 Relay has triggered permanent fault"
-          - key: 81
+          - bit: 80
             value: "ID81 Internal temperature is too high"
-          - key: 82
+          - bit: 81
             value: "ID82 AC frequency is too high"
-          - key: 83
+          - bit: 82
             value: "ID83 Remote power derate"
-          - key: 84
+          - bit: 83
             value: "ID84 Switch OFF HYD series inverter remotely"
-          - key: 85
+          - bit: 84
             value: "ID85 SOC <= 1 - DOD or Low battery voltage"
-          - key: 86
+          - bit: 85
             value: "ID86 Battery voltage is too low and caused HYD series inverter to switch OFF"
-          - key: 94
+          - bit: 93
             value: "ID94 Software version is not consistent"
-          - key: 95
+          - bit: 94
             value: "ID95 The communication board EEPROM is faulty"
-          - key: 96
+          - bit: 95
             value: "ID96 RTC clock chip fault"
-          - key: 98
+          - bit: 97
             value: "ID98 SD card fault"
-          - key: 100
+          - bit: 99
             value: "ID100 Battery overcurrent discharging protection"
-          - key: 101
+          - bit: 100
             value: "ID101 Discharging short circuit protection"
-          - key: 102
+          - bit: 101
             value: "ID102 Battery high voltage protection"
-          - key: 103
+          - bit: 102
             value: "ID103 Battery low voltage protection"
-          - key: 104
+          - bit: 103
             value: "ID104 Battery high temperature protection while discharging"
-          - key: 105
+          - bit: 104
             value: "ID105 Battery high temperature protection while charging"
-          - key: 106
+          - bit: 105
             value: "ID106 Battery low temperature protection while discharging"
-          - key: 107
+          - bit: 106
             value: "ID107 Battery low temperature protection while charging"
           - key: default
             value: Problem
@@ -984,105 +984,105 @@ parameters:
             value: "ID01 Grid Over Voltage Protection"
           - bit: 1
             value: "ID02 Grid Under Voltage Protection"
-          - bit: 4
-            value: "ID03 Grid Over Frequency Protection"
           - bit: 2
-            value: "ID04 Grid Under Frequency Protection"
+            value: "ID03 Grid Over Frequency Protection"
           - bit: 3
-            value: "ID05 PV Under Voltage Protection"
+            value: "ID04 Grid Under Frequency Protection"
           - bit: 4
-            value: "ID06 Grid Low Voltage Ride through"
+            value: "ID05 PV Under Voltage Protection"
           - bit: 5
-            value: "ID07"
+            value: "ID06 Grid Low Voltage Ride through"
           - bit: 6
-            value: "ID08"
+            value: "ID07"
           - bit: 7
-            value: "ID09 PV Over Voltage Protection"
+            value: "ID08"
           - bit: 8
-            value: "ID10 PV Input Current Unbalanced"
+            value: "ID09 PV Over Voltage Protection"
           - bit: 9
-            value: "ID11 PV Input Mode wrong configuration"
+            value: "ID10 PV Input Current Unbalanced"
           - bit: 10
-            value: "ID12 Ground-Fault circuit interrupters fault"
+            value: "ID11 PV Input Mode wrong configuration"
           - bit: 11
-            value: "ID13 Phase sequence fault"
+            value: "ID12 Ground-Fault circuit interrupters fault"
           - bit: 12
-            value: "ID14 Hardware boost over current protection"
+            value: "ID13 Phase sequence fault"
           - bit: 13
-            value: "ID15 Hardware AC over current protection"
+            value: "ID14 Hardware boost over current protection"
           - bit: 14
-            value: "ID16 Grid current is too high"
+            value: "ID15 Hardware AC over current protection"
           - bit: 15
-            value: "ID17 Grid current sampling error"
+            value: "ID16 Grid current is too high"
           - bit: 16
-            value: "ID18 DCI sampling error"
+            value: "ID17 Grid current sampling error"
           - bit: 17
-            value: "ID19 Grid voltage sampling error"
+            value: "ID18 DCI sampling error"
           - bit: 18
-            value: "ID20 GFCI device sampling error"
+            value: "ID19 Grid voltage sampling error"
           - bit: 19
-            value: "ID21 Main chip fault"
+            value: "ID20 GFCI device sampling error"
           - bit: 20
-            value: "ID22 Hardware auxiliary power fault"
+            value: "ID21 Main chip fault"
           - bit: 21
-            value: "ID23 Bus voltage zero fault"
+            value: "ID22 Hardware auxiliary power fault"
           - bit: 22
-            value: "ID24 Output current not balanced"
+            value: "ID23 Bus voltage zero fault"
           - bit: 23
-            value: "ID25 Bus under voltage protection"
+            value: "ID24 Output current not balanced"
           - bit: 24
-            value: "ID26 Bus over voltage protection"
+            value: "ID25 Bus under voltage protection"
           - bit: 25
-            value: "ID27 Bus voltage unbalanced"
+            value: "ID26 Bus over voltage protection"
           - bit: 26
-            value: "ID28 DCI is too high"
+            value: "ID27 Bus voltage unbalanced"
           - bit: 27
-            value: "ID29 Grid current is too high"
+            value: "ID28 DCI is too high"
           - bit: 28
-            value: "ID30 Input current is too high"
+            value: "ID29 Grid current is too high"
           - bit: 29
-            value: "ID31 Output over current protection"
+            value: "ID30 Input current is too high"
           - bit: 30
-            value: "ID32 The input current is too high"
+            value: "ID31 Output over current protection"
           - bit: 31
-            value: "ID33 Reserved"
+            value: "ID32 The input current is too high"
           - bit: 32
-            value: "ID34 Reserved"
+            value: "ID33 Reserved"
           - bit: 33
-            value: "ID35 Reserved"
+            value: "ID34 Reserved"
           - bit: 34
-            value: "ID36 Reserved"
+            value: "ID35 Reserved"
           - bit: 35
-            value: "ID37 Reserved"
+            value: "ID36 Reserved"
           - bit: 36
-            value: "ID38 Reserved"
+            value: "ID37 Reserved"
           - bit: 37
-            value: "ID39 Reserved"
+            value: "ID38 Reserved"
           - bit: 38
-            value: "ID40 Reserved"
+            value: "ID39 Reserved"
           - bit: 39
-            value: "ID41 Reserved"
+            value: "ID40 Reserved"
           - bit: 40
-            value: "ID42 Reserved"
+            value: "ID41 Reserved"
           - bit: 41
-            value: "ID43 Reserved"
+            value: "ID42 Reserved"
           - bit: 42
-            value: "ID44 Reserved"
+            value: "ID43 Reserved"
           - bit: 43
-            value: "ID45 Reserved"
+            value: "ID44 Reserved"
           - bit: 44
-            value: "ID46 Reserved"
+            value: "ID45 Reserved"
           - bit: 45
-            value: "ID47 Reserved"
+            value: "ID46 Reserved"
           - bit: 46
-            value: "ID48 Reserved"
+            value: "ID47 Reserved"
           - bit: 47
-            value: "ID49 Grid voltage sampling value between master and slave DSP vary widely"
+            value: "ID48 Reserved"
           - bit: 48
-            value: "ID50 Grid frequency sampling value between master and slave DSP vary widely"
+            value: "ID49 Grid voltage sampling value between master and slave DSP vary widely"
           - bit: 49
-            value: "ID51 DCI sampling value between master and slave DSP vary widely"
+            value: "ID50 Grid frequency sampling value between master and slave DSP vary widely"
           - bit: 50
+            value: "ID51 DCI sampling value between master and slave DSP vary widely"
+          - bit: 51
             value: "ID52 GFCI sampling value between master and slave DSP vary widely"
           - bit: 52
             value: "ID53 Communication failure between master and slave DSP failure"
