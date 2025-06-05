@@ -265,6 +265,38 @@ parameters:
         validation:
           min: 0.1
 
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        uint: enforce
+        sensors:
+          - registers: [5160]
+          - operator: subtract
+            registers: [5162]
+
+      - name: Total Losses
+        description: Includes total consumption of the device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        uint: enforce
+        sensors:
+          - registers: [5164]
+          - operator: subtract
+            registers: [5166]
+        validation:
+          min: 1
+
   - group: Battery Module 0
     hidden:
     pack: 1

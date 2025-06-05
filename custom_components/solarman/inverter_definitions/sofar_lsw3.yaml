@@ -127,7 +127,7 @@ parameters:
 
   - group: Output
     items:
-      - name: "Output active power"
+      - name: "Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -135,6 +135,21 @@ parameters:
         rule: 1
         registers: [0x000C]
         icon: "mdi:home-lightning-bolt"
+
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        scale: 10
+        uint: enforce
+        sensors:
+          - registers: [0x000A]
+          - registers: [0x000B]
+          - operator: subtract
+            registers: [0x000C]
 
       - name: "Output reactive power"
         class: "reactive_power"

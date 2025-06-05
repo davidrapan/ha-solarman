@@ -237,6 +237,23 @@ parameters:
         rule: 2
         registers: [0x0214]
 
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        scale: 0.00001
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [0x020D]
+          - registers: [0x0215]
+          - operator: subtract
+            signed:
+            registers: [0x0214]
+
   - group: Energy
     update_interval: 30
     items:
@@ -298,6 +315,52 @@ parameters:
         registers: [0x0223, 0x0222]
         validation:
           min: 0.1
+
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.01
+        uint: enforce
+        sensors:
+          - registers: [0x021A]
+          - registers: [0x0218]
+          - registers: [0x0225]
+          - operator: subtract
+            registers: [0x0219]
+          - operator: subtract
+            registers: [0x021B]
+          - operator: subtract
+            registers: [0x0224]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.01
+        uint: enforce
+        sensors:
+          - registers: [0x0221, 0x0220]
+          - registers: [0x021D, 0x021C]
+          - registers: [0x0229, 0x0228]
+          - operator: subtract
+            registers: [0x021F, 0x021E]
+          - operator: subtract
+            registers: [0x0223, 0x0222]
+          - operator: subtract
+            registers: [0x0227, 0x0226]
+        validation:
+          min: 1
 
   - group: Battery
     items:
