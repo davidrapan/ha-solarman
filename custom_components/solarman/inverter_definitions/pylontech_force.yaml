@@ -1,5 +1,5 @@
 #
-# Pylontech Force H2/H3
+# Pylontech Force H1/H2/H3, configuration modifier respective values are 0/1/2
 #
 # Reference: https://gist.github.com/pavelmaca/170c282bdb9e20b6c624e8c7633be3b2
 #
@@ -415,7 +415,7 @@ parameters:
         uom: "V"
         scale: 0.01
         rule: 1
-        registers: [5221]
+        registers: [[5221], [], [5221]]
         icon: "mdi:battery"
 
       - name: "Battery Module 5 Temperature"
@@ -425,7 +425,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [5301]
+        registers: [[5301], [], [5301]]
         icon: "mdi:thermometer"
 
   - group: Battery Module 6
@@ -438,7 +438,7 @@ parameters:
         uom: "V"
         scale: 0.01
         rule: 1
-        registers: [5222]
+        registers: [[5222], [], [5222]]
         icon: "mdi:battery"
 
       - name: "Battery Module 6 Temperature"
@@ -448,7 +448,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [5302]
+        registers: [[5302], [], [5302]]
         icon: "mdi:thermometer"
 
   - group: Battery Module 0 Cells
