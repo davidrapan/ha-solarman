@@ -474,7 +474,7 @@ parameters:
           - registers: [0x05C4]
           - operator: subtract
             signed:
-            registers: [0x0214]
+            registers: [0x0485]
 
       - name: "ReactivePower_Output_Total"
         class: "reactive_power"
