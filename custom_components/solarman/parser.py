@@ -243,13 +243,16 @@ class ParameterParser:
         value = 0
 
         for s in definition["sensors"]:
+            if not (registers := s.get("registers")):
+                continue
+
             if (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
                 return None
 
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
                 n *= c
 
-            if (validation := s.get("validation")) is not None and not self.do_validate(s["registers"], n, validation):
+            if (validation := s.get("validation")) is not None and not self.do_validate(registers, n, validation):
                 if (d := validation.get("default")) is None:
                     continue
                 n = d
