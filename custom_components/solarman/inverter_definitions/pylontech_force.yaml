@@ -273,6 +273,7 @@ parameters:
         state_class: "total_increasing"
         ensure_increasing:
         uom: "kWh"
+        scale: 0.001
         rule: 1
         digits: 1
         uint: enforce
