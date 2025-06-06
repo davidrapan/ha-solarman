@@ -36,7 +36,7 @@ parameters:
         mppt: 1
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 1
         registers: [0x0215]
         validation:
@@ -70,7 +70,7 @@ parameters:
         mppt: 1
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 1
         registers: [[], [0x0252]]
         icon: "mdi:solar-power-variant"
@@ -100,7 +100,7 @@ parameters:
         mppt: 2
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 1
         registers: [[], [0x0255]]
         icon: "mdi:solar-power-variant"
@@ -216,7 +216,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 2
         registers: [0x0212]
         icon: ""
@@ -225,7 +225,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 1
         registers: [0x0213]
 
@@ -233,7 +233,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 2
         registers: [0x0214]
 
@@ -244,7 +244,7 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        scale: 0.00001
+        scale: 10
         uint: enforce
         sensors:
           - signed:
@@ -368,7 +368,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        scale: 0.00001
+        scale: 10
         rule: 2
         registers: [0x020D]
 
@@ -443,7 +443,7 @@ parameters:
       #   class: "power"
       #   state_class: "measurement"
       #   uom: "W"
-      #   scale: 0.00001
+      #   scale: 10
       #   rule: 2
       #   registers: [0x0237]
 
