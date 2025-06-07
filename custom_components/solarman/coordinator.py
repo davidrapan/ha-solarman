@@ -27,7 +27,6 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._counter = count(0, int(self._update_interval_seconds))
 
     async def async_shutdown(self) -> None:
-        _LOGGER.debug("async_shutdown")
         await super().async_shutdown()
         try:
             await self.device.shutdown()
@@ -35,7 +34,6 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER.exception(f"Unexpected error shutting down {self.name}")
 
     async def _async_setup(self) -> None:
-        _LOGGER.debug("_async_setup")
         await super()._async_setup()
         try:
             await self.device.setup()

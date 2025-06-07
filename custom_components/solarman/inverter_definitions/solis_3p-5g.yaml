@@ -329,6 +329,40 @@ parameters:
 
   - group: InverterDC
     items:
+      - name: PV Power
+        alt: DC Power
+        mppt: 1
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33049]
+            multiply:
+              registers: [33050]
+          - registers: [33051]
+            multiply:
+              registers: [33052]
+        icon: "mdi:solar-power-variant"
+
+      - name: PV1 Power
+        alt: DC1 Power
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33049]
+            multiply:
+              registers: [33050]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV1 Voltage"
         class: "voltage"
         mppt: 1
@@ -339,6 +373,30 @@ parameters:
         registers: [33049]
         icon: "mdi:solar-power"
 
+      - name: "PV1 Current"
+        class: "current"
+        mppt: 1
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [33050]
+        icon: "mdi:current-dc"
+
+      - name: PV2 Power
+        alt: DC2 Power
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33051]
+            multiply:
+              registers: [33052]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV2 Voltage"
         class: "voltage"
         mppt: 2
@@ -348,15 +406,6 @@ parameters:
         rule: 1
         registers: [33051]
         icon: "mdi:solar-power"
-
-      - name: "PV1 Current"
-        class: "current"
-        mppt: 1
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [33050]
-        icon: "mdi:current-dc"
 
       - name: "PV2 Current"
         class: "current"
@@ -449,6 +498,30 @@ parameters:
         rule: 1
         registers: [33094]
         icon: "mdi:sine-wave"
+
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        scale: 1
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [33150, 33149]
+          - registers: [33049]
+            scale: 0.1
+            multiply:
+              registers: [33050]
+          - registers: [33051]
+            scale: 0.1
+            multiply:
+              registers: [33052]
+          - operator: subtract
+            signed:
+            registers: [33080, 33079]
 
   - group: Production
     items:
@@ -614,6 +687,52 @@ parameters:
         icon: "mdi:home-export-outline"
         validation:
           min: 0.1
+
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [33171]
+          - registers: [33035]
+          - registers: [33167]
+          - operator: subtract
+            registers: [33175]
+          - operator: subtract
+            registers: [33179]
+          - operator: subtract
+            registers: [33163]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [33170, 33169]
+          - registers: [33030, 33029]
+          - registers: [33166, 33165]
+          - operator: subtract
+            registers: [33174, 33173]
+          - operator: subtract
+            registers: [33178, 33177]
+          - operator: subtract
+            registers: [33162, 33161]
+        validation:
+          min: 1
 
   - group: Load
     items:

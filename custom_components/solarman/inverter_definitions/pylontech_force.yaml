@@ -1,10 +1,14 @@
 #
-# Pylontech Force H2/H3
+# Pylontech Force H1/H2/H3, configuration modifier respective values are 0/1/2
 #
 # Reference: https://gist.github.com/pavelmaca/170c282bdb9e20b6c624e8c7633be3b2
 #
 # Tested Firmware Version: 0.1.0.1 - cryptocake, extended with cell sensors - mamonick and kwaaak
 #
+
+info:
+  manufacturer: Pylontech
+  model: [Force H1, Force H2, Force H3]
 
 default:
   update_interval: 5
@@ -261,6 +265,39 @@ parameters:
         validation:
           min: 0.1
 
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        scale: 0.001
+        rule: 1
+        digits: 1
+        uint: enforce
+        sensors:
+          - registers: [5160]
+          - operator: subtract
+            registers: [5162]
+
+      - name: Total Losses
+        description: Includes total consumption of the device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        uint: enforce
+        sensors:
+          - registers: [5164]
+          - operator: subtract
+            registers: [5166]
+        validation:
+          min: 1
+
   - group: Battery Module 0
     hidden:
     pack: 1
@@ -378,7 +415,7 @@ parameters:
         uom: "V"
         scale: 0.01
         rule: 1
-        registers: [5221]
+        registers: [[5221], [], [5221]]
         icon: "mdi:battery"
 
       - name: "Battery Module 5 Temperature"
@@ -388,7 +425,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [5301]
+        registers: [[5301], [], [5301]]
         icon: "mdi:thermometer"
 
   - group: Battery Module 6
@@ -401,7 +438,7 @@ parameters:
         uom: "V"
         scale: 0.01
         rule: 1
-        registers: [5222]
+        registers: [[5222], [], [5222]]
         icon: "mdi:battery"
 
       - name: "Battery Module 6 Temperature"
@@ -411,11 +448,11 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [5302]
+        registers: [[5302], [], [5302]]
         icon: "mdi:thermometer"
 
   - group: Battery Module 0 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 1
     items:
@@ -545,7 +582,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5391]
+        registers: [[], [5391]]
 
       - name: "Cell 0 - 16 Voltage"
         class: "voltage"
@@ -553,7 +590,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5392]
+        registers: [[], [5392]]
 
       - name: "Cell 0 - 17 Voltage"
         class: "voltage"
@@ -561,7 +598,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5393]
+        registers: [[], [5393]]
 
       - name: "Cell 0 - 18 Voltage"
         class: "voltage"
@@ -569,7 +606,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5394]
+        registers: [[], [5394]]
 
       - name: "Cell 0 - 19 Voltage"
         class: "voltage"
@@ -577,7 +614,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5395]
+        registers: [[], [5395]]
 
       - name: "Cell 0 - 20 Voltage"
         class: "voltage"
@@ -585,7 +622,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5396]
+        registers: [[], [5396]]
 
       - name: "Cell 0 - 21 Voltage"
         class: "voltage"
@@ -593,7 +630,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5397]
+        registers: [[], [5397]]
 
       - name: "Cell 0 - 22 Voltage"
         class: "voltage"
@@ -601,7 +638,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5398]
+        registers: [[], [5398]]
 
       - name: "Cell 0 - 23 Voltage"
         class: "voltage"
@@ -609,7 +646,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5399]
+        registers: [[], [5399]]
 
       - name: "Cell 0 - 24 Voltage"
         class: "voltage"
@@ -617,7 +654,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5400]
+        registers: [[], [5400]]
 
       - name: "Cell 0 - 25 Voltage"
         class: "voltage"
@@ -625,7 +662,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5401]
+        registers: [[], [5401]]
 
       - name: "Cell 0 - 26 Voltage"
         class: "voltage"
@@ -633,7 +670,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5402]
+        registers: [[], [5402]]
 
       - name: "Cell 0 - 27 Voltage"
         class: "voltage"
@@ -641,7 +678,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5403]
+        registers: [[], [5403]]
 
       - name: "Cell 0 - 28 Voltage"
         class: "voltage"
@@ -649,7 +686,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5404]
+        registers: [[], [5404]]
 
       - name: "Cell 0 - 29 Voltage"
         class: "voltage"
@@ -657,7 +694,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5405]
+        registers: [[], [5405]]
+
+      - name: "Cell 0 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5406]]
+
+      - name: "Cell 0 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5407]]
 
       - name: "Cell 0 - 0 Temperature"
         class: "temperature"
@@ -785,7 +838,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6159]
+        registers: [[], [6159]]
 
       - name: "Cell 0 - 16 Temperature"
         class: "temperature"
@@ -793,7 +846,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6160]
+        registers: [[], [6160]]
 
       - name: "Cell 0 - 17 Temperature"
         class: "temperature"
@@ -801,7 +854,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6161]
+        registers: [[], [6161]]
 
       - name: "Cell 0 - 18 Temperature"
         class: "temperature"
@@ -809,7 +862,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6162]
+        registers: [[], [6162]]
 
       - name: "Cell 0 - 19 Temperature"
         class: "temperature"
@@ -817,7 +870,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6163]
+        registers: [[], [6163]]
 
       - name: "Cell 0 - 20 Temperature"
         class: "temperature"
@@ -825,7 +878,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6164]
+        registers: [[], [6164]]
 
       - name: "Cell 0 - 21 Temperature"
         class: "temperature"
@@ -833,7 +886,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6165]
+        registers: [[], [6165]]
 
       - name: "Cell 0 - 22 Temperature"
         class: "temperature"
@@ -841,7 +894,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6166]
+        registers: [[], [6166]]
 
       - name: "Cell 0 - 23 Temperature"
         class: "temperature"
@@ -849,7 +902,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6167]
+        registers: [[], [6167]]
 
       - name: "Cell 0 - 24 Temperature"
         class: "temperature"
@@ -857,7 +910,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6168]
+        registers: [[], [6168]]
 
       - name: "Cell 0 - 25 Temperature"
         class: "temperature"
@@ -865,7 +918,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6169]
+        registers: [[], [6169]]
 
       - name: "Cell 0 - 26 Temperature"
         class: "temperature"
@@ -873,7 +926,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6170]
+        registers: [[], [6170]]
 
       - name: "Cell 0 - 27 Temperature"
         class: "temperature"
@@ -881,7 +934,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6171]
+        registers: [[], [6171]]
 
       - name: "Cell 0 - 28 Temperature"
         class: "temperature"
@@ -889,7 +942,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6172]
+        registers: [[], [6172]]
 
       - name: "Cell 0 - 29 Temperature"
         class: "temperature"
@@ -897,10 +950,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6173]
+        registers: [[], [6173]]
+
+      - name: "Cell 0 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6174]]
+
+      - name: "Cell 0 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6175]]
 
   - group: Battery Module 1 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 2
     items:
@@ -910,7 +979,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5406]
+        registers: [[5391], [5406], [5408]]
 
       - name: "Cell 1 - 1 Voltage"
         class: "voltage"
@@ -918,7 +987,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5407]
+        registers: [[5392], [5407], [5409]]
 
       - name: "Cell 1 - 2 Voltage"
         class: "voltage"
@@ -926,7 +995,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5408]
+        registers: [[5393], [5408], [5410]]
 
       - name: "Cell 1 - 3 Voltage"
         class: "voltage"
@@ -934,7 +1003,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5409]
+        registers: [[5394], [5409], [5411]]
 
       - name: "Cell 1 - 4 Voltage"
         class: "voltage"
@@ -942,7 +1011,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5410]
+        registers: [[5395], [5410], [5412]]
 
       - name: "Cell 1 - 5 Voltage"
         class: "voltage"
@@ -950,7 +1019,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5411]
+        registers: [[5396], [5411], [5413]]
 
       - name: "Cell 1 - 6 Voltage"
         class: "voltage"
@@ -958,7 +1027,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5412]
+        registers: [[5397], [5412], [5414]]
 
       - name: "Cell 1 - 7 Voltage"
         class: "voltage"
@@ -966,7 +1035,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5413]
+        registers: [[5398], [5413], [5415]]
 
       - name: "Cell 1 - 8 Voltage"
         class: "voltage"
@@ -974,7 +1043,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5414]
+        registers: [[5399], [5414], [5416]]
 
       - name: "Cell 1 - 9 Voltage"
         class: "voltage"
@@ -982,7 +1051,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5415]
+        registers: [[5400], [5415], [5417]]
 
       - name: "Cell 1 - 10 Voltage"
         class: "voltage"
@@ -990,7 +1059,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5416]
+        registers: [[5401], [5416], [5418]]
 
       - name: "Cell 1 - 11 Voltage"
         class: "voltage"
@@ -998,7 +1067,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5417]
+        registers: [[5402], [5417], [5419]]
 
       - name: "Cell 1 - 12 Voltage"
         class: "voltage"
@@ -1006,7 +1075,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5418]
+        registers: [[5403], [5418], [5420]]
 
       - name: "Cell 1 - 13 Voltage"
         class: "voltage"
@@ -1014,7 +1083,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5419]
+        registers: [[5404], [5419], [5421]]
 
       - name: "Cell 1 - 14 Voltage"
         class: "voltage"
@@ -1022,7 +1091,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5420]
+        registers: [[5405], [5420], [5422]]
 
       - name: "Cell 1 - 15 Voltage"
         class: "voltage"
@@ -1030,15 +1099,14 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5421]
-
+        registers: [[], [5421], [5423]]
       - name: "Cell 1 - 16 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5422]
+        registers: [[], [5422], [5424]]
 
       - name: "Cell 1 - 17 Voltage"
         class: "voltage"
@@ -1046,7 +1114,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5423]
+        registers: [[], [5423], [5425]]
 
       - name: "Cell 1 - 18 Voltage"
         class: "voltage"
@@ -1054,7 +1122,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5424]
+        registers: [[], [5424], [5426]]
 
       - name: "Cell 1 - 19 Voltage"
         class: "voltage"
@@ -1062,7 +1130,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5425]
+        registers: [[], [5425], [5427]]
 
       - name: "Cell 1 - 20 Voltage"
         class: "voltage"
@@ -1070,7 +1138,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5426]
+        registers: [[], [5426], [5427]]
 
       - name: "Cell 1 - 21 Voltage"
         class: "voltage"
@@ -1078,7 +1146,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5427]
+        registers: [[], [5427], [5429]]
 
       - name: "Cell 1 - 22 Voltage"
         class: "voltage"
@@ -1086,7 +1154,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5428]
+        registers: [[], [5428], [5430]]
 
       - name: "Cell 1 - 23 Voltage"
         class: "voltage"
@@ -1094,7 +1162,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5429]
+        registers: [[], [5429], [5431]]
 
       - name: "Cell 1 - 24 Voltage"
         class: "voltage"
@@ -1102,7 +1170,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5430]
+        registers: [[], [5430], [5432]]
 
       - name: "Cell 1 - 25 Voltage"
         class: "voltage"
@@ -1110,7 +1178,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5431]
+        registers: [[], [5431], [5433]]
 
       - name: "Cell 1 - 26 Voltage"
         class: "voltage"
@@ -1118,7 +1186,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5432]
+        registers: [[], [5432], [5434]]
 
       - name: "Cell 1 - 27 Voltage"
         class: "voltage"
@@ -1126,7 +1194,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5433]
+        registers: [[], [5433], [5435]]
 
       - name: "Cell 1 - 28 Voltage"
         class: "voltage"
@@ -1134,7 +1202,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5434]
+        registers: [[], [5434], [5436]]
 
       - name: "Cell 1 - 29 Voltage"
         class: "voltage"
@@ -1142,7 +1210,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5435]
+        registers: [[], [5435], [5437]]
+
+      - name: "Cell 1 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5438]]
+
+      - name: "Cell 1 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5439]]
 
       - name: "Cell 1 - 0 Temperature"
         class: "temperature"
@@ -1150,7 +1234,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6174]
+        registers: [[6159], [6174], [6176]]
 
       - name: "Cell 1 - 1 Temperature"
         class: "temperature"
@@ -1158,7 +1242,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6175]
+        registers: [[6160], [6175], [6177]]
 
       - name: "Cell 1 - 2 Temperature"
         class: "temperature"
@@ -1166,7 +1250,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6176]
+        registers: [[6161], [6176], [6178]]
 
       - name: "Cell 1 - 3 Temperature"
         class: "temperature"
@@ -1174,7 +1258,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6177]
+        registers: [[6162], [6177], [6179]]
 
       - name: "Cell 1 - 4 Temperature"
         class: "temperature"
@@ -1182,7 +1266,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6178]
+        registers: [[6163], [6178], [6180]]
 
       - name: "Cell 1 - 5 Temperature"
         class: "temperature"
@@ -1190,7 +1274,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6179]
+        registers: [[6164], [6179], [6181]]
 
       - name: "Cell 1 - 6 Temperature"
         class: "temperature"
@@ -1198,7 +1282,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6180]
+        registers: [[6165], [6180], [6182]]
 
       - name: "Cell 1 - 7 Temperature"
         class: "temperature"
@@ -1206,7 +1290,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6181]
+        registers: [[6166], [6181], [6183]]
 
       - name: "Cell 1 - 8 Temperature"
         class: "temperature"
@@ -1214,7 +1298,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6182]
+        registers: [[6167], [6182], [6184]]
 
       - name: "Cell 1 - 9 Temperature"
         class: "temperature"
@@ -1222,7 +1306,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6183]
+        registers: [[6168], [6183], [6185]]
 
       - name: "Cell 1 - 10 Temperature"
         class: "temperature"
@@ -1230,7 +1314,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6184]
+        registers: [[6169], [6184], [6186]]
 
       - name: "Cell 1 - 11 Temperature"
         class: "temperature"
@@ -1238,7 +1322,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6185]
+        registers: [[6170], [6185], [6187]]
 
       - name: "Cell 1 - 12 Temperature"
         class: "temperature"
@@ -1246,7 +1330,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6186]
+        registers: [[6171], [6186], [6188]]
 
       - name: "Cell 1 - 13 Temperature"
         class: "temperature"
@@ -1254,7 +1338,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6187]
+        registers: [[6172], [6187], [6189]]
 
       - name: "Cell 1 - 14 Temperature"
         class: "temperature"
@@ -1262,7 +1346,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6188]
+        registers: [[6173], [6188], [6190]]
 
       - name: "Cell 1 - 15 Temperature"
         class: "temperature"
@@ -1270,7 +1354,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6189]
+        registers: [[], [6189], [6191]]
 
       - name: "Cell 1 - 16 Temperature"
         class: "temperature"
@@ -1278,7 +1362,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6190]
+        registers: [[], [6190], [6192]]
 
       - name: "Cell 1 - 17 Temperature"
         class: "temperature"
@@ -1286,7 +1370,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6191]
+        registers: [[], [6191], [6193]]
 
       - name: "Cell 1 - 18 Temperature"
         class: "temperature"
@@ -1294,7 +1378,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6192]
+        registers: [[], [6192], [6194]]
 
       - name: "Cell 1 - 19 Temperature"
         class: "temperature"
@@ -1302,7 +1386,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6193]
+        registers: [[], [6193], [6195]]
 
       - name: "Cell 1 - 20 Temperature"
         class: "temperature"
@@ -1310,7 +1394,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6194]
+        registers: [[], [6194], [6196]]
 
       - name: "Cell 1 - 21 Temperature"
         class: "temperature"
@@ -1318,7 +1402,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6195]
+        registers: [[], [6195], [6197]]
 
       - name: "Cell 1 - 22 Temperature"
         class: "temperature"
@@ -1326,7 +1410,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6196]
+        registers: [[], [6196], [6198]]
 
       - name: "Cell 1 - 23 Temperature"
         class: "temperature"
@@ -1334,7 +1418,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6197]
+        registers: [[], [6197], [6199]]
 
       - name: "Cell 1 - 24 Temperature"
         class: "temperature"
@@ -1342,7 +1426,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6198]
+        registers: [[], [6198], [6200]]
 
       - name: "Cell 1 - 25 Temperature"
         class: "temperature"
@@ -1350,7 +1434,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6199]
+        registers: [[], [6199], [6201]]
 
       - name: "Cell 1 - 26 Temperature"
         class: "temperature"
@@ -1358,7 +1442,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6200]
+        registers: [[], [6200], [6202]]
 
       - name: "Cell 1 - 27 Temperature"
         class: "temperature"
@@ -1366,7 +1450,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6201]
+        registers: [[], [6201], [6203]]
 
       - name: "Cell 1 - 28 Temperature"
         class: "temperature"
@@ -1374,7 +1458,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6202]
+        registers: [[], [6202], [6204]]
 
       - name: "Cell 1 - 29 Temperature"
         class: "temperature"
@@ -1382,10 +1466,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6203]
+        registers: [[], [6203], [6205]]
+
+      - name: "Cell 1 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6206]]
+
+      - name: "Cell 1 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6207]]
 
   - group: Battery Module 2 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 3
     items:
@@ -1395,7 +1495,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5436]
+        registers: [[5406], [5436], [5440]]
 
       - name: "Cell 2 - 1 Voltage"
         class: "voltage"
@@ -1403,7 +1503,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5437]
+        registers: [[5407], [5437], [5441]]
 
       - name: "Cell 2 - 2 Voltage"
         class: "voltage"
@@ -1411,7 +1511,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5438]
+        registers: [[5408], [5438], [5442]]
 
       - name: "Cell 2 - 3 Voltage"
         class: "voltage"
@@ -1419,7 +1519,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5439]
+        registers: [[5409], [5439], [5443]]
 
       - name: "Cell 2 - 4 Voltage"
         class: "voltage"
@@ -1427,7 +1527,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5440]
+        registers: [[5410], [5440], [5444]]
 
       - name: "Cell 2 - 5 Voltage"
         class: "voltage"
@@ -1435,7 +1535,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5441]
+        registers: [[5411], [5441], [5445]]
 
       - name: "Cell 2 - 6 Voltage"
         class: "voltage"
@@ -1443,7 +1543,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5442]
+        registers: [[5412], [5442], [5446]]
 
       - name: "Cell 2 - 7 Voltage"
         class: "voltage"
@@ -1451,7 +1551,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5443]
+        registers: [[5413], [5443], [5447]]
 
       - name: "Cell 2 - 8 Voltage"
         class: "voltage"
@@ -1459,15 +1559,15 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5444]
-        icon: "mdi:battery"
+        registers: [[5414], [5444], [5448]]
+
       - name: "Cell 2 - 9 Voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5445]
+        registers: [[5415], [5445], [5449]]
 
       - name: "Cell 2 - 10 Voltage"
         class: "voltage"
@@ -1475,7 +1575,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5446]
+        registers: [[5416], [5446], [5450]]
 
       - name: "Cell 2 - 11 Voltage"
         class: "voltage"
@@ -1483,7 +1583,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5447]
+        registers: [[5417], [5447], [5451]]
 
       - name: "Cell 2 - 12 Voltage"
         class: "voltage"
@@ -1491,7 +1591,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5448]
+        registers: [[5418], [5448], [5452]]
 
       - name: "Cell 2 - 13 Voltage"
         class: "voltage"
@@ -1499,7 +1599,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5449]
+        registers: [[5419], [5449], [5453]]
 
       - name: "Cell 2 - 14 Voltage"
         class: "voltage"
@@ -1507,7 +1607,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5450]
+        registers: [[5420], [5450], [5454]]
 
       - name: "Cell 2 - 15 Voltage"
         class: "voltage"
@@ -1515,7 +1615,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5451]
+        registers: [[], [5451], [5455]]
 
       - name: "Cell 2 - 16 Voltage"
         class: "voltage"
@@ -1523,7 +1623,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5452]
+        registers: [[], [5452], [5456]]
 
       - name: "Cell 2 - 17 Voltage"
         class: "voltage"
@@ -1531,7 +1631,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5453]
+        registers: [[], [5453], [5457]]
 
       - name: "Cell 2 - 18 Voltage"
         class: "voltage"
@@ -1539,7 +1639,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5454]
+        registers: [[], [5454], [5458]]
 
       - name: "Cell 2 - 19 Voltage"
         class: "voltage"
@@ -1547,7 +1647,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5455]
+        registers: [[], [5455], [5459]]
 
       - name: "Cell 2 - 20 Voltage"
         class: "voltage"
@@ -1555,7 +1655,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5456]
+        registers: [[], [5456], [5460]]
 
       - name: "Cell 2 - 21 Voltage"
         class: "voltage"
@@ -1563,7 +1663,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5457]
+        registers: [[], [5457], [5461]]
 
       - name: "Cell 2 - 22 Voltage"
         class: "voltage"
@@ -1571,7 +1671,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5458]
+        registers: [[], [5458], [5462]]
 
       - name: "Cell 2 - 23 Voltage"
         class: "voltage"
@@ -1579,7 +1679,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5459]
+        registers: [[], [5459], [5463]]
 
       - name: "Cell 2 - 24 Voltage"
         class: "voltage"
@@ -1587,7 +1687,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5460]
+        registers: [[], [5460], [5464]]
 
       - name: "Cell 2 - 25 Voltage"
         class: "voltage"
@@ -1595,7 +1695,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5461]
+        registers: [[], [5461], [5465]]
 
       - name: "Cell 2 - 26 Voltage"
         class: "voltage"
@@ -1603,7 +1703,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5462]
+        registers: [[], [5462], [5466]]
 
       - name: "Cell 2 - 27 Voltage"
         class: "voltage"
@@ -1611,7 +1711,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5463]
+        registers: [[], [5463], [5467]]
 
       - name: "Cell 2 - 28 Voltage"
         class: "voltage"
@@ -1619,7 +1719,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5464]
+        registers: [[], [5464], [5468]]
 
       - name: "Cell 2 - 29 Voltage"
         class: "voltage"
@@ -1627,7 +1727,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5465]
+        registers: [[], [5465], [5469]]
+
+      - name: "Cell 2 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5469]]
+
+      - name: "Cell 2 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5470]]
 
       - name: "Cell 2 - 0 Temperature"
         class: "temperature"
@@ -1635,7 +1751,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6204]
+        registers: [[6174], [6204], [6208]]
 
       - name: "Cell 2 - 1 Temperature"
         class: "temperature"
@@ -1643,7 +1759,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6205]
+        registers: [[6175], [6205], [6209]]
 
       - name: "Cell 2 - 2 Temperature"
         class: "temperature"
@@ -1651,7 +1767,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6206]
+        registers: [[6176], [6206], [6210]]
 
       - name: "Cell 2 - 3 Temperature"
         class: "temperature"
@@ -1659,7 +1775,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6207]
+        registers: [[6177], [6207], [6211]]
 
       - name: "Cell 2 - 4 Temperature"
         class: "temperature"
@@ -1667,7 +1783,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6208]
+        registers: [[6178], [6208], [6212]]
 
       - name: "Cell 2 - 5 Temperature"
         class: "temperature"
@@ -1675,7 +1791,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6209]
+        registers: [[6179], [6209], [6213]]
 
       - name: "Cell 2 - 6 Temperature"
         class: "temperature"
@@ -1683,7 +1799,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6210]
+        registers: [[6180], [6210], [6214]]
 
       - name: "Cell 2 - 7 Temperature"
         class: "temperature"
@@ -1691,7 +1807,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6211]
+        registers: [[6181], [6211], [6215]]
 
       - name: "Cell 2 - 8 Temperature"
         class: "temperature"
@@ -1699,7 +1815,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6212]
+        registers: [[6182], [6212], [6216]]
 
       - name: "Cell 2 - 9 Temperature"
         class: "temperature"
@@ -1707,7 +1823,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6213]
+        registers: [[6183], [6213], [6217]]
 
       - name: "Cell 2 - 10 Temperature"
         class: "temperature"
@@ -1715,7 +1831,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6214]
+        registers: [[6184], [6214], [6218]]
 
       - name: "Cell 2 - 11 Temperature"
         class: "temperature"
@@ -1723,7 +1839,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6215]
+        registers: [[6185], [6215], [6219]]
 
       - name: "Cell 2 - 12 Temperature"
         class: "temperature"
@@ -1731,7 +1847,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6216]
+        registers: [[6186], [6216], [6220]]
 
       - name: "Cell 2 - 13 Temperature"
         class: "temperature"
@@ -1739,7 +1855,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6217]
+        registers: [[6187], [6217], [6221]]
 
       - name: "Cell 2 - 14 Temperature"
         class: "temperature"
@@ -1747,7 +1863,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6218]
+        registers: [[6188], [6218], [6222]]
 
       - name: "Cell 2 - 15 Temperature"
         class: "temperature"
@@ -1755,7 +1871,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6219]
+        registers: [[], [6219], [6223]]
 
       - name: "Cell 2 - 16 Temperature"
         class: "temperature"
@@ -1763,7 +1879,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6220]
+        registers: [[], [6220], [6224]]
 
       - name: "Cell 2 - 17 Temperature"
         class: "temperature"
@@ -1771,7 +1887,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6221]
+        registers: [[], [6221], [6225]]
 
       - name: "Cell 2 - 18 Temperature"
         class: "temperature"
@@ -1779,7 +1895,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6222]
+        registers: [[], [6222], [6226]]
 
       - name: "Cell 2 - 19 Temperature"
         class: "temperature"
@@ -1787,7 +1903,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6223]
+        registers: [[], [6223], [6227]]
 
       - name: "Cell 2 - 20 Temperature"
         class: "temperature"
@@ -1795,7 +1911,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6224]
+        registers: [[], [6224], [6228]]
 
       - name: "Cell 2 - 21 Temperature"
         class: "temperature"
@@ -1803,7 +1919,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6225]
+        registers: [[], [6225], [6229]]
 
       - name: "Cell 2 - 22 Temperature"
         class: "temperature"
@@ -1811,7 +1927,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6226]
+        registers: [[], [6226], [6230]]
 
       - name: "Cell 2 - 23 Temperature"
         class: "temperature"
@@ -1819,7 +1935,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6227]
+        registers: [[], [6227], [6231]]
 
       - name: "Cell 2 - 24 Temperature"
         class: "temperature"
@@ -1827,7 +1943,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6228]
+        registers: [[], [6228], [6232]]
 
       - name: "Cell 2 - 25 Temperature"
         class: "temperature"
@@ -1835,7 +1951,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6229]
+        registers: [[], [6229], [6233]]
 
       - name: "Cell 2 - 26 Temperature"
         class: "temperature"
@@ -1843,7 +1959,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6230]
+        registers: [[], [6230], [6234]]
 
       - name: "Cell 2 - 27 Temperature"
         class: "temperature"
@@ -1851,7 +1967,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6231]
+        registers: [[], [6231], [6235]]
 
       - name: "Cell 2 - 28 Temperature"
         class: "temperature"
@@ -1859,7 +1975,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6232]
+        registers: [[], [6232], [6236]]
 
       - name: "Cell 2 - 29 Temperature"
         class: "temperature"
@@ -1867,10 +1983,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6233]
+        registers: [[], [6233], [6237]]
+
+      - name: "Cell 2 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6238]]
+
+      - name: "Cell 2 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6239]]
 
   - group: Battery Module 3 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 4
     items:
@@ -1880,7 +2012,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5466]
+        registers: [[5421], [5466], [5472]]
 
       - name: "Cell 3 - 1 Voltage"
         class: "voltage"
@@ -1888,7 +2020,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5467]
+        registers: [[5422], [5467], [5473]]
 
       - name: "Cell 3 - 2 Voltage"
         class: "voltage"
@@ -1896,7 +2028,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5468]
+        registers: [[5423], [5468], [5474]]
 
       - name: "Cell 3 - 3 Voltage"
         class: "voltage"
@@ -1904,7 +2036,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5469]
+        registers: [[5424], [5469], [5475]]
 
       - name: "Cell 3 - 4 Voltage"
         class: "voltage"
@@ -1912,7 +2044,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5470]
+        registers: [[5425], [5470], [5476]]
 
       - name: "Cell 3 - 5 Voltage"
         class: "voltage"
@@ -1920,7 +2052,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5471]
+        registers: [[5426], [5471], [5477]]
 
       - name: "Cell 3 - 6 Voltage"
         class: "voltage"
@@ -1928,7 +2060,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5472]
+        registers: [[5427], [5472], [5478]]
 
       - name: "Cell 3 - 7 Voltage"
         class: "voltage"
@@ -1936,7 +2068,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5473]
+        registers: [[5428], [5473], [5479]]
 
       - name: "Cell 3 - 8 Voltage"
         class: "voltage"
@@ -1944,7 +2076,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5474]
+        registers: [[5429], [5474], [5480]]
 
       - name: "Cell 3 - 9 Voltage"
         class: "voltage"
@@ -1952,7 +2084,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5475]
+        registers: [[5430], [5475], [5481]]
 
       - name: "Cell 3 - 10 Voltage"
         class: "voltage"
@@ -1960,7 +2092,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5476]
+        registers: [[5431], [5476], [5482]]
 
       - name: "Cell 3 - 11 Voltage"
         class: "voltage"
@@ -1968,7 +2100,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5477]
+        registers: [[5432], [5477], [5483]]
 
       - name: "Cell 3 - 12 Voltage"
         class: "voltage"
@@ -1976,7 +2108,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5478]
+        registers: [[5433], [5478], [5484]]
 
       - name: "Cell 3 - 13 Voltage"
         class: "voltage"
@@ -1984,7 +2116,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5479]
+        registers: [[5434], [5479], [5485]]
 
       - name: "Cell 3 - 14 Voltage"
         class: "voltage"
@@ -1992,7 +2124,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5480]
+        registers: [[5435], [5480], [5486]]
 
       - name: "Cell 3 - 15 Voltage"
         class: "voltage"
@@ -2000,7 +2132,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5481]
+        registers: [[], [5481], [5487]]
 
       - name: "Cell 3 - 16 Voltage"
         class: "voltage"
@@ -2008,7 +2140,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5482]
+        registers: [[], [5482], [5488]]
 
       - name: "Cell 3 - 17 Voltage"
         class: "voltage"
@@ -2016,7 +2148,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5483]
+        registers: [[], [5483], [5489]]
 
       - name: "Cell 3 - 18 Voltage"
         class: "voltage"
@@ -2024,7 +2156,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5484]
+        registers: [[], [5484], [5490]]
 
       - name: "Cell 3 - 19 Voltage"
         class: "voltage"
@@ -2032,7 +2164,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5485]
+        registers: [[], [5485], [5491]]
 
       - name: "Cell 3 - 20 Voltage"
         class: "voltage"
@@ -2040,7 +2172,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5486]
+        registers: [[], [5486], [5492]]
 
       - name: "Cell 3 - 21 Voltage"
         class: "voltage"
@@ -2048,7 +2180,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5487]
+        registers: [[], [5487], [5493]]
 
       - name: "Cell 3 - 22 Voltage"
         class: "voltage"
@@ -2056,7 +2188,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5488]
+        registers: [[], [5488], [5494]]
 
       - name: "Cell 3 - 23 Voltage"
         class: "voltage"
@@ -2064,7 +2196,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5489]
+        registers: [[], [5489], [5495]]
 
       - name: "Cell 3 - 24 Voltage"
         class: "voltage"
@@ -2072,7 +2204,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5490]
+        registers: [[], [5490], [5496]]
 
       - name: "Cell 3 - 25 Voltage"
         class: "voltage"
@@ -2080,7 +2212,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5491]
+        registers: [[], [5491], [5497]]
 
       - name: "Cell 3 - 26 Voltage"
         class: "voltage"
@@ -2088,7 +2220,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5492]
+        registers: [[], [5492], [5498]]
 
       - name: "Cell 3 - 27 Voltage"
         class: "voltage"
@@ -2096,7 +2228,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5493]
+        registers: [[], [5493], [5499]]
 
       - name: "Cell 3 - 28 Voltage"
         class: "voltage"
@@ -2104,7 +2236,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5494]
+        registers: [[], [5494], [5500]]
 
       - name: "Cell 3 - 29 Voltage"
         class: "voltage"
@@ -2112,7 +2244,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5495]
+        registers: [[], [5495], [5501]]
+
+      - name: "Cell 3 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5502]]
+
+      - name: "Cell 3 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5503]]
 
       - name: "Cell 3 - 0 Temperature"
         class: "temperature"
@@ -2120,7 +2268,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6234]
+        registers: [[6189], [6234], [6240]]
 
       - name: "Cell 3 - 1 Temperature"
         class: "temperature"
@@ -2128,7 +2276,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6235]
+        registers: [[6190], [6235], [6241]]
 
       - name: "Cell 3 - 2 Temperature"
         class: "temperature"
@@ -2136,7 +2284,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6236]
+        registers: [[6191], [6236], [6242]]
 
       - name: "Cell 3 - 3 Temperature"
         class: "temperature"
@@ -2144,7 +2292,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6237]
+        registers: [[6192], [6237], [6243]]
 
       - name: "Cell 3 - 4 Temperature"
         class: "temperature"
@@ -2152,7 +2300,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6238]
+        registers: [[6193], [6238], [6244]]
 
       - name: "Cell 3 - 5 Temperature"
         class: "temperature"
@@ -2160,7 +2308,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6239]
+        registers: [[6194], [6239], [6245]]
 
       - name: "Cell 3 - 6 Temperature"
         class: "temperature"
@@ -2168,7 +2316,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6240]
+        registers: [[6195], [6240], [6246]]
 
       - name: "Cell 3 - 7 Temperature"
         class: "temperature"
@@ -2176,7 +2324,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6241]
+        registers: [[6196], [6241], [6247]]
 
       - name: "Cell 3 - 8 Temperature"
         class: "temperature"
@@ -2184,7 +2332,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6242]
+        registers: [[6197], [6242], [6248]]
 
       - name: "Cell 3 - 9 Temperature"
         class: "temperature"
@@ -2192,7 +2340,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6243]
+        registers: [[6198], [6243], [6249]]
 
       - name: "Cell 3 - 10 Temperature"
         class: "temperature"
@@ -2200,7 +2348,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6244]
+        registers: [[6199], [6244], [6250]]
 
       - name: "Cell 3 - 11 Temperature"
         class: "temperature"
@@ -2208,7 +2356,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6245]
+        registers: [[6200], [6245], [6251]]
 
       - name: "Cell 3 - 12 Temperature"
         class: "temperature"
@@ -2216,7 +2364,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6246]
+        registers: [[6201], [6246], [6252]]
 
       - name: "Cell 3 - 13 Temperature"
         class: "temperature"
@@ -2224,7 +2372,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6247]
+        registers: [[6202], [6247], [6253]]
 
       - name: "Cell 3 - 14 Temperature"
         class: "temperature"
@@ -2232,7 +2380,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6248]
+        registers: [[6203], [6248], [6254]]
 
       - name: "Cell 3 - 15 Temperature"
         class: "temperature"
@@ -2240,7 +2388,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6249]
+        registers: [[], [6249], [6255]]
 
       - name: "Cell 3 - 16 Temperature"
         class: "temperature"
@@ -2248,7 +2396,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6250]
+        registers: [[], [6250], [6256]]
 
       - name: "Cell 3 - 17 Temperature"
         class: "temperature"
@@ -2256,7 +2404,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6251]
+        registers: [[], [6251], [6257]]
 
       - name: "Cell 3 - 18 Temperature"
         class: "temperature"
@@ -2264,7 +2412,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6252]
+        registers: [[], [6252], [6258]]
 
       - name: "Cell 3 - 19 Temperature"
         class: "temperature"
@@ -2272,7 +2420,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6253]
+        registers: [[], [6253], [6259]]
 
       - name: "Cell 3 - 20 Temperature"
         class: "temperature"
@@ -2280,7 +2428,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6254]
+        registers: [[], [6254], [6260]]
 
       - name: "Cell 3 - 21 Temperature"
         class: "temperature"
@@ -2288,7 +2436,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6255]
+        registers: [[], [6255], [6261]]
 
       - name: "Cell 3 - 22 Temperature"
         class: "temperature"
@@ -2296,7 +2444,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6256]
+        registers: [[], [6256], [6262]]
 
       - name: "Cell 3 - 23 Temperature"
         class: "temperature"
@@ -2304,7 +2452,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6257]
+        registers: [[], [6257], [6263]]
 
       - name: "Cell 3 - 24 Temperature"
         class: "temperature"
@@ -2312,7 +2460,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6258]
+        registers: [[], [6258], [6264]]
 
       - name: "Cell 3 - 25 Temperature"
         class: "temperature"
@@ -2320,7 +2468,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6259]
+        registers: [[], [6259], [6265]]
 
       - name: "Cell 3 - 26 Temperature"
         class: "temperature"
@@ -2328,7 +2476,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6260]
+        registers: [[], [6260], [6266]]
 
       - name: "Cell 3 - 27 Temperature"
         class: "temperature"
@@ -2336,7 +2484,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6261]
+        registers: [[], [6261], [6267]]
 
       - name: "Cell 3 - 28 Temperature"
         class: "temperature"
@@ -2344,7 +2492,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6262]
+        registers: [[], [6262], [6268]]
 
       - name: "Cell 3 - 29 Temperature"
         class: "temperature"
@@ -2352,10 +2500,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6263]
+        registers: [[], [6263], [6269]]
+
+      - name: "Cell 3 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6270]]
+
+      - name: "Cell 3 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6271]]
 
   - group: Battery Module 4 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 5
     items:
@@ -2365,7 +2529,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5496]
+        registers: [[5436], [5496], [5504]]
 
       - name: "Cell 4 - 1 Voltage"
         class: "voltage"
@@ -2373,7 +2537,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5497]
+        registers: [[5437], [5497], [5505]]
 
       - name: "Cell 4 - 2 Voltage"
         class: "voltage"
@@ -2381,7 +2545,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5498]
+        registers: [[5438], [5498], [5506]]
 
       - name: "Cell 4 - 3 Voltage"
         class: "voltage"
@@ -2389,7 +2553,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5499]
+        registers: [[5439], [5499], [5507]]
 
       - name: "Cell 4 - 4 Voltage"
         class: "voltage"
@@ -2397,7 +2561,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5500]
+        registers: [[5440], [5500], [5508]]
 
       - name: "Cell 4 - 5 Voltage"
         class: "voltage"
@@ -2405,7 +2569,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5501]
+        registers: [[5441], [5501], [5509]]
 
       - name: "Cell 4 - 6 Voltage"
         class: "voltage"
@@ -2413,7 +2577,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5502]
+        registers: [[5442], [5502], [5510]]
 
       - name: "Cell 4 - 7 Voltage"
         class: "voltage"
@@ -2421,7 +2585,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5503]
+        registers: [[5443], [5503], [5511]]
 
       - name: "Cell 4 - 8 Voltage"
         class: "voltage"
@@ -2429,7 +2593,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5504]
+        registers: [[5444], [5504], [5512]]
 
       - name: "Cell 4 - 9 Voltage"
         class: "voltage"
@@ -2437,7 +2601,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5505]
+        registers: [[5445], [5505], [5513]]
 
       - name: "Cell 4 - 10 Voltage"
         class: "voltage"
@@ -2445,7 +2609,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5506]
+        registers: [[5446], [5506], [5514]]
 
       - name: "Cell 4 - 11 Voltage"
         class: "voltage"
@@ -2453,7 +2617,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5507]
+        registers: [[5447], [5507], [5515]]
 
       - name: "Cell 4 - 12 Voltage"
         class: "voltage"
@@ -2461,7 +2625,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5508]
+        registers: [[5448], [5508], [5516]]
 
       - name: "Cell 4 - 13 Voltage"
         class: "voltage"
@@ -2469,7 +2633,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5509]
+        registers: [[5449], [5509], [5517]]
 
       - name: "Cell 4 - 14 Voltage"
         class: "voltage"
@@ -2477,7 +2641,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5510]
+        registers: [[5450], [5510], [5518]]
 
       - name: "Cell 4 - 15 Voltage"
         class: "voltage"
@@ -2485,7 +2649,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5511]
+        registers: [[], [5511], [5519]]
 
       - name: "Cell 4 - 16 Voltage"
         class: "voltage"
@@ -2493,7 +2657,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5512]
+        registers: [[], [5512], [5520]]
 
       - name: "Cell 4 - 17 Voltage"
         class: "voltage"
@@ -2501,7 +2665,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5513]
+        registers: [[], [5513], [5521]]
 
       - name: "Cell 4 - 18 Voltage"
         class: "voltage"
@@ -2509,7 +2673,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5514]
+        registers: [[], [5514], [5522]]
 
       - name: "Cell 4 - 19 Voltage"
         class: "voltage"
@@ -2517,7 +2681,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5515]
+        registers: [[], [5515], [5523]]
 
       - name: "Cell 4 - 20 Voltage"
         class: "voltage"
@@ -2525,7 +2689,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5516]
+        registers: [[], [5516], [5524]]
 
       - name: "Cell 4 - 21 Voltage"
         class: "voltage"
@@ -2533,7 +2697,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5517]
+        registers: [[], [5517], [5525]]
 
       - name: "Cell 4 - 22 Voltage"
         class: "voltage"
@@ -2541,7 +2705,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5518]
+        registers: [[], [5518], [5526]]
 
       - name: "Cell 4 - 23 Voltage"
         class: "voltage"
@@ -2549,7 +2713,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5519]
+        registers: [[], [5519], [5527]]
 
       - name: "Cell 4 - 24 Voltage"
         class: "voltage"
@@ -2557,7 +2721,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5520]
+        registers: [[], [5520], [5528]]
 
       - name: "Cell 4 - 25 Voltage"
         class: "voltage"
@@ -2565,7 +2729,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5521]
+        registers: [[], [5521], [5529]]
 
       - name: "Cell 4 - 26 Voltage"
         class: "voltage"
@@ -2573,7 +2737,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5522]
+        registers: [[], [5522], [5530]]
 
       - name: "Cell 4 - 27 Voltage"
         class: "voltage"
@@ -2581,7 +2745,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5523]
+        registers: [[], [5523], [5531]]
 
       - name: "Cell 4 - 28 Voltage"
         class: "voltage"
@@ -2589,7 +2753,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5524]
+        registers: [[], [5524], [5532]]
 
       - name: "Cell 4 - 29 Voltage"
         class: "voltage"
@@ -2597,7 +2761,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5525]
+        registers: [[], [5525], [5533]]
+
+      - name: "Cell 4 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5534]]
+
+      - name: "Cell 4 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5535]]
 
       - name: "Cell 4 - 0 Temperature"
         class: "temperature"
@@ -2605,7 +2785,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6264]
+        registers: [[6204], [6264], [6272]]
 
       - name: "Cell 4 - 1 Temperature"
         class: "temperature"
@@ -2613,7 +2793,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6265]
+        registers: [[6205], [6265], [6273]]
 
       - name: "Cell 4 - 2 Temperature"
         class: "temperature"
@@ -2621,7 +2801,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6266]
+        registers: [[6206], [6266], [6274]]
 
       - name: "Cell 4 - 3 Temperature"
         class: "temperature"
@@ -2629,7 +2809,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6267]
+        registers: [[6207], [6267], [6275]]
 
       - name: "Cell 4 - 4 Temperature"
         class: "temperature"
@@ -2637,7 +2817,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6268]
+        registers: [[6208], [6268], [6276]]
 
       - name: "Cell 4 - 5 Temperature"
         class: "temperature"
@@ -2645,7 +2825,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6269]
+        registers: [[6209], [6269], [6277]]
 
       - name: "Cell 4 - 6 Temperature"
         class: "temperature"
@@ -2653,7 +2833,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6270]
+        registers: [[6210], [6270], [6278]]
 
       - name: "Cell 4 - 7 Temperature"
         class: "temperature"
@@ -2661,7 +2841,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6271]
+        registers: [[6211], [6271], [6279]]
 
       - name: "Cell 4 - 8 Temperature"
         class: "temperature"
@@ -2669,7 +2849,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6272]
+        registers: [[6212], [6272], [6280]]
 
       - name: "Cell 4 - 9 Temperature"
         class: "temperature"
@@ -2677,7 +2857,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6273]
+        registers: [[6213], [6273], [6281]]
 
       - name: "Cell 4 - 10 Temperature"
         class: "temperature"
@@ -2685,7 +2865,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6274]
+        registers: [[6214], [6274], [6282]]
 
       - name: "Cell 4 - 11 Temperature"
         class: "temperature"
@@ -2693,7 +2873,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6275]
+        registers: [[6215], [6275], [6283]]
 
       - name: "Cell 4 - 12 Temperature"
         class: "temperature"
@@ -2701,7 +2881,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6276]
+        registers: [[6216], [6276], [6284]]
 
       - name: "Cell 4 - 13 Temperature"
         class: "temperature"
@@ -2709,7 +2889,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6277]
+        registers: [[6217], [6277], [6285]]
 
       - name: "Cell 4 - 14 Temperature"
         class: "temperature"
@@ -2717,7 +2897,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6278]
+        registers: [[6218], [6278], [6286]]
 
       - name: "Cell 4 - 15 Temperature"
         class: "temperature"
@@ -2725,7 +2905,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6279]
+        registers: [[], [6279], [6287]]
 
       - name: "Cell 4 - 16 Temperature"
         class: "temperature"
@@ -2733,7 +2913,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6280]
+        registers: [[], [6280], [6288]]
 
       - name: "Cell 4 - 17 Temperature"
         class: "temperature"
@@ -2741,7 +2921,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6281]
+        registers: [[], [6281], [6289]]
 
       - name: "Cell 4 - 18 Temperature"
         class: "temperature"
@@ -2749,7 +2929,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6282]
+        registers: [[], [6282], [6290]]
 
       - name: "Cell 4 - 19 Temperature"
         class: "temperature"
@@ -2757,7 +2937,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6283]
+        registers: [[], [6283], [6291]]
 
       - name: "Cell 4 - 20 Temperature"
         class: "temperature"
@@ -2765,7 +2945,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6284]
+        registers: [[], [6284], [6292]]
 
       - name: "Cell 4 - 21 Temperature"
         class: "temperature"
@@ -2773,7 +2953,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6285]
+        registers: [[], [6285], [6293]]
 
       - name: "Cell 4 - 22 Temperature"
         class: "temperature"
@@ -2781,7 +2961,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6286]
+        registers: [[], [6286], [6294]]
 
       - name: "Cell 4 - 23 Temperature"
         class: "temperature"
@@ -2789,7 +2969,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6287]
+        registers: [[], [6287], [6295]]
 
       - name: "Cell 4 - 24 Temperature"
         class: "temperature"
@@ -2797,7 +2977,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6288]
+        registers: [[], [6288], [6296]]
 
       - name: "Cell 4 - 25 Temperature"
         class: "temperature"
@@ -2805,7 +2985,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6289]
+        registers: [[], [6289], [6297]]
 
       - name: "Cell 4 - 26 Temperature"
         class: "temperature"
@@ -2813,7 +2993,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6290]
+        registers: [[], [6290], [6298]]
 
       - name: "Cell 4 - 27 Temperature"
         class: "temperature"
@@ -2821,7 +3001,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6291]
+        registers: [[], [6291], [6299]]
 
       - name: "Cell 4 - 28 Temperature"
         class: "temperature"
@@ -2829,7 +3009,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6292]
+        registers: [[], [6292], [6300]]
 
       - name: "Cell 4 - 29 Temperature"
         class: "temperature"
@@ -2837,10 +3017,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6293]
+        registers: [[], [6293], [6301]]
+
+      - name: "Cell 4 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6302]]
+
+      - name: "Cell 4 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6303]]
 
   - group: Battery Module 5 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 6
     items:
@@ -2850,7 +3046,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5526]
+        registers: [[5451], [], [5536]]
 
       - name: "Cell 5 - 1 Voltage"
         class: "voltage"
@@ -2858,7 +3054,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5527]
+        registers: [[5452], [], [5537]]
 
       - name: "Cell 5 - 2 Voltage"
         class: "voltage"
@@ -2866,7 +3062,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5528]
+        registers: [[5453], [], [5538]]
 
       - name: "Cell 5 - 3 Voltage"
         class: "voltage"
@@ -2874,7 +3070,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5529]
+        registers: [[5454], [], [5539]]
 
       - name: "Cell 5 - 4 Voltage"
         class: "voltage"
@@ -2882,7 +3078,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5530]
+        registers: [[5455], [], [5540]]
 
       - name: "Cell 5 - 5 Voltage"
         class: "voltage"
@@ -2890,7 +3086,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5531]
+        registers: [[5456], [], [5541]]
 
       - name: "Cell 5 - 6 Voltage"
         class: "voltage"
@@ -2898,7 +3094,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5532]
+        registers: [[5457], [], [5542]]
 
       - name: "Cell 5 - 7 Voltage"
         class: "voltage"
@@ -2906,7 +3102,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5533]
+        registers: [[5458], [], [5543]]
 
       - name: "Cell 5 - 8 Voltage"
         class: "voltage"
@@ -2914,7 +3110,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5534]
+        registers: [[5459], [], [5544]]
 
       - name: "Cell 5 - 9 Voltage"
         class: "voltage"
@@ -2922,7 +3118,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5535]
+        registers: [[5460], [], [5545]]
 
       - name: "Cell 5 - 10 Voltage"
         class: "voltage"
@@ -2930,7 +3126,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5536]
+        registers: [[5461], [], [5546]]
 
       - name: "Cell 5 - 11 Voltage"
         class: "voltage"
@@ -2938,7 +3134,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5537]
+        registers: [[5462], [], [5547]]
 
       - name: "Cell 5 - 12 Voltage"
         class: "voltage"
@@ -2946,7 +3142,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5538]
+        registers: [[5463], [], [5548]]
 
       - name: "Cell 5 - 13 Voltage"
         class: "voltage"
@@ -2954,7 +3150,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5539]
+        registers: [[5464], [], [5549]]
 
       - name: "Cell 5 - 14 Voltage"
         class: "voltage"
@@ -2962,7 +3158,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5540]
+        registers: [[5465], [], [5550]]
 
       - name: "Cell 5 - 15 Voltage"
         class: "voltage"
@@ -2970,7 +3166,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5541]
+        registers: [[], [], [5551]]
 
       - name: "Cell 5 - 16 Voltage"
         class: "voltage"
@@ -2978,7 +3174,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5542]
+        registers: [[], [], [5552]]
 
       - name: "Cell 5 - 17 Voltage"
         class: "voltage"
@@ -2986,7 +3182,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5543]
+        registers: [[], [], [5553]]
 
       - name: "Cell 5 - 18 Voltage"
         class: "voltage"
@@ -2994,7 +3190,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5544]
+        registers: [[], [], [5554]]
 
       - name: "Cell 5 - 19 Voltage"
         class: "voltage"
@@ -3002,7 +3198,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5545]
+        registers: [[], [], [5555]]
 
       - name: "Cell 5 - 20 Voltage"
         class: "voltage"
@@ -3010,7 +3206,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5546]
+        registers: [[], [], [5556]]
 
       - name: "Cell 5 - 21 Voltage"
         class: "voltage"
@@ -3018,7 +3214,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5547]
+        registers: [[], [], [5557]]
 
       - name: "Cell 5 - 22 Voltage"
         class: "voltage"
@@ -3026,7 +3222,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5548]
+        registers: [[], [], [5558]]
 
       - name: "Cell 5 - 23 Voltage"
         class: "voltage"
@@ -3034,7 +3230,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5549]
+        registers: [[], [], [5559]]
 
       - name: "Cell 5 - 24 Voltage"
         class: "voltage"
@@ -3042,7 +3238,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5550]
+        registers: [[], [], [5560]]
 
       - name: "Cell 5 - 25 Voltage"
         class: "voltage"
@@ -3050,7 +3246,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5551]
+        registers: [[], [], [5561]]
 
       - name: "Cell 5 - 26 Voltage"
         class: "voltage"
@@ -3058,7 +3254,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5552]
+        registers: [[], [], [5562]]
 
       - name: "Cell 5 - 27 Voltage"
         class: "voltage"
@@ -3066,7 +3262,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5553]
+        registers: [[], [], [5563]]
 
       - name: "Cell 5 - 28 Voltage"
         class: "voltage"
@@ -3074,7 +3270,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5554]
+        registers: [[], [], [5564]]
 
       - name: "Cell 5 - 29 Voltage"
         class: "voltage"
@@ -3082,7 +3278,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5555]
+        registers: [[], [], [5565]]
+
+      - name: "Cell 5 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5566]]
+
+      - name: "Cell 5 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5567]]
 
       - name: "Cell 5 - 0 Temperature"
         class: "temperature"
@@ -3090,7 +3302,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6294]
+        registers: [[6219], [], [6304]]
 
       - name: "Cell 5 - 1 Temperature"
         class: "temperature"
@@ -3098,7 +3310,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6295]
+        registers: [[6220], [], [6305]]
 
       - name: "Cell 5 - 2 Temperature"
         class: "temperature"
@@ -3106,7 +3318,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6296]
+        registers: [[6221], [], [6306]]
 
       - name: "Cell 5 - 3 Temperature"
         class: "temperature"
@@ -3114,7 +3326,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6297]
+        registers: [[6222], [], [6307]]
 
       - name: "Cell 5 - 4 Temperature"
         class: "temperature"
@@ -3122,7 +3334,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6298]
+        registers: [[6223], [], [6308]]
 
       - name: "Cell 5 - 5 Temperature"
         class: "temperature"
@@ -3130,7 +3342,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6299]
+        registers: [[6224], [], [6309]]
 
       - name: "Cell 5 - 6 Temperature"
         class: "temperature"
@@ -3138,7 +3350,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6300]
+        registers: [[6225], [], [6310]]
 
       - name: "Cell 5 - 7 Temperature"
         class: "temperature"
@@ -3146,7 +3358,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6301]
+        registers: [[6226], [], [6311]]
 
       - name: "Cell 5 - 8 Temperature"
         class: "temperature"
@@ -3154,7 +3366,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6302]
+        registers: [[6227], [], [6312]]
 
       - name: "Cell 5 - 9 Temperature"
         class: "temperature"
@@ -3162,7 +3374,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6303]
+        registers: [[6228], [], [6313]]
 
       - name: "Cell 5 - 10 Temperature"
         class: "temperature"
@@ -3170,7 +3382,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6304]
+        registers: [[6229], [], [6314]]
 
       - name: "Cell 5 - 11 Temperature"
         class: "temperature"
@@ -3178,7 +3390,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6305]
+        registers: [[6230], [], [6315]]
 
       - name: "Cell 5 - 12 Temperature"
         class: "temperature"
@@ -3186,7 +3398,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6306]
+        registers: [[6231], [], [6316]]
 
       - name: "Cell 5 - 13 Temperature"
         class: "temperature"
@@ -3194,7 +3406,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6307]
+        registers: [[6232], [], [6317]]
 
       - name: "Cell 5 - 14 Temperature"
         class: "temperature"
@@ -3202,7 +3414,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6308]
+        registers: [[6233], [], [6318]]
 
       - name: "Cell 5 - 15 Temperature"
         class: "temperature"
@@ -3210,7 +3422,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6309]
+        registers: [[], [], [6319]]
 
       - name: "Cell 5 - 16 Temperature"
         class: "temperature"
@@ -3218,7 +3430,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6310]
+        registers: [[], [], [6320]]
 
       - name: "Cell 5 - 17 Temperature"
         class: "temperature"
@@ -3226,7 +3438,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6311]
+        registers: [[], [], [6321]]
 
       - name: "Cell 5 - 18 Temperature"
         class: "temperature"
@@ -3234,7 +3446,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6312]
+        registers: [[], [], [6322]]
 
       - name: "Cell 5 - 19 Temperature"
         class: "temperature"
@@ -3242,7 +3454,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6313]
+        registers: [[], [], [6323]]
 
       - name: "Cell 5 - 20 Temperature"
         class: "temperature"
@@ -3250,7 +3462,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6314]
+        registers: [[], [], [6324]]
 
       - name: "Cell 5 - 21 Temperature"
         class: "temperature"
@@ -3258,7 +3470,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6315]
+        registers: [[], [], [6325]]
 
       - name: "Cell 5 - 22 Temperature"
         class: "temperature"
@@ -3266,7 +3478,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6316]
+        registers: [[], [], [6326]]
 
       - name: "Cell 5 - 23 Temperature"
         class: "temperature"
@@ -3274,7 +3486,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6317]
+        registers: [[], [], [6327]]
 
       - name: "Cell 5 - 24 Temperature"
         class: "temperature"
@@ -3282,7 +3494,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6318]
+        registers: [[], [], [6328]]
 
       - name: "Cell 5 - 25 Temperature"
         class: "temperature"
@@ -3290,7 +3502,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6319]
+        registers: [[], [], [6329]]
 
       - name: "Cell 5 - 26 Temperature"
         class: "temperature"
@@ -3298,7 +3510,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6320]
+        registers: [[], [], [6330]]
 
       - name: "Cell 5 - 27 Temperature"
         class: "temperature"
@@ -3306,7 +3518,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6321]
+        registers: [[], [], [6331]]
 
       - name: "Cell 5 - 28 Temperature"
         class: "temperature"
@@ -3314,7 +3526,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6322]
+        registers: [[], [], [6332]]
 
       - name: "Cell 5 - 29 Temperature"
         class: "temperature"
@@ -3322,10 +3534,26 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6323]
+        registers: [[], [], [6333]]
+
+      - name: "Cell 5 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6334]]
+
+      - name: "Cell 5 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6335]]
 
   - group: Battery Module 6 Cells
-    update_interval: 30
+    update_interval: 60
     hidden:
     pack: 7
     items:
@@ -3335,7 +3563,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5556]
+        registers: [[5466], [], [5568]]
 
       - name: "Cell 6 - 1 Voltage"
         class: "voltage"
@@ -3343,7 +3571,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5557]
+        registers: [[5467], [], [5569]]
 
       - name: "Cell 6 - 2 Voltage"
         class: "voltage"
@@ -3351,7 +3579,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5558]
+        registers: [[5468], [], [5570]]
 
       - name: "Cell 6 - 3 Voltage"
         class: "voltage"
@@ -3359,7 +3587,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5559]
+        registers: [[5469], [], [5571]]
 
       - name: "Cell 6 - 4 Voltage"
         class: "voltage"
@@ -3367,7 +3595,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5560]
+        registers: [[5470], [], [5572]]
 
       - name: "Cell 6 - 5 Voltage"
         class: "voltage"
@@ -3375,7 +3603,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5561]
+        registers: [[5471], [], [5573]]
 
       - name: "Cell 6 - 6 Voltage"
         class: "voltage"
@@ -3383,7 +3611,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5562]
+        registers: [[5472], [], [5574]]
 
       - name: "Cell 6 - 7 Voltage"
         class: "voltage"
@@ -3391,7 +3619,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5563]
+        registers: [[5473], [], [5575]]
 
       - name: "Cell 6 - 8 Voltage"
         class: "voltage"
@@ -3399,7 +3627,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5564]
+        registers: [[5474], [], [5576]]
 
       - name: "Cell 6 - 9 Voltage"
         class: "voltage"
@@ -3407,7 +3635,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5565]
+        registers: [[5475], [], [5577]]
 
       - name: "Cell 6 - 10 Voltage"
         class: "voltage"
@@ -3415,7 +3643,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5566]
+        registers: [[5476], [], [5578]]
 
       - name: "Cell 6 - 11 Voltage"
         class: "voltage"
@@ -3423,7 +3651,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5567]
+        registers: [[5477], [], [5579]]
 
       - name: "Cell 6 - 12 Voltage"
         class: "voltage"
@@ -3431,7 +3659,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5568]
+        registers: [[5478], [], [5580]]
 
       - name: "Cell 6 - 13 Voltage"
         class: "voltage"
@@ -3439,7 +3667,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5569]
+        registers: [[5479], [], [5581]]
 
       - name: "Cell 6 - 14 Voltage"
         class: "voltage"
@@ -3447,7 +3675,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5570]
+        registers: [[5480], [], [5582]]
 
       - name: "Cell 6 - 15 Voltage"
         class: "voltage"
@@ -3455,7 +3683,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5571]
+        registers: [[], [], [5583]]
 
       - name: "Cell 6 - 16 Voltage"
         class: "voltage"
@@ -3463,7 +3691,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5572]
+        registers: [[], [], [5584]]
 
       - name: "Cell 6 - 17 Voltage"
         class: "voltage"
@@ -3471,7 +3699,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5573]
+        registers: [[], [], [5585]]
 
       - name: "Cell 6 - 18 Voltage"
         class: "voltage"
@@ -3479,7 +3707,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5574]
+        registers: [[], [], [5586]]
 
       - name: "Cell 6 - 19 Voltage"
         class: "voltage"
@@ -3487,7 +3715,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5575]
+        registers: [[], [], [5587]]
 
       - name: "Cell 6 - 20 Voltage"
         class: "voltage"
@@ -3495,7 +3723,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5576]
+        registers: [[], [], [5588]]
 
       - name: "Cell 6 - 21 Voltage"
         class: "voltage"
@@ -3503,7 +3731,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5577]
+        registers: [[], [], [5589]]
 
       - name: "Cell 6 - 22 Voltage"
         class: "voltage"
@@ -3511,7 +3739,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5578]
+        registers: [[], [], [5590]]
 
       - name: "Cell 6 - 23 Voltage"
         class: "voltage"
@@ -3519,7 +3747,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5579]
+        registers: [[], [], [5591]]
 
       - name: "Cell 6 - 24 Voltage"
         class: "voltage"
@@ -3527,7 +3755,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5580]
+        registers: [[], [], [5592]]
 
       - name: "Cell 6 - 25 Voltage"
         class: "voltage"
@@ -3535,7 +3763,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5581]
+        registers: [[], [], [5593]]
 
       - name: "Cell 6 - 26 Voltage"
         class: "voltage"
@@ -3543,7 +3771,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5582]
+        registers: [[], [], [5594]]
 
       - name: "Cell 6 - 27 Voltage"
         class: "voltage"
@@ -3551,7 +3779,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5583]
+        registers: [[], [], [5595]]
 
       - name: "Cell 6 - 28 Voltage"
         class: "voltage"
@@ -3559,7 +3787,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5584]
+        registers: [[], [], [5596]]
 
       - name: "Cell 6 - 29 Voltage"
         class: "voltage"
@@ -3567,7 +3795,23 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [5585]
+        registers: [[], [], [5597]]
+
+      - name: "Cell 6 - 30 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5598]]
+
+      - name: "Cell 6 - 31 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.001
+        rule: 1
+        registers: [[], [], [5599]]
 
       - name: "Cell 6 - 0 Temperature"
         class: "temperature"
@@ -3575,7 +3819,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6324]
+        registers: [[6234], [], [6336]]
 
       - name: "Cell 6 - 1 Temperature"
         class: "temperature"
@@ -3583,7 +3827,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6325]
+        registers: [[6235], [], [6337]]
 
       - name: "Cell 6 - 2 Temperature"
         class: "temperature"
@@ -3591,7 +3835,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6326]
+        registers: [[6236], [], [6338]]
 
       - name: "Cell 6 - 3 Temperature"
         class: "temperature"
@@ -3599,7 +3843,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6327]
+        registers: [[6237], [], [6339]]
 
       - name: "Cell 6 - 4 Temperature"
         class: "temperature"
@@ -3607,7 +3851,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6328]
+        registers: [[6238], [], [6340]]
 
       - name: "Cell 6 - 5 Temperature"
         class: "temperature"
@@ -3615,7 +3859,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6329]
+        registers: [[6239], [], [6341]]
 
       - name: "Cell 6 - 6 Temperature"
         class: "temperature"
@@ -3623,7 +3867,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6330]
+        registers: [[6240], [], [6342]]
 
       - name: "Cell 6 - 7 Temperature"
         class: "temperature"
@@ -3631,7 +3875,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6331]
+        registers: [[6241], [], [6343]]
 
       - name: "Cell 6 - 8 Temperature"
         class: "temperature"
@@ -3639,7 +3883,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6332]
+        registers: [[6242], [], [6344]]
 
       - name: "Cell 6 - 9 Temperature"
         class: "temperature"
@@ -3647,7 +3891,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6333]
+        registers: [[6243], [], [6345]]
 
       - name: "Cell 6 - 10 Temperature"
         class: "temperature"
@@ -3655,7 +3899,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6334]
+        registers: [[6244], [], [6346]]
 
       - name: "Cell 6 - 11 Temperature"
         class: "temperature"
@@ -3663,7 +3907,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6335]
+        registers: [[6245], [], [6347]]
 
       - name: "Cell 6 - 12 Temperature"
         class: "temperature"
@@ -3671,7 +3915,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6336]
+        registers: [[6246], [], [6348]]
 
       - name: "Cell 6 - 13 Temperature"
         class: "temperature"
@@ -3679,7 +3923,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6337]
+        registers: [[6247], [], [6349]]
 
       - name: "Cell 6 - 14 Temperature"
         class: "temperature"
@@ -3687,7 +3931,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6338]
+        registers: [[6248], [], [6350]]
 
       - name: "Cell 6 - 15 Temperature"
         class: "temperature"
@@ -3695,7 +3939,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6339]
+        registers: [[], [], [6351]]
 
       - name: "Cell 6 - 16 Temperature"
         class: "temperature"
@@ -3703,7 +3947,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6340]
+        registers: [[], [], [6352]]
 
       - name: "Cell 6 - 17 Temperature"
         class: "temperature"
@@ -3711,7 +3955,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6341]
+        registers: [[], [], [6353]]
 
       - name: "Cell 6 - 18 Temperature"
         class: "temperature"
@@ -3719,7 +3963,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6342]
+        registers: [[], [], [6354]]
 
       - name: "Cell 6 - 19 Temperature"
         class: "temperature"
@@ -3727,7 +3971,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6343]
+        registers: [[], [], [6355]]
 
       - name: "Cell 6 - 20 Temperature"
         class: "temperature"
@@ -3735,7 +3979,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6344]
+        registers: [[], [], [6356]]
 
       - name: "Cell 6 - 21 Temperature"
         class: "temperature"
@@ -3743,7 +3987,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6345]
+        registers: [[], [], [6357]]
 
       - name: "Cell 6 - 22 Temperature"
         class: "temperature"
@@ -3751,7 +3995,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6346]
+        registers: [[], [], [6358]]
 
       - name: "Cell 6 - 23 Temperature"
         class: "temperature"
@@ -3759,7 +4003,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6347]
+        registers: [[], [], [6359]]
 
       - name: "Cell 6 - 24 Temperature"
         class: "temperature"
@@ -3767,7 +4011,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6348]
+        registers: [[], [], [6360]]
 
       - name: "Cell 6 - 25 Temperature"
         class: "temperature"
@@ -3775,7 +4019,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6349]
+        registers: [[], [], [6361]]
 
       - name: "Cell 6 - 26 Temperature"
         class: "temperature"
@@ -3783,7 +4027,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6350]
+        registers: [[], [], [6362]]
 
       - name: "Cell 6 - 27 Temperature"
         class: "temperature"
@@ -3791,7 +4035,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6351]
+        registers: [[], [], [6363]]
 
       - name: "Cell 6 - 28 Temperature"
         class: "temperature"
@@ -3799,7 +4043,7 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6352]
+        registers: [[], [], [6364]]
 
       - name: "Cell 6 - 29 Temperature"
         class: "temperature"
@@ -3807,4 +4051,20 @@ parameters:
         uom: "°C"
         scale: 0.1
         rule: 2
-        registers: [6353]
+        registers: [[], [], [6365]]
+
+      - name: "Cell 6 - 30 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6366]]
+
+      - name: "Cell 6 - 31 Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[], [], [6367]]

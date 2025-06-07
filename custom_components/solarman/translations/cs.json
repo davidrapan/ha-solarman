@@ -28,7 +28,7 @@
           "additional_options": {
             "name": "Další možnosti",
             "data": {
-              "mod": "Modifikátor měřítka",
+              "mod": "Modifikátor",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
               "pack": "Počet bateriových sad",
@@ -65,7 +65,7 @@
           "additional_options": {
             "name": "Další možnosti",
             "data": {
-              "mod": "Modifikátor měřítka",
+              "mod": "Modifikátor",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
               "pack": "Počet bateriových sad",

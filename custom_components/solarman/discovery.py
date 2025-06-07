@@ -28,11 +28,10 @@ class DiscoveryProtocol:
             for message in DISCOVERY_MESSAGE:
                 self.transport.sendto(message, (address, DISCOVERY_PORT))
 
-    def datagram_received(self, d: bytes, a: tuple[str, int]):
-        if len(data := d.decode().split(',')) == 3:
-            serial = int(data[2])
-            self.responses.put_nowait((serial, {"ip": data[0], "mac": data[1]}))
-            _LOGGER.debug(f"DiscoveryProtocol: {a}: [{data[0]}, {data[1]}, {serial}]")
+    def datagram_received(self, data: bytes, addr: tuple[str, int]):
+        if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
+            self.responses.put_nowait((s, {"ip": d[0], "mac": d[1]}))
+            _LOGGER.debug(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {s}] from {addr}")
 
     def error_received(self, e: OSError):
         _LOGGER.debug(f"DiscoveryProtocol: {e!r}")

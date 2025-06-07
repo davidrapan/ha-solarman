@@ -164,18 +164,18 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3153]
+        registers: [0x3153,0x3154]
         icon: "mdi:solar-power"
 
-      - name: "Today Energy Import"
-        friendly_name: Today's Energy Import
+      - name: "Today Energy Export"
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3155]
-        icon: "mdi:transmission-tower-export"
+        registers: [0x3155, 0x3156]
+        icon: "mdi:transmission-tower-import"
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -184,28 +184,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3157]
-        icon: "mdi:home"
-
-      - name: "Today Battery Charge"
-        friendly_name: Today's Battery Charge
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x316D]
-        icon: "mdi:battery-plus"
-
-      - name: "Today Battery Discharge"
-        friendly_name: Today's Battery Discharge
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x316F]
-        icon: "mdi:battery-minus"
+        registers: [0x3157, 0x3158]
 
       - name: "Total Production"
         class: "energy"
@@ -213,23 +192,12 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3165]
+        registers: [0x3165, 0x3166]
         icon: "mdi:solar-power"
         validation:
           min: 0.1
           dev: 100
           invalidate_all: 2
-
-      - name: "Total Energy Import"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x317D]
-        icon: "mdi:transmission-tower-export"
-        validation:
-          min: 0.1
 
       - name: "Total Energy Export"
         class: "energy"
@@ -237,7 +205,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3167]
+        registers: [0x3167, 0x3168]
         icon: "mdi:transmission-tower-import"
         validation:
           min: 0.1
@@ -248,7 +216,48 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3169]
+        registers: [0x3169, 0x316A]
+        validation:
+          min: 0.1
+
+      - name: "Today Energy Import"
+        friendly_name: Today's Energy Import
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316B, 0x316C]
+        icon: "mdi:transmission-tower-export"
+
+      - name: "Today Battery Charge"
+        friendly_name: Today's Battery Charge
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316D, 0x316E]
+        icon: "mdi:battery-plus"
+
+      - name: "Today Battery Discharge"
+        friendly_name: Today's Battery Discharge
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316F, 0x3170]
+        icon: "mdi:battery-minus"
+
+      - name: "Total Energy Import"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x317D, 0x317E]
+        icon: "mdi:transmission-tower-export"
         validation:
           min: 0.1
 
@@ -258,7 +267,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x317F]
+        registers: [0x317F, 0x3180]
         icon: "mdi:battery-plus"
         validation:
           min: 0.1
@@ -269,10 +278,56 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3181]
+        registers: [0x3181, 0x3182]
         icon: "mdi:battery-minus"
         validation:
           min: 0.1
+
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.001
+        uint: enforce
+        sensors:
+          - registers: [0x3155, 0x3156]
+          - registers: [0x3153, 0x3154]
+          - registers: [0x316F, 0x3170]
+          - operator: subtract
+            registers: [0x3159, 0x315A]
+          - operator: subtract
+            registers: [0x3157, 0x3158]
+          - operator: subtract
+            registers: [0x316D, 0x316E]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.001
+        uint: enforce
+        sensors:
+          - registers: [0x317D, 0x317E]
+          - registers: [0x3165, 0x3166]
+          - registers: [0x3181, 0x3182]
+          - operator: subtract
+            registers: [0x3167, 0x3168]
+          - operator: subtract
+            registers: [0x3169, 0x316A]
+          - operator: subtract
+            registers: [0x317F, 0x3180]
+        validation:
+          min: 1
 
   - group: Grid
     update_interval: 5
