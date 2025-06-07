@@ -76,7 +76,7 @@ class ParameterParser:
     def get_entity_descriptions(self, platform: str):
         return [i for i in self._items if self.is_valid(i) and self.is_enabled(i) and not "attribute" in i and i.get("platform") == platform]
 
-    def schedule_requests(self, runtime = 0):
+    def schedule_requests(self, runtime):
         self._result = {}
 
         if self._requests:
