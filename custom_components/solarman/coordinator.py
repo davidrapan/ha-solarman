@@ -17,14 +17,27 @@ _LOGGER = logging.getLogger(__name__)
 
 class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, device: Device):
-        self._counter: count | None = None
         self.device: Device = device
         super().__init__(hass, _LOGGER, name = device.config.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
 
     @DataUpdateCoordinator.update_interval.setter
     def update_interval(self, value: timedelta | None) -> None:
-        DataUpdateCoordinator.update_interval.fset(self, value)
-        self._counter = count(0, int(self._update_interval_seconds))
+        if value != self._update_interval:
+            DataUpdateCoordinator.update_interval.fset(self, value)
+        self.counter = self._update_interval_seconds
+
+    @property
+    def counter(self) -> int:
+        if self.data:
+            self._counter_value = next(self._counter)
+        elif not self.data and not self.last_update_success:
+            self.counter = self._update_interval_seconds
+        return self._counter_value
+
+    @counter.setter
+    def counter(self, value: int | float) -> None:
+        self._counter = count(0, int(value))
+        self._counter_value = next(self._counter)
 
     async def async_shutdown(self) -> None:
         await super().async_shutdown()
@@ -50,9 +63,8 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            return await self.device.get(next(self._counter))
+            return await self.device.get(self.counter)
+        except TimeoutError:
+            raise
         except Exception as e:
-            self._counter = count(0, int(self._update_interval_seconds))
-            if isinstance(e, TimeoutError):
-                raise
             raise UpdateFailed(strepr(e)) from e
