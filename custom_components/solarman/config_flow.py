@@ -60,22 +60,25 @@ async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.S
 
 def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, Any]:
     _LOGGER.debug(f"validate_connection: {user_input}")
+    error = "unknown"
 
     try:
         if host := user_input.get(CONF_HOST, IP_ANY):
             getaddrinfo(host, user_input.get(CONF_PORT, DEFAULT_[CONF_PORT]), family = 0, type = 0, proto = 0, flags = 0)
     except herror:
-        errors["base"] = "invalid_host"
-    except (gaierror, timeout):
-        errors["base"] = "cannot_connect"
+        error = "invalid_host"
+    except timeout:
+        error = "timeout_connect"
+    except gaierror:
+        error = "cannot_connect"
     except Exception as e:
         _LOGGER.exception(f"validate_connection: {e!r}")
-        errors["base"] = "unknown"
     else:
         _LOGGER.debug(f"validate_connection: validation passed: {user_input}")
-        return True
+        return None
 
-    return False
+    _LOGGER.debug(f"validate_connection: validation failed: {user_input}")
+    return {"base": error}
 
 def remove_defaults(user_input: dict[str, Any]):
     for k in list(user_input.keys()):
@@ -100,46 +103,44 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                 if entry.entry_id in device.config_entries and entry.options.get(CONF_HOST) != discovery_info.ip:
                     self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info.ip})
                     self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
-                    return self.async_abort(reason = "already_configured")
-        self._async_abort_entries_match({ CONF_HOST: discovery_info.ip })
+                    return self.async_abort(reason = "already_configured_device")
+        input = { CONF_HOST: discovery_info.ip }
+        self._async_abort_entries_match(input)
         await self._async_handle_discovery_without_unique_id()
-        return await self.async_step_user()
+        return await self.async_step_user(input)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
-        if user_input is None:
+        if user_input is None or not user_input.get(CONF_NAME):
             name = None
-            ip = None
-            if (discovered := await Discovery(self.hass).discover()):
-                for s, v in discovered.items():
+            for i in range(0, 1000):
+                try:
+                    for entry in self._async_current_entries(include_ignore = False):
+                        if entry.title == (name := ' '.join(filter(None, (DEFAULT_[CONF_NAME], None if not i else str(i if i != 1 else 2))))):
+                            raise AbortFlow("already_configured_device")
+                    break
+                except:
+                    continue
+            else:
+                name = None
+            ip = None if not user_input else user_input.get(CONF_HOST)
+            if not ip and (discovered := await Discovery(self.hass).discover()):
+                for v in discovered.values():
                     try:
-                        self._async_abort_entries_match({ CONF_HOST: v["ip"] })
-                        ip = v["ip"]
-                        break
-                    except:
-                        continue
-                for i in range(0, 1000):
-                    try:
-                        for entry in self._async_current_entries(include_ignore = False):
-                            if entry.title == (name := ' '.join(filter(None, (DEFAULT_[CONF_NAME], None if not i else str(i if i != 1 else 2))))):
-                                raise AbortFlow("already_configured")
+                        self._async_abort_entries_match({ CONF_HOST: (ip := v["ip"]) })
                         break
                     except:
                         continue
                 else:
-                    name = None
+                    ip = None
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
 
-        errors = {}
+        if errors := validate_connection(user_input, errors):
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
 
-        if validate_connection(user_input, errors):
-            await self.async_set_unique_id(None)
-            self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
-            return self.async_create_entry(title = user_input[CONF_NAME], data = {}, options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
-
-        _LOGGER.debug(f"ConfigFlowHandler.async_step_user: connection validation failed: {user_input}")
-
-        return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
+        await self.async_set_unique_id(None)
+        self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
+        return self.async_create_entry(title = user_input[CONF_NAME], data = {}, options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
 
     @staticmethod
     @callback
@@ -157,11 +158,7 @@ class OptionsFlowHandler(OptionsFlow):
         if user_input is None:
             return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), self.entry.options))
 
-        errors = {}
+        if errors := validate_connection(user_input, errors):
+            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)
 
-        if validate_connection(user_input, errors):
-            return self.async_create_entry(data = remove_defaults(user_input))
-
-        _LOGGER.debug(f"OptionsFlowHandler.async_step_init: connection validation failed: {user_input}")
-
-        return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)
+        return self.async_create_entry(data = remove_defaults(user_input))

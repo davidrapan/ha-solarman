@@ -1,11 +1,13 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Gerät ist bereits konfiguriert"
+      "already_configured_device": "Gerät ist bereits konfiguriert",
+      "already_in_progress": "Der Konfigurationsablauf ist bereits im Gange"
     },
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_host": "Ungültiger Hostname oder ungültige IP-Adresse",
+      "timeout_connect": "Zeitüberschreitung beim Verbindungsaufbau",
       "unknown": "Unerwarteter Fehler"
     },
     "step": {
@@ -15,7 +17,7 @@
           "name": "Gerätename",
           "host": "Host (IP-Adresse oder Hostname)",
           "port": "Port (normalerweise 8899)",
-          "transport": "Transport protocol",
+          "transport": "Transportprotokoll",
           "lookup_file": "Profil"
         },
         "data_description": {
@@ -45,6 +47,7 @@
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_host": "Ungültiger Hostname oder ungültige IP-Adresse",
+      "timeout_connect": "Zeitüberschreitung beim Verbindungsaufbau",
       "unknown": "Unerwarteter Fehler"
     },
     "step": {
@@ -53,7 +56,7 @@
         "data": {
           "host": "Host (IP-Adresse oder Hostname)",
           "port": "Port (normalerweise 8899)",
-          "transport": "Transport protocol",
+          "transport": "Transportprotokoll",
           "lookup_file": "Profil"
         },
         "data_description": {

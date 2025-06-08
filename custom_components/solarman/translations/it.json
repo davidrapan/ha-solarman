@@ -1,11 +1,13 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Questo dispositivo è già configurato"
+      "already_configured_device": "Questo dispositivo è già configurato",
+      "already_in_progress": "Il flusso di configurazione è già in corso"
     },
     "error": {
       "cannot_connect": "Impossibile connettersi",
       "invalid_host": "Nome o Indirizzo IP forniti non sono validi",
+      "timeout_connect": "Timeout durante la creazione della connessione",
       "unknown": "Errore"
     },
     "step": {
@@ -15,7 +17,7 @@
           "name": "Nome del dispositivo",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
-          "transport": "Transport protocol",
+          "transport": "Protocollo di trasporto",
           "lookup_file": "Profilo"
         },
         "data_description": {
@@ -45,6 +47,7 @@
     "error": {
       "cannot_connect": "Impossibile connettersi",
       "invalid_host": "Nome o Indirizzo IP forniti non sono validi",
+      "timeout_connect": "Timeout durante la creazione della connessione",
       "unknown": "Errore"
     },
     "step": {
@@ -53,7 +56,7 @@
         "data": {
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
-          "transport": "Transport protocol",
+          "transport": "Protocollo di trasporto",
           "lookup_file": "Profilo"
         },
         "data_description": {

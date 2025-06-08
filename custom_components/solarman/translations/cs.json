@@ -1,11 +1,13 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Zařízení je již nakonfigurováno"
+      "already_configured_device": "Zařízení je již nakonfigurováno",
+      "already_in_progress": "konfigurace již probíhá"
     },
     "error": {
       "cannot_connect": "Nepodařilo se připojit",
       "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "timeout_connect": "Vypršel časový limit navazování spojení",
       "unknown": "Neočekávaná chyba"
     },
     "step": {
@@ -45,6 +47,7 @@
     "error": {
       "cannot_connect": "Nepodařilo se připojit",
       "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "timeout_connect": "Vypršel časový limit navazování spojení",
       "unknown": "Neočekávaná chyba"
     },
     "step": {

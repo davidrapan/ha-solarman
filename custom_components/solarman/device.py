@@ -91,7 +91,7 @@ class Device():
         try:
             result = await self.execute_bulk(requests, scheduled)
         except Exception as e:
-            if self.state.update(exception = e):
+            if self.state.update(exception = e) or runtime == 0:
                 await self.modbus.close()
                 if self.profile.parser:
                     self.profile.parser.reset()

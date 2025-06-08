@@ -1,11 +1,13 @@
 {
   "config": {
     "abort": {
-      "already_configured": "El dispositiu ja s'ha configurat"
+      "already_configured_device": "El dispositiu ja s'ha configurat",
+      "already_in_progress": "El flux de configuració ja està en curs"
     },
     "error": {
       "cannot_connect": "No s'ha pogut connectar",
       "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "timeout_connect": "Temps d'espera per establir la connexió",
       "unknown": "Error inesperat"
     },
     "step": {
@@ -15,7 +17,7 @@
           "name": "Nom del dispositiu",
           "host": "Amfitrió o adreça IP",
           "port": "Port",
-          "transport": "Transport protocol",
+          "transport": "Protocol de transport",
           "lookup_file": "Perfil"
         },
         "data_description": {
@@ -45,6 +47,7 @@
     "error": {
       "cannot_connect": "No s'ha pogut connectar",
       "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "timeout_connect": "Temps d'espera per establir la connexió",
       "unknown": "Error inesperat"
     },
     "step": {
@@ -53,7 +56,7 @@
         "data": {
           "host": "Amfitrió o adreça IP",
           "port": "Port",
-          "transport": "Transport protocol",
+          "transport": "Protocol de transport",
           "lookup_file": "Perfil"
         },
         "data_description": {

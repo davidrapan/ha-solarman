@@ -1,11 +1,13 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Пристрій вже сконфігуровано"
+      "already_configured_device": "Пристрій вже сконфігуровано",
+      "already_in_progress": "Конфігурація вже триває"
     },
     "error": {
       "cannot_connect": "Не вдалося підключитися",
       "invalid_host": "Не коректний хостнейм або IP-адреса",
+      "timeout_connect": "Час очікування встановлення з’єднання",
       "unknown": "Неочікувана помилка"
     },
     "step": {
@@ -15,7 +17,7 @@
           "name": "Назва пристрою",
           "host": "Хост чи IP адреса",
           "port": "Порт",
-          "transport": "Transport protocol",
+          "transport": "Транспортний протокол",
           "lookup_file": "Профіль"
         },
         "data_description": {
@@ -45,6 +47,7 @@
     "error": {
       "cannot_connect": "Не вдалося підключитися",
       "invalid_host": "Не коректний хостнейм або IP-адреса",
+      "timeout_connect": "Час очікування встановлення з’єднання",
       "unknown": "Неочікувана помилка"
     },
     "step": {
@@ -53,7 +56,7 @@
         "data": {
           "host": "Хост чи IP адреса",
           "port": "Порт",
-          "transport": "Transport protocol",
+          "transport": "Транспортний протокол",
           "lookup_file": "Профіль"
         },
         "data_description": {
