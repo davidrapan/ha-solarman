@@ -2023,7 +2023,6 @@ parameters:
     items:
       # Battery - The temperature of battery 1
       - name: "Battery Temperature"
-        update_interval: 5
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
