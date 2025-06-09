@@ -280,7 +280,7 @@ parameters:
         registers: [0x0068]
         range:
           min: 0
-          max: 500
+          max: 65535
         icon: "mdi:transmission-tower-import"
 
       - name: "Battery Equalization Cycle"
