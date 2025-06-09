@@ -281,7 +281,10 @@ parameters:
         range:
           min: 0
           max: 65535
-        icon: "mdi:transmission-tower-import"
+        configurable:
+          min: -20
+          max: 500
+        icon: "mdi:transmission-tower"
 
       - name: "Battery Equalization Cycle"
         platform: number
