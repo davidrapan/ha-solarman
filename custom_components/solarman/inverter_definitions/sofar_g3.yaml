@@ -281,6 +281,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Reverse the original value to match standard behavior like the other inverters
+        #scale: -10
         scale: 10
         rule: 2
         registers: [0x0606]
@@ -314,7 +316,8 @@ parameters:
         scale: 10
         uint: enforce
         sensors:
-          - signed:
+          - operator: subtract
+            signed:
             registers: [0x0606]
           - registers: [0x0586]
           - registers: [0x0589]
@@ -326,6 +329,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Reverse the original value to match standard behavior like the other inverters
+        #scale: -10
         scale: 10
         rule: 2
         registers: [0x0488]

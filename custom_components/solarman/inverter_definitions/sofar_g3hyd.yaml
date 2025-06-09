@@ -407,6 +407,9 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Reverse the original value to match standard behavior like the other inverters
+        # https://github.com/davidrapan/ha-solarman/discussions/458
+        #scale: -10
         scale: 10
         rule: 2
         registers: [0x0606]
@@ -469,7 +472,8 @@ parameters:
         scale: 10
         uint: enforce
         sensors:
-          - signed:
+          - operator: subtract
+            signed:
             registers: [0x0606]
           - registers: [0x05C4]
           - operator: subtract
@@ -497,7 +501,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match the other ha-solarman inverters
+        # Reverse the original value to match standard behavior like the other inverters
         # https://github.com/davidrapan/ha-solarman/discussions/458
         #scale: -10
         scale: 10
@@ -518,7 +522,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        # Reverse the original value to match the other ha-solarman inverters
+        # Reverse the original value to match standard behavior like the other inverters
         # https://github.com/davidrapan/ha-solarman/discussions/458
         #scale: -0.1
         scale: 0.1
