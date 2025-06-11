@@ -18,15 +18,13 @@ _LOGGER = logging.getLogger(__name__)
 class DiscoveryProtocol:
     def __init__(self, addresses: list[str] | str):
         self.addresses = addresses
-        self.responses: asyncio.Queue = asyncio.Queue()
-        self.transport: asyncio.DatagramTransport | None = None
+        self.responses = asyncio.Queue()
 
     def connection_made(self, transport: asyncio.DatagramTransport):
-        self.transport = transport
         _LOGGER.debug(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in ensure_list(self.addresses):
             for message in DISCOVERY_MESSAGE:
-                self.transport.sendto(message, (address, DISCOVERY_PORT))
+                transport.sendto(message, (address, DISCOVERY_PORT))
 
     def datagram_received(self, data: bytes, addr: tuple[str, int]):
         if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
@@ -50,13 +48,9 @@ class Discovery:
         self._devices = {}
 
     async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False):
-        loop = asyncio.get_running_loop()
-
         try:
-            transport, protocol = await loop.create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
-            r: tuple = None
-            while r is None or wait:
-                r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
+            transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
+            while (r := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) is None or wait:
                 yield r
         except TimeoutError:
             pass

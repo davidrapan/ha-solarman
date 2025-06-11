@@ -11,15 +11,13 @@ DISCOVERY_TIMEOUT = 1
 class DiscoveryProtocol:
     def __init__(self, addresses: list[str] | str):
         self.addresses = addresses
-        self.responses: asyncio.Queue = asyncio.Queue()
-        self.transport: asyncio.DatagramTransport | None = None
+        self.responses = asyncio.Queue()
 
     def connection_made(self, transport: asyncio.DatagramTransport):
-        self.transport = transport
         print(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in self.addresses if isinstance(self.addresses, list) else [self.addresses]:
             for message in DISCOVERY_MESSAGE:
-                self.transport.sendto(message, (address, DISCOVERY_PORT))
+                transport.sendto(message, (address, DISCOVERY_PORT))
 
     def datagram_received(self, data: bytes, addr: tuple[str, int]):
         if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
@@ -30,21 +28,19 @@ class DiscoveryProtocol:
         print(f"DiscoveryProtocol: {e!r}")
 
     def connection_lost(self, _: Exception | None):
-        print(f"DiscoveryProtocol: Connection closed")
+        print("DiscoveryProtocol: Connection closed")
 
 async def main():
-    parser = ArgumentParser(
-        "solarman-discovery", description = "Discovery for Solarman Stick Loggers"
-    )
-    parser.add_argument("--address", default = DISCOVERY_IP, required = False, help = "Network IPv4 address", type = str)
-    parser.add_argument("--wait", default = True, required = False, help = "Gather responses until timeout", type = bool)
+    parser = ArgumentParser("solarman-discovery", description = "Discovery for Solarman Stick Loggers")
+    parser.add_argument("--address", default = DISCOVERY_IP, required = False, type = str, help = "Network IPv4 address")
+    parser.add_argument("--timeout", default = DISCOVERY_TIMEOUT, required = False, type = int, choices = range(10), help = "Timeout in seconds, an integer in the range 0..9")
+    parser.add_argument("--wait", default = True, required = False, type = bool, help = "Wait for multiple responses")
     args = parser.parse_args()
 
     try:
         transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(args.address), family = socket.AF_INET, allow_broadcast = True)
-        r = None
-        while r is None or args.wait:
-            r = await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)
+        while await asyncio.wait_for(protocol.responses.get(), args.timeout) is None or args.wait:
+            pass
     except TimeoutError:
         pass
     except Exception as e:
