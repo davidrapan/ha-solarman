@@ -48,9 +48,11 @@ def create_entity(creator, description):
         raise
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
+    _attr_has_entity_name = True
+
     def __init__(self, coordinator: Coordinator):
         super().__init__(coordinator)
-        self._attr_device_info = self.coordinator.device.device_info.get(self.coordinator.device.config.config_entry.entry_id)
+        self._attr_device_info = self.coordinator.device.device_info.get(self.coordinator.config_entry.entry_id)
         self._attr_state: StateType = STATE_UNKNOWN
         self._attr_native_value: StateType | str | date | datetime | time | float | Decimal | None = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
@@ -88,10 +90,9 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
         self._attr_key = sensor["key"]
         self._attr_name = sensor["name"]
-        self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.coordinator.device.config.config_entry.entry_id, self._attr_key))))
+        self._attr_unique_id = slugify('_'.join(filter(None, (self.coordinator.config_entry.entry_id, self._attr_key))))
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
