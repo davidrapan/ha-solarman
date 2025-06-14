@@ -22,7 +22,7 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     @DataUpdateCoordinator.update_interval.setter
     def update_interval(self, value: timedelta | None) -> None:
-        if hasattr(self, "_update_interval") and value != self._update_interval:
+        if not hasattr(self, "_update_interval") or value != self._update_interval:
             DataUpdateCoordinator.update_interval.fset(self, value)
         self.counter = self._update_interval_seconds
 
