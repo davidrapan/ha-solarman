@@ -134,9 +134,9 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                 else:
                     ip = None
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
-
-        if errors := validate_connection(user_input, errors):
-            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
+        errors = {}
+        if (new_errors := validate_connection(user_input, errors)):
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = new_errors)
 
         await self.async_set_unique_id(None)
         self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
@@ -158,7 +158,8 @@ class OptionsFlowHandler(OptionsFlow):
         if user_input is None:
             return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), self.entry.options))
 
-        if errors := validate_connection(user_input, errors):
-            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)
+        errors = {}
+        if (new_errors := validate_connection(user_input, errors)):
+            return self.async_show_form(step_id="init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors=new_errors)
 
         return self.async_create_entry(data = remove_defaults(user_input))
