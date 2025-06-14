@@ -134,6 +134,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                 else:
                     ip = None
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
+            
         errors = {}
         if (new_errors := validate_connection(user_input, errors)):
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = new_errors)
