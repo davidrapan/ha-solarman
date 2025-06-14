@@ -19,12 +19,12 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, device: Device):
         self.device: Device = device
         super().__init__(hass, _LOGGER, config_entry = device.config.config_entry, name = device.config.name, update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
-
+        
     @DataUpdateCoordinator.update_interval.setter
     def update_interval(self, value: timedelta | None) -> None:
         if not hasattr(self, "_update_interval") or value != self._update_interval:
             DataUpdateCoordinator.update_interval.fset(self, value)
-        self.counter = self._update_interval_seconds
+        self._counter = count(0, int(self._update_interval_seconds))
 
     @property
     def counter(self) -> int:
