@@ -22,16 +22,11 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     @DataUpdateCoordinator.update_interval.setter
     def update_interval(self, value: timedelta | None) -> None:
-        if not hasattr(self, "_update_interval") or value != self._update_interval:
-            DataUpdateCoordinator.update_interval.fset(self, value)
+        DataUpdateCoordinator.update_interval.fset(self, value)
         self.counter = self._update_interval_seconds
 
     @property
     def counter(self) -> int:
-        if self.data:
-            self._counter_value = next(self._counter)
-        elif not self.data and not self.last_update_success:
-            self.counter = self._update_interval_seconds
         return self._counter_value
 
     @counter.setter
@@ -68,3 +63,10 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise
         except Exception as e:
             raise UpdateFailed(strepr(e)) from e
+
+    def _async_refresh_finished(self):
+        super()._async_refresh_finished()
+        if self.data:
+            self._counter_value = next(self._counter)
+        elif not (self.data and self.last_update_success):
+            self.counter = self._update_interval_seconds
