@@ -27,26 +27,19 @@ DATA_SCHEMA = {
 OPTS_SCHEMA = {
     vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
-    vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}): selector({
-        "select": {
-            "mode": "dropdown",
-            "options": ["tcp", "modbus_tcp"],
-            "translation_key": "transport"
-        }
-    }),
+    vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}):
+        selector({ "select": {"mode": "dropdown", "options": ["tcp", "modbus_tcp"], "translation_key": "transport"}}),
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
-    vol.Required(CONF_ADDITIONAL_OPTIONS): section(
-        vol.Schema(
-            {
-                vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MOD]}): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 2)),
-                vol.Optional(CONF_MPPT, default = DEFAULT_[CONF_MPPT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
-                vol.Optional(CONF_PHASE, default = DEFAULT_[CONF_PHASE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
-                vol.Optional(CONF_PACK, default = DEFAULT_[CONF_PACK], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PACK]}): vol.All(vol.Coerce(int), vol.Range(min = -1, max = 20)),
-                vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
-                vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING]}): cv.positive_int,
-                vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_[CONF_MB_SLAVE_ID], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MB_SLAVE_ID]}): cv.positive_int
-            }
-        ),
+    vol.Required(CONF_ADDITIONAL_OPTIONS):
+        section(vol.Schema({
+            vol.Optional(CONF_MOD, default = DEFAULT_[CONF_MOD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MOD]}): vol.All(vol.Coerce(int), vol.Range(min = 0, max = 2)),
+            vol.Optional(CONF_MPPT, default = DEFAULT_[CONF_MPPT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MPPT]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 12)),
+            vol.Optional(CONF_PHASE, default = DEFAULT_[CONF_PHASE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PHASE]}): vol.All(vol.Coerce(int), vol.Range(min = 1, max = 3)),
+            vol.Optional(CONF_PACK, default = DEFAULT_[CONF_PACK], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PACK]}): vol.All(vol.Coerce(int), vol.Range(min = -1, max = 20)),
+            vol.Optional(CONF_BATTERY_NOMINAL_VOLTAGE, default = DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_NOMINAL_VOLTAGE]}): cv.positive_int,
+            vol.Optional(CONF_BATTERY_LIFE_CYCLE_RATING, default = DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING], description = {SUGGESTED_VALUE: DEFAULT_[CONF_BATTERY_LIFE_CYCLE_RATING]}): cv.positive_int,
+            vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_[CONF_MB_SLAVE_ID], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MB_SLAVE_ID]}): cv.positive_int
+        }),
         {"collapsed": True}
     )
 }
@@ -58,7 +51,7 @@ async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.S
     _LOGGER.debug(f"step_user_data_schema: data_schema: {data_schema}")
     return vol.Schema(data_schema)
 
-def validate_connection(user_input: dict[str, Any], errors: dict) -> dict[str, Any]:
+def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
     _LOGGER.debug(f"validate_connection: {user_input}")
     error = "unknown"
 
@@ -135,7 +128,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                     ip = None
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
 
-        if errors := validate_connection(user_input, errors):
+        if errors := validate_connection(user_input):
             return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
 
         await self.async_set_unique_id(None)
@@ -158,7 +151,7 @@ class OptionsFlowHandler(OptionsFlow):
         if user_input is None:
             return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), self.entry.options))
 
-        if errors := validate_connection(user_input, errors):
+        if errors := validate_connection(user_input):
             return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)
 
         return self.async_create_entry(data = remove_defaults(user_input))
