@@ -1153,12 +1153,13 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x00CE]
-        configurable:
-          mode: box
         range:
           min: 0
+          max: 65535
+        configurable:
+          min: -20
           max: 500
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower"
 
       - name: "Battery Equalization Cycle"
         platform: number

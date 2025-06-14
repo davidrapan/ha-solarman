@@ -2,6 +2,8 @@ import socket
 import asyncio
 import netifaces
 
+from argparse import ArgumentParser
+
 DISCOVERY_IP = "0.0.0.0"
 DISCOVERY_PORT = 48899
 DISCOVERY_MESSAGE = ["WIFIKIT-214028-READ".encode(), "HF-A11ASSISTHREAD".encode()]
@@ -26,13 +28,15 @@ class DiscoveryProtocol:
         print(f"DiscoveryProtocol: {e!r}")
 
     def connection_lost(self, _: Exception | None):
-        print(f"DiscoveryProtocol: Connection closed")
+        print("DiscoveryProtocol: Connection closed")
 
 async def main():
-    transport, _ = await asyncio.get_running_loop().create_datagram_endpoint(DiscoveryProtocol, local_addr = (DISCOVERY_IP, DISCOVERY_PORT), family = socket.AF_INET, allow_broadcast = True)
+    parser = ArgumentParser("solarman-discovery-reply", description = "Discovery for Solarman Stick Loggers")
+    parser.add_argument("--timeout", default = DISCOVERY_TIMEOUT, required = False, type = int, choices = range(3600), help = "Timeout in seconds, an integer in the range 0..3600")
 
     try:
-        await asyncio.sleep(DISCOVERY_TIMEOUT)
+        transport, _ = await asyncio.get_running_loop().create_datagram_endpoint(DiscoveryProtocol, local_addr = (DISCOVERY_IP, DISCOVERY_PORT), family = socket.AF_INET, allow_broadcast = True)
+        await asyncio.sleep(parser.parse_args().timeout)
     finally:
         transport.close()
 

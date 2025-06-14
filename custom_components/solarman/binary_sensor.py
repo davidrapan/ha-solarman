@@ -60,4 +60,4 @@ class SolarmanConnectionSensor(SolarmanBinarySensorEntity):
 
     def update(self):
         self.set_state(self.coordinator.device.state.value)
-        self._attr_extra_state_attributes["updated"] = self.coordinator.device.state.updated.timestamp()
+        self._attr_extra_state_attributes["timestamp"] = self.coordinator.device.state.updated.timestamp()
