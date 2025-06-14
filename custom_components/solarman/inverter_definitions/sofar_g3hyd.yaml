@@ -1236,6 +1236,8 @@ parameters:
             value: "Off-Grid"
           - key: 6
             value: "Generator"
+          - key: 7
+            value: "Export Priority"
 
       - name: "Timed Program"
         platform: number
