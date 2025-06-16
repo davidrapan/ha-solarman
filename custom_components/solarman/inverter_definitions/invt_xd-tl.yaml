@@ -1,5 +1,5 @@
 #
-# INVT XD3-6KTL | 3.6~6kW | Single Phase | Hybrid Inverter
+# INVT XD ❘ XG - TL ❘ TR | 3.6~136kW | Hybrid Inverter
 #
 # Reference: https://github.com/user-attachments/files/17638743/INVT.Modbus.July.2024.pdf
 #
@@ -24,6 +24,16 @@ parameters:
         sensors:
           - registers: [0x3B01]
           - registers: [0x3B02]
+          - registers: [0x3B03]
+          - registers: [0x3B04]
+          - registers: [0x3B05]
+          - registers: [0x3B06]
+          - registers: [0x3B07]
+          - registers: [0x3B08]
+          - registers: [0x3B09]
+          - registers: [0x3B0A]
+          - registers: [0x3B0B]
+          - registers: [0x3B0C]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Power"
@@ -53,7 +63,6 @@ parameters:
         uom: "A"
         scale: 0.01
         rule: 1
-        data_type: "int16"
         registers: [0x3837]
         icon: "mdi:solar-power-variant"
 
@@ -84,8 +93,307 @@ parameters:
         uom: "A"
         scale: 0.01
         rule: 1
-        data_type: "int16"
         registers: [0x3839]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Power"
+        class: "power"
+        mppt: 3
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B03]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Voltage"
+        class: "voltage"
+        mppt: 3
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x383A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Current"
+        class: "current"
+        mppt: 3
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x383B]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Power"
+        class: "power"
+        mppt: 4
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B04]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Voltage"
+        class: "voltage"
+        mppt: 4
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x383C]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Current"
+        class: "current"
+        mppt: 4
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x383D]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV5 Power"
+        class: "power"
+        mppt: 5
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B05]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV5 Voltage"
+        class: "voltage"
+        mppt: 5
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x383E]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV5 Current"
+        class: "current"
+        mppt: 5
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x383F]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV6 Power"
+        class: "power"
+        mppt: 6
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B06]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV6 Voltage"
+        class: "voltage"
+        mppt: 6
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3840]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV6 Current"
+        class: "current"
+        mppt: 6
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3841]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV7 Power"
+        class: "power"
+        mppt: 7
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B07]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV7 Voltage"
+        class: "voltage"
+        mppt: 7
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3842]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV7 Current"
+        class: "current"
+        mppt: 7
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3843]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV8 Power"
+        class: "power"
+        mppt: 8
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B08]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV8 Voltage"
+        class: "voltage"
+        mppt: 8
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3844]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV8 Current"
+        class: "current"
+        mppt: 8
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3845]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV9 Power"
+        class: "power"
+        mppt: 9
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B09]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV9 Voltage"
+        class: "voltage"
+        mppt: 9
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3846]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV9 Current"
+        class: "current"
+        mppt: 9
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3847]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV10 Power"
+        class: "power"
+        mppt: 10
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B0A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV10 Voltage"
+        class: "voltage"
+        mppt: 10
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3848]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV10 Current"
+        class: "current"
+        mppt: 10
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3849]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV11 Power"
+        class: "power"
+        mppt: 11
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B0B]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV11 Voltage"
+        class: "voltage"
+        mppt: 11
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x384A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV11 Current"
+        class: "current"
+        mppt: 11
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x384B]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV12 Power"
+        class: "power"
+        mppt: 12
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        registers: [0x3B0C]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV12 Voltage"
+        class: "voltage"
+        mppt: 12
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x384C]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV12 Current"
+        class: "current"
+        mppt: 12
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x384D]
         icon: "mdi:solar-power-variant"
 
       - name: "Today Production"
@@ -168,13 +476,22 @@ parameters:
             signed:
             registers: [0x381E, 0x381D]
 
-      - name: "Reactive Power"
+      - name: "Reactive power"
         class: "reactive_power"
         state_class: "measurement"
         uom: "var"
         scale: 0.1
         rule: 2
         registers: [0x3820, 0x381F]
+
+      - name: "Grid L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"      
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3811]
 
       - name: "Grid L1 Current"
         l: 1
@@ -185,6 +502,42 @@ parameters:
         rule: 2
         registers: [0x3817]
 
+      - name: "Grid L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"      
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3812]
+
+      - name: "Grid L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"      
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3818]
+
+      - name: "Grid L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"      
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3813]
+
+      - name: "Grid L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"      
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x3819]
+      
       - name: "Grid Frequency"
         class: "frequency"
         state_class: "measurement"
@@ -192,6 +545,47 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x381A]
+
+      - name: "L1 Temperature"
+        class: "temperature"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x3822]
+        icon: "mdi:thermometer"
+    
+      - name: "L2 Temperature"
+        class: "temperature"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x3823]
+        icon: 'mdi:thermometer'
+    
+      - name: "L3 Temperature"
+        class: "temperature"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x3824]
+        icon: 'mdi:thermometer'
+
+      - name: "Room temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x3825]
+
+      - name: "Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x3826]
+        icon: "mdi:thermometer"
 
       - name: "Grid Power"
         class: "power"
@@ -218,6 +612,24 @@ parameters:
         rule: 2
         registers: [0x3832]
 
+      - name: "L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"      
+        uom: "mA"
+        scale: 0.1
+        rule: 2
+        registers: [0x3833]
+
+      - name: "L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"      
+        uom: "mA"
+        scale: 0.1
+        rule: 2
+        registers: [0x3834]
+      
       - name: "DC Insulation Resistance"
         class: "resistance"
         state_class: "measurement"
@@ -322,31 +734,6 @@ parameters:
             value: "Off-Grid"
         icon: "mdi:wrench"
 
-      - name: "Device Module Temperature"
-        class: "temperature"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x3822]
-        icon: "mdi:thermometer"
-
-      - name: "Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x3826]
-        icon: "mdi:thermometer"
-
-      - name: "Device Ambient Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x3825]
-
       - name: "Bus Voltage"
         class: "voltage"
         state_class: "measurement"
@@ -370,7 +757,48 @@ parameters:
         rule: 1
         registers: [0x381B]
 
-      - name: "Real Time Clock"
+      - name: "Device Derating Mode"
+        class: "enum"
+        rule: 1
+        registers: [0x382C]
+        lookup:
+          - key: 0
+            value: "No derating"
+          - key: 1
+            value: "High voltage derating"
+          - key: 2
+            value: "BST High temperature derating"
+          - key: 3
+            value: "Inverter derating"
+          - key: 4
+            value: "Ambient temperature derating"
+          - key: 5
+            value: "Power setting derating"
+          - key: 6
+            value: "Reset MPPT derating"
+          - key: 7
+            value: "Reactive power derating"
+          - key: 8
+            value: "Loading slope derating"
+          - key: 9
+            value: "AC High voltage derating"
+          - key: 10
+            value: "ATE Adjust derating"
+          - key: 11
+            value: "Single inverter Anti-reflux derating"
+          - key: 12
+            value: "Mutli-inverter Anti-reflux derating"
+        icon: "mdi:wrench"
+
+      - name: "Device efficiency"
+        state_class: "measurement"      
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x3882]
+        icon: 'mdi:PercentOutline'
+
+      - name: "Device RTC"
         class: "enum"
         rule: 1
         registers: [0x3883]
@@ -380,6 +808,15 @@ parameters:
             value: "No RTC"
           - key: 1
             value: "RTC configured"
+
+      - name: "Device Communication quality"
+        class: ""
+        state_class: "measurement"      
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x3884]
+        icon: 'mdi:WifiStar'
 
   - group: Battery
     items:
@@ -463,7 +900,7 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "Total EPS Power"
+      - name: "Load UPS Power"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -483,6 +920,25 @@ parameters:
             value: "charging"
           - key: 2
             value: "discharging"
+
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: "Power"
+        platform: number
+        class: power
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1 
+        registers: [0x3019]
+        range:
+          min: 0
+          max: 1000
+        configurable:
+          min: 0
+          max: 100
+          mode: box
 
   - group: Alarm
     items:
@@ -657,36 +1113,3 @@ parameters:
       - name: "Device Fault bit"
         rule: 1
         registers: [0x380E, 0x380D]
-
-      - name: "Device Derating Mode"
-        class: "enum"
-        rule: 1
-        registers: [0x382C]
-        lookup:
-          - key: 0
-            value: "No derating"
-          - key: 1
-            value: "High voltage derating"
-          - key: 2
-            value: "BST High temperature derating"
-          - key: 3
-            value: "Inverter derating"
-          - key: 4
-            value: "Ambient temperature derating"
-          - key: 5
-            value: "Power setting derating"
-          - key: 6
-            value: "Reset MPPT derating"
-          - key: 7
-            value: "Reactive power derating"
-          - key: 8
-            value: "Loading slope derating"
-          - key: 9
-            value: "AC High voltage derating"
-          - key: 10
-            value: "ATE Adjust derating"
-          - key: 11
-            value: "Single inverter Anti-reflux derating"
-          - key: 12
-            value: "Mutli-inverter Anti-reflux derating"
-        icon: "mdi:wrench"
