@@ -85,7 +85,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
                 self._attr_extra_state_attributes[self.attributes[attr].replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, sensor):
+    def __init__(self, coordinator, sensor: dict):
         super().__init__(coordinator)
 
         self._attr_key = sensor["key"]
@@ -101,6 +101,10 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
         if (unit_of_measurement := sensor.get("uom") or sensor.get("unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
+        if (suggested_unit_of_measurement := sensor.get("suggested_unit_of_measurement")):
+            self._attr_suggested_unit_of_measurement = suggested_unit_of_measurement
+        if (suggested_display_precision := sensor.get("suggested_display_precision")):
+            self._attr_suggested_display_precision = suggested_display_precision
         if (options := sensor.get("options")):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }

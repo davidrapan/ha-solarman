@@ -244,6 +244,10 @@ def postprocess_descriptions(coordinator, platform):
                 if not_enabled(sensor):
                     sensors.remove(sensor)
 
+        # Temporary location of fix for latest HA changes regarding default precision behavior
+        if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) == "energy":
+            description["suggested_display_precision"] = 1
+
         yield description
 
 def get_code(item, type, default = None):
