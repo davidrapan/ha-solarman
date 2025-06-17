@@ -2,12 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from typing import Any
-
-from homeassistant.util import slugify
 from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
-from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
+from homeassistant.components.sensor import RestoreSensor, SensorEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -90,7 +87,7 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
         parent_device_info = self.coordinator.device.device_info.get(self.coordinator.config_entry.entry_id)
-        device_serial_number, _ = self.coordinator.data[slugify(' '.join(filter(None, (sensor["group"], "serial", "number", "sensor"))))]
+        device_serial_number, _ = self.coordinator.data[slugify(sensor["group"], "serial", "number", "sensor")]
         if not device_serial_number in self.coordinator.device.device_info:
             self.coordinator.device.device_info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
             self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))

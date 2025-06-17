@@ -7,13 +7,12 @@ import yaml
 import logging
 import asyncio
 import aiofiles
-
 import voluptuous as vol
 
-from typing import Any
 from functools import wraps
+from typing import Any, Iterable
 
-from homeassistant.util import slugify
+from homeassistant.util import slugify as _slugify
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
@@ -164,10 +163,10 @@ def group_when(iterable, predicate):
         i += 1
     yield iterable[x:size]
 
-def format(value):
+def format(value: Any) -> Any:
     return value if not isinstance(value, (bytes, bytearray)) else value.hex(" ")
 
-def strepr(value):
+def strepr(value: Any) -> str:
     return s if (s := str(value)) else repr(value)
 
 def unwrap(source: dict, key: Any, mod: int = 0):
@@ -175,8 +174,11 @@ def unwrap(source: dict, key: Any, mod: int = 0):
         source[key] = c[mod] if mod < len(c) else c[-1]
     return source
 
-def entity_key(object: dict):
-    return slugify('_'.join(filter(None, (object["name"], object["platform"]))))
+def slugify(*items: Iterable[str | None], separator: str = "_") -> str:
+    return _slugify(separator.join(filter(None, items)), separator = separator)
+
+def entity_key(object: dict) -> str:
+    return slugify(object["name"], object["platform"])
 
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):

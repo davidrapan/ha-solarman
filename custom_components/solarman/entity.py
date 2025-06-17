@@ -6,7 +6,6 @@ from typing import Any
 from decimal import Decimal
 from datetime import date, datetime, time
 
-from homeassistant.util import slugify
 from homeassistant.core import split_entity_id, callback
 from homeassistant.const import EntityCategory, STATE_UNKNOWN, CONF_FRIENDLY_NAME
 from homeassistant.config_entries import ConfigEntry
@@ -30,7 +29,7 @@ def migrate_unique_ids(config_entry: SolarmanConfigEntry, entity_entry: Registry
 
     entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(config_entry.runtime_data.device.config.name, '').strip()
 
-    if entity_entry.unique_id != (unique_id := slugify('_'.join(filter(None, (config_entry.entry_id, entity_name, split_entity_id(entity_entry.entity_id)[0]))))):
+    if entity_entry.unique_id != (unique_id := slugify(config_entry.entry_id, entity_name, split_entity_id(entity_entry.entity_id)[0])):
         _LOGGER.debug(f"Migrating unique_id for {entity_entry.entity_id} entity from '{entity_entry.unique_id}' to '{unique_id}]'")
         return { "new_unique_id": entity_entry.unique_id.replace(entity_entry.unique_id, unique_id) }
 
@@ -92,7 +91,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_name = sensor["name"]
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.coordinator.config_entry.entry_id, self._attr_key))))
+        self._attr_unique_id = slugify(self.coordinator.config_entry.entry_id, self._attr_key)
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
@@ -117,7 +116,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if description := sensor.get("description"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
 
-        self.attributes = {slugify('_'.join(filter(None, (x, "sensor")))): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
+        self.attributes = {slugify(x, "sensor"): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
         self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
