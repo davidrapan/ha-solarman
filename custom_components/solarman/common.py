@@ -247,7 +247,7 @@ def postprocess_descriptions(coordinator, platform):
                     sensors.remove(sensor)
 
         # Temporary location of fix for latest HA changes regarding default precision behavior
-        if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) == "energy":
+        if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":
             description["suggested_display_precision"] = 1
 
         yield description
