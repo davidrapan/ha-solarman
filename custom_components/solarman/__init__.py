@@ -4,6 +4,7 @@ import logging
 
 from functools import partial
 
+from homeassistant import loader
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
@@ -26,6 +27,11 @@ CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
 async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
     _LOGGER.debug(f"async_setup")
+
+    try:
+        _LOGGER.info(f"Solarman {str((await loader.async_get_integration(hass, DOMAIN)).version)}")
+    except loader.IntegrationNotFound as e:
+        _LOGGER.debug(f"Error reading version: {strepr(e)}")
 
     async_register(hass)
 
