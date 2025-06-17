@@ -134,7 +134,6 @@ parameters:
         scale: 10
         rule: 1
         registers: [0x000C]
-        icon: "mdi:home-lightning-bolt"
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
