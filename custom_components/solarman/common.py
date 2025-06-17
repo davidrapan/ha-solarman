@@ -282,9 +282,7 @@ def get_or_def(o, k, d):
     return o.get(k, d) or d
 
 def from_bit_index(value):
-    if isinstance(value, list):
-        return sum(1 << i for i in value)
-    return 1 << value
+    return 1 << value if not isinstance(value, list) else sum(1 << i for i in value)
 
 def lookup_value(value, dictionary):
     default = dictionary[0]["value"]
