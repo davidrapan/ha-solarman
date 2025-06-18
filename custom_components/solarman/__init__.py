@@ -9,7 +9,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers.entity_registry import async_migrate_entries
+from homeassistant.helpers.entity_registry import async_get, async_migrate_entries
 
 from .const import *
 from .common import *
@@ -59,7 +59,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     #
     _LOGGER.debug(f"async_setup_entry: async_migrate_entries")
 
-    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config_entry))
+    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, async_get(hass), config_entry))
 
     # Forward setup
     #
