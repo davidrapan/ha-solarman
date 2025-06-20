@@ -62,7 +62,7 @@ class Discovery:
     async def _discover_all(self):
         if Discovery.networks is None:
             _LOGGER.debug(f"_discover_all: network.async_get_adapters")
-            Discovery.networks = [x for x in [IPv4Network(ipv4["address"] + '/' + str(ipv4["network_prefix"]), False) for adapter in await network.async_get_adapters(self._hass) if len(adapter["ipv4"]) > 0 for ipv4 in adapter["ipv4"]] if not x.is_loopback]
+            Discovery.networks = [n for adapter in await network.async_get_adapters(self._hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
 
         async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
             yield item

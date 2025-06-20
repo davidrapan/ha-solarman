@@ -34,13 +34,6 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._counter = count(0, int(value))
         self._counter_value = next(self._counter)
 
-    async def async_shutdown(self) -> None:
-        await super().async_shutdown()
-        try:
-            await self.device.shutdown()
-        except Exception as e:
-            _LOGGER.exception(f"Unexpected error shutting down {self.name}")
-
     async def _async_setup(self) -> None:
         await super()._async_setup()
         try:
@@ -49,12 +42,6 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise
         except Exception as e:
             raise UpdateFailed(strepr(e)) from e
-
-    async def async_config_entry_first_refresh(self) -> None:
-        await super().async_config_entry_first_refresh()
-        device_info = build_device_info(self.config_entry.entry_id, str(self.device.modbus.serial), self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
-        self.device.device_info[self.config_entry.entry_id] = device_info
-        _LOGGER.debug(device_info)
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
@@ -70,3 +57,16 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._counter_value = next(self._counter)
         elif not (self.data and self.last_update_success):
             self.counter = self._update_interval_seconds
+
+    async def async_config_entry_first_refresh(self) -> None:
+        await super().async_config_entry_first_refresh()
+        device_info = build_device_info(self.config_entry.entry_id, str(self.device.modbus.serial), self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
+        self.device.device_info[self.config_entry.entry_id] = device_info
+        _LOGGER.debug(device_info)
+
+    async def async_shutdown(self) -> None:
+        await super().async_shutdown()
+        try:
+            await self.device.shutdown()
+        except Exception as e:
+            _LOGGER.exception(f"Unexpected error shutting down {self.name}")

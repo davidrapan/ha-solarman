@@ -43,13 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     config = ConfigurationProvider(hass, config_entry)
     config_entry.runtime_data = Coordinator(hass, Device(config))
 
-    # Fetch initial data so we have data when entities subscribe.
-    #
-    # If the refresh fails, async_config_entry_first_refresh will
-    # raise ConfigEntryNotReady and setup will try again later.
-    #
-    # If you do not want to retry setup on failure, use
-    # config_entry.runtime_data.async_refresh() instead.
+    # Fetch initial data
     #
     _LOGGER.debug(f"async_setup_entry: config_entry.runtime_data.async_config_entry_first_refresh")
 
@@ -90,9 +84,6 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEn
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
     _LOGGER.debug(f"async_migrate_entry({config_entry.as_dict()})")
-
-    #if config_entry.minor_version > 1:
-    #    return False
 
     _LOGGER.info("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
 

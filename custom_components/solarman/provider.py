@@ -111,7 +111,6 @@ class ProfileProvider:
         return {PARAM_[k]: int(self._additional_options.get(k, DEFAULT_[k])) for k in PARAM_}
 
     async def resolve(self, request: Callable[[], Awaitable[None]] | None = None):
-        _LOGGER.debug(f"Device autodetection is {"enabled" if self.auto and request else f"disabled. Selected profile: {self.filename}"}")
-        if (f := await lookup_profile(request, self.parameters) if self.auto and request else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)) and (p := await yaml_open(self.config.directory + n)):
+        if (f := await lookup_profile(request, self.parameters) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)) and (p := await yaml_open(self.config.directory + n)):
             self.parser = ParameterParser(p, self.parameters)
             self.info = (unwrap(p["info"], "model", self.parameters[PARAM_[CONF_MOD]]) if "info" in p else {}) | {"filename": f}
