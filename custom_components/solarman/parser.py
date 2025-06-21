@@ -20,7 +20,7 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
-        self._last_result = {}
+        self._previous_result = {}
         self._result = {}
 
         if "default" in profile:
@@ -100,7 +100,7 @@ class ParameterParser:
         return [create_request(self._code if self._is_single_code else r[0][0], r[0][1], r[-1][1]) for r in groups]
 
     def reset(self):
-        self._last_result = {}
+        self._previous_result = {}
 
     def in_range(self, key, value, rule):
         if ((min := rule.get("min")) is not None and value < min) or ((max := rule.get("max")) is not None and value > max):
@@ -111,20 +111,22 @@ class ParameterParser:
 
     def do_validate(self, key, value, rule):
         invalid = 0
+        previous_value = None
 
         if ((min := rule.get("min")) is not None and min > value) or ((max := rule.get("max")) is not None and max < value):
-            _LOGGER.debug(f"{key}: {value} validation failed. Conditions: {rule}")
             invalid = 1
 
         if dev := rule.get("dev"):
-            if value and (last_value := self._last_result.get(key)) is not None and abs(value - last_value) > dev:
-                _LOGGER.debug(f"{key}: {value} validation failed, last value: {last_value}. Conditions: {rule}")
+            if value and (previous_value := self._previous_result.get(key)) is not None and abs(value - previous_value) > dev:
                 invalid |= 2
             else:
-                self._last_result[key] = value
+                self._previous_result[key] = value
 
-        if invalid > 0 and "invalidate_all" in rule and ((inv := rule.get("invalidate_all")) is None or invalid & inv):
-            raise ValueError(f"Invalidate complete dataset. {key}: {value} validation failed. Conditions: {rule}")
+        if invalid > 0 and (message := f"{key} validation failed, triggered by state: {value}{'' if previous_value is None else f' ({previous_value})'} with conditions: {rule}"):
+            if "invalidate_all" in rule and ((inv := rule.get("invalidate_all")) is None or invalid & inv):
+                raise ValueError(f"Invalidate complete dataset - {message}")
+            else:
+                _LOGGER.debug(message)
 
         return invalid == 0
 
