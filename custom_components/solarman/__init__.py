@@ -13,11 +13,10 @@ from homeassistant.helpers.entity_registry import async_get, async_migrate_entri
 
 from .const import *
 from .common import *
-from .config_flow import ConfigFlowHandler
-from .provider import ConfigurationProvider
-from .coordinator import Device, Coordinator
-from .entity import SolarmanConfigEntry, migrate_unique_ids
 from .services import async_register
+from .coordinator import Coordinator
+from .config_flow import ConfigFlowHandler
+from .entity import SolarmanConfigEntry, migrate_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ _PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.
 
 CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
-async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
+async def async_setup(hass: HomeAssistant, _: ConfigType):
     _LOGGER.debug(f"async_setup")
 
     try:
@@ -37,11 +36,10 @@ async def async_setup(hass: HomeAssistant, _: ConfigType) -> bool:
 
     return True
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
-    config = ConfigurationProvider(hass, config_entry)
-    config_entry.runtime_data = Coordinator(hass, Device(config))
+    config_entry.runtime_data = Coordinator(hass, config_entry)
 
     # Fetch initial data
     #
@@ -53,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     #
     _LOGGER.debug(f"async_setup_entry: async_migrate_entries")
 
-    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, async_get(hass), config_entry))
+    await async_migrate_entries(hass, config_entry.entry_id, partial(migrate_unique_ids, config_entry, async_get(hass)))
 
     # Forward setup
     #
@@ -65,7 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
     #
     _LOGGER.debug(f"async_setup_entry: config_entry.add_update_listener(async_update_listener)")
 
-    async def async_update_listener(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> None:
+    async def async_update_listener(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
         _LOGGER.debug(f"async_update_listener({config_entry.as_dict()})")
         await hass.config_entries.async_reload(config_entry.entry_id)
 
@@ -73,7 +71,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
 
     return True
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
     _LOGGER.debug(f"async_unload_entry({config_entry.as_dict()})")
 
     # Forward unload
@@ -82,7 +80,7 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEn
 
     return await hass.config_entries.async_unload_platforms(config_entry, _PLATFORMS)
 
-async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
     _LOGGER.debug(f"async_migrate_entry({config_entry.as_dict()})")
 
     _LOGGER.info("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
@@ -108,7 +106,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
 
     return True
 
-async def async_remove_config_entry_device(hass: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: dr.DeviceEntry) -> bool:
+async def async_remove_config_entry_device(_: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: dr.DeviceEntry):
     _LOGGER.debug(f"async_remove_config_entry_device({config_entry.as_dict()}, {device_entry})")
 
     return not any(identifier for identifier in device_entry.identifiers if identifier[0] == DOMAIN and identifier[1] == config_entry.entry_id or identifier[1] == config_entry.runtime_data.device.modbus.serial)

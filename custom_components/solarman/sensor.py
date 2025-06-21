@@ -86,14 +86,14 @@ class SolarmanSensor(SolarmanSensorEntity):
 class SolarmanNestedSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
-        parent_device_info = self.coordinator.device.device_info.get(self.coordinator.config_entry.entry_id)
+        parent_device_info = self.coordinator.device.info.get(self.coordinator.config_entry.entry_id)
         device_serial_number, _ = self.coordinator.data[slugify(sensor["group"], "serial", "number", "sensor")]
-        if not device_serial_number in self.coordinator.device.device_info:
-            self.coordinator.device.device_info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
-            self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
-            self.coordinator.device.device_info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
-            self.coordinator.device.device_info[device_serial_number]["model"] = None
-        self._attr_device_info = self.coordinator.device.device_info[device_serial_number]
+        if not device_serial_number in self.coordinator.device.info:
+            self.coordinator.device.info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
+            self.coordinator.device.info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
+            self.coordinator.device.info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
+            self.coordinator.device.info[device_serial_number]["model"] = None
+        self._attr_device_info = self.coordinator.device.info[device_serial_number]
         self._attr_name.replace(f"{sensor["group"]} ", '')
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):

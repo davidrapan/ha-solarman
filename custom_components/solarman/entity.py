@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 type SolarmanConfigEntry = ConfigEntry[Coordinator]
 
 @callback
-def migrate_unique_ids(registry: EntityRegistry, config_entry: SolarmanConfigEntry, entity_entry: RegistryEntry) -> dict[str, Any] | None:
+def migrate_unique_ids(config_entry: SolarmanConfigEntry, registry: EntityRegistry, entity_entry: RegistryEntry) -> dict[str, Any] | None:
 
     entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(config_entry.runtime_data.device.config.name, '').strip()
 
@@ -54,7 +54,7 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
 
     def __init__(self, coordinator: Coordinator):
         super().__init__(coordinator)
-        self._attr_device_info = self.coordinator.device.device_info.get(self.coordinator.config_entry.entry_id)
+        self._attr_device_info = self.coordinator.device.info.get(self.coordinator.config_entry.entry_id)
         self._attr_state: StateType = STATE_UNKNOWN
         self._attr_native_value: StateType | str | date | datetime | time | float | Decimal | None = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
