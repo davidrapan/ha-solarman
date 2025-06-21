@@ -47,7 +47,7 @@ def throttle(delay: float = 1):
 async def async_execute(x):
     return await asyncio.get_running_loop().run_in_executor(None, x)
 
-def create_task(coro, *, name=None, context=None):
+def create_task(coro, *, name = None, context = None):
     return asyncio.get_running_loop().create_task(coro, name = name, context = context)
 
 def protected(value, error):
@@ -64,7 +64,7 @@ async def async_listdir(path, prefix = ""):
 def to_dict(*keys: list):
     return {k: k for k in keys}
 
-def filter_by_keys(source: dict, keys: dict | list) -> dict:
+def filter_by_keys(source: dict, keys: dict | list):
     return {k: source[k] for k in source.keys() if k in keys}
 
 def bulk_inherit(target: dict, source: dict, *keys: list):
@@ -163,10 +163,10 @@ def group_when(iterable, predicate):
         i += 1
     yield iterable[x:size]
 
-def format(value: Any) -> Any:
+def format(value: Any):
     return value if not isinstance(value, (bytes, bytearray)) else value.hex(" ")
 
-def strepr(value: Any) -> str:
+def strepr(value: Any):
     return s if (s := str(value)) else repr(value)
 
 def unwrap(source: dict, key: Any, mod: int = 0):
@@ -174,10 +174,10 @@ def unwrap(source: dict, key: Any, mod: int = 0):
         source[key] = c[mod] if mod < len(c) else c[-1]
     return source
 
-def slugify(*items: Iterable[str | None], separator: str = "_") -> str:
+def slugify(*items: Iterable[str | None], separator: str = "_"):
     return _slugify(separator.join(filter(None, items)), separator = separator)
 
-def entity_key(object: dict) -> str:
+def entity_key(object: dict):
     return slugify(object["name"], object["platform"])
 
 def preprocess_descriptions(item, group, table, code, parameters):

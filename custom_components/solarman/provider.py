@@ -37,23 +37,23 @@ class ConfigurationProvider:
         return protected(self.config_entry.title, "Configuration parameter [title] does not have a value")
 
     @cached_property
-    def host(self):
+    def host(self) -> str:
         return protected(self._options.get(CONF_HOST), "Configuration parameter [host] does not have a value")
 
     @cached_property
-    def port(self):
+    def port(self) -> int:
         return self._options.get(CONF_PORT, DEFAULT_[CONF_PORT])
 
     @cached_property
-    def transport(self):
+    def transport(self) -> str:
         return self._options.get(CONF_TRANSPORT, DEFAULT_[CONF_TRANSPORT])
 
     @cached_property
-    def filename(self):
+    def filename(self) -> str:
         return self._options.get(CONF_LOOKUP_FILE, DEFAULT_[CONF_LOOKUP_FILE])
 
     @cached_property
-    def mb_slave_id(self):
+    def mb_slave_id(self) -> int:
         return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_[CONF_MB_SLAVE_ID])
 
     @cached_property
@@ -74,7 +74,7 @@ class EndPointProvider:
         return self.config.host
 
     @cached_property
-    def connection(self):
+    def connection(self) -> tuple[str, int, str, int, int, int]:
         return self.host, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_INTERVAL
 
     @cached_property
@@ -96,21 +96,21 @@ class EndPointProvider:
 class ProfileProvider:
     config: ConfigurationProvider
     endpoint: EndPointProvider
-    parser: ParameterParser | None = None
     info: dict[str, str] | None = None
+    parser: ParameterParser | None = None
 
-    def __getattr__(self, attr: str) -> Any:
+    def __getattr__(self, attr: str):
         return getattr(self.config, attr)
 
     @cached_property
-    def auto(self) -> bool:
+    def auto(self):
         return not self.filename or self.filename in AUTODETECTION_REDIRECT
 
     @cached_property
-    def parameters(self) -> str:
+    def parameters(self):
         return {PARAM_[k]: int(self._additional_options.get(k, DEFAULT_[k])) for k in PARAM_}
 
-    async def resolve(self, request: Callable[[], Awaitable[None]] | None = None):
+    async def resolve(self, request: Callable[[int, dict], Awaitable[dict]] | None = None):
         if (f := await lookup_profile(request, self.parameters) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)) and (p := await yaml_open(self.config.directory + n)):
-            self.parser = ParameterParser(p, self.parameters)
             self.info = (unwrap(p["info"], "model", self.parameters[PARAM_[CONF_MOD]]) if "info" in p else {}) | {"filename": f}
+            self.parser = ParameterParser(p, self.parameters)
