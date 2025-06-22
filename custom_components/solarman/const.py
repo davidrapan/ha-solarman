@@ -77,7 +77,7 @@ AUTODETECTION_BATTERY_REGISTERS_DEYE = (0x2712, 0x2712)
 AUTODETECTION_BATTERY_REQUEST_DEYE = (AUTODETECTION_CODE_DEYE, *AUTODETECTION_BATTERY_REGISTERS_DEYE)
 AUTODETECTION_BATTERY_NUMBER_DEYE = (AUTODETECTION_CODE_DEYE, AUTODETECTION_BATTERY_REGISTERS_DEYE[0])
 
-PROFILE_REDIRECT = { "sofar_hyd3k-6k-es.yaml": "sofar_wifikit.yaml:mod=1", "hyd-zss-hp-3k-6k.yaml": "sofar_g3.yaml:pack=1", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml", "solis_3p-4g+.yaml": "solis_3p-4g.yaml", "sofar_hyd-es.yaml": "sofar_wifikit.yaml:mod=1", "sofar_tlx-g3.yaml": "sofar_g3.yaml", "zcs_azzurro-1ph-tl-v3.yaml": "sofar_lsw3.yaml:mppt=1&l=1", "zcs_azzurro-hyd-zss-hp.yaml": "sofar_g3.yaml:pack=1", "zcs_azzurro-ktl-v3.yaml": "sofar_g3.yaml", "pylontech_Force-H.yaml": "pylontech_force.yaml:mod=1" }
+PROFILE_REDIRECT = { "sofar_wifikit.yaml": "sofar_hybrid.yaml", "sofar_hyd-es.yaml": "sofar_hybrid.yaml:mod=1", "sofar_hyd3k-6k-es.yaml": "sofar_hybrid.yaml:mod=1", "hyd-zss-hp-3k-6k.yaml": "sofar_g3.yaml:pack=1", "solis_1p8k-5g.yaml": "solis_1p-5g.yaml", "solis_3p-4g+.yaml": "solis_3p-4g.yaml", "sofar_tlx-g3.yaml": "sofar_g3.yaml", "sofar_lsw3.yaml": "sofar_string.yaml", "zcs_azzurro-1ph-tl-v3.yaml": "sofar_string.yaml:mppt=1&l=1", "zcs_azzurro-hyd-zss-hp.yaml": "sofar_g3.yaml:pack=1", "zcs_azzurro-ktl-v3.yaml": "sofar_g3.yaml", "pylontech_Force-H.yaml": "pylontech_force.yaml:mod=1" }
 
 PARAM_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK: CONF_PACK }
 
