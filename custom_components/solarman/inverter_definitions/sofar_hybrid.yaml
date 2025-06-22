@@ -1,13 +1,12 @@
 #
-# Sofar ME3000SP | HYD3000/4000/5000/6000-ES
+# Sofar HYD 3000~6000-ES (Hybrid Inverter) | ME 3000-SP (Battery Storage Inverter)
 #
 # Reference: https://github.com/user-attachments/files/16641716/SOFARSOLAR.ModBus-RTU.Communication.Protocol.pdf
 #
-# Tested with Sofar ME 3000-SP with an embedded
-# "wifikit" logger. The device is basically
-# a glorified battery charger - it is not directly
-# connected to any production infrastructure, but can
-# calculate generated energy based on any CT clamps
+# Tested with Sofar HYD 3000~6000-ES and ME 3000-SP.
+# The ME device is basically a glorified battery charger,
+# not directly connected to any production infrastructure,
+# but can calculate generated energy based on any CT clamps
 # it is connected to. For most people this entity will
 # be a generally accurate representation of their
 # PV panel output, but since this tracks production
