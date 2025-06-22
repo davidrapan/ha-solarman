@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import logging
-
 import voluptuous as vol
 
+from logging import getLogger
+
 from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
-from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers.device_registry import async_get
 from homeassistant.exceptions import ServiceValidationError
+from homeassistant.helpers import config_validation as cv
 
 from .const import *
 from .coordinator import Device, Coordinator
 from .pysolarman.umodbus.functions import FUNCTION_CODE
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 HEADER_SCHEMA = {
     vol.Required(SERVICES_PARAM_DEVICE): vol.All(vol.Coerce(str)),
@@ -40,7 +41,7 @@ def async_register(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register")
 
     def get_device(device_id) -> Device:
-        for config_entry_id in dr.async_get(hass).async_get(device_id).config_entries:
+        for config_entry_id in async_get(hass).async_get(device_id).config_entries:
             if (config_entry := hass.config_entries.async_get_entry(config_entry_id)) and config_entry.domain == DOMAIN and config_entry.runtime_data is not None and isinstance(config_entry.runtime_data, Coordinator):
                 return config_entry.runtime_data.device
         raise ServiceValidationError("No communication interface for device found", translation_domain = DOMAIN, translation_key = "no_interface_found")

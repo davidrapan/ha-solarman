@@ -4,9 +4,10 @@ import struct
 import logging
 import asyncio
 
-from multiprocessing import Event
-from random import randrange
 from functools import wraps
+from random import randrange
+from logging import getLogger
+from multiprocessing import Event
 
 from .umodbus.functions import FUNCTION_CODES
 from .umodbus.exceptions import error_code_to_exception_map
@@ -16,7 +17,7 @@ from .umodbus.client import tcp
 
 from ..common import retry, throttle, create_task, format
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 PROTOCOL = types.SimpleNamespace()
 PROTOCOL.CONTROL_CODE = types.SimpleNamespace()

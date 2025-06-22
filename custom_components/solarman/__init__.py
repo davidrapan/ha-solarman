@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import logging
-
+from logging import getLogger
 from functools import partial
 
 from homeassistant import loader
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers import config_validation
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.entity_registry import async_get, async_migrate_entries
 
 from .const import *
@@ -16,13 +16,13 @@ from .common import *
 from .services import async_register
 from .coordinator import Coordinator
 from .config_flow import ConfigFlowHandler
-from .entity import SolarmanConfigEntry, migrate_unique_ids
+from .data import SolarmanConfigEntry, migrate_unique_ids
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 _PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SWITCH, Platform.BUTTON, Platform.SELECT, Platform.DATETIME, Platform.TIME]
 
-CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
+CONFIG_SCHEMA = config_validation.empty_config_schema(DOMAIN)
 
 async def async_setup(hass: HomeAssistant, _: ConfigType):
     _LOGGER.debug(f"async_setup")
@@ -106,7 +106,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
 
     return True
 
-async def async_remove_config_entry_device(_: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: dr.DeviceEntry):
+async def async_remove_config_entry_device(_: HomeAssistant, config_entry: SolarmanConfigEntry, device_entry: DeviceEntry):
     _LOGGER.debug(f"async_remove_config_entry_device({config_entry.as_dict()}, {device_entry})")
 
     return not any(identifier for identifier in device_entry.identifiers if identifier[0] == DOMAIN and identifier[1] == config_entry.entry_id or identifier[1] == config_entry.runtime_data.device.modbus.serial)

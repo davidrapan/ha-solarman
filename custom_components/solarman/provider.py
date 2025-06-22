@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import socket
-import logging
 
 from typing import Any
 from dataclasses import dataclass
@@ -16,8 +15,6 @@ from .const import *
 from .common import *
 from .discovery import Discovery
 from .parser import ParameterParser
-
-_LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class ConfigurationProvider:

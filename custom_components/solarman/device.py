@@ -1,5 +1,4 @@
-import logging
-
+from logging import getLogger
 from datetime import datetime, timedelta
 
 from .const import *
@@ -7,7 +6,7 @@ from .common import *
 from .provider import *
 from .pysolarman.pysolarman import Solarman
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 class DeviceState():
     def __init__(self):

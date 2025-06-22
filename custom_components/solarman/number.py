@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
-
-from typing import Any
+from logging import getLogger
 
 from homeassistant.core import HomeAssistant
 from homeassistant.components.number import NumberEntity, NumberDeviceClass, NumberEntityDescription
@@ -11,9 +9,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .entity import SolarmanConfigEntry, create_entity, SolarmanWritableEntity
+from .data import SolarmanConfigEntry
+from .entity import create_entity, SolarmanWritableEntity
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 

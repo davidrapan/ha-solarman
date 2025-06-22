@@ -4,12 +4,12 @@ import os
 import ast
 import time
 import yaml
-import logging
 import asyncio
 import aiofiles
 import voluptuous as vol
 
 from functools import wraps
+from logging import getLogger
 from typing import Any, Iterable
 
 from homeassistant.util import slugify as _slugify
@@ -17,7 +17,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, Device
 
 from .const import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 def retry(ignore: tuple = ()):
     def decorator(f):

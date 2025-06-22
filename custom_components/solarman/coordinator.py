@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
-
-from typing import Any
+from logging import getLogger
 from itertools import count
 from datetime import timedelta
 
@@ -15,9 +13,9 @@ from .common import *
 from .device import Device
 from .provider import ConfigurationProvider
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
-class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
+class Coordinator(DataUpdateCoordinator[dict[str, tuple[int | float | str | list, int | float | None]]]):
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry[Coordinator]):
         self.device = Device(ConfigurationProvider(hass, config_entry))
         super().__init__(hass, _LOGGER, config_entry = config_entry, name = "", update_interval = TIMINGS_UPDATE_INTERVAL, always_update = False)
@@ -65,7 +63,7 @@ class Coordinator(DataUpdateCoordinator[dict[str, Any]]):
         super()._async_refresh_finished()
         if self.data:
             self._counter_value = next(self._counter)
-        elif not (self.data and self.last_update_success):
+        elif not self.last_update_success:
             self.counter = self._update_interval_seconds
 
     async def async_config_entry_first_refresh(self):

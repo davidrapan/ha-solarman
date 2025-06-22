@@ -1,24 +1,24 @@
 from __future__ import annotations
 
-import logging
 import voluptuous as vol
 
 from typing import Any
+from logging import getLogger
 from socket import getaddrinfo, herror, gaierror, timeout
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.data_entry_flow import section, AbortFlow
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.helpers import config_validation as cv, device_registry as dr
-from homeassistant.helpers.selector import selector
 from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
+from homeassistant.helpers.selector import selector
 
 from .const import *
 from .common import *
 from .discovery import Discovery
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 DATA_SCHEMA = {
     vol.Required(CONF_NAME, default = DEFAULT_[CONF_NAME]): str

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import re
 import bisect
-import logging
 
+from logging import getLogger
 from datetime import datetime
 
 from .const import *
 from .common import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 class ParameterParser:
     def __init__(self, profile, parameters):

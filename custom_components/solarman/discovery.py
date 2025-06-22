@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import socket
-import logging
 import asyncio
 
+from logging import getLogger
 from ipaddress import IPv4Network
 from datetime import datetime, timedelta
 
@@ -13,7 +13,7 @@ from homeassistant.components import network
 from .const import *
 from .common import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 class DiscoveryProtocol:
     def __init__(self, addresses: list[str] | str):
