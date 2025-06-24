@@ -284,7 +284,7 @@ class ParameterParser:
         key = definition["key"]
 
         if "lookup" in definition:
-            self.set_state(key, lookup_value(value, definition["lookup"]), int(value))
+            self.set_state(key, lookup_value(value, definition["lookup"]), int(value) if len(definition["registers"]) == 1 else list(split_p16b(value)))
             return
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
