@@ -10,12 +10,12 @@ DISCOVERY_TIMEOUT = 1
 
 class DiscoveryProtocol:
     def __init__(self, addresses: list[str] | str):
-        self.addresses = addresses
+        self.addresses = addresses if isinstance(addresses, list) else [addresses]
         self.responses = asyncio.Queue()
 
     def connection_made(self, transport: asyncio.DatagramTransport):
         print(f"DiscoveryProtocol: Send to {self.addresses}")
-        for address in self.addresses if isinstance(self.addresses, list) else [self.addresses]:
+        for address in self.addresses:
             for message in DISCOVERY_MESSAGE:
                 transport.sendto(message, (address, DISCOVERY_PORT))
 
@@ -39,7 +39,7 @@ async def main():
 
     try:
         transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(args.address), family = socket.AF_INET, allow_broadcast = True)
-        while await asyncio.wait_for(protocol.responses.get(), args.timeout) is None or args.wait:
+        while await asyncio.wait_for(protocol.responses.get(), args.timeout) or args.wait:
             pass
     except TimeoutError:
         pass

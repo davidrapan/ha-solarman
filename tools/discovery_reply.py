@@ -25,7 +25,7 @@ class DiscoveryProtocol:
             self.transport.sendto(DISCOVERY_MESSAGE_REPLY, addr)
 
     def error_received(self, e: OSError):
-        print(f"DiscoveryProtocol: {e!r}")
+        print(f"DiscoveryProtocol: {e!r}") # Bug on Windows, can't recover from ConnectionResetError: https://github.com/python/cpython/issues/127057
 
     def connection_lost(self, _: Exception | None):
         print("DiscoveryProtocol: Connection closed")
