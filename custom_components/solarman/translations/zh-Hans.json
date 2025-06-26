@@ -1,6 +1,7 @@
 {
   "config": {
     "abort": {
+      "already_configured": "设备已配置",
       "already_configured_device": "设备已配置",
       "already_in_progress": "配置流程已在进行中"
     },

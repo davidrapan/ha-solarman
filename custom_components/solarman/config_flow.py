@@ -9,9 +9,10 @@ from socket import getaddrinfo, herror, gaierror, timeout
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import section, AbortFlow
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import DEFAULT_DISCOVERY_UNIQUE_ID, ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
+from homeassistant.helpers.typing import DiscoveryInfoType
 from homeassistant.helpers.selector import selector
 
 from .const import *
@@ -89,23 +90,36 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     MINOR_VERSION = 0
     VERSION = 2
 
-    async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        _LOGGER.debug(f"ConfigFlowHandler.async_step_dhcp: {discovery_info}")
-        if (device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info.macaddress))})) is not None:
+    async def _async_handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
+        _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
+        if (device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})) is not None:
             for entry in self._async_current_entries():
-                if entry.entry_id in device.config_entries and entry.options.get(CONF_HOST) != discovery_info.ip:
-                    self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info.ip})
-                    self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
+                if entry.entry_id in device.config_entries:
+                    if entry.options.get(CONF_HOST) != discovery_info["ip"]:
+                        self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
+                        self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
                     return self.async_abort(reason = "already_configured_device")
-        input = { CONF_HOST: discovery_info.ip }
+        input = {CONF_HOST: discovery_info["ip"]}
         self._async_abort_entries_match(input)
-        await self._async_handle_discovery_without_unique_id()
+        await self.async_set_unique_id(DEFAULT_DISCOVERY_UNIQUE_ID)
+        self._abort_if_unique_id_configured()
+        if self._async_in_progress(include_uninitialized = True):
+            raise AbortFlow("already_in_progress")
+        if hostname := discovery_info.get("hostname"):
+            input["hostname"] = hostname.capitalize()
+        self.context.update({"title_placeholders": {CONF_NAME: hostname or discovery_info["ip"]}, "configuration_url": build_configuration_url(discovery_info["ip"])})
         return await self.async_step_user(input)
+
+    async def async_step_integration_discovery(self, discovery_info: DiscoveryInfoType) -> ConfigFlowResult:
+        return await self._async_handle_discovery(**discovery_info)
+
+    async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
+        return await self._async_handle_discovery(ip = discovery_info.ip, hostname = discovery_info.hostname, mac = discovery_info.macaddress)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
         if user_input is None or not user_input.get(CONF_NAME):
-            name = None
+            name = None if not user_input else user_input.get("hostname")
             for i in range(0, 1000):
                 try:
                     for entry in self._async_current_entries(include_ignore = False):

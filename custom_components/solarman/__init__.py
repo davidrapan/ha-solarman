@@ -10,12 +10,14 @@ from homeassistant.helpers import config_validation
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.entity_registry import async_get, async_migrate_entries
+from homeassistant.helpers.event import async_track_time_interval
 
 from .const import *
 from .common import *
-from .services import async_register
+from .services import register
 from .coordinator import Coordinator
 from .config_flow import ConfigFlowHandler
+from .discovery import Discovery, trigger_discovery
 from .data import SolarmanConfigEntry, migrate_unique_ids
 
 _LOGGER = getLogger(__name__)
@@ -32,20 +34,25 @@ async def async_setup(hass: HomeAssistant, _: ConfigType):
     except loader.IntegrationNotFound as e:
         _LOGGER.debug(f"Error reading version: {strepr(e)}")
 
-    async_register(hass)
+    register(hass)
+
+    async def _discovery(*_: Any):
+        trigger_discovery(hass, await Discovery(hass).discover())
+
+    hass.async_create_background_task(_discovery(), "Solarman setup discovery")
+
+    async_track_time_interval(hass, _discovery, DISCOVERY_INTERVAL, cancel_on_shutdown = True)
 
     return True
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
     _LOGGER.debug(f"async_setup_entry({config_entry.as_dict()})")
 
-    config_entry.runtime_data = Coordinator(hass, config_entry)
-
-    # Fetch initial data
+    # Initiaize coordinator and fetch initial data
     #
-    _LOGGER.debug(f"async_setup_entry: config_entry.runtime_data.async_config_entry_first_refresh")
+    _LOGGER.debug(f"async_setup_entry: Coordinator.async_init -> async_config_entry_first_refresh")
 
-    await config_entry.runtime_data.async_config_entry_first_refresh()
+    config_entry.runtime_data = await Coordinator(hass, config_entry).init()
 
     # Migrations
     #
@@ -83,9 +90,9 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: SolarmanConfigEn
 async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
     _LOGGER.debug(f"async_migrate_entry({config_entry.as_dict()})")
 
-    _LOGGER.info("Migrating configuration from version %s.%s", config_entry.version, config_entry.minor_version)
+    _LOGGER.info("Migrating configuration version %s.%s to %s.%s", config_entry.version, config_entry.minor_version, ConfigFlowHandler.VERSION, ConfigFlowHandler.MINOR_VERSION)
 
-    if (new_data := {**config_entry.data}) and (new_options := {**config_entry.options}):
+    if (new_data := {**config_entry.data}) is not None and (new_options := {**config_entry.options}) is not None:
         bulk_migrate(new_data, new_data, OLD_)
         bulk_migrate(new_options, new_options, OLD_)
         bulk_inherit(new_options.setdefault(CONF_ADDITIONAL_OPTIONS, {}), new_options, CONF_BATTERY_NOMINAL_VOLTAGE, CONF_BATTERY_LIFE_CYCLE_RATING)
@@ -101,8 +108,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: SolarmanConfigE
             del new_options[CONF_ADDITIONAL_OPTIONS]
 
         hass.config_entries.async_update_entry(config_entry, unique_id = None, data = new_data, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
-
-    _LOGGER.info("Migration to configuration version %s.%s was successful", config_entry.version, config_entry.minor_version)
 
     return True
 

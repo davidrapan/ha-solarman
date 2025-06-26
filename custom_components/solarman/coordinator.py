@@ -66,11 +66,12 @@ class Coordinator(DataUpdateCoordinator[dict[str, tuple[int | float | str | list
         elif not self.last_update_success:
             self.counter = self._update_interval_seconds
 
-    async def async_config_entry_first_refresh(self):
+    async def init(self):
         await super().async_config_entry_first_refresh()
         device_info = build_device_info(self.config_entry.entry_id, str(self.device.modbus.serial), self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
         self.device.info[self.config_entry.entry_id] = device_info
         _LOGGER.debug(device_info)
+        return self
 
     async def async_shutdown(self):
         await super().async_shutdown()

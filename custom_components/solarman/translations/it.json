@@ -1,6 +1,7 @@
 {
   "config": {
     "abort": {
+      "already_configured": "Questo dispositivo è già configurato",
       "already_configured_device": "Questo dispositivo è già configurato",
       "already_in_progress": "Il flusso di configurazione è già in corso"
     },

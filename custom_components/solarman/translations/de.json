@@ -1,6 +1,7 @@
 {
   "config": {
     "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert",
       "already_configured_device": "Gerät ist bereits konfiguriert",
       "already_in_progress": "Der Konfigurationsablauf ist bereits im Gange"
     },

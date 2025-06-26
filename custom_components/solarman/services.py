@@ -4,10 +4,10 @@ import voluptuous as vol
 
 from logging import getLogger
 
-from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.device_registry import async_get
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import config_validation as cv
+from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 
 from .const import *
 from .coordinator import Device, Coordinator
@@ -37,7 +37,7 @@ VALUES_SCHEMA = {
     vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))])
 }
 
-def async_register(hass: HomeAssistant) -> None:
+def register(hass: HomeAssistant) -> None:
     _LOGGER.debug(f"register")
 
     def get_device(device_id) -> Device:

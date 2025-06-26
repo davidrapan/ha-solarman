@@ -4,11 +4,14 @@ import socket
 import asyncio
 
 from logging import getLogger
+from typing import AsyncGenerator
 from ipaddress import IPv4Network
 from datetime import datetime, timedelta
 
-from homeassistant.core import HomeAssistant
+from homeassistant import config_entries
 from homeassistant.components import network
+from homeassistant.helpers import discovery_flow
+from homeassistant.core import HomeAssistant, callback
 
 from .const import *
 from .common import *
@@ -41,16 +44,16 @@ class Discovery:
     semaphore = asyncio.Semaphore(1)
     networks: list[IPv4Network] | None = None
     devices: dict | None = None
-    d_when: datetime | None = None
+    when: datetime | None = None
 
     def __init__(self, hass: HomeAssistant):
         self._hass = hass
         self._devices = {}
 
-    async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False):
+    async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False) -> AsyncGenerator[tuple[int, dict[str, str]], None]:
         try:
             transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
-            while (r := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) is None or wait:
+            while (r := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) or wait:
                 yield r
         except TimeoutError:
             pass
@@ -63,23 +66,23 @@ class Discovery:
         if Discovery.networks is None:
             _LOGGER.debug(f"_discover_all: network.async_get_adapters")
             Discovery.networks = [n for adapter in await network.async_get_adapters(self._hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
-
         async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
             yield item
 
     async def discover(self, address: str | None = None):
-        self._devices = {}
+        devices = {}
+        async with Discovery.semaphore:
+            if Discovery.devices and (datetime.now() - Discovery.when) < DISCOVERY_CACHE:
+                devices = Discovery.devices
+            if address and not (devices and any([v["ip"] == address for v in devices.values()])):
+                devices = {k: v async for k, v in self._discover(address)}
+            if not devices:
+                Discovery.devices = devices = {k: v async for k, v in self._discover_all()}
+                Discovery.when = datetime.now()
+        return devices
 
-        if address:
-            if (devices := {item[0]: item[1] async for item in self._discover(address)}) and any([v["ip"] == address for v in devices.values()]):
-                self._devices = devices
-            return self._devices
-
-        if not self._devices:
-            async with Discovery.semaphore:
-                if Discovery.devices is not None and (datetime.now() - Discovery.d_when) < timedelta(seconds = 10):
-                    return Discovery.devices
-                Discovery.devices = self._devices = {item[0]: item[1] async for item in self._discover_all()}
-                Discovery.d_when = datetime.now()
-
-        return self._devices
+@callback
+def trigger_discovery(hass: HomeAssistant, discovered_devices: dict[int, dict[str, str]]):
+    """Trigger config flows for discovered devices."""
+    for k, v in discovered_devices.items():
+        discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data = dict(v, serial = k))

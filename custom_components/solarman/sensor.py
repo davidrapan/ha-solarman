@@ -100,8 +100,7 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-
-        if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
+        if last_sensor_data := await self.async_get_last_sensor_data():
             self._attr_native_value = last_sensor_data.native_value
 
     def set_state(self, state, value = None) -> bool:

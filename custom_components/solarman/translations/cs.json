@@ -1,6 +1,7 @@
 {
   "config": {
     "abort": {
+      "already_configured": "Zařízení je již nakonfigurováno",
       "already_configured_device": "Zařízení je již nakonfigurováno",
       "already_in_progress": "konfigurace již probíhá"
     },
