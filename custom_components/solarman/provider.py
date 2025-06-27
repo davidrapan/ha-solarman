@@ -13,7 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 
 from .const import *
 from .common import *
-from .discovery import Discovery
+from .discovery import discover
 from .parser import ParameterParser
 
 @dataclass
@@ -82,8 +82,8 @@ class EndPointProvider:
             return IPv4Address(socket.gethostbyname(self.host))    
 
     async def discover(self):
-        if self.ip.is_private and (discover := await Discovery(self.hass).discover(str(self.ip))):
-            if (device := discover.get((s := next(iter([k for k, v in discover.items() if v["ip"] == str(self.ip)]), None)))) is not None:
+        if self.ip.is_private and (devices := await discover(self.hass, str(self.ip))):
+            if (device := devices.get((s := next(iter([k for k, v in devices.items() if v["ip"] == str(self.ip)]), None)))) is not None:
                 self.host = device["ip"]
                 self.mac = device["mac"]
                 self.serial = s

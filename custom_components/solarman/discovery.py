@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 from homeassistant import config_entries
 from homeassistant.components import network
-from homeassistant.helpers import discovery_flow
+from homeassistant.helpers import singleton, discovery_flow
 from homeassistant.core import HomeAssistant, callback
 
 from .const import *
@@ -35,20 +35,22 @@ class DiscoveryProtocol:
             _LOGGER.debug(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {s}] from {addr}")
 
     def error_received(self, e: OSError):
-        _LOGGER.debug(f"DiscoveryProtocol: {e!r}")
+        _LOGGER.debug(f"DiscoveryProtocol: {strepr(e)}")
 
     def connection_lost(self, _):
         pass
 
 class Discovery:
-    semaphore = asyncio.Semaphore(1)
-    networks: list[IPv4Network] | None = None
-    devices: dict | None = None
-    when: datetime | None = None
-
     def __init__(self, hass: HomeAssistant):
+        self._semaphore = asyncio.Semaphore(1)
+        self._networks: list[IPv4Network] | None = None
+        self._devices: dict[int, dict[str, str]] = {}
+        self._when: datetime | None = None
         self._hass = hass
-        self._devices = {}
+
+    async def init(self):
+        self._networks = [n for adapter in await network.async_get_adapters(self._hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
+        return self
 
     async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False) -> AsyncGenerator[tuple[int, dict[str, str]], None]:
         try:
@@ -58,31 +60,30 @@ class Discovery:
         except TimeoutError:
             pass
         except Exception as e:
-            _LOGGER.debug(f"_discover: {e!r}")
+            _LOGGER.debug(f"_discover: {strepr(e)}")
         finally:
             transport.close()
 
-    async def _discover_all(self):
-        if Discovery.networks is None:
-            _LOGGER.debug(f"_discover_all: network.async_get_adapters")
-            Discovery.networks = [n for adapter in await network.async_get_adapters(self._hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
-        async for item in self._discover([str(net.broadcast_address) for net in Discovery.networks], True):
-            yield item
-
     async def discover(self, address: str | None = None):
-        devices = {}
-        async with Discovery.semaphore:
-            if Discovery.devices and (datetime.now() - Discovery.when) < DISCOVERY_CACHE:
-                devices = Discovery.devices
+        devices: dict[int, dict[str, str]] = {}
+        async with self._semaphore:
+            if self._devices and (datetime.now() - self._when) < DISCOVERY_CACHE:
+                devices = self._devices
             if address and not (devices and any([v["ip"] == address for v in devices.values()])):
                 devices = {k: v async for k, v in self._discover(address)}
             if not devices:
-                Discovery.devices = devices = {k: v async for k, v in self._discover_all()}
-                Discovery.when = datetime.now()
+                self._devices = devices = {k: v async for k, v in self._discover([str(net.broadcast_address) for net in self._networks], True)}
+                self._when = datetime.now()
         return devices
 
+@singleton.singleton(f"{DOMAIN}_discovery")
+async def get_discovery(hass: HomeAssistant):
+    return await Discovery(hass).init()
+
+async def discover(hass: HomeAssistant, address: str | None = None):
+    return await (await get_discovery(hass)).discover(address)
+
 @callback
-def trigger_discovery(hass: HomeAssistant, discovered_devices: dict[int, dict[str, str]]):
-    """Trigger config flows for discovered devices."""
-    for k, v in discovered_devices.items():
+async def trigger_discovery(hass: HomeAssistant):
+    for k, v in (await discover(hass)).items():
         discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data = dict(v, serial = k))

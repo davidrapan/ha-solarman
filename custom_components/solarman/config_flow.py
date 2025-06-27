@@ -17,7 +17,7 @@ from homeassistant.helpers.selector import selector
 
 from .const import *
 from .common import *
-from .discovery import Discovery
+from .discovery import discover
 
 _LOGGER = getLogger(__name__)
 
@@ -66,7 +66,7 @@ def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
     except gaierror:
         error = "cannot_connect"
     except Exception as e:
-        _LOGGER.exception(f"validate_connection: {e!r}")
+        _LOGGER.exception(f"validate_connection: {strepr(e)}")
     else:
         _LOGGER.debug(f"validate_connection: validation passed: {user_input}")
         return None
@@ -90,7 +90,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
     MINOR_VERSION = 0
     VERSION = 2
 
-    async def _async_handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
+    async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
         if (device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})) is not None:
             for entry in self._async_current_entries():
@@ -111,10 +111,10 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         return await self.async_step_user(input)
 
     async def async_step_integration_discovery(self, discovery_info: DiscoveryInfoType) -> ConfigFlowResult:
-        return await self._async_handle_discovery(**discovery_info)
+        return await self._handle_discovery(**discovery_info)
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        return await self._async_handle_discovery(ip = discovery_info.ip, hostname = discovery_info.hostname, mac = discovery_info.macaddress)
+        return await self._handle_discovery(ip = discovery_info.ip, hostname = discovery_info.hostname, mac = discovery_info.macaddress)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
@@ -131,10 +131,10 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             else:
                 name = None
             ip = None if not user_input else user_input.get(CONF_HOST)
-            if not ip and (discovered := await Discovery(self.hass).discover()):
-                for v in discovered.values():
+            if not ip and (devices := await discover(self.hass)):
+                for v in devices.values():
                     try:
-                        self._async_abort_entries_match({ CONF_HOST: (ip := v["ip"]) })
+                        self._async_abort_entries_match({CONF_HOST: (ip := v["ip"])})
                         break
                     except:
                         continue

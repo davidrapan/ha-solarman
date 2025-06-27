@@ -16,8 +16,8 @@ from .const import *
 from .common import *
 from .services import register
 from .coordinator import Coordinator
+from .discovery import trigger_discovery
 from .config_flow import ConfigFlowHandler
-from .discovery import Discovery, trigger_discovery
 from .data import SolarmanConfigEntry, migrate_unique_ids
 
 _LOGGER = getLogger(__name__)
@@ -37,7 +37,7 @@ async def async_setup(hass: HomeAssistant, _: ConfigType):
     register(hass)
 
     async def _discovery(*_: Any):
-        trigger_discovery(hass, await Discovery(hass).discover())
+        trigger_discovery(hass)
 
     hass.async_create_background_task(_discovery(), "Solarman setup discovery")
 
@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
 
     # Initiaize coordinator and fetch initial data
     #
-    _LOGGER.debug(f"async_setup_entry: Coordinator.async_init -> async_config_entry_first_refresh")
+    _LOGGER.debug(f"async_setup_entry: Coordinator.init -> async_config_entry_first_refresh")
 
     config_entry.runtime_data = await Coordinator(hass, config_entry).init()
 
