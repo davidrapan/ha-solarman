@@ -19,17 +19,6 @@ from .pysolarman.umodbus.functions import FUNCTION_CODE
 
 _LOGGER = getLogger(__name__)
 
-def create_entity(creator, description):
-    try:
-        entity = creator(description)
-
-        entity.update()
-
-        return entity
-    except Exception as e:
-        _LOGGER.error(f"Configuring {description} failed. [{e!r}]")
-        raise
-
 class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
     _attr_has_entity_name = True
 
@@ -53,6 +42,13 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
     def _handle_coordinator_update(self) -> None:
         self.update()
         self.async_write_ha_state()
+
+    def init(self):
+        try:
+            self.update()
+        except Exception as e:
+            _LOGGER.exception(f"{self._attr_name} initialization failed. [{strepr(e)}]")
+        return self
 
     def set_state(self, state, value = None) -> bool:
         self._attr_native_value = self._attr_state = state

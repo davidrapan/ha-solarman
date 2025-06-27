@@ -10,8 +10,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .data import SolarmanConfigEntry
-from .entity import create_entity, SolarmanEntity
+from . import SolarmanConfigEntry
+from .entity import SolarmanEntity
 
 _LOGGER = getLogger(__name__)
 
@@ -46,9 +46,8 @@ def _create_entity(coordinator, description, options):
 async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities(create_entity(lambda x: _create_entity(config_entry.runtime_data, x, config_entry.options), d) for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
-
-    async_add_entities([create_entity(lambda _: SolarmanIntervalSensor(config_entry.runtime_data), None)])
+    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)])
+    async_add_entities(_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
 
     return True
 

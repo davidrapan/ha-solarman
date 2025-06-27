@@ -161,7 +161,7 @@ class ParameterParser:
                             case 10:
                                 self.try_parse_raw(data, i)
                     except Exception as e:
-                        _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {i} [{e!r}]")
+                        _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {i} [{strepr(e)}]")
                         raise
 
         return self._result
@@ -399,7 +399,7 @@ class ParameterParser:
                 value = datetime.strptime(value, DATETIME_FORMAT)
             self.set_state(definition["key"], value)
         except Exception as e:
-            _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{e!r}]")
+            _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{strepr(e)}]")
 
     def try_parse_time(self, data, definition):
         code = get_code(definition, "read")

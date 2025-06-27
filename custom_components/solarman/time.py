@@ -10,8 +10,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import *
 from .common import *
 from .services import *
-from .data import SolarmanConfigEntry
-from .entity import create_entity, SolarmanWritableEntity
+from . import SolarmanConfigEntry
+from .entity import SolarmanWritableEntity
 
 _LOGGER = getLogger(__name__)
 
@@ -20,7 +20,7 @@ _PLATFORM = get_current_file_name(__name__)
 async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities(create_entity(lambda x: SolarmanTimeEntity(config_entry.runtime_data, x), d) for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
+    async_add_entities(SolarmanTimeEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
 
     return True
 
@@ -54,7 +54,7 @@ class SolarmanTimeEntity(SolarmanWritableEntity, TimeEntity):
                     return datetime.strptime(f"{self._attr_native_value[0]}:{self._attr_native_value[1]}", TIME_FORMAT).time()
                 return datetime.strptime(self._attr_native_value, TIME_FORMAT).time()
         except Exception as e:
-            _LOGGER.debug(f"SolarmanTimeEntity.native_value of {self._attr_name}: {e!r}")
+            _LOGGER.debug(f"SolarmanTimeEntity.native_value of {self._attr_name}: {strepr(e)}")
         return None
 
     async def async_set_value(self, value: time) -> None:
