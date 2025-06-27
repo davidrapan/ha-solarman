@@ -21,11 +21,11 @@ from .discovery import discover
 
 _LOGGER = getLogger(__name__)
 
-DATA_SCHEMA = {
+CREATION_SCHEMA = {
     vol.Required(CONF_NAME, default = DEFAULT_[CONF_NAME]): str
 }
 
-OPTS_SCHEMA = {
+CONFIGURATION_SCHEMA = {
     vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
     vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}):
@@ -55,7 +55,6 @@ async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.S
 def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
     _LOGGER.debug(f"validate_connection: {user_input}")
     error = "unknown"
-
     try:
         if host := user_input.get(CONF_HOST, IP_ANY):
             getaddrinfo(host, user_input.get(CONF_PORT, DEFAULT_[CONF_PORT]), family = 0, type = 0, proto = 0, flags = 0)
@@ -70,7 +69,6 @@ def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
     else:
         _LOGGER.debug(f"validate_connection: validation passed: {user_input}")
         return None
-
     _LOGGER.debug(f"validate_connection: validation failed: {user_input}")
     return {"base": error}
 
@@ -92,12 +90,18 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
 
     async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
-        if (device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})) is not None:
+        if device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))}):
             for entry in self._async_current_entries():
-                if entry.entry_id in device.config_entries:
+                if entry.entry_id == device.primary_config_entry:
                     if entry.options.get(CONF_HOST) != discovery_info["ip"]:
                         self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
                         self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
+                    return self.async_abort(reason = "already_configured_device")
+        else:
+            for entry in self._async_current_entries():
+                if entry.options.get(CONF_HOST) == discovery_info["ip"]:
+                    if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
+                        dr.async_get(self.hass).async_update_device(device.id, new_connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})
                     return self.async_abort(reason = "already_configured_device")
         input = {CONF_HOST: discovery_info["ip"]}
         self._async_abort_entries_match(input)
@@ -140,14 +144,10 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                         continue
                 else:
                     ip = None
-            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
-
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, CREATION_SCHEMA | CONFIGURATION_SCHEMA), {CONF_NAME: name, CONF_HOST: ip}))
         if errors := validate_connection(user_input):
-            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, DATA_SCHEMA | OPTS_SCHEMA), user_input), errors = errors)
-
-        await self.async_set_unique_id(None)
-        self._abort_if_unique_id_configured() #self._abort_if_unique_id_configured(updates={CONF_HOST: url.host})
-        return self.async_create_entry(title = user_input[CONF_NAME], data = {}, options = remove_defaults(filter_by_keys(user_input, OPTS_SCHEMA)))
+            return self.async_show_form(step_id = "user", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, CREATION_SCHEMA | CONFIGURATION_SCHEMA), user_input), errors = errors)
+        return self.async_create_entry(title = user_input[CONF_NAME], data = {}, options = remove_defaults(filter_by_keys(user_input, CONFIGURATION_SCHEMA)))
 
     @staticmethod
     @callback
@@ -163,9 +163,7 @@ class OptionsFlowHandler(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"OptionsFlowHandler.async_step_init: user_input: {user_input}, current: {self.entry.options}")
         if user_input is None:
-            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), self.entry.options))
-
+            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, CONFIGURATION_SCHEMA), self.entry.options))
         if errors := validate_connection(user_input):
-            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, OPTS_SCHEMA), user_input), errors = errors)
-
+            return self.async_show_form(step_id = "init", data_schema = self.add_suggested_values_to_schema(await data_schema(self.hass, CONFIGURATION_SCHEMA), user_input), errors = errors)
         return self.async_create_entry(data = remove_defaults(user_input))
