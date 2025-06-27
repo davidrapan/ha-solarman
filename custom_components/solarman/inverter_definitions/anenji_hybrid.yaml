@@ -1,0 +1,240 @@
+#
+# ANENJI | Hybrid Inverter
+#
+# Reference: https://github.com/user-attachments/files/20907869/RS232.Communication.Protocol.V1.0-220209.pdf
+#
+# Tested
+#
+
+info:
+  manufacturer: ANENJI
+  model: Hybrid
+
+default:
+  update_interval: 5
+  digits: 6
+
+parameters:
+  - group: Grid
+    items:
+      - name: "Grid voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 2
+        registers: [202]
+
+      - name: "Grid frequency"
+        l: 1
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 2
+        registers: [203]
+
+      - name: "Grid power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [204]
+        attributes: [inverse]
+
+  - group: Output
+    items:
+      - name: "Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 2
+        registers: [205]
+
+      - name: "Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [206]
+
+      - name: "Frequency"
+        l: 1
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 2
+        registers: [207]
+
+      - name: "Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [208]
+
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        digits: 0
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [217]
+          - signed:
+            registers: [219]
+            multiply:
+              signed:
+              registers: [220]
+          - operator: subtract
+            signed:
+            registers: [208]
+
+  - group: Load
+    items:
+      - name: "Load voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 2
+        registers: [210]
+
+      - name: "Load current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [211]
+
+      - name: "Load frequency"
+        l: 1
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 2
+        registers: [212]
+
+      - name: "Load power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [213]
+
+      - name: "Load apparent power"
+        l: 1
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 2
+        registers: [214]
+
+      - name: "Load"
+        state_class: "measurement"
+        uom: "%"
+        rule: 2
+        registers: [225]
+        icon: "mdi:percent"
+
+  - group: PV
+    items:
+      - name: PV power
+        alt: DC power
+        mppt: 1
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        digits: 3
+        scale: 0.1
+        sensors:
+          - signed:
+            registers: [219]
+            multiply:
+              signed:
+              registers: [220]
+        validation:
+          min: 0
+          max: 12000
+          invalidate_all:
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV voltage"
+        alt: DC Voltage
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 2
+        registers: [219]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV current"
+        alt: DC Current
+        mppt: 1
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [220]
+        icon: "mdi:solar-power-variant"
+
+  - group: Battery
+    items:
+      - name: "Battery voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 2
+        registers: [215]
+
+      - name: "Battery current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [216]
+        icon: "mdi:current-dc"
+
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [229]
+
+      - name: "Battery power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [217]
+        attributes: [inverse]
+
+      - name: "Battery State"
+        description: Determines battery state from battery power by +-50 W
+        class: "enum"
+        rule: 0
+        options: ["charging", "idle", "discharging"]
+        icon: "mdi:battery"
