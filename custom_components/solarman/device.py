@@ -89,6 +89,8 @@ class Device():
 
         try:
             result = await self.execute_bulk(requests, scheduled)
+        except ValueError:
+            pass
         except Exception as e:
             if self.state.update(exception = e) or runtime == 0:
                 await self.modbus.close()
