@@ -49,7 +49,7 @@ class Device():
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
         except Exception as e:
-            raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {e!r}"}") from e
+            raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {strepr(e)}"}") from e
         else:
             self.state.update(True)
 
@@ -83,7 +83,7 @@ class Device():
         scheduled, scount, result = *ensure_list_safe_len(self.profile.parser.schedule_requests(runtime) if requests is None else requests), {}
 
         if scount == 0:
-            return result
+            return {None: None}
 
         _LOGGER.debug(f"[{self.endpoint.host}] Scheduling {scount} query request{'s' if scount != 1 else ''}: {scheduled} #{runtime}")
 
@@ -95,7 +95,7 @@ class Device():
                 if self.profile.parser:
                     self.profile.parser.reset()
                 raise
-            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} fetching {self.config.name} data{"" if x else f": {e!r}"}")
+            _LOGGER.debug(f"[{self.endpoint.host}] {"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} fetching {self.config.name} data{"" if x else f": {strepr(e)}"}")
 
         if (rcount := len(result) if result else 0):
             _LOGGER.debug(f"[{self.endpoint.host}] Returning {rcount} new value{'s' if rcount > 1 else ''}")
