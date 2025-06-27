@@ -29,7 +29,7 @@ OPTS_SCHEMA = {
     vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
     vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}):
-        selector({ "select": {"mode": "dropdown", "options": ["tcp", "modbus_tcp"], "translation_key": "transport"}}),
+        selector({ "select": {"mode": "dropdown", "options": ["tcp", "modbus_rtu", "modbus_tcp"], "translation_key": "transport"}}),
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS):
         section(vol.Schema({

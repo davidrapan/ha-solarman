@@ -109,10 +109,10 @@ class Solarman:
     def transport(self, value: str) -> None:
         self._transport = value
         if value == "tcp":
-            self._get_response = self._parse_adu_from_rtu_response
+            self._get_response = self._parse_adu_response
             self._handle_frame = self._handle_protocol_frame
         else:
-            self._get_response = self._parse_adu_from_tcp_response
+            self._get_response = self._parse_adu_from_tcp_response if not value.endswith("rtu") else self._parse_adu_from_rtu_response
             self._handle_frame = None
 
     @property
@@ -262,7 +262,7 @@ class Solarman:
         finally:
             self._data_event.clear()
 
-    async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
+    async def _parse_adu_response(self, code: int, address: int, **kwargs) -> list[int]:
         async def _get_rtu_response(frame: bytes) -> bytes:
             request_frame = self._protocol_header(15 + len(frame),
                 PROTOCOL.CONTROL_CODE.REQUEST,
@@ -294,6 +294,10 @@ class Solarman:
         if res.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(res[:-4]) == res[-4:-2]: # Double CRC (XXXX0000) correction
             res = res[:-2]
         return rtu.parse_response_adu(res, req)
+
+    async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
+        req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
+        return rtu.parse_response_adu(await self._send_receive_frame(req), req)
 
     async def _parse_adu_from_tcp_response(self, code: int, address: int, **kwargs) -> list[int]:
         req = tcp.function_code_to_function_map[code](self.slave, address, **kwargs)
