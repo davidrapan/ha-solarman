@@ -3,20 +3,20 @@ from __future__ import annotations
 from logging import getLogger
 from functools import partial
 
-from homeassistant import loader
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation
+from homeassistant import loader, config_entries
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.entity_registry import async_get, async_migrate_entries
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers import config_validation, discovery_flow
 
 from .const import *
 from .common import *
 from .services import register
+from .discovery import discover
 from .coordinator import Coordinator
-from .discovery import trigger_discovery
 from .config_flow import ConfigFlowHandler
 from .data import SolarmanConfigEntry, migrate_unique_ids
 
@@ -36,12 +36,13 @@ async def async_setup(hass: HomeAssistant, _: ConfigType):
 
     register(hass)
 
-    async def _discovery(*_: Any):
-        trigger_discovery(hass)
+    async def discovery(*_: Any):
+        for k, v in (await discover(hass)).items():
+            discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data = dict(v, serial = k))
 
-    hass.async_create_background_task(_discovery(), "Solarman setup discovery")
+    hass.async_create_background_task(discovery(), "Solarman setup discovery")
 
-    async_track_time_interval(hass, _discovery, DISCOVERY_INTERVAL, cancel_on_shutdown = True)
+    async_track_time_interval(hass, discovery, DISCOVERY_INTERVAL, cancel_on_shutdown = True)
 
     return True
 
@@ -68,13 +69,13 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: SolarmanConfigEnt
 
     # Add update listener
     #
-    _LOGGER.debug(f"async_setup_entry: config_entry.add_update_listener(async_update_listener)")
+    _LOGGER.debug(f"async_setup_entry: config_entry.async_on_unload(config_entry.add_update_listener(reload))")
 
-    async def async_update_listener(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
-        _LOGGER.debug(f"async_update_listener({config_entry.as_dict()})")
+    async def reload(hass: HomeAssistant, config_entry: SolarmanConfigEntry):
+        _LOGGER.debug(f"reload({config_entry.as_dict()})")
         await hass.config_entries.async_reload(config_entry.entry_id)
 
-    config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
+    config_entry.async_on_unload(config_entry.add_update_listener(reload))
 
     return True
 

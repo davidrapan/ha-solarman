@@ -1,17 +1,14 @@
-from __future__ import annotations
-
 import socket
 import asyncio
 
 from logging import getLogger
+from datetime import datetime
 from typing import AsyncGenerator
 from ipaddress import IPv4Network
-from datetime import datetime, timedelta
 
-from homeassistant import config_entries
+from homeassistant.helpers import singleton
+from homeassistant.core import HomeAssistant
 from homeassistant.components import network
-from homeassistant.helpers import singleton, discovery_flow
-from homeassistant.core import HomeAssistant, callback
 
 from .const import *
 from .common import *
@@ -82,8 +79,3 @@ async def get_discovery(hass: HomeAssistant):
 
 async def discover(hass: HomeAssistant, address: str | None = None):
     return await (await get_discovery(hass)).discover(address)
-
-@callback
-async def trigger_discovery(hass: HomeAssistant):
-    for k, v in (await discover(hass)).items():
-        discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data = dict(v, serial = k))
