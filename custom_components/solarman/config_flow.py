@@ -95,7 +95,6 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                 if entry.entry_id == device.primary_config_entry:
                     if entry.options.get(CONF_HOST) != discovery_info["ip"]:
                         self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
-                        self.hass.async_create_task(self.hass.config_entries.async_reload(entry.entry_id))
                     return self.async_abort(reason = "already_configured_device")
         else:
             for entry in self._async_current_entries():
