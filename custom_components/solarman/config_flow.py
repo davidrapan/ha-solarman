@@ -102,14 +102,11 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                     if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
                         dr.async_get(self.hass).async_update_device(device.id, new_connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})
                     return self.async_abort(reason = "already_configured_device")
-        input = {CONF_HOST: discovery_info["ip"]}
-        self._async_abort_entries_match(input)
         await self.async_set_unique_id(DEFAULT_DISCOVERY_UNIQUE_ID)
         self._abort_if_unique_id_configured()
         if self._async_in_progress(include_uninitialized = True):
             raise AbortFlow("already_in_progress")
-        if hostname := discovery_info.get("hostname"):
-            input["hostname"] = hostname.capitalize()
+        input = {CONF_HOST: discovery_info["ip"]} | ({"hostname": hostname} if (hostname := discovery_info.get("hostname")) and (hostname := hostname.capitalize()) else {})
         self.context.update({"title_placeholders": {CONF_NAME: hostname or discovery_info["ip"]}, "configuration_url": build_configuration_url(discovery_info["ip"])})
         return await self.async_step_user(input)
 
