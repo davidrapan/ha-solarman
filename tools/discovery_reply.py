@@ -15,19 +15,19 @@ iface_link = ifaces[netifaces.AF_LINK][0]["addr"].replace(':', '').upper()
 
 DISCOVERY_MESSAGE_REPLY = f"{iface_inet},{iface_link},1234567890".encode()
 
-class DiscoveryProtocol:
-    def connection_made(self, transport: asyncio.DatagramTransport):
+class DiscoveryProtocol(asyncio.DatagramProtocol):
+    def connection_made(self, transport):
         self.transport = transport
 
-    def datagram_received(self, data: bytes, addr: tuple[str, int]):
+    def datagram_received(self, data, addr):
         if data in DISCOVERY_MESSAGE:
             print(f"DiscoveryProtocol: {data} from {addr}")
             self.transport.sendto(DISCOVERY_MESSAGE_REPLY, addr)
 
-    def error_received(self, e: OSError):
+    def error_received(self, e):
         print(f"DiscoveryProtocol: {e!r}") # Bug on Windows, can't recover from ConnectionResetError: https://github.com/python/cpython/issues/127057
 
-    def connection_lost(self, _: Exception | None):
+    def connection_lost(self, _):
         print("DiscoveryProtocol: Connection closed")
 
 async def main():

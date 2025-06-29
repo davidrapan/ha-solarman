@@ -8,26 +8,26 @@ DISCOVERY_PORT = 48899
 DISCOVERY_MESSAGE = ["WIFIKIT-214028-READ".encode(), "HF-A11ASSISTHREAD".encode()]
 DISCOVERY_TIMEOUT = 1
 
-class DiscoveryProtocol:
+class DiscoveryProtocol(asyncio.DatagramProtocol):
     def __init__(self, addresses: list[str] | str):
         self.addresses = addresses if isinstance(addresses, list) else [addresses]
         self.responses = asyncio.Queue()
 
-    def connection_made(self, transport: asyncio.DatagramTransport):
+    def connection_made(self, transport):
         print(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in self.addresses:
             for message in DISCOVERY_MESSAGE:
                 transport.sendto(message, (address, DISCOVERY_PORT))
 
-    def datagram_received(self, data: bytes, addr: tuple[str, int]):
+    def datagram_received(self, data, addr):
         if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
             self.responses.put_nowait((s, {"ip": d[0], "mac": d[1]}))
             print(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {s}] from {addr}")
 
-    def error_received(self, e: OSError):
+    def error_received(self, e):
         print(f"DiscoveryProtocol: {e!r}")
 
-    def connection_lost(self, _: Exception | None):
+    def connection_lost(self, _):
         print("DiscoveryProtocol: Connection closed")
 
 async def main():
@@ -39,7 +39,7 @@ async def main():
 
     try:
         transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(args.address), family = socket.AF_INET, allow_broadcast = True)
-        while await asyncio.wait_for(protocol.responses.get(), args.timeout) or args.wait:
+        while await asyncio.wait_for(protocol.responses.get(), args.timeout) and args.wait:
             pass
     except TimeoutError:
         pass
