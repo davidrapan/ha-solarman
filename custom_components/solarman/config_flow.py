@@ -130,9 +130,8 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
                     continue
             else:
                 name = None
-            ip = None if not user_input else user_input.get(CONF_HOST)
-            if not ip and (devices := await discover(self.hass)):
-                for v in devices.values():
+            if not (ip := None if not user_input else user_input.get(CONF_HOST)):
+                async for _, v in await discover(self.hass):
                     try:
                         self._async_abort_entries_match({CONF_HOST: (ip := v["ip"])})
                         break

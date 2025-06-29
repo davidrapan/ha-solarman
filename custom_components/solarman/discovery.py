@@ -2,9 +2,8 @@ import socket
 import asyncio
 
 from logging import getLogger
-from datetime import datetime
-from typing import AsyncGenerator
 from ipaddress import IPv4Network
+from contextlib import asynccontextmanager
 
 from homeassistant.helpers import singleton
 from homeassistant.core import HomeAssistant
@@ -15,67 +14,70 @@ from .common import *
 
 _LOGGER = getLogger(__name__)
 
-class DiscoveryProtocol:
+class DiscoveryProtocol(asyncio.DatagramProtocol):
     def __init__(self, addresses: list[str] | str):
+        self.responses: list[asyncio.Queue[tuple[int, dict[str, str]]]] = []
         self.addresses = addresses
-        self.responses = asyncio.Queue()
 
-    def connection_made(self, transport: asyncio.DatagramTransport):
+    def connection_made(self, transport):
         _LOGGER.debug(f"DiscoveryProtocol: Send to {self.addresses}")
         for address in ensure_list(self.addresses):
             for message in DISCOVERY_MESSAGE:
                 transport.sendto(message, (address, DISCOVERY_PORT))
 
-    def datagram_received(self, data: bytes, addr: tuple[str, int]):
+    def datagram_received(self, data, addr):
         if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
-            self.responses.put_nowait((s, {"ip": d[0], "mac": d[1]}))
+            for r in self.responses:
+                r.put_nowait((s, {"ip": d[0], "mac": d[1]}))
             _LOGGER.debug(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {s}] from {addr}")
 
-    def error_received(self, e: OSError):
+    def error_received(self, e):
         _LOGGER.debug(f"DiscoveryProtocol: {strepr(e)}")
 
     def connection_lost(self, _):
         pass
 
 class Discovery:
-    def __init__(self, hass: HomeAssistant):
+    def __init__(self):
         self._semaphore = asyncio.Semaphore(1)
-        self._networks: list[IPv4Network] | None = None
-        self._devices: dict[int, dict[str, str]] = {}
-        self._when: datetime | None = None
-        self._hass = hass
+        self._transport: asyncio.DatagramTransport | None = None
+        self._protocol: DiscoveryProtocol | None = None
 
-    async def init(self):
-        self._networks = [n for adapter in await network.async_get_adapters(self._hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
+    async def init(self, hass: HomeAssistant):
+        self._broadcast = [str(n.broadcast_address) for adapter in await network.async_get_adapters(hass) if adapter["enabled"] and adapter["index"] is not None and adapter["ipv4"] for ip in adapter["ipv4"] if (n := IPv4Network(ip["address"] + '/' + str(ip["network_prefix"]), False)) and not n.is_loopback and not n.is_global]
         return self
 
-    async def _discover(self, addresses: list[str] | str = IP_BROADCAST, wait: bool = False) -> AsyncGenerator[tuple[int, dict[str, str]], None]:
+    @asynccontextmanager
+    async def _context(self, address: str | None = None):
+        async with self._semaphore:
+            if self._transport is None:
+                self._transport, self._protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(address or self._broadcast), family = socket.AF_INET, allow_broadcast = True)
+        self._protocol.responses.append(responses := asyncio.Queue())
         try:
-            transport, protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(addresses), family = socket.AF_INET, allow_broadcast = True)
-            while (r := await asyncio.wait_for(protocol.responses.get(), DISCOVERY_TIMEOUT)) or wait:
-                yield r
+            yield responses
         except TimeoutError:
             pass
         except Exception as e:
             _LOGGER.debug(f"_discover: {strepr(e)}")
         finally:
-            transport.close()
+            try:
+                self._transport.close()
+            except:
+                pass
+            finally:
+                self._transport = None
 
     async def discover(self, address: str | None = None):
-        devices: dict[int, dict[str, str]] = {}
-        async with self._semaphore:
-            if self._devices and (datetime.now() - self._when) < DISCOVERY_CACHE:
-                devices = self._devices
-            if address and not (devices and any([v["ip"] == address for v in devices.values()])):
-                devices = {k: v async for k, v in self._discover(address)}
-            if not devices:
-                self._devices = devices = {k: v async for k, v in self._discover([str(net.broadcast_address) for net in self._networks], True)}
-                self._when = datetime.now()
-        return devices
+        async with self._context(address) as responses:
+            while True:
+                k, v = await asyncio.wait_for(responses.get(), DISCOVERY_TIMEOUT)
+                yield k, v
+                if v["ip"] == address:
+                    break
 
 @singleton.singleton(f"{DOMAIN}_discovery")
-async def get_discovery(hass: HomeAssistant):
-    return await Discovery(hass).init()
+async def _get_discovery(hass: HomeAssistant):
+    return await Discovery().init(hass)
 
 async def discover(hass: HomeAssistant, address: str | None = None):
-    return await (await get_discovery(hass)).discover(address)
+    return (await _get_discovery(hass)).discover(address)

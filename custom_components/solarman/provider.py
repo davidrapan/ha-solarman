@@ -82,11 +82,10 @@ class EndPointProvider:
             return IPv4Address(socket.gethostbyname(self.host))    
 
     async def discover(self):
-        if self.ip.is_private and (devices := await discover(self.hass, str(self.ip))):
-            if (device := devices.get((s := next(iter([k for k, v in devices.items() if v["ip"] == str(self.ip)]), None)))) is not None:
-                self.host = device["ip"]
-                self.mac = device["mac"]
-                self.serial = s
+        if self.ip.is_private and (devices := {k: v async for k, v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)}.items()):
+            self.serial, v = next(iter(devices))
+            self.host = v["ip"]
+            self.mac = v["mac"]
         return self
 
 @dataclass
