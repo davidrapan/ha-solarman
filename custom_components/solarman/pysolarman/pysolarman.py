@@ -109,7 +109,7 @@ class Solarman:
     def transport(self, value: str) -> None:
         self._transport = value
         if value == "tcp":
-            self._get_response = self._parse_adu_response
+            self._get_response = self._parse_adu_from_sol_response
             self._handle_frame = self._handle_protocol_frame
         else:
             self._get_response = self._parse_adu_from_tcp_response if not value.endswith("rtu") else self._parse_adu_from_rtu_response
@@ -262,8 +262,8 @@ class Solarman:
         finally:
             self._data_event.clear()
 
-    async def _parse_adu_response(self, code: int, address: int, **kwargs) -> list[int]:
-        async def _get_rtu_response(frame: bytes) -> bytes:
+    async def _parse_adu_from_sol_response(self, code: int, address: int, **kwargs) -> list[int]:
+        async def _get_sol_response(frame: bytes) -> bytes:
             request_frame = self._protocol_header(15 + len(frame),
                 PROTOCOL.CONTROL_CODE.REQUEST,
                 struct.pack("<H", self.sequence_number)
@@ -273,11 +273,11 @@ class Solarman:
                 + frame)
             return await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
         req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
-        res = await _get_rtu_response(req)
+        res = await _get_sol_response(req)
         if self.serial_bytes == PROTOCOL.PLACEHOLDER3:
             self.serial = res[7:11]
             _LOGGER.debug(f"[{self.host}] SERIAL_SET: {self.serial}")
-            res = await _get_rtu_response(req)
+            res = await _get_sol_response(req)
         if res[4] != self._get_response_code(PROTOCOL.CONTROL_CODE.REQUEST):
             raise FrameError("Invalid control code")
         if res[5] != self._sequence_number:
