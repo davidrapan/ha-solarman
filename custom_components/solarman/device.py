@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from .const import *
 from .common import *
 from .provider import *
-from .pysolarman.pysolarman import Solarman
+from .pysolarman import Solarman
 
 _LOGGER = getLogger(__name__)
 
