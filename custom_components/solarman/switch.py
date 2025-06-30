@@ -34,9 +34,9 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordin
 
 class SolarmanCloud(SolarmanEntity, SwitchEntity):
     def __init__(self, coordinator):
-        SolarmanEntity.__init__(self, coordinator, {"key": "logger_cloud_switch", "name": "Logger Cloud"})
+        SolarmanEntity.__init__(self, coordinator, {"key": "cloud_switch", "name": "Cloud"})
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_class = SwitchDeviceClass.SWITCH
-        self._attr_entity_category = EntityCategory.CONFIG
 
     @property
     def available(self):

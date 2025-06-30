@@ -33,8 +33,8 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordin
 
 class SolarmanRestart(SolarmanEntity, ButtonEntity):
     def __init__(self, coordinator):
-        SolarmanEntity.__init__(self, coordinator, {"key": "logger_restart_button", "name": "Logger Restart"})
-        self._attr_entity_category = EntityCategory.CONFIG
+        SolarmanEntity.__init__(self, coordinator, {"key": "restart_button", "name": "Restart"})
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
     def available(self) -> bool:
