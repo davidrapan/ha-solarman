@@ -39,7 +39,8 @@ OLD_ = { "name": "name", "serial": "inverter_serial", "sn": "serial", "sn": "sn"
 LOGGER_AUTH = BasicAuth("admin", "admin")
 LOGGER_SET = "hide_set_edit.html"
 LOGGER_CMD = "do_cmd.html"
-LOGGER_RESTART_URL = "success.html"
+LOGGER_SUCCESS = "success.html"
+LOGGER_RESTART = "restart.html"
 LOGGER_RESTART_DATA = FormData({"HF_PROCESS_CMD": "RESTART"})
 LOGGER_REGEX = compile("var server_[a|b].?=.?\"(.*)\";")
 

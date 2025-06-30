@@ -39,26 +39,34 @@ class SolarmanCloud(SolarmanEntity, SwitchEntity):
         self._attr_entity_category = EntityCategory.CONFIG
 
     @property
-    def available(self) -> bool:
+    def available(self):
         return self.coordinator.device.endpoint.info is not None
 
     @property
-    def is_on(self) -> bool | None:
+    def cloud_enabled(self):
         for i in LOGGER_REGEX.finditer(self.coordinator.device.endpoint.info):
             if ",5406.deviceaccess.host,10000,TCP" in i.group():
                 return True
         return False
 
+    @property
+    def is_on(self):
+        return self.cloud_enabled
+
     async def async_turn_on(self, **kwargs: Any):
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(True)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
         await self.coordinator.device.endpoint.load()
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART_URL}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+        if not self.cloud_enabled:
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(True)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await self.coordinator.device.endpoint.load()
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any):
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(False)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
         await self.coordinator.device.endpoint.load()
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART_URL}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+        if not self.cloud_enabled:
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(False)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await self.coordinator.device.endpoint.load()
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
         self.async_write_ha_state()
 
 class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):

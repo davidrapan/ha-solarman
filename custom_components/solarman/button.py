@@ -41,7 +41,8 @@ class SolarmanRestart(SolarmanEntity, ButtonEntity):
         return self.coordinator.device.endpoint.info is not None
 
     async def async_press(self):
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART_URL}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/restart.html"})
+        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART}", auth = LOGGER_AUTH)
+        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART}"})
 
 class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
     def __init__(self, coordinator, sensor):
