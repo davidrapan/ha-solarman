@@ -3,6 +3,7 @@ from __future__ import annotations
 import socket
 
 from typing import Any
+from aiohttp import BasicAuth
 from dataclasses import dataclass
 from propcache import cached_property
 from collections.abc import Awaitable, Callable
@@ -62,6 +63,7 @@ class EndPointProvider:
     config: ConfigurationProvider
     mac = ""
     serial = 0
+    info: str = None
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.config, attr)
@@ -81,12 +83,22 @@ class EndPointProvider:
         except AddressValueError:
             return IPv4Address(socket.gethostbyname(self.host))    
 
+    async def init(self):
+        await self.discover()
+        await self.load()
+        return self
+
     async def discover(self):
         if self.ip.is_private and (devices := {k: v async for k, v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)}.items()):
             self.serial, v = next(iter(devices))
             self.host = v["ip"]
             self.mac = v["mac"]
-        return self
+
+    async def load(self):
+        try:
+            self.info = await request(f"http://{self.host}/{LOGGER_SET}", auth = LOGGER_AUTH)
+        except:
+            pass
 
 @dataclass
 class ProfileProvider:

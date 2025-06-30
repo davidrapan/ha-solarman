@@ -4,20 +4,20 @@ from logging import getLogger
 
 from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorDeviceClass
 
 from .const import *
 from .common import *
 from .services import *
-from . import SolarmanConfigEntry
-from .entity import SolarmanEntity
+from .entity import SolarmanEntity, Coordinator
 
 _LOGGER = getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
     async_add_entities([SolarmanConnectionSensor(config_entry.runtime_data)])
@@ -25,7 +25,7 @@ async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry,
 
     return True
 
-async def async_unload_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator]) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True

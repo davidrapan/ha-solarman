@@ -11,6 +11,7 @@ import voluptuous as vol
 from functools import wraps
 from logging import getLogger
 from typing import Any, Iterable
+from aiohttp import ClientSession, ClientError, ContentTypeError
 
 from homeassistant.util import slugify as _slugify
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
@@ -43,6 +44,35 @@ def throttle(delay: float = 1):
             return await f(*args, **kwargs)
         return wrapper
     return decorator
+
+async def request(url: str, **kwargs: Any):
+    try:
+        async with ClientSession(trust_env = kwargs.get("trust_env", False)) as s:
+            method = s.post if kwargs.get("data") or kwargs.get("json") else s.get
+            async with method(url, **kwargs) as r:
+                match r.content_type:
+                    case "text/plain" | "text/html" | "text/xml":
+                        return await r.text()
+                    case "application/json":
+                        return await r.json()
+                    case _:
+                        raise ContentTypeError(r.request_info, r.history, status = r.status, message = "Attempt to decode unexpected mimetype", headers = r.headers)
+    except ClientError as e:
+        raise e
+
+def logger_set_data(enable: bool):
+    return {
+        "server_a": ",5406.deviceaccess.host,10000,TCP" if enable else ",,,TCP",
+        "cnmo_ip_a": "",
+        "cnmo_ds_a": "5406.deviceaccess.host" if enable else "",
+        "cnmo_pt_a": "10000" if enable else "",
+        "cnmo_tp_a": "TCP",
+        "server_b": ",,,TCP",
+        "cnmo_ip_b": "",
+        "cnmo_ds_b": "",
+        "cnmo_pt_b": "",
+        "cnmo_tp_b": "TCP"
+    }
 
 async def async_execute(x):
     return await asyncio.get_running_loop().run_in_executor(None, x)

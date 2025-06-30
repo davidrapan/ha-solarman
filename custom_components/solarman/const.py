@@ -1,4 +1,6 @@
+from re import compile
 from datetime import timedelta
+from aiohttp import BasicAuth, FormData
 
 DOMAIN = "solarman"
 
@@ -33,6 +35,13 @@ CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
 
 OLD_ = { "name": "name", "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
+
+LOGGER_AUTH = BasicAuth("admin", "admin")
+LOGGER_SET = "hide_set_edit.html"
+LOGGER_CMD = "do_cmd.html"
+LOGGER_RESTART_URL = "success.html"
+LOGGER_RESTART_DATA = FormData({"HF_PROCESS_CMD": "RESTART"})
+LOGGER_REGEX = compile("var server_[a|b].?=.?\"(.*)\";")
 
 SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"

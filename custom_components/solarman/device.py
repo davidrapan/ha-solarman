@@ -44,7 +44,7 @@ class Device():
 
     async def setup(self):
         try:
-            self.endpoint = await EndPointProvider(self.config).discover()
+            self.endpoint = await EndPointProvider(self.config).init()
             self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
             await self.profile.resolve(self.get)
