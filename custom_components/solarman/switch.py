@@ -45,9 +45,11 @@ class SolarmanCloud(SolarmanEntity, SwitchEntity):
     @property
     def cloud_enabled(self):
         for i in LOGGER_REGEX.finditer(self.coordinator.device.endpoint.info):
-            if ",5406.deviceaccess.host,10000,TCP" in i.group():
+            if i.group().endswith("5406.deviceaccess.host,10000,TCP"):
                 return True
-        return False
+            elif i.group().startswith(",,"):
+                return False
+        return None
 
     @property
     def is_on(self):
@@ -55,7 +57,7 @@ class SolarmanCloud(SolarmanEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any):
         await self.coordinator.device.endpoint.load()
-        if not self.cloud_enabled:
+        if self.cloud_enabled is False:
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(True)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
             await self.coordinator.device.endpoint.load()
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
@@ -63,7 +65,7 @@ class SolarmanCloud(SolarmanEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any):
         await self.coordinator.device.endpoint.load()
-        if not self.cloud_enabled:
+        if self.cloud_enabled is True:
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(False)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
             await self.coordinator.device.endpoint.load()
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
