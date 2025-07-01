@@ -315,6 +315,9 @@ parameters:
         rule: 2
         registers: [273, 272]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"

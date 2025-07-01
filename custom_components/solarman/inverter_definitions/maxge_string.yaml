@@ -67,16 +67,6 @@ parameters:
 
   - group: Production
     items:
-      - name: "Total Production"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        rule: 3
-        registers: [276, 275]
-        icon: "mdi:solar-power"
-        validation:
-          min: 0.1
-
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
@@ -86,6 +76,21 @@ parameters:
         rule: 1
         registers: [274, 273]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [276, 275]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
 
   - group: PV
     items:

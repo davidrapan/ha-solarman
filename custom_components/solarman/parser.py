@@ -119,7 +119,7 @@ class ParameterParser:
         if dev := rule.get("dev"):
             if value and (previous_value := self._previous_result.get(key)) is not None and abs(value - previous_value) > dev:
                 invalid |= 2
-            else:
+            elif not invalid:
                 self._previous_result[key] = value
 
         if invalid > 0 and (message := f"{key} validation failed, triggered by state: {value}{'' if previous_value is None else f' ({previous_value})'} with conditions: {rule}"):

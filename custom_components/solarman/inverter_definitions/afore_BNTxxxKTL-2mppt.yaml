@@ -309,6 +309,9 @@ parameters:
         rule: 1
         registers: [0x0011, 0x0010]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Today Production time"
         state_class: "measurement"

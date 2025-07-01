@@ -166,6 +166,9 @@ parameters:
         rule: 3
         registers: [0x3153,0x3154]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Today Energy Export"
         friendly_name: Today's Energy Export

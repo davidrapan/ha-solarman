@@ -540,6 +540,9 @@ parameters:
         rule: 1
         registers: [33035]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Monthly Production"
         class: "energy"
@@ -548,6 +551,9 @@ parameters:
         rule: 3
         registers: [33032, 33031]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Yearly Production"
         class: "energy"
@@ -556,6 +562,9 @@ parameters:
         rule: 3
         registers: [33038, 33037]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"

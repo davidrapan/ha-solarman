@@ -109,6 +109,9 @@ parameters:
         rule: 1
         registers: [3036]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Monthly Production"
         update_interval: 30

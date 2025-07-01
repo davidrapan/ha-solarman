@@ -636,6 +636,9 @@ parameters:
         rule: 3 # unsigned 32
         registers: [0x1028, 0x1027]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production" # aka "Total Energy" + "Decimals of total energy"
         class: "energy"
