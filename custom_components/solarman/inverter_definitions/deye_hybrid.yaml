@@ -2313,9 +2313,25 @@ parameters:
         rule: 1
         registers: [0x0146]
         lookup:
-          - key: 0x0000
+          - key: 0
             value: Disabled
           - bit: 0
             value: Enabled
           - bit: [0, 13]
             value: Generator
+
+      - name: AC Coupling
+        description: Couple inverters and batteries using AC lines
+        platform: "select"
+        rule: 1
+        registers: [0x0146]
+        lookup:
+          - bit: 0
+            mode: single
+            value: Disabled
+          - bit: 6
+            mode: single
+            value: Grid
+          - bit: 7
+            mode: single
+            value: Load
