@@ -1726,7 +1726,7 @@ parameters:
           - key: 0x00FF
             value: "Week"
           - bit: 0
-            mode: single
+            mode: "|"
             value: "Enabled"
 
       - name: "Program 1 Time"
@@ -2327,11 +2327,11 @@ parameters:
         registers: [0x0146]
         lookup:
           - bit: 0
-            mode: single
+            mode: "|"
             value: Disabled
           - bit: 6
-            mode: single
+            mode: "|"
             value: Grid
           - bit: 7
-            mode: single
+            mode: "|"
             value: Load

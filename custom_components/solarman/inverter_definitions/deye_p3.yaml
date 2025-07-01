@@ -892,7 +892,7 @@ parameters:
           - key: 0x00FF
             value: "Week"
           - bit: 0
-            mode: single
+            mode: "|"
             value: "Enabled"
 
       - name: Program 1 Time

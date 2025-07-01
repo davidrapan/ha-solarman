@@ -323,7 +323,7 @@ def lookup_value(value, dictionary):
     for o in dictionary:
         key = from_bit_index(o["bit"]) if "bit" in o else o["key"]
 
-        if o.get("mode") == "single" and value & key == key:
+        if o.get("mode") == "|" and value & key == key:
             key = value
     
         if "default" in o or key == "default":
