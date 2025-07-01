@@ -46,8 +46,7 @@ def _create_entity(coordinator, description, options):
 async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)])
-    async_add_entities(_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
+    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)] + [_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
 
     return True
 

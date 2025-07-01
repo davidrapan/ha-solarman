@@ -20,8 +20,7 @@ _PLATFORM = get_current_file_name(__name__)
 async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities([SolarmanConnectionSensor(config_entry.runtime_data)])
-    async_add_entities(SolarmanBinarySensorEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
+    async_add_entities([SolarmanConnectionSensor(config_entry.runtime_data)] + [SolarmanBinarySensorEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
 
     return True
 

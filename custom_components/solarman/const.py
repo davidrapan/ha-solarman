@@ -42,7 +42,7 @@ LOGGER_CMD = "do_cmd.html"
 LOGGER_SUCCESS = "success.html"
 LOGGER_RESTART = "restart.html"
 LOGGER_RESTART_DATA = FormData({"HF_PROCESS_CMD": "RESTART"})
-LOGGER_REGEX = compile("var server_[a|b].?=.?\"(.*)\";")
+LOGGER_REGEX = {"server": compile("var server_[a|b].?=.?\"(.*)\";"), "ap": compile("var apsta_mode.?=.?\"(.*)\";")}
 
 SUGGESTED_VALUE = "suggested_value"
 UPDATE_INTERVAL = "update_interval"

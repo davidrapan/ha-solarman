@@ -22,8 +22,7 @@ _PLATFORM = get_current_file_name(__name__)
 async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities([SolarmanCloud(config_entry.runtime_data)])
-    async_add_entities(SolarmanSwitchEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
+    async_add_entities([SolarmanCloud(config_entry.runtime_data), SolarmanAccessPoint(config_entry.runtime_data)] + [SolarmanSwitchEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
 
     return True
 
@@ -32,32 +31,34 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordin
 
     return True
 
-class SolarmanCloud(SolarmanEntity, SwitchEntity):
-    def __init__(self, coordinator):
-        SolarmanEntity.__init__(self, coordinator, {"key": "cloud_switch", "name": "Cloud"})
+class SolarmanLogger(SolarmanEntity, SwitchEntity):
+    def __init__(self, coordinator, sensor: dict):
+        SolarmanEntity.__init__(self, coordinator, sensor)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_class = SwitchDeviceClass.SWITCH
 
     @property
     def available(self):
-        return self.coordinator.device.endpoint.info is not None
+        return self.coordinator.device.endpoint.info is not None and self.is_on is not None
 
-    @property
-    def cloud_enabled(self):
-        for i in LOGGER_REGEX.finditer(self.coordinator.device.endpoint.info):
-            if i.group().endswith("5406.deviceaccess.host,10000,TCP"):
-                return True
-            elif i.group().startswith(",,"):
-                return False
-        return None
+class SolarmanCloud(SolarmanLogger):
+    def __init__(self, coordinator):
+        super().__init__(coordinator, {"key": "cloud_switch", "name": "Cloud"})
+        self._attr_icon = "mdi:cloud-upload-outline"
 
     @property
     def is_on(self):
-        return self.cloud_enabled
+        for i in LOGGER_REGEX["server"].finditer(self.coordinator.device.endpoint.info):
+            match i.group(1):
+                case c if c.endswith("5406.deviceaccess.host,10000,TCP"):
+                    return True
+                case c if c.startswith(",,"):
+                    return False
+        return None
 
     async def async_turn_on(self, **kwargs: Any):
         await self.coordinator.device.endpoint.load()
-        if self.cloud_enabled is False:
+        if self.is_on is False:
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(True)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
             await self.coordinator.device.endpoint.load()
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
@@ -65,8 +66,39 @@ class SolarmanCloud(SolarmanEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any):
         await self.coordinator.device.endpoint.load()
-        if self.cloud_enabled is True:
+        if self.is_on is True:
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(logger_set_data(False)), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await self.coordinator.device.endpoint.load()
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+        self.async_write_ha_state()
+
+class SolarmanAccessPoint(SolarmanLogger):
+    def __init__(self, coordinator):
+        super().__init__(coordinator, {"key": "access_point_switch", "name": "Access Point"})
+        self._attr_icon = "mdi:access-point"
+
+    @property
+    def is_on(self):
+        for i in LOGGER_REGEX["ap"].finditer(self.coordinator.device.endpoint.info):
+            match i.group(1):
+                case "0":
+                    return True
+                case "1":
+                    return False
+        return None
+
+    async def async_turn_on(self, **kwargs: Any):
+        await self.coordinator.device.endpoint.load()
+        if self.is_on is False:
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData({"apsta_mode": 0, "mode_sel": 0}), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await self.coordinator.device.endpoint.load()
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+        self.async_write_ha_state()
+
+    async def async_turn_off(self, **kwargs: Any):
+        await self.coordinator.device.endpoint.load()
+        if self.is_on is True:
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData({"apsta_mode": 1, "mode_sel": 1}), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
             await self.coordinator.device.endpoint.load()
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
         self.async_write_ha_state()
