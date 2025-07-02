@@ -34,6 +34,7 @@ class SolarmanRestart(SolarmanEntity, ButtonEntity):
     def __init__(self, coordinator):
         SolarmanEntity.__init__(self, coordinator, {"key": "restart_button", "name": "Restart"})
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_icon = "mdi:restart"
 
     @property
     def available(self) -> bool:
