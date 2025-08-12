@@ -60,12 +60,12 @@ async def request(url: str, **kwargs: Any):
     except ClientError as e:
         raise e
 
-def logger_set_data(enable: bool):
+def logger_set_data(enable: bool, port: int):
     return {
-        "server_a": ",5406.deviceaccess.host,10000,TCP" if enable else ",,,TCP",
+        "server_a": f",5406.deviceaccess.host,{port},TCP" if enable else ",,,TCP",
         "cnmo_ip_a": "",
         "cnmo_ds_a": "5406.deviceaccess.host" if enable else "",
-        "cnmo_pt_a": "10000" if enable else "",
+        "cnmo_pt_a": str(port) if enable else "",
         "cnmo_tp_a": "TCP",
         "server_b": ",,,TCP",
         "cnmo_ip_b": "",
