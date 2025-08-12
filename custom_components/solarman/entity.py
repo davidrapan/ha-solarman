@@ -101,7 +101,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
     def _friendly_name_internal(self) -> str | None:
         name = self.name if self.name is not UNDEFINED else None
-        if self.platform and (name_translation_key := self._name_translation_key) and (n := self.platform.platform_translations.get(name_translation_key)):
+        if self.platform_data and (name_translation_key := self._name_translation_key) and (n := self.platform_data.platform_translations.get(name_translation_key)):
             name = self._substitute_name_placeholders(n)
         elif self._attr_friendly_name:
             name = self._attr_friendly_name
