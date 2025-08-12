@@ -155,8 +155,8 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                         self._states.pop(0)
                     self._attr_extra_state_attributes["states"] = self._states
                     self._temp = [(power, soc, tb)]
-                    if (srtd := sorted(self._states)[5:-5] if len(self._states) > 10 else sorted(self._states)):
-                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits))
+                    if (srtd := sorted(self._states)[5:-5] if len(self._states) > 10 else None):
+                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits) if srtd else None)
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
