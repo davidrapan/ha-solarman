@@ -17,6 +17,7 @@ jobs:
     - name: Zip
       run: |
           cd ${{ github.workspace }}/custom_components/$name
+          sed -i "s/0\.0\.0/$(echo '${{ github.event.release.name }}' | cut -c 2-)/g" manifest.json
           cp ../../license ./
           zip -r ../$name.zip . -x "*.git*" "*.git/*" "*.github/*"
     - name: Release
