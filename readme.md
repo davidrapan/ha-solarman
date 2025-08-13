@@ -19,7 +19,7 @@
 > [!IMPORTANT]  
 > - Made for [🏡 Home Assistant](https://www.home-assistant.io/)  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> - Implemented using asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and even supports Ethernet Loggers
+> - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Ethernet Loggers
 
 > [!NOTE]  
 > - It's still 🚧 work in progress  but currently very 🐎 stable 😉  
