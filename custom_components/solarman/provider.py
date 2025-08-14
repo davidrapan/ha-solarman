@@ -108,7 +108,6 @@ class EndPointProvider:
 class ProfileProvider:
     config: ConfigurationProvider
     endpoint: EndPointProvider
-    info: dict[str, str] | None = None
     parser: ParameterParser | None = None
 
     def __getattr__(self, attr: str):
@@ -122,7 +121,11 @@ class ProfileProvider:
     def parameters(self):
         return {PARAM_[k]: int(self._additional_options.get(k, DEFAULT_[k])) for k in PARAM_}
 
-    async def resolve(self, request: Callable[[int, dict], Awaitable[dict]] | None = None):
-        if (f := await lookup_profile(request, self.parameters) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)) and (p := await yaml_open(self.config.directory + n)):
-            self.info = (unwrap(p["info"], "model", self.parameters[PARAM_[CONF_MOD]]) if "info" in p else {}) | {"filename": f}
-            self.parser = ParameterParser(p, self.parameters)
+    @cached_property
+    def info(self):
+        return self.parser.info
+
+    async def init(self, request: Callable[[int, dict], Awaitable[dict]] | None = None):
+        if (f := await lookup_profile(request, self.parameters) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)):
+            self.parser = await ParameterParser().init(self.config.directory, n, self.parameters)
+        return self

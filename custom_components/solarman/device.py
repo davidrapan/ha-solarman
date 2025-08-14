@@ -45,9 +45,8 @@ class Device():
     async def setup(self):
         try:
             self.endpoint = await EndPointProvider(self.config).init()
-            self.profile = ProfileProvider(self.config, self.endpoint)
             self.modbus = Solarman(*self.endpoint.connection)
-            await self.profile.resolve(self.get)
+            self.profile = await ProfileProvider(self.config, self.endpoint).init(self.get)
         except Exception as e:
             raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {strepr(e)}"}") from e
         else:
