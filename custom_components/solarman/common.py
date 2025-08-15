@@ -60,20 +60,6 @@ async def request(url: str, **kwargs: Any):
     except ClientError as e:
         raise e
 
-def logger_set_data(enable: bool, port: int):
-    return {
-        "server_a": f",5406.deviceaccess.host,{port},TCP" if enable else ",,,TCP",
-        "cnmo_ip_a": "",
-        "cnmo_ds_a": "5406.deviceaccess.host" if enable else "",
-        "cnmo_pt_a": str(port) if enable else "",
-        "cnmo_tp_a": "TCP",
-        "server_b": ",,,TCP",
-        "cnmo_ip_b": "",
-        "cnmo_ds_b": "",
-        "cnmo_pt_b": "",
-        "cnmo_tp_b": "TCP"
-    }
-
 async def async_execute(x):
     return await asyncio.get_running_loop().run_in_executor(None, x)
 

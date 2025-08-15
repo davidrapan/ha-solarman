@@ -52,19 +52,19 @@ class SolarmanAccessPoint(SolarmanEntity, SwitchEntity):
                     return False
         return None
 
-    async def async_turn_(self, data: dict):
+    async def async_turn_(self, mode: int):
         await self.coordinator.device.endpoint.load()
         if self.is_on is False:
-            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData(data), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData({"apsta_mode": mode, "mode_sel": mode}), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
             await self.coordinator.device.endpoint.load()
             await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
-        await self.async_turn_({"apsta_mode": 0, "mode_sel": 0})
+        await self.async_turn_(0)
 
     async def async_turn_off(self, **kwargs: Any):
-        await self.async_turn_({"apsta_mode": 1, "mode_sel": 1})
+        await self.async_turn_(1)
 
 class SolarmanSwitchEntity(SolarmanWritableEntity, SwitchEntity):
     def __init__(self, coordinator, sensor):
