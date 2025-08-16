@@ -9,6 +9,7 @@ import aiofiles
 import voluptuous as vol
 
 from functools import wraps
+from aiohttp import FormData
 from logging import getLogger
 from typing import Any, Iterable
 from aiohttp import ClientSession, ClientError, ContentTypeError
@@ -45,7 +46,7 @@ def throttle(delay: float = 1):
         return wrapper
     return decorator
 
-async def request(url: str, **kwargs: Any):
+async def _request(url: str, **kwargs: Any):
     try:
         async with ClientSession(trust_env = kwargs.get("trust_env", False)) as s:
             method = s.post if kwargs.get("data") or kwargs.get("json") else s.get
@@ -59,6 +60,9 @@ async def request(url: str, **kwargs: Any):
                         raise ContentTypeError(r.request_info, r.history, status = r.status, message = "Attempt to decode unexpected mimetype", headers = r.headers)
     except ClientError as e:
         raise e
+
+async def request(domain: str, path: str, referer: str = "", data: FormData | dict = None):
+    return await _request(f"http://{domain}/{path}", auth = LOGGER_AUTH, headers = {"Referer": f"http://{domain}/{referer}"}, data = (data if isinstance(data, FormData) else FormData(data)) if data else None)
 
 async def async_execute(x):
     return await asyncio.get_running_loop().run_in_executor(None, x)

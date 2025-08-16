@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from aiohttp import FormData
 from logging import getLogger
 
 from homeassistant.core import HomeAssistant
@@ -41,8 +40,8 @@ class SolarmanRestart(SolarmanEntity, ButtonEntity):
         return self.coordinator.device.endpoint.info is not None
 
     async def async_press(self):
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART}", auth = LOGGER_AUTH)
-        await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_RESTART}"})
+        await request(self.coordinator.device.config.host, LOGGER_RESTART)
+        await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_RESTART, LOGGER_RESTART_DATA)
 
 class SolarmanButtonEntity(SolarmanWritableEntity, ButtonEntity):
     def __init__(self, coordinator, sensor):

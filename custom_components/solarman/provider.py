@@ -3,7 +3,6 @@ from __future__ import annotations
 import socket
 
 from typing import Any
-from aiohttp import FormData
 from dataclasses import dataclass
 from propcache import cached_property
 from collections.abc import Awaitable, Callable
@@ -93,14 +92,23 @@ class EndPointProvider:
             self.host = v["ip"]
             self.mac = v["mac"]
             try:
-                self.info = await request(f"http://{self.host}/{LOGGER_SET}", auth = LOGGER_AUTH)
-                await request(f"http://{self.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData({"net_setting_pro": "TCP" if "tcp" in self.transport else "UDP", "net_setting_cs": "SERVER" if "tcp" in self.transport else "", "net_setting_pro_sel": "TCPSERVER" if "tcp" in self.transport else "UDP", "net_setting_port": self.port, "net_setting_ip": "0.0.0.0", "net_setting_to": "300"}), headers = {"Referer": f"http://{self.host}/{LOGGER_SET}"})
+                self.info = await request(self.host, LOGGER_SET)
+                await request(self.host, LOGGER_CMD, LOGGER_SET,
+                    {
+                        "net_setting_pro": "TCP" if "tcp" in self.transport else "UDP",
+                        "net_setting_cs": "SERVER" if "tcp" in self.transport else "",
+                        "net_setting_pro_sel": "TCPSERVER" if "tcp" in self.transport else "UDP",
+                        "net_setting_port": self.port,
+                        "net_setting_ip": "0.0.0.0",
+                        "net_setting_to": "300"
+                    }
+                )
             except:
                 pass
 
     async def load(self):
         try:
-            self.info = await request(f"http://{self.host}/{LOGGER_SET}", auth = LOGGER_AUTH)
+            self.info = await request(self.host, LOGGER_SET)
         except:
             pass
 

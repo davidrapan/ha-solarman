@@ -55,12 +55,12 @@ class SolarmanCloud(SolarmanEntity, SelectEntity):
     async def async_select_option(self, option: str):
         await self.coordinator.device.endpoint.load()
         if (enabled := option != "Disabled") and (port := 10443 if option == "HTTPS" else 10000):
-            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"}, data = FormData( 
+            await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET,
                 {
                     "server_a": f"35.157.42.77,5406.deviceaccess.host,{port},TCP" if enabled else ",,,TCP",
                     "cnmo_ip_a": "",
                     "cnmo_ds_a": "5406.deviceaccess.host" if enabled else "",
-                    "cnmo_pt_a": str(port) if enabled else "",
+                    "cnmo_pt_a": port if enabled else "",
                     "cnmo_tp_a": "TCP",
                     "server_b": ",,,TCP",
                     "cnmo_ip_b": "",
@@ -68,9 +68,9 @@ class SolarmanCloud(SolarmanEntity, SelectEntity):
                     "cnmo_pt_b": "",
                     "cnmo_tp_b": "TCP"
                 }
-            ))
+            )
             await self.coordinator.device.endpoint.load()
-            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
         self.async_write_ha_state()
 
 class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):

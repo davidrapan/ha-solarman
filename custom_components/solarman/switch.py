@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 from logging import getLogger
-from aiohttp import BasicAuth, FormData
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
@@ -55,9 +54,9 @@ class SolarmanAccessPoint(SolarmanEntity, SwitchEntity):
     async def async_turn_(self, mode: int):
         await self.coordinator.device.endpoint.load()
         if self.is_on is False:
-            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}", auth = LOGGER_AUTH, data = FormData({"apsta_mode": mode, "mode_sel": mode}), headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_SET}"})
+            await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET, {"apsta_mode": mode, "mode_sel": mode})
             await self.coordinator.device.endpoint.load()
-            await request(f"http://{self.coordinator.device.config.host}/{LOGGER_SUCCESS}", auth = LOGGER_AUTH, data = LOGGER_RESTART_DATA, headers = {"Referer": f"http://{self.coordinator.device.config.host}/{LOGGER_CMD}"})
+            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
