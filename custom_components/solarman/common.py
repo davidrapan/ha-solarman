@@ -130,7 +130,6 @@ async def lookup_profile(request, parameters):
                     parameters[PARAM_[CONF_PACK]] = p if parameters[PARAM_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, parameters[PARAM_[CONF_PACK]])
             except:
                 _LOGGER.debug(f"Unable to read Number of Battery packs. Continuing with the configured value", exc_info = True)
-                pass
             return f
         except StopIteration:
             raise Exception(f"Unknown Device Type: {device_type}")

@@ -3,6 +3,7 @@ from __future__ import annotations
 import socket
 
 from typing import Any
+from logging import getLogger
 from dataclasses import dataclass
 from propcache import cached_property
 from collections.abc import Awaitable, Callable
@@ -15,6 +16,8 @@ from .const import *
 from .common import *
 from .discovery import discover
 from .parser import ParameterParser
+
+_LOGGER = getLogger(__name__)
 
 @dataclass
 class ConfigurationProvider:
@@ -103,14 +106,14 @@ class EndPointProvider:
                         "net_setting_to": "300"
                     }
                 )
-            except:
-                pass
+            except Exception as e:
+                _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
 
     async def load(self):
         try:
             self.info = await request(self.host, LOGGER_SET)
-        except:
-            pass
+        except Exception as e:
+            _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
 
 @dataclass
 class ProfileProvider:
