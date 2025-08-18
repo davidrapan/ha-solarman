@@ -12,6 +12,32 @@ default:
   digits: 6
 
 parameters:
+  - group: Info
+    update_interval: 3600
+    items:
+      - name: "Device Serial Number"
+        rule: 5
+        registers: [0x1234, 0x1235, 0x1236, 0x1237, 0x1238, 0x1239]
+        icon: "mdi:barcode"
+
+  - group: Device
+    items:
+      - name: "Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x16A6]
+
+      - name: "Environment Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x16A7]
+
   - group: PV
     items:
       - name: "PV1 Voltage"
@@ -78,6 +104,9 @@ parameters:
         rule: 3
         registers: [0x3153, 0x3154]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -87,6 +116,10 @@ parameters:
         rule: 3
         registers: [0x3165, 0x3166]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
 
   - group: Grid
     items:
@@ -96,7 +129,6 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x16A1]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Voltage"
         l: 1
@@ -106,7 +138,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3110]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Voltage"
         l: 2
@@ -116,7 +147,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3113]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L3 Voltage"
         l: 3
@@ -126,7 +156,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3116]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Current"
         l: 1
@@ -136,7 +165,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3111]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Current"
         l: 2
@@ -146,7 +174,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3114]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L3 Current"
         l: 3
@@ -156,7 +183,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3117]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
         class: "frequency"
@@ -171,8 +197,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         rule: 2
-        registers: [0x2285, 0x2284] # [0x2282, 0x2283, 0x2284, 0x2285, 0x2286, 0x2287, 0x2288, 0x2289, 0x228A, 0x228B]
-        icon: "mdi:transmission-tower"
+        registers: [0x2285, 0x2284]  # [0x2282, 0x2283, 0x2284, 0x2285, 0x2286, 0x2287, 0x2288, 0x2289, 0x228A, 0x228B]
 
       - name: "Today Energy Import"
         class: "energy"
@@ -221,21 +246,6 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x316B,
-            0x316C,
-            0x316F,
-            0x3170,
-            0x3153,
-            0x3154,
-            0x3155,
-            0x3156,
-            0x316D,
-            0x316E,
-            0x3157,
-            0x3158,
-          ]
         uint: enforce
         sensors:
           - registers: [0x316B, 0x316C]
@@ -257,21 +267,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x317D,
-            0x317E,
-            0x3181,
-            0x3182,
-            0x3165,
-            0x3166,
-            0x3167,
-            0x3168,
-            0x3181,
-            0x3182,
-            0x3169,
-            0x3170,
-          ]
         uint: enforce
         sensors:
           - registers: [0x317D, 0x317E]
@@ -423,25 +418,3 @@ parameters:
         scale: 0.001
         rule: 3
         registers: [0x3169, 0x3170]
-
-      - name: "Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x16A6]
-
-      - name: "Environment Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 2
-        registers: [0x16A7]
-
-  - group: Info
-    items:
-      - name: "Device Serial Number"
-        rule: 5
-        registers: [0x1234, 0x1235, 0x1236, 0x1237, 0x1238, 0x1239]

@@ -218,7 +218,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [4067, 4068, 10022, 4081, 4082]
         uint: enforce
         sensors:
           - signed:
@@ -240,6 +239,9 @@ parameters:
         rule: 1
         registers: [10002]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -251,6 +253,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Load Power"
         class: "power"
@@ -314,7 +318,6 @@ parameters:
   #        uom: "kWh"
   #        rule: 1
   #        digits: 1
-  #        registers: [10036, 10002, 10026, 10045, 10040, ???]
   #        uint: enforce
   #        sensors:
   #          - scale: 0.1
@@ -342,20 +345,6 @@ parameters:
   #        uom: "kWh"
   #        rule: 3
   #        digits: 1
-  #        registers:
-  #          [
-  #            10037,
-  #            10038,
-  #            10003,
-  #            10004,
-  #            10027,
-  #            10028,
-  #            10046,
-  #            10047,
-  #            10041,
-  #            10042,
-  #            ???,
-  #          ]
   #        uint: enforce
   #        sensors:
   #          - scale: 0.1
@@ -491,8 +480,7 @@ parameters:
           - key: 0x4001
             value: "Emergency charging operation"
           - key: 4864
-            value: "Off"
-          - key: "default"
+            default:
             value: "Off"
 
       - name: "Temperature"
@@ -503,20 +491,12 @@ parameters:
         rule: 2
         offset: 0
         registers: [4058]
-        icon: "mdi:thermometer"
 
-      # Device - Power On/Off (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
       - name: ""
         platform: binary_sensor
         device_class: running
         rule: 1
         registers: [4056]
-
-      # Device - On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
-      - name: ""
-        platform: switch
-        rule: 1
-        registers: [20030]
 
   - group: Alarm
     items:
@@ -530,7 +510,13 @@ parameters:
             value: "No Alert"
 
   - group: Settings
+    update_interval: 300
     items:
+      - name: ""
+        platform: switch
+        rule: 1
+        registers: [20030]
+
       - name: "Battery Type"
         attribute:
         rule: 2

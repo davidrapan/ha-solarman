@@ -8,7 +8,7 @@
 
 info:
   manufacturer: Deye
-  model: String Inverter
+  model: G0*
 
 default:
   update_interval: 5
@@ -119,6 +119,9 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x0010, 0x0011]
+        validation:
+          min: 0
+          max: 50000
 
       - name: "Device MPPTs"
         attribute:
@@ -165,7 +168,7 @@ parameters:
         platform: switch
         update_interval: 30
         rule: 1
-        registers: [0x002b]
+        registers: [0x002B]
         value:
           on: 0x0001
           off: 0x0002
@@ -208,8 +211,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       - name: "Device Fault"
         class: "enum"
@@ -235,8 +238,8 @@ parameters:
             value: "AC current leakage failure"
           - bit: 63
             value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: PV
     items:
@@ -250,7 +253,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006D, 0x006E, 0x006F, 0x0070]
         sensors:
           - registers: [0x006D]
             multiply:
@@ -258,6 +260,16 @@ parameters:
           - registers: [0x006F]
             multiply:
               registers: [0x0070]
+          - registers: [0x0071]
+            multiply:
+              registers: [0x0072]
+          - registers: [0x0073]
+            multiply:
+              registers: [0x0074]
+        validation:
+          min: 0
+          max: 50000
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       - name: PV1 Power
@@ -269,7 +281,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006D, 0x006E]
         sensors:
           - registers: [0x006D]
             multiply:
@@ -307,7 +318,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006F, 0x0070]
         sensors:
           - registers: [0x006F]
             multiply:
@@ -336,6 +346,80 @@ parameters:
         registers: [0x0070]
         icon: "mdi:solar-power-variant"
 
+      - name: PV3 Power
+        alt: DC3 Power
+        mppt: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0071]
+            multiply:
+              registers: [0x0072]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Voltage"
+        alt: DC3 Voltage
+        mppt: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0071]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV3 Current"
+        alt: DC3 Current
+        mppt: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0072]
+        icon: "mdi:solar-power-variant"
+
+      - name: PV4 Power
+        alt: DC4 Power
+        mppt: 4
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0073]
+            multiply:
+              registers: [0x0074]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Voltage"
+        alt: DC4 Voltage
+        mppt: 4
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0073]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV4 Current"
+        alt: DC4 Current
+        mppt: 4
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0074]
+        icon: "mdi:solar-power-variant"
+
   - group: Meter
     update_interval: 30
     items:
@@ -348,6 +432,9 @@ parameters:
         rule: 1
         registers: [0x003C]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         persistent:
@@ -360,6 +447,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -437,7 +526,6 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers: [0x00D0, 0x003C, 0x00CD, 0x00C8]
         uint: enforce
         sensors:
           - registers: [0x00D0]
@@ -456,8 +544,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [0x00D1, 0x00D2, 0x003F, 0x0040, 0x00CE, 0x00CF, 0x00C9, 0x00CA]
         uint: enforce
         sensors:
           - registers: [0x00D1, 0x00D2]
@@ -601,7 +687,6 @@ parameters:
         rule: 1
         digits: 3
         scale: 0.1
-        registers: [0x006D, 0x006E, 0x006F, 0x0070, 0x0056, 0x0057]
         uint: enforce
         sensors:
           - registers: [0x006D]

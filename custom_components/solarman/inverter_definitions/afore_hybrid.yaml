@@ -309,7 +309,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x022A, 0x0229, 0x07D8, 0x020B, 0x020A]
         uint: enforce
         sensors:
           - registers: [0x022A, 0x0229]
@@ -659,6 +658,9 @@ parameters:
         rule: 1
         registers: [0x03EF, 0x03EE]
         icon: mdi:solar-power
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -670,6 +672,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Total Production B"
         class: "energy"
@@ -681,6 +685,8 @@ parameters:
         icon: mdi:solar-power
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Total Energy Export"
         class: "energy"
@@ -724,7 +730,6 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers: [0x03EB, 0x03EF, 0x03EE, 0x07DA, 0x03EA, 0x03EC, 0x07D9]
         uint: enforce
         sensors:
           - registers: [0x03EB]
@@ -746,21 +751,6 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x03FD,
-            0x03FC,
-            0x0403,
-            0x0402,
-            0x07DE,
-            0x07DD,
-            0x03FB,
-            0x03FA,
-            0x03FF,
-            0x03FE,
-            0x07DC,
-            0x07DB,
-          ]
         uint: enforce
         sensors:
           - registers: [0x03FD, 0x03FC]

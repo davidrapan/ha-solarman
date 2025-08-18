@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-import logging
+from logging import getLogger
 
-from typing import Any
-
-from homeassistant.util import slugify
 from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
-from homeassistant.components.sensor import RestoreSensor, SensorEntity, SensorDeviceClass
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.components.sensor import RestoreSensor, SensorEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
 from .common import *
 from .services import *
-from .entity import SolarmanConfigEntry, create_entity, SolarmanEntity
+from .entity import SolarmanEntity, Coordinator
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
@@ -45,21 +43,14 @@ def _create_entity(coordinator, description, options):
 
     return SolarmanSensor(coordinator, description)
 
-async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator = config_entry.runtime_data
-    descriptions = coordinator.device.profile.parser.get_entity_descriptions(_PLATFORM)
-
-    _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
-
-    async_add_entities(create_entity(lambda x: _create_entity(coordinator, x, config_entry.options), d) for d in descriptions)
-
-    async_add_entities([create_entity(lambda _: SolarmanIntervalSensor(coordinator), None)])
+    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)] + [_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
 
     return True
 
-async def async_unload_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator]) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
@@ -77,10 +68,11 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         self._attr_native_unit_of_measurement = "s"
         self._attr_state_class = "duration"
         self._attr_icon = "mdi:update"
+        self._attr_native_value = 0
 
     @property
     def available(self) -> bool:
-        return self._attr_native_value > 0
+        return self._attr_native_value is not None
 
     def update(self):
         self.set_state(self.coordinator.device.state.updated_interval.total_seconds())
@@ -93,25 +85,24 @@ class SolarmanSensor(SolarmanSensorEntity):
 class SolarmanNestedSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
-        parent_device_info = self.coordinator.device.device_info.get(self.coordinator.device.config.serial)
-        device_serial_number, _ = self.coordinator.data[slugify(' '.join(filter(None, (sensor["group"], "serial", "number", "sensor"))))]
-        if not device_serial_number in self.coordinator.device.device_info:
-            self.coordinator.device.device_info[device_serial_number] = build_device_info(str(device_serial_number), None, None, parent_device_info["name"], None, None)
-            self.coordinator.device.device_info[device_serial_number]["via_device"] = (DOMAIN, str(self.coordinator.device.config.serial))
-            self.coordinator.device.device_info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
-            self.coordinator.device.device_info[device_serial_number]["model"] = None
-        self._attr_device_info = self.coordinator.device.device_info[device_serial_number]
+        parent_device_info = self.coordinator.device.info.get(self.coordinator.config_entry.entry_id)
+        device_serial_number, _ = self.coordinator.data[slugify(sensor["group"], "serial", "number", "sensor")]
+        if not device_serial_number in self.coordinator.device.info:
+            self.coordinator.device.info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
+            self.coordinator.device.info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
+            self.coordinator.device.info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
+            self.coordinator.device.info[device_serial_number]["model"] = None
+        self._attr_device_info = self.coordinator.device.info[device_serial_number]
         self._attr_name.replace(f"{sensor["group"]} ", '')
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-
-        if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
+        if last_sensor_data := await self.async_get_last_sensor_data():
             self._attr_native_value = last_sensor_data.native_value
 
     def set_state(self, state, value = None) -> bool:
-        if self._sensor_ensure_increasing and self._attr_native_value and self._attr_native_value > state > 0:
+        if self._sensor_ensure_increasing and self._attr_native_value is not None and state is not None and self._attr_native_value > state > 0:
             return False
         return super().set_state(state, value)
 
@@ -164,8 +155,8 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                         self._states.pop(0)
                     self._attr_extra_state_attributes["states"] = self._states
                     self._temp = [(power, soc, tb)]
-                    if (srtd := sorted(self._states)):
-                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits))
+                    if (srtd := sorted(self._states)[5:-5] if len(self._states) > 10 else None):
+                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits) if srtd else None)
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):

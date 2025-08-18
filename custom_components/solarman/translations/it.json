@@ -1,11 +1,14 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Questo dispositivo è già configurato"
+      "already_configured": "Questo dispositivo è già configurato",
+      "already_configured_device": "Questo dispositivo è già configurato",
+      "already_in_progress": "Il flusso di configurazione è già in corso"
     },
     "error": {
       "cannot_connect": "Impossibile connettersi",
       "invalid_host": "Nome o Indirizzo IP forniti non sono validi",
+      "timeout_connect": "Timeout durante la creazione della connessione",
       "unknown": "Errore"
     },
     "step": {
@@ -13,23 +16,22 @@
         "title": "Configurazione della connessione inverter",
         "data": {
           "name": "Nome del dispositivo",
-          "serial": "Numero di serie",
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
+          "transport": "Protocollo di trasporto",
           "lookup_file": "Profilo"
         },
         "data_description": {
           "name": "Questo valore sarà il prefisso di tutte le entità (scegli il nome che più ritieni adatto)",
-          "serial": "Numero seriale del logger (da interfaccia web)",
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
-          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "port": "La porta (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"
         },
         "sections": {
           "additional_options": {
             "name": "Opzioni aggiuntive",
             "data": {
-              "mod": "Modificatore di scala",
+              "mod": "Modificatore",
               "mppt": "Numero di MPPT",
               "phase": "Numero di fasi",
               "pack": "Numero di pacchi batteria",
@@ -46,6 +48,7 @@
     "error": {
       "cannot_connect": "Impossibile connettersi",
       "invalid_host": "Nome o Indirizzo IP forniti non sono validi",
+      "timeout_connect": "Timeout durante la creazione della connessione",
       "unknown": "Errore"
     },
     "step": {
@@ -54,18 +57,19 @@
         "data": {
           "host": "Inverter (nome di dominio o indirizzo IP)",
           "port": "Porta (solitamente 8899)",
+          "transport": "Protocollo di trasporto",
           "lookup_file": "Profilo"
         },
         "data_description": {
           "host": "Il nome host o l'indirizzo IP del dispositivo a cui connettersi",
-          "port": "La porta TCP (8899) del dispositivo a cui connettersi",
+          "port": "La porta (8899) del dispositivo a cui connettersi",
           "lookup_file": "File YAML contenente la definizione Inverter"
         },
         "sections": {
           "additional_options": {
             "name": "Opzioni aggiuntive",
             "data": {
-              "mod": "Modificatore di scala",
+              "mod": "Modificatore",
               "mppt": "Numero di MPPT",
               "phase": "Numero di fasi",
               "pack": "Numero di pacchi batteria",
@@ -76,6 +80,16 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

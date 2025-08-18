@@ -1,11 +1,14 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Zařízení je již nakonfigurováno"
+      "already_configured": "Zařízení je již nakonfigurováno",
+      "already_configured_device": "Zařízení je již nakonfigurováno",
+      "already_in_progress": "konfigurace již probíhá"
     },
     "error": {
       "cannot_connect": "Nepodařilo se připojit",
       "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "timeout_connect": "Vypršel časový limit navazování spojení",
       "unknown": "Neočekávaná chyba"
     },
     "step": {
@@ -13,23 +16,22 @@
         "title": "Konfigurace měniče",
         "data": {
           "name": "Název",
-          "serial": "Sériové číslo",
           "host": "Hostitel nebo IP adresa",
           "port": "Port",
+          "transport": "Transportní protokol",
           "lookup_file": "Profil"
         },
         "data_description": {
           "name": "Tento název bude mít předponu u všech senzorů (změňte, jak chcete)",
-          "serial": "Sériové číslo zařízení (z webového rozhraní)",
           "host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit",
-          "port": "TCP port (8899) zařízení, ke kterému se chcete připojit",
+          "port": "Port (8899) zařízení, ke kterému se chcete připojit",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče"
         },
         "sections": {
           "additional_options": {
             "name": "Další možnosti",
             "data": {
-              "mod": "Modifikátor měřítka",
+              "mod": "Modifikátor",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
               "pack": "Počet bateriových sad",
@@ -46,6 +48,7 @@
     "error": {
       "cannot_connect": "Nepodařilo se připojit",
       "invalid_host": "Neplatný název hostitele nebo IP adresa",
+      "timeout_connect": "Vypršel časový limit navazování spojení",
       "unknown": "Neočekávaná chyba"
     },
     "step": {
@@ -54,18 +57,19 @@
         "data": {
           "host": "Hostitel nebo IP adresa",
           "port": "Port",
+          "transport": "Transportní protokol",
           "lookup_file": "Profil"
         },
         "data_description": {
           "host": "Název hostitele nebo IP adresa zařízení, ke kterému se chcete připojit",
-          "port": "TCP port (8899) zařízení, ke kterému se chcete připojit",
+          "port": "Port (8899) zařízení, ke kterému se chcete připojit",
           "lookup_file": "Soubor yaml obsahující definice parametrů měniče"
         },
         "sections": {
           "additional_options": {
             "name": "Další možnosti",
             "data": {
-              "mod": "Modifikátor měřítka",
+              "mod": "Modifikátor",
               "mppt": "Počet MPPT",
               "phase": "Počet fází",
               "pack": "Počet bateriových sad",
@@ -76,6 +80,16 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

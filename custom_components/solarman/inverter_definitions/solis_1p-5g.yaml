@@ -126,7 +126,6 @@ parameters:
         rule: 1
         digits: 1
         uint: enforce
-        registers: [3005, 3004, 3007, 3006]
         sensors:
           - signed:
             registers: [3005, 3004]
@@ -215,7 +214,6 @@ parameters:
         uom: "kW"
         rule: 1
         digits: 3
-        registers: [3021, 3022]
         sensors:
           - registers: [3021]
             scale: 0.1
@@ -250,7 +248,6 @@ parameters:
         uom: "kW"
         rule: 1
         digits: 3
-        registers: [3023, 3024]
         sensors:
           - registers: [3023]
             scale: 0.1
@@ -319,6 +316,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -330,6 +329,9 @@ parameters:
         rule: 1
         registers: [3014]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Monthly Production"
         class: "energy"
@@ -338,6 +340,9 @@ parameters:
         rule: 3
         registers: [3011, 3010]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Yearly Production"
         class: "energy"
@@ -346,3 +351,6 @@ parameters:
         rule: 3
         registers: [3017, 3016]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:

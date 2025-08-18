@@ -106,6 +106,9 @@ parameters:
         rule: 1
         registers: [0x03E8]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -115,6 +118,10 @@ parameters:
         rule: 1
         registers: [0x03F7, 0x03F6]
         icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
 
   - group: Output
     items:
@@ -232,7 +239,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x022A, 0x0229, 0x020B, 0x020A]
         uint: enforce
         sensors:
           - registers: [0x022A, 0x0229]

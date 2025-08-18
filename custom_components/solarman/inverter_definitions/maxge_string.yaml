@@ -1,0 +1,172 @@
+#
+# MAXGE (RETELEC) MGEA6KSI11 | String Inverter
+#
+# Reference: ???
+# 
+
+default: 
+  update_interval: 5
+  code: 4
+  digits: 6
+
+parameters:
+  - group: Info
+    update_interval: 3600
+    items:
+      - name: "Device"
+        rule: 5
+        registers: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+        attributes:
+          [
+            "Device Serial Number",
+            "Device Software Version",
+          ]
+
+      - name: "Device Software Version"
+        attribute:
+        rule: 5
+        registers: [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+
+      - name: "Device Serial Number"
+        attribute:
+        rule: 5
+        registers: [60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71]
+
+  - group: Load
+    items:
+      - name: "Load Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [258]
+
+      - name: "Load Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [264]
+
+      - name: "Load Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [267]
+
+      - name: "Load Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 3
+        registers: [269, 268]
+
+  - group: Production
+    items:
+      - name: "Today Production"
+        friendly_name: Today's Production
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [274, 273]
+        icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [276, 275]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
+
+  - group: PV
+    items:
+      - name: "PV Power"
+        class: "power"
+        mppt: 1
+        state_class: "measurement"
+        uom: "W"
+        rule: 3
+        registers: [269, 268]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Voltage"
+        class: "voltage"
+        mppt: 1
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [518]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        class: "current"
+        mppt: 1
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [519]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        class: "power"
+        mppt: 1
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        digits: 3
+        sensors:
+          - registers: [518]
+          - operator: multiply
+            registers: [519]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        mppt: 2
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [525]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        class: "current"
+        mppt: 2
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [526]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        class: "power"
+        mppt: 2
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 1
+        digits: 3
+        sensors:
+          - registers: [525]
+          - operator: multiply
+            registers: [526]
+        icon: "mdi:solar-power-variant"

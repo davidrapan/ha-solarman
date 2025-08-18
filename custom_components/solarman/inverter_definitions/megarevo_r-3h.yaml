@@ -1,7 +1,7 @@
 #
 # Megarevo R6-15KH3 | 6.6~16.5kW | Three Phase | Hybrid Inverter
 #
-# Reference: ???
+# Reference: https://github.com/user-attachments/files/20112528/Hybrid.Inverter_Modbus.Protocol.xlsx
 #
 # Megarevo Inverters using Solarman v5 via Solarman App pcap - Full Register Map Not Complete Yet
 # Expected to Work with most of the Megarevo Inverters (including EG4 8k)
@@ -10,49 +10,12 @@
 #
 
 default:
-  update_interval: 60
+  update_interval: 10
   digits: 6
 
 parameters:
-  - group: Battery
-    items:
-      - name: "Battery Voltage"
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x3140]
-
-      - name: "Battery Current"
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 2
-        registers: [0x3141]
-
-      - name: "Battery Power"
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 2
-        registers: [0x314A]
-        icon: "mdi:power-plug"
-
-      - name: "Battery Control Mode"
-        state_class: "measurement"
-        rule: 1
-        registers: [0x340F]
-        lookup:
-          - key: 0
-            value: "Generic DC Source"
-          - key: 1
-            value: "Lead Acid (No BMS)"
-          - key: 2
-            value: "Lithium"
-
   - group: PV
+    update_interval: 5
     items:
       - name: "PV Power"
         class: "power"
@@ -121,6 +84,45 @@ parameters:
         registers: [0x3135]
         icon: "mdi:solar-power-variant"
 
+  - group: Battery
+    update_interval: 5
+    items:
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x3140]
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x3141]
+
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3145]
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        registers: [0x3146]
+
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [0x314A]
   - group: Device
     items:
       - name: "GFCI Leakage Current"
@@ -129,21 +131,7 @@ parameters:
         uom: "mA"
         rule: 1
         registers: [0x319C]
-        icon: "mdi:lightning-bolt-outline"
-
-      - name: "Device State"
-        class: "State"
-        state_class: "measurement"
-        rule: 1
-        registers: [0x3400]
-        lookup:
-          - key: 0
-            value: "Self-Consumption"
-          - key: 1
-            value: "Grid Peak Shift"
-          - key: 2
-            value: "Battery Priority (Storm Watch)"
-        icon: "mdi:state-machine"
+        icon: "mdi:pipe-leak"
 
       - name: "Temperature"
         class: "Temperature"
@@ -151,7 +139,6 @@ parameters:
         uom: "°C"
         rule: 2
         registers: [0x311A]
-        icon: "mdi:thermometer"
 
       - name: "Board Temperature"
         class: "Temperature"
@@ -159,8 +146,17 @@ parameters:
         uom: "°C"
         rule: 2
         registers: [0x311B]
-        icon: "mdi:thermometer"
 
+      - name: "DC Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 2
+        registers: [0x3152]
+
+  - group: Energy
+    update_interval: 30
+    items:
       - name: "Today Production"
         friendly_name: Today's Production
         class: "energy"
@@ -168,18 +164,21 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3153]
+        registers: [0x3153,0x3154]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
-      - name: "Today Energy Import"
-        friendly_name: Today's Energy Import
+      - name: "Today Energy Export"
+        friendly_name: Today's Energy Export
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3155]
-        icon: "mdi:transmission-tower-export"
+        registers: [0x3155, 0x3156]
+        icon: "mdi:transmission-tower-import"
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -188,28 +187,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3157]
-        icon: "mdi:home"
-
-      - name: "Today Battery Charge"
-        friendly_name: Today's Battery Charge
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x316D]
-        icon: "mdi:battery-plus"
-
-      - name: "Today Battery Discharge"
-        friendly_name: Today's Battery Discharge
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x316F]
-        icon: "mdi:battery-minus"
+        registers: [0x3157, 0x3158]
 
       - name: "Total Production"
         class: "energy"
@@ -217,21 +195,12 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3165]
+        registers: [0x3165, 0x3166]
         icon: "mdi:solar-power"
         validation:
           min: 0.1
-
-      - name: "Total Energy Import"
-        class: "energy"
-        state_class: "total_increasing"
-        uom: "kWh"
-        scale: 0.001
-        rule: 3
-        registers: [0x317D]
-        icon: "mdi:transmission-tower-export"
-        validation:
-          min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: "Total Energy Export"
         class: "energy"
@@ -239,7 +208,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3167]
+        registers: [0x3167, 0x3168]
         icon: "mdi:transmission-tower-import"
         validation:
           min: 0.1
@@ -250,7 +219,48 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3169]
+        registers: [0x3169, 0x316A]
+        validation:
+          min: 0.1
+
+      - name: "Today Energy Import"
+        friendly_name: Today's Energy Import
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316B, 0x316C]
+        icon: "mdi:transmission-tower-export"
+
+      - name: "Today Battery Charge"
+        friendly_name: Today's Battery Charge
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316D, 0x316E]
+        icon: "mdi:battery-plus"
+
+      - name: "Today Battery Discharge"
+        friendly_name: Today's Battery Discharge
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x316F, 0x3170]
+        icon: "mdi:battery-minus"
+
+      - name: "Total Energy Import"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.001
+        rule: 3
+        registers: [0x317D, 0x317E]
+        icon: "mdi:transmission-tower-export"
         validation:
           min: 0.1
 
@@ -260,7 +270,7 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x317F]
+        registers: [0x317F, 0x3180]
         icon: "mdi:battery-plus"
         validation:
           min: 0.1
@@ -271,20 +281,59 @@ parameters:
         uom: "kWh"
         scale: 0.001
         rule: 3
-        registers: [0x3181]
+        registers: [0x3181, 0x3182]
         icon: "mdi:battery-minus"
         validation:
           min: 0.1
 
-      - name: "DC Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        rule: 2
-        registers: [0x3152]
-        icon: "mdi:thermometer"
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.001
+        uint: enforce
+        sensors:
+          - registers: [0x3155, 0x3156]
+          - registers: [0x3153, 0x3154]
+          - registers: [0x316F, 0x3170]
+          - operator: subtract
+            registers: [0x3159, 0x315A]
+          - operator: subtract
+            registers: [0x3157, 0x3158]
+          - operator: subtract
+            registers: [0x316D, 0x316E]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.001
+        uint: enforce
+        sensors:
+          - registers: [0x317D, 0x317E]
+          - registers: [0x3165, 0x3166]
+          - registers: [0x3181, 0x3182]
+          - operator: subtract
+            registers: [0x3167, 0x3168]
+          - operator: subtract
+            registers: [0x3169, 0x316A]
+          - operator: subtract
+            registers: [0x317F, 0x3180]
+        validation:
+          min: 1
 
   - group: Grid
+    update_interval: 5
     items:
       - name: "Grid L1 Voltage"
         l: 1
@@ -294,7 +343,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3110]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Current"
         l: 1
@@ -304,7 +352,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x3111]
-        icon: "mdi:current-ac"
 
       - name: "Grid L1 Power"
         l: 1
@@ -313,7 +360,6 @@ parameters:
         uom: "W"
         rule: 2
         registers: [0x3112]
-        icon: "mdi:current-ac"
 
       - name: "Grid L2 Voltage"
         l: 2
@@ -323,7 +369,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3113]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L2 Current"
         l: 2
@@ -333,7 +378,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x3114]
-        icon: "mdi:current-ac"
 
       - name: "Grid L2 Power"
         l: 2
@@ -342,7 +386,6 @@ parameters:
         uom: "W"
         rule: 2
         registers: [0x3115]
-        icon: "mdi:current-ac"
 
       - name: "Grid L3 Voltage"
         l: 3
@@ -352,7 +395,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3116]
-        icon: "mdi:transmission-tower"
 
       - name: "Grid L3 Current"
         l: 3
@@ -362,7 +404,6 @@ parameters:
         scale: 0.1
         rule: 2
         registers: [0x3117]
-        icon: "mdi:current-ac"
 
       - name: "Grid L3 Power"
         l: 3
@@ -371,7 +412,6 @@ parameters:
         uom: "W"
         rule: 2
         registers: [0x3118]
-        icon: "mdi:current-ac"
 
       - name: "Grid Frequency"
         class: "Frequency"
@@ -380,9 +420,9 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x3119]
-        icon: "mdi:current-ac"
 
-  - group: load
+  - group: Load
+    update_interval: 5
     items:
       - name: "Load L1 Voltage"
         l: 1
@@ -392,7 +432,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3120]
-        icon: "mdi:power-plug"
 
       - name: "Load L1 Current"
         l: 1
@@ -402,7 +441,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3121]
-        icon: "mdi:current-ac"
 
       - name: "Load L1 Power"
         l: 1
@@ -411,17 +449,15 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x3122]
-        icon: "mdi:current-ac"
 
-      - name: "Load L1 Used"
+      - name: "Load L1"
         l: 1
-        class: "Percent"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x3123]
-        icon: "mdi:fuse"
+        icon: "mdi:percent"
 
       - name: "Load L2 Voltage"
         l: 2
@@ -431,7 +467,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3124]
-        icon: "mdi:power-plug"
 
       - name: "Load L2 Current"
         l: 2
@@ -441,7 +476,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3125]
-        icon: "mdi:current-ac"
 
       - name: "Load L2 Power"
         l: 2
@@ -450,17 +484,15 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x3126]
-        icon: "mdi:current-ac"
 
-      - name: "Load L2 Used"
+      - name: "Load L2"
         l: 2
-        class: "Percent"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x3127]
-        icon: "mdi:fuse"
+        icon: "mdi:percent"
 
       - name: "Load L3 Voltage"
         l: 3
@@ -470,7 +502,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3128]
-        icon: "mdi:power-plug"
 
       - name: "Load L3 Current"
         l: 3
@@ -480,7 +511,6 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x3129]
-        icon: "mdi:current-ac"
 
       - name: "Load L3 Power"
         l: 3
@@ -489,14 +519,41 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x312A]
-        icon: "mdi:current-ac"
 
-      - name: "Load L3 Used"
+      - name: "Load L3"
         l: 3
-        class: "Percent"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x312B]
-        icon: "mdi:fuse"
+        icon: "mdi:percent"
+
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: "Work Mode"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3400]
+        lookup:
+          - key: 0
+            value: "Self Use"
+          - key: 1
+            value: "Grid Peak Shift"
+          - key: 2
+            value: "Battery Priority"
+
+      - name: "Battery Control Mode"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340F]
+        lookup:
+          - key: 0
+            value: "Generic DC Source"
+          - key: 1
+            value: "Lead Acid (No BMS)"
+          - key: 2
+            value: "Lithium"

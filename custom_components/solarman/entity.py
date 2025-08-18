@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-import logging
-
 from typing import Any
 from decimal import Decimal
+from logging import getLogger
 from datetime import date, datetime, time
 
-from homeassistant.util import slugify
-from homeassistant.core import split_entity_id, callback
+from homeassistant.core import callback
 from homeassistant.const import EntityCategory, STATE_UNKNOWN, CONF_FRIENDLY_NAME
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import EntityDescription
-from homeassistant.helpers.entity_registry import RegistryEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.typing import UNDEFINED, StateType, UndefinedType
 
@@ -19,48 +15,18 @@ from .const import *
 from .common import *
 from .services import *
 from .coordinator import Coordinator
-from .pysolarman.pysolarman import FUNCTION_CODE
+from .pysolarman.umodbus.functions import FUNCTION_CODE
 
-_LOGGER = logging.getLogger(__name__)
-
-type SolarmanConfigEntry = ConfigEntry[Coordinator]
-
-@callback
-def migrate_unique_ids(name: str, serial: int, entity_entry: RegistryEntry) -> dict[str, Any] | None:
-
-    entity_name = entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(name, '').strip()
-    old_unique_id = '_'.join(filter(None, (name, str(serial), entity_name)))
-    slugified_old_unique_id = slugify(old_unique_id)
-
-    for old_unique_id in (old_unique_id, slugified_old_unique_id):
-        if entity_entry.unique_id == old_unique_id and (new_unique_id := f"{slugified_old_unique_id}_{split_entity_id(entity_entry.entity_id)[0]}"):
-            _LOGGER.debug("Migrating unique_id for %s entity from [%s] to [%s]", entity_entry.entity_id, old_unique_id, new_unique_id)
-            return { "new_unique_id": entity_entry.unique_id.replace(old_unique_id, new_unique_id) }
-
-    return None
-
-def create_entity(creator, description):
-    try:
-        entity = creator(description)
-
-        if description is not None and (nlookup := description.get("name_lookup")) is not None and (prefix := entity.coordinator.data.get(nlookup)) is not None:
-            description["name"] = replace_first(description["name"], get_tuple(prefix))
-            description["key"] = entity_key(description)
-            entity = creator(description)
-
-        entity.update()
-
-        return entity
-    except BaseException as e:
-        _LOGGER.error(f"Configuring {description} failed. [{format_exception(e)}]")
-        raise
+_LOGGER = getLogger(__name__)
 
 class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
+    _attr_has_entity_name = True
+
     def __init__(self, coordinator: Coordinator):
         super().__init__(coordinator)
-        self._attr_device_info = self.coordinator.device.device_info.get(coordinator.device.config.serial)
+        self._attr_device_info = self.coordinator.device.info.get(self.coordinator.config_entry.entry_id)
         self._attr_state: StateType = STATE_UNKNOWN
-        self._attr_native_value: StateType | str | date | datetime | time | float | Decimal = None
+        self._attr_native_value: StateType | str | date | datetime | time | float | Decimal | None = None
         self._attr_extra_state_attributes: dict[str, Any] = {}
         self._attr_value: None = None
 
@@ -77,6 +43,13 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
         self.update()
         self.async_write_ha_state()
 
+    def init(self):
+        try:
+            self.update()
+        except Exception as e:
+            _LOGGER.exception(f"{self._attr_name} initialization failed. [{strepr(e)}]")
+        return self
+
     def set_state(self, state, value = None) -> bool:
         self._attr_native_value = self._attr_state = state
         if value is not None:
@@ -91,15 +64,14 @@ class SolarmanCoordinatorEntity(CoordinatorEntity[Coordinator]):
                 self._attr_extra_state_attributes[self.attributes[attr].replace(f"{self._attr_name} ", "")] = get_tuple(self.coordinator.data.get(attr))
 
 class SolarmanEntity(SolarmanCoordinatorEntity):
-    def __init__(self, coordinator, sensor):
+    def __init__(self, coordinator, sensor: dict):
         super().__init__(coordinator)
 
         self._attr_key = sensor["key"]
         self._attr_name = sensor["name"]
-        self._attr_has_entity_name = True
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
-        self._attr_unique_id = slugify('_'.join(filter(None, (self.device_name, str(self.coordinator.device.config.serial), self._attr_key))))
+        self._attr_unique_id = slugify(self.coordinator.config_entry.entry_id, self._attr_key)
         self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
@@ -108,6 +80,10 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
         if (unit_of_measurement := sensor.get("uom") or sensor.get("unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
+        if (suggested_unit_of_measurement := sensor.get("suggested_unit_of_measurement")):
+            self._attr_suggested_unit_of_measurement = suggested_unit_of_measurement
+        if (suggested_display_precision := sensor.get("suggested_display_precision")):
+            self._attr_suggested_display_precision = suggested_display_precision
         if (options := sensor.get("options")):
             self._attr_options = options
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "options": options }
@@ -120,12 +96,12 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         if description := sensor.get("description"):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "description": description }
 
-        self.attributes = {slugify('_'.join(filter(None, (x, "sensor")))): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
+        self.attributes = {slugify(x, "sensor"): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
         self.registers = sensor.get("registers")
 
     def _friendly_name_internal(self) -> str | None:
         name = self.name if self.name is not UNDEFINED else None
-        if self.platform and (name_translation_key := self._name_translation_key) and (n := self.platform.platform_translations.get(name_translation_key)):
+        if hasattr(self, "platform_data") and self.platform_data and (name_translation_key := self._name_translation_key) and (n := self.platform_data.platform_translations.get(name_translation_key)):
             name = self._substitute_name_placeholders(n)
         elif self._attr_friendly_name:
             name = self._attr_friendly_name
@@ -146,18 +122,31 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         self.code = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
+        self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
+
+    @property
+    def _get_attr_native_value(self):
+        if self._attr_native_value is None:
+            raise RuntimeError(
+                f"{self.name}: Cannot write value when _attr_native_value is None. "
+                "This likely means the entity has not received data from the device"
+            )
+        return self._attr_native_value
 
     async def write(self, value, state = None) -> None:
         #self.coordinator.device.check(self._write_lock)
-        if isinstance(value, int):
-            if value > 0xFFFF:
-                value = list(split_p16b(value))
-            if len(self.registers) > 1:
-                value = ensure_list(value)
-        if isinstance(value, list):
-            while len(self.registers) > len(value):
-                value.insert(0, 0)
-        if await self.coordinator.device.exe(self.code, address = self.register, registers = value) > 0 and state is not None:
+        data = value
+        if isinstance(data, int):
+            if data < 0:
+                data = data + self.maxint
+            if data > 0xFFFF:
+                data = list(split_p16b(data))
+            if len(self.registers) > 1 or self.code > FUNCTION_CODE.WRITE_SINGLE_REGISTER:
+                data = ensure_list(data)
+        if isinstance(data, list):
+            while len(self.registers) > len(data):
+                data.insert(0, 0)
+        if await self.coordinator.device.execute(self.code, self.register, data = data) > 0 and state is not None:
             self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))

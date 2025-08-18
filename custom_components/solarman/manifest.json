@@ -3,13 +3,13 @@
   "name": "Solarman",
   "codeowners": ["@davidrapan"],
   "config_flow": true,
-  "dependencies": ["network", "template", "dhcp"],
+  "dependencies": ["network", "dhcp"],
+  "dhcp": [{"macaddress": "E8FDF8*"}, {"registered_devices": true}],
   "documentation": "https://github.com/davidrapan/ha-solarman",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
-  "loggers": ["pymodbus"],
   "quality_scale": "custom",
-  "requirements": ["propcache", "aiofiles", "pyyaml", "pymodbus>=3.8.3"],
-  "version": "25.03.12_1"
+  "requirements": ["propcache", "aiohttp", "aiofiles", "pyyaml"],
+  "version": "0.0.0"
 }

@@ -47,7 +47,6 @@ parameters:
         rule: 2
         digits: 3
         scale: 0.1
-        registers: [0x0101, 0x0102]
         sensors:
           - registers: [0x0101]
           - operator: multiply
@@ -459,6 +458,9 @@ parameters:
         rule: 1
         registers: [0xF02F]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -470,6 +472,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: Today Energy Export
         alt: Daily Energy Sold

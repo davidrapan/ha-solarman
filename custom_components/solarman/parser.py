@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import re
 import bisect
-import logging
 
+from logging import getLogger
 from datetime import datetime
 
 from .const import *
 from .common import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 class ParameterParser:
-    def __init__(self, profile, attr):
+    def __init__(self):
         self._update_interval = DEFAULT_[UPDATE_INTERVAL]
         self._is_single_code = DEFAULT_[IS_SINGLE_CODE]
         self._code = DEFAULT_[REGISTERS_CODE]
@@ -20,10 +20,20 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
+        self._previous_result = {}
         self._result = {}
 
-        if "default" in profile:
-            default = profile["default"]
+        self.info: dict[str, str] = {}
+
+    async def init(self, path: str, filename: str, parameters: dict):
+        profile = await yaml_open(path + filename)
+
+        if "info" in profile:
+            self.info = unwrap(profile["info"], "model", parameters[PARAM_[CONF_MOD]])
+        
+        self.info |= {"filename": filename}
+
+        if "default" in profile and (default := profile["default"]):
             if REQUEST_UPDATE_INTERVAL in default:
                 self._update_interval = default[REQUEST_UPDATE_INTERVAL]
             if REQUEST_CODE in default:
@@ -39,11 +49,11 @@ class ParameterParser:
             _LOGGER.debug("Fine control of request sets is enabled!")
             self._requests = profile["requests"]
 
-        _LOGGER.debug(f"{'Defaults' if 'default' in profile else 'Stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, attributes: {attr}")
+        _LOGGER.debug(f"{filename} w/ {'defaults' if 'default' in profile else 'stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = [i for i in sorted([process_descriptions(item, group, table, self._code, attr["mod"]) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if "registers" in x else (-1, -1)) if len((a := i.keys() & attr.keys())) == 0 or ((k := next(iter(a))) and i[k] <= attr[k])]
+        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -53,6 +63,8 @@ class ParameterParser:
 
         self._lambda = lambda x, y, z: l(x[1], y[1]) or y[1] - z[1] >= self._max_size
         self._lambda_code_aware = lambda x, y, z: x[0] != y[0] or self._lambda(x, y, z)
+
+        return self
 
     def is_valid(self, parameters):
         return "name" in parameters and "rule" in parameters # and "registers" in parameters
@@ -73,9 +85,9 @@ class ParameterParser:
         self._result[key] = (state, value)
 
     def get_entity_descriptions(self, platform: str):
-        return [i for i in self._items if self.is_valid(i) and not "attribute" in i and i.get("platform") == platform]
+        return [i for i in self._items if self.is_valid(i) and self.is_enabled(i) and not "attribute" in i and i.get("platform") == platform]
 
-    def schedule_requests(self, runtime = 0):
+    def schedule_requests(self, runtime):
         self._result = {}
 
         if self._requests:
@@ -92,28 +104,42 @@ class ParameterParser:
                             bisect.insort(registers, register)
 
         if len(registers) == 0:
-            return {}
+            return []
 
         groups = group_when(registers, self._lambda if self._is_single_code or all_same([r[0] for r in registers]) else self._lambda_code_aware)
 
-        return [set_request(self._code if self._is_single_code else r[0][0], r[0][1], r[-1][1]) for r in groups]
+        return [create_request(self._code if self._is_single_code else r[0][0], r[0][1], r[-1][1]) for r in groups]
 
-    def in_range(self, value, definition):
-        if (range := definition.get("range")) is not None:
-            if ((min := range.get("min")) is not None and value < min) or ((max := range.get("max")) is not None and value > max):
-                _LOGGER.debug(f"Value: {value} of {definition["registers"]} is out of range: {range}")
-                return False
+    def reset(self):
+        self._previous_result = {}
+
+    def in_range(self, key, value, rule):
+        if ((min := rule.get("min")) is not None and value < min) or ((max := rule.get("max")) is not None and value > max):
+            _LOGGER.debug(f"{key}: {value} is outside of range: {rule}")
+            return False
 
         return True
 
     def do_validate(self, key, value, rule):
-        if ((min := rule.get("min")) is not None and min > value) or ((max := rule.get("max")) is not None and max < value):
-            _LOGGER.debug(f"Value: {value} of {key} validation failed: {rule}")
-            if "invalidate_all" in rule:
-                raise ValueError(f"Invalidate complete dataset - {value} of {key} validation failed: {rule}")
-            return False
+        invalid = 0
+        previous_value = None
 
-        return True
+        if ((min := rule.get("min")) is not None and min > value) or ((max := rule.get("max")) is not None and max < value):
+            invalid = 1
+
+        if dev := rule.get("dev"):
+            if value and (previous_value := self._previous_result.get(key)) is not None and abs(value - previous_value) > dev:
+                invalid |= 2
+            elif not invalid:
+                self._previous_result[key] = value
+
+        if invalid > 0 and (message := f"{key} validation failed, triggered by state: {value}{'' if previous_value is None else f' ({previous_value})'} with conditions: {rule}"):
+            if "invalidate_all" in rule and ((inv := rule.get("invalidate_all")) is None or invalid & inv):
+                raise ValueError(f"Invalidate complete dataset - {message}")
+            else:
+                _LOGGER.debug(message)
+
+        return invalid == 0
 
     def process(self, data):
         if data is not None:
@@ -127,50 +153,47 @@ class ParameterParser:
 
                 # Check that the first register in the definition is within the register set in the raw data.
                 if get_start_addr(data, get_code(i, "read"), registers[0]) is not None:
-                    self.try_parse(data, i)
+                    try:
+                        match i["rule"]:
+                            case 1 | 3:
+                                self.try_parse_unsigned(data, i)
+                            case 2 | 4:
+                                self.try_parse_signed(data, i)
+                            case 5:
+                                self.try_parse_ascii(data, i)
+                            case 6:
+                                self.try_parse_bits(data, i)
+                            case 7:
+                                self.try_parse_version(data, i)
+                            case 8:
+                                self.try_parse_datetime(data, i)
+                            case 9:
+                                self.try_parse_time(data, i)
+                            case 10:
+                                self.try_parse_raw(data, i)
+                    except Exception as e:
+                        _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {i} [{strepr(e)}]")
+                        raise
 
         return self._result
-
-    def try_parse(self, data, definition):
-        try:
-            self.try_parse_field(data, definition)
-        except Exception as e:
-            _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {definition} [{format_exception(e)}]")
-            raise
-
-    def try_parse_field(self, data, definition):
-        match definition["rule"]:
-            case 1 | 3:
-                self.try_parse_unsigned(data, definition)
-            case 2 | 4:
-                self.try_parse_signed(data, definition)
-            case 5:
-                self.try_parse_ascii(data, definition)
-            case 6:
-                self.try_parse_bits(data, definition)
-            case 7:
-                self.try_parse_version(data, definition)
-            case 8:
-                self.try_parse_datetime(data, definition)
-            case 9:
-                self.try_parse_time(data, definition)
-            case 10:
-                self.try_parse_raw(data, definition)
 
     def _read_registers(self, data, definition):
         code = get_code(definition, "read")
         value = 0
         shift = 0
 
-        for r in definition["registers"]:
+        if not (registers := definition.get("registers")):
+            return None
+
+        for r in registers:
             if (temp := get_addr_value(data, code, r)) is None:
                 return None
 
             value += (temp & 0xFFFF) << shift
             shift += 16
 
-        if not self.in_range(value, definition):
-            return None
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
 
         if (mask := definition.get("mask")) is not None:
             value &= mask
@@ -200,7 +223,10 @@ class ParameterParser:
         value = 0
         shift = 0
 
-        for r in definition["registers"]:
+        if not (registers := definition.get("registers")):
+            return None
+
+        for r in registers:
             if (temp := get_addr_value(data, code, r)) is None:
                 return None
 
@@ -212,8 +238,8 @@ class ParameterParser:
         if value > (maxint >> 1):
             value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
-        if not self.in_range(value, definition):
-            return None
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
 
         if (offset := definition.get("offset")) is not None:
             value -= offset
@@ -230,16 +256,19 @@ class ParameterParser:
         value = 0
 
         for s in definition["sensors"]:
+            if not (registers := s.get("registers")):
+                continue
+
             if (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
                 return None
 
-            if (validation := s.get("validation")) is not None and not self.do_validate(s["registers"], n, validation):
-                if not "default" in validation:
-                    continue
-                n = validation["default"]
-
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
                 n *= c
+
+            if (validation := s.get("validation")) is not None and not self.do_validate(registers, n, validation):
+                if (d := validation.get("default")) is None:
+                    continue
+                n = d
 
             if (o := s.get("operator")) is None:
                 value += n
@@ -266,13 +295,13 @@ class ParameterParser:
         key = definition["key"]
 
         if "lookup" in definition:
-            self.set_state(key, lookup_value(value, definition["lookup"]), int(value))
+            self.set_state(key, lookup_value(value, definition["lookup"]), int(value) if len(definition["registers"]) == 1 else list(split_p16b(value)))
             return
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
-            if not "default" in validation:
+            if (d := validation.get("default")) is None:
                 return
-            value = validation["default"]
+            value = d
 
         self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
@@ -289,9 +318,9 @@ class ParameterParser:
         key = definition["key"]
 
         if (validation := definition.get("validation")) is not None and not self.do_validate(key, value, validation):
-            if not "default" in validation:
+            if (d := validation.get("default")) is None:
                 return
-            value = validation["default"]
+            value = d
 
         self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
@@ -381,7 +410,7 @@ class ParameterParser:
                 value = datetime.strptime(value, DATETIME_FORMAT)
             self.set_state(definition["key"], value)
         except Exception as e:
-            _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{format_exception(e)}]")
+            _LOGGER.debug(f"ParameterParser.try_parse_datetime: data: {data}, definition: {definition} [{strepr(e)}]")
 
     def try_parse_time(self, data, definition):
         code = get_code(definition, "read")

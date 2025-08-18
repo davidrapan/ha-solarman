@@ -1,36 +1,31 @@
 from __future__ import annotations
 
-import logging
-
+from logging import getLogger
 from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
 
 from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.datetime import DateTimeEntity, DateTimeEntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
 from .common import *
 from .services import *
-from .entity import SolarmanConfigEntry, create_entity, SolarmanWritableEntity
+from .entity import SolarmanWritableEntity, Coordinator
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 _PLATFORM = get_current_file_name(__name__)
 
-async def async_setup_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry, async_add_entities: AddEntitiesCallback) -> bool:
+async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    coordinator = config_entry.runtime_data
-    descriptions = coordinator.device.profile.parser.get_entity_descriptions(_PLATFORM)
-
-    _LOGGER.debug(f"async_setup_entry: async_add_entities: {descriptions}")
-
-    async_add_entities(create_entity(lambda x: SolarmanDateTimeEntity(coordinator, x), d) for d in descriptions)
+    async_add_entities(SolarmanDateTimeEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM))
 
     return True
 
-async def async_unload_entry(_: HomeAssistant, config_entry: SolarmanConfigEntry) -> bool:
+async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator]) -> bool:
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
@@ -57,7 +52,7 @@ class SolarmanDateTimeEntity(SolarmanWritableEntity, DateTimeEntity):
             if self._attr_native_value:
                 return datetime.strptime(self._attr_native_value, DATETIME_FORMAT).replace(tzinfo = ZoneInfo(self.coordinator.hass.config.time_zone))
         except Exception as e:
-            _LOGGER.debug(f"SolarmanDateTimeEntity.native_value of {self._attr_name}: {format_exception(e)}")
+            _LOGGER.debug(f"SolarmanDateTimeEntity.native_value of {self._attr_name}: {strepr(e)}")
         return None
 
     async def async_set_value(self, value: datetime) -> None:

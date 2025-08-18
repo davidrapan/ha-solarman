@@ -1,11 +1,14 @@
 {
   "config": {
     "abort": {
-      "already_configured": "O dispositivo já está configurado"
+      "already_configured": "O dispositivo já está configurado",
+      "already_configured_device": "O dispositivo já está configurado",
+      "already_in_progress": "O fluxo de configuração já está em andamento"
     },
     "error": {
       "cannot_connect": "Falhou ao conectar",
       "invalid_host": "Nome de host ou endereço IP inválido",
+      "timeout_connect": "Tempo limite para estabelecer conexão",
       "unknown": "Erro inesperado"
     },
     "step": {
@@ -13,23 +16,22 @@
         "title": "Configuração de conexão do inversor",
         "data": {
           "name": "Nome do dispositivo",
-          "serial": "Número de série",
           "host": "Host (ip ou nome do host)",
           "port": "Porta (geralmente 8899)",
+          "transport": "Protocolo de transporte",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "name": "Este nome será prefixado para todos os valores de parâmetro (altere como quiser)",
-          "serial": "Número de série do dispositivo (recuperar da interface da web)",
           "host": "O nome do host ou endereço IP do dispositivo ao qual se conectar",
-          "port": "A porta TCP (8899) do dispositivo ao qual se conectar",
+          "port": "A porta (8899) do dispositivo ao qual se conectar",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro"
         },
         "sections": {
           "additional_options": {
             "name": "Opções adicionais",
             "data": {
-              "mod": "Modificador de escala",
+              "mod": "Modificador",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
               "pack": "Número de baterias",
@@ -46,6 +48,7 @@
     "error": {
       "cannot_connect": "Falhou ao conectar",
       "invalid_host": "Nome de host ou endereço IP inválido",
+      "timeout_connect": "Tempo limite para estabelecer conexão",
       "unknown": "Erro inesperado"
     },
     "step": {
@@ -54,18 +57,19 @@
         "data": {
           "host": "Host (ip ou nome do host)",
           "port": "Porta (geralmente 8899)",
+          "transport": "Protocolo de transporte",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "host": "O nome do host ou endereço IP do dispositivo ao qual se conectar",
-          "port": "A porta TCP (8899) do dispositivo ao qual se conectar",
+          "port": "A porta (8899) do dispositivo ao qual se conectar",
           "lookup_file": "O arquivo yaml a ser usado para definição de parâmetro"
         },
         "sections": {
           "additional_options": {
             "name": "Opções adicionais",
             "data": {
-              "mod": "Modificador de escala",
+              "mod": "Modificador",
               "mppt": "Número de MPPTs",
               "phase": "Número de fases",
               "pack": "Número de baterias",
@@ -76,6 +80,16 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

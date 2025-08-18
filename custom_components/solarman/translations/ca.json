@@ -1,11 +1,14 @@
 {
   "config": {
     "abort": {
-      "already_configured": "El dispositiu ja s'ha configurat"
+      "already_configured": "El dispositiu ja s'ha configurat",
+      "already_configured_device": "El dispositiu ja s'ha configurat",
+      "already_in_progress": "El flux de configuració ja està en curs"
     },
     "error": {
       "cannot_connect": "No s'ha pogut connectar",
       "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "timeout_connect": "Temps d'espera per establir la connexió",
       "unknown": "Error inesperat"
     },
     "step": {
@@ -13,23 +16,22 @@
         "title": "Configuració de l'inversor",
         "data": {
           "name": "Nom del dispositiu",
-          "serial": "Número de sèrie",
           "host": "Amfitrió o adreça IP",
           "port": "Port",
+          "transport": "Protocol de transport",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "name": "Aquest nom s'utilitzarà com a prefixe de tots els dispositius",
-          "serial": "Número de sèrie del dispositiu (obtin-lo de la interfície web)",
           "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "port": "El port (8899) del dispositiu, per a connectar-s'hi",
           "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
         },
         "sections": {
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
-              "mod": "Modificador d'escala",
+              "mod": "Modificador",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "pack": "Nombre de paquets de bateries",
@@ -46,6 +48,7 @@
     "error": {
       "cannot_connect": "No s'ha pogut connectar",
       "invalid_host": "El nom de l'amfitrió o l'adreça IP és invàlida",
+      "timeout_connect": "Temps d'espera per establir la connexió",
       "unknown": "Error inesperat"
     },
     "step": {
@@ -54,18 +57,19 @@
         "data": {
           "host": "Amfitrió o adreça IP",
           "port": "Port",
+          "transport": "Protocol de transport",
           "lookup_file": "Perfil"
         },
         "data_description": {
           "host": "El nom de l'amfitrió o l'adreça IP del dispositiu, per a connectar-s'hi",
-          "port": "El port TCP (8899) del dispositiu, per a connectar-s'hi",
+          "port": "El port (8899) del dispositiu, per a connectar-s'hi",
           "lookup_file": "El fitxer yaml que conté les definicions dels paràmetres de l'inversor"
         },
         "sections": {
           "additional_options": {
             "name": "Opcions addicionals",
             "data": {
-              "mod": "Modificador d'escala",
+              "mod": "Modificador",
               "mppt": "Nombre de MPPTs",
               "phase": "Nombre de fases",
               "pack": "Nombre de paquets de bateries",
@@ -76,6 +80,16 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

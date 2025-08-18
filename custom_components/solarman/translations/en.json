@@ -1,11 +1,14 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Device is already configured"
+      "already_configured": "Device is already configured",
+      "already_configured_device": "Device is already configured",
+      "already_in_progress": "Configuration flow is already in progress"
     },
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_host": "Invalid hostname or IP address",
+      "timeout_connect": "Timeout establishing connection",
       "unknown": "Unexpected error"
     },
     "step": {
@@ -13,23 +16,23 @@
         "title": "Inverter configuration",
         "data": {
           "name": "Device name",
-          "serial": "Serial Number",
-          "host": "Host or IP address",
+          "host": "Hostname or IP address",
           "port": "Port",
+          "transport": "Transport protocol",
           "lookup_file": "Profile"
         },
         "data_description": {
           "name": "This name will be prefixed to all sensors (change as you like)",
-          "serial": "Device Serial Number (retrieve from the web interface)",
-          "host": "The hostname or IP address of the device to connect to",
-          "port": "The TCP port (8899) of the device to connect to",
+          "host": "Hostname or IP address of the device to connect to",
+          "port": "Port (8899) of the device to connect to",
+          "transport": "Transport protocol used during communication with the device",
           "lookup_file": "The yaml file containing inverter parameter definitions"
         },
         "sections": {
           "additional_options": {
             "name": "Additional options",
             "data": {
-              "mod": "Scale modifier",
+              "mod": "Modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
               "pack": "Number of Battery packs",
@@ -46,26 +49,29 @@
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_host": "Invalid hostname or IP address",
+      "timeout_connect": "Timeout establishing connection",
       "unknown": "Unexpected error"
     },
     "step": {
       "init": {
         "title": "Inverter configuration",
         "data": {
-          "host": "Host or IP address",
+          "host": "Hostname or IP address",
           "port": "Port",
+          "transport": "Transport protocol",
           "lookup_file": "Profile"
         },
         "data_description": {
-          "host": "The hostname or IP address of the device to connect to",
-          "port": "The TCP port (8899) of the device to connect to",
+          "host": "Hostname or IP address of the device to connect to",
+          "port": "Port (8899) of the device to connect to",
+          "transport": "Transport protocol used during communication with the device",
           "lookup_file": "The yaml file containing inverter parameter definitions"
         },
         "sections": {
           "additional_options": {
             "name": "Additional options",
-            "data": {
-              "mod": "Scale modifier",
+            "data": { 
+              "mod": "Modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
               "pack": "Number of Battery packs",
@@ -76,6 +82,16 @@
           }
         }
       }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
     }
   },
   "entity": {

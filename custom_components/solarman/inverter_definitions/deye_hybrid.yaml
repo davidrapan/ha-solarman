@@ -8,7 +8,7 @@
 
 info:
   manufacturer: Deye
-  model: SG0XLP1
+  model: SG0*LP1
 
 default:
   update_interval: 5
@@ -119,6 +119,9 @@ parameters:
         scale: 0.1
         rule: 4
         registers: [0x0010, 0x0011]
+        validation:
+          min: 0
+          max: 24000
 
       - name: "Device MPPTs"
         attribute:
@@ -155,6 +158,7 @@ parameters:
         range:
           min: 0
           max: 1000
+          default: 0
 
       - name: "Date & Time"
         platform: datetime
@@ -166,7 +170,7 @@ parameters:
         platform: switch
         update_interval: 30
         rule: 1
-        registers: [0x002b]
+        registers: [0x002B]
         value:
           on: 0x0001
           off: 0x0002
@@ -210,8 +214,8 @@ parameters:
             value: "Battery loss"
           - bit: 31
             value: "Parallel communication quality"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
       - name: "Device Fault"
         class: "enum"
@@ -237,8 +241,8 @@ parameters:
             value: "AC current leakage failure"
           - bit: 63
             value: "Temperature is too high"
-          - key: "default"
-            value: "Error"
+          - key: default
+            value: Problem
 
   - group: PV
     update_interval: 5
@@ -252,12 +256,15 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x00BA, 0x00BB, 0x00BC, 0x00BD]
         sensors:
           - registers: [0x00BA]
           - registers: [0x00BB]
           - registers: [0x00BC]
           - registers: [0x00BD]
+        validation:
+          min: 0
+          max: 24000
+          invalidate_all:
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
@@ -305,7 +312,7 @@ parameters:
 
       - name: "PV3 Voltage"
         alt: DC3 Voltage
-        mppt: 2
+        mppt: 3
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -517,23 +524,23 @@ parameters:
         validation:
           min: 0.1
 
-      - name: "Today Generation"
+      - name: Generator Energy - today
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x003E]
-        icon: "mdi:generator-stationary"
 
-      - name: "Total Generation"
+      - name: Generator Energy
+        name_lookup: "io_mode_select"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
         scale: 0.1
         rule: 3
         registers: [0x005C, 0x005F]
-        icon: "mdi:generator-stationary"
         validation:
           min: 0.1
 
@@ -546,6 +553,9 @@ parameters:
         rule: 1
         registers: [0x006C]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -557,6 +567,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
       - name: Today Losses
         alt: Daily Losses
@@ -569,11 +581,13 @@ parameters:
         rule: 1
         digits: 1
         scale: 0.1
-        registers: [0x004C, 0x006C, 0x0047, 0x004D, 0x0046, 0x0054]
         uint: enforce
         sensors:
           - registers: [0x004C]
           - registers: [0x006C]
+          - registers: [0x003E]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x0047]
           - operator: subtract
             registers: [0x004D]
@@ -591,25 +605,13 @@ parameters:
         rule: 3
         digits: 1
         scale: 0.1
-        registers:
-          [
-            0x004E,
-            0x0050,
-            0x0060,
-            0x0061,
-            0x004A,
-            0x004B,
-            0x0051,
-            0x0052,
-            0x0048,
-            0x0049,
-            0x0055,
-            0x0056,
-          ]
         uint: enforce
         sensors:
           - registers: [0x004E, 0x0050]
           - registers: [0x0060, 0x0061]
+          - registers: [0x005C, 0x005F]
+            enabled_lookup:
+              io_mode_select: [Generator, Microinverter]
           - registers: [0x004A, 0x004B]
           - operator: subtract
             registers: [0x0051, 0x0052]
@@ -675,6 +677,7 @@ parameters:
 
       - name: "Battery Capacity"
         description: Estimates capacity of the battery during (dis)charging
+        class: energy_storage
         state_class: measurement
         uom: "kWh"
         rule: 0
@@ -743,7 +746,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -794,7 +797,7 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "External CT1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -844,7 +847,7 @@ parameters:
         registers: [0x009E]
 
       - name: "Load L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -903,7 +906,7 @@ parameters:
         device_class: power
         rule: 1
         registers: [0x00C3]
-        bit: 8
+        bit: 0
 
       - name: "Output Frequency"
         l: 1
@@ -961,7 +964,7 @@ parameters:
         registers: [0x00A5]
 
       - name: "Output L1 Power"
-        l: 2
+        l: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -990,7 +993,6 @@ parameters:
         uom: "W"
         rule: 1
         digits: 0
-        registers: [0x00BA, 0x00BB, 0x00BE, 0x00AF]
         uint: enforce
         sensors:
           - registers: [0x00BA]
@@ -1040,6 +1042,7 @@ parameters:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
+        scale: 0.1
         rule: 1
         registers: [0x00B5]
 
@@ -1154,12 +1157,13 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x00CE]
-        configurable:
-          mode: box
         range:
           min: 0
+          max: 65535
+        configurable:
+          min: -20
           max: 500
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower"
 
       - name: "Battery Equalization Cycle"
         platform: number
@@ -1594,8 +1598,10 @@ parameters:
   - group: Parameters
     update_interval: 300
     items:
-      - name: "PV Min Power"
-        description: "Minimum PV power to start generator"
+      - name: "Generator Min PV Power"
+        name_lookup: "io_mode_select"
+        enabled_lookup:
+          io_mode_select: [Generator, SmartLoad]
         platform: number
         class: "power"
         state_class: "measurement"
@@ -1664,7 +1670,8 @@ parameters:
         rule: 1
         registers: [0x00F7]
 
-      - name: PV Max Power
+      - name: PV Power
+        description: Max PV power limiter
         alt: Max Solar Power
         platform: number
         class: "power"
@@ -1675,7 +1682,7 @@ parameters:
         icon: "mdi:solar-power-variant"
         range:
           min: 0
-          max: 12000
+          max: 13000
 
       - name: Time of Use
         platform: select
@@ -1719,7 +1726,7 @@ parameters:
           - key: 0x00FF
             value: "Week"
           - bit: 0
-            mode: single
+            mode: "|"
             value: "Enabled"
 
       - name: "Program 1 Time"
@@ -2142,17 +2149,114 @@ parameters:
           - key: 0x0003
             value: "Both"
 
-      - name: SmartLoad Grid On
+      - name: Microinverter Export cut-off
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 0
+
+      - name: Generator Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 4
+
+      - name: Grid Peak shaving
+        platform: "switch"
+        rule: 1
+        registers: [0x0118]
+        value:
+          bit: 8
+
+      - name: Generator On-Grid
         description: On Grid always on
+        name_lookup: io_mode_select
+        enabled_lookup:
+          io_mode_select: [Generator, SmartLoad]
         platform: "switch"
         rule: 1
         registers: [0x0118]
         value:
           bit: 12
 
-  - group: Grid, Generator and BMS
-    update_interval: 300
-    items:
+      - name: Off Grid
+        platform: switch
+        rule: 1
+        range:
+          min: 0
+          max: 1
+        registers: [0x0119]
+
+      - name: Grid Frequency
+        platform: "select"
+        rule: 1
+        registers: [0x011D]
+        lookup:
+          - key: 0x0
+            value: 50 Hz
+          - key: 0x1
+            value: 60 Hz
+
+      - name: "Grid voltage protection - high"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x011F]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid voltage protection - low"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0120]
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 2900
+
+      - name: "Grid frequency protection - high"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0121]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: "Grid frequency protection - low"
+        platform: number
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0122]
+        configurable:
+          mode: box
+        range:
+          min: 4500
+          max: 6500
+
+      - name: Generator Grid side
+        description: The generator is connected to the grid input
+        platform: "switch"
+        rule: 1
+        registers: [0x0123]
+
       - name: "Generator Peak shaving"
         platform: number
         class: "power"
@@ -2162,7 +2266,7 @@ parameters:
         icon: "mdi:generator-stationary"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: "Grid Peak shaving"
         platform: number
@@ -2173,7 +2277,7 @@ parameters:
         icon: "mdi:transmission-tower"
         range:
           min: 0
-          max: 16000
+          max: 22000
 
       - name: Battery BMS Type
         platform: select
@@ -2209,9 +2313,25 @@ parameters:
         rule: 1
         registers: [0x0146]
         lookup:
-          - key: 0x0000
+          - key: 0
             value: Disabled
           - bit: 0
             value: Enabled
           - bit: [0, 13]
             value: Generator
+
+      - name: AC Coupling
+        description: Couple inverters and batteries using AC lines
+        platform: "select"
+        rule: 1
+        registers: [0x0146]
+        lookup:
+          - bit: 0
+            mode: "|"
+            value: Disabled
+          - bit: 6
+            mode: "|"
+            value: Grid
+          - bit: 7
+            mode: "|"
+            value: Load

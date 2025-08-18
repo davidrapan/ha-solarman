@@ -1,0 +1,128 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "设备已配置",
+      "already_configured_device": "设备已配置",
+      "already_in_progress": "配置流程已在进行中"
+    },
+    "error": {
+      "cannot_connect": "连接失败",
+      "invalid_host": "无效的主机名或 IP 地址",
+      "timeout_connect": "连接超时",
+      "unknown": "未知错误"
+    },
+    "step": {
+      "user": {
+        "title": "逆变器配置",
+        "data": {
+          "name": "设备名称",
+          "host": "主机名或 IP 地址",
+          "port": "端口",
+          "transport": "传输协议",
+          "lookup_file": "配置文件"
+        },
+        "data_description": {
+          "name": "此名称将作为所有传感器的前缀（可根据需要更改）",
+          "host": "要连接的设备的主机名或 IP 地址",
+          "port": "要连接的设备端口（默认8899）",
+          "transport": "与设备通信时使用的传输协议",
+          "lookup_file": "包含逆变器参数定义的 yaml 文件"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "附加选项",
+            "data": {
+              "mod": "修饰符",
+              "mppt": "MPPT 数量",
+              "phase": "相数",
+              "pack": "电池包数量",
+              "battery_nominal_voltage": "锂离子电池标称电压",
+              "battery_life_cycle_rating": "锂离子电池预期寿命循环次数",
+              "mb_slave_id": "Modbus 从站 ID（通常为 1）"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "连接失败",
+      "invalid_host": "无效的主机名或 IP 地址",
+      "timeout_connect": "连接超时",
+      "unknown": "未知错误"
+    },
+    "step": {
+      "init": {
+        "title": "逆变器配置",
+        "data": {
+          "host": "主机名或 IP 地址",
+          "port": "端口",
+          "transport": "传输协议",
+          "lookup_file": "配置文件"
+        },
+        "data_description": {
+          "host": "要连接的设备的主机名或 IP 地址",
+          "port": "要连接的设备端口（默认8899）",
+          "transport": "与设备通信时使用的传输协议",
+          "lookup_file": "包含逆变器参数定义的 yaml 文件"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "附加选项",
+            "data": { 
+              "mod": "修饰符",
+              "mppt": "MPPT 数量",
+              "phase": "相数",
+              "pack": "电池包数量",
+              "battery_nominal_voltage": "锂离子电池标称电压",
+              "battery_life_cycle_rating": "锂离子电池预期寿命循环次数",
+              "mb_slave_id": "Modbus 从站 ID（通常为 1）"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_rtu": "Modbus RTU",
+        "modbus_tcp": "Modbus TCP"
+      } 
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "今日电池充电量"
+      },
+      "today_battery_discharge": {
+        "name": "今日电池放电量"
+      },
+      "today_battery_life_cycles": {
+        "name": "今日电池循环次数"
+      },
+      "today_energy_export": {
+        "name": "今日能量输出"
+      },
+      "today_energy_import": {
+        "name": "今日能量输入"
+      },
+      "today_generation": {
+        "name": "今日发电量"
+      },
+      "today_load_consumption": {
+        "name": "今日负载用电量"
+      },
+      "today_losses": {
+        "name": "今日损耗"
+      },
+      "today_production": {
+        "name": "今日产量"
+      }
+    }
+  }
+}

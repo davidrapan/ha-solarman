@@ -3,24 +3,31 @@ on:
   release:
     types:
       - created
-env:
-  name: solarman
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
       with:
         submodules: true
+    - name: Set
+      run: |
+          echo "workspace=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "name=$(echo ${{ github.event.repository.name }} | sed 's/^[^-]*-//')" >> $GITHUB_ENV
+          echo "version=$(echo '${{ github.event.release.name }}' | cut -c 2-)" >> $GITHUB_ENV
+    - name: Prepare
+      run: |
+          cp $workspace/license $workspace/custom_components/$name/
+          sed -i "s/0\.0\.0/$version/g" $workspace/custom_components/$name/manifest.json
     - name: Zip
       run: |
-          cd ${{ github.workspace }}/custom_components/$name
-          cp ../../license ./
+          cd $workspace/custom_components/$name
           zip -r ../$name.zip . -x "*.git*" "*.git/*" "*.github/*"
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: ${{ github.workspace }}/custom_components/*.zip
+        files: ${{ env.workspace }}/custom_components/${{ env.name }}.zip

@@ -277,12 +277,6 @@ parameters:
           - key: 0x8000
             value: "DSP Communication Failed"
 
-      - name: "Date & Time"
-        platform: datetime
-        update_interval: 60
-        rule: 8
-        registers: [33022, 33023, 33024, 33025, 33026, 33027]
-
       - name: "Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -292,7 +286,7 @@ parameters:
         registers: [33093]
         icon: "mdi:thermometer"
 
-      # Sensors below are outside of modbus request ranges.
+      # Registers below are outside of modbus request ranges.
       # If enabling, ensure to amend the request start register.
       #
       #    - name: "Inverter ID"
@@ -341,6 +335,40 @@ parameters:
 
   - group: InverterDC
     items:
+      - name: PV Power
+        alt: DC Power
+        mppt: 1
+        description: Combined power of all inputs
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33049]
+            multiply:
+              registers: [33050]
+          - registers: [33051]
+            multiply:
+              registers: [33052]
+        icon: "mdi:solar-power-variant"
+
+      - name: PV1 Power
+        alt: DC1 Power
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33049]
+            multiply:
+              registers: [33050]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV1 Voltage"
         class: "voltage"
         mppt: 1
@@ -351,6 +379,30 @@ parameters:
         registers: [33049]
         icon: "mdi:solar-power"
 
+      - name: "PV1 Current"
+        class: "current"
+        mppt: 1
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [33050]
+        icon: "mdi:current-dc"
+
+      - name: PV2 Power
+        alt: DC2 Power
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [33051]
+            multiply:
+              registers: [33052]
+        icon: "mdi:solar-power-variant"
+
       - name: "PV2 Voltage"
         class: "voltage"
         mppt: 2
@@ -360,15 +412,6 @@ parameters:
         rule: 1
         registers: [33051]
         icon: "mdi:solar-power"
-
-      - name: "PV1 Current"
-        class: "current"
-        mppt: 1
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [33050]
-        icon: "mdi:current-dc"
 
       - name: "PV2 Current"
         class: "current"
@@ -462,6 +505,30 @@ parameters:
         registers: [33094]
         icon: "mdi:sine-wave"
 
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        scale: 1
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [33150, 33149]
+          - registers: [33049]
+            scale: 0.1
+            multiply:
+              registers: [33050]
+          - registers: [33051]
+            scale: 0.1
+            multiply:
+              registers: [33052]
+          - operator: subtract
+            signed:
+            registers: [33080, 33079]
+
   - group: Production
     items:
       - name: "Today Production"
@@ -473,6 +540,9 @@ parameters:
         rule: 1
         registers: [33035]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Monthly Production"
         class: "energy"
@@ -481,6 +551,9 @@ parameters:
         rule: 3
         registers: [33032, 33031]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Yearly Production"
         class: "energy"
@@ -489,6 +562,9 @@ parameters:
         rule: 3
         registers: [33038, 33037]
         icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
 
       - name: "Total Production"
         class: "energy"
@@ -499,6 +575,8 @@ parameters:
         icon: "mdi:solar-power"
         validation:
           min: 0.1
+          dev: 100
+          invalidate_all: 2
 
   - group: Grid
     items:
@@ -637,6 +715,52 @@ parameters:
         validation:
           min: 0.1
 
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [33171]
+          - registers: [33035]
+          - registers: [33167]
+          - operator: subtract
+            registers: [33175]
+          - operator: subtract
+            registers: [33179]
+          - operator: subtract
+            registers: [33163]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [33170, 33169]
+          - registers: [33030, 33029]
+          - registers: [33166, 33165]
+          - operator: subtract
+            registers: [33174, 33173]
+          - operator: subtract
+            registers: [33178, 33177]
+          - operator: subtract
+            registers: [33162, 33161]
+        validation:
+          min: 1
+
   - group: Battery
     items:
       - name: "Battery State"
@@ -647,7 +771,7 @@ parameters:
             value: "charging"
           - key: 1
             value: "discharging"
-          - key: "default"
+          - key: default
             value: "idle"
         icon: "mdi:battery"
 
@@ -787,10 +911,21 @@ parameters:
         icon: "mdi:battery-arrow-down"
 
       - name: "Backup Mode SOC"
+        platform: number
         state_class: "measurement"
+        code:
+          read: 0x03
+          write: 0x06
         uom: "%"
         rule: 1
         registers: [43024]
+        range: 
+          min: 0
+          max: 100
+        configurable:
+          min: 0
+          max: 100
+          step: 1
         icon: "mdi:battery"
 
       - name: "Overdischarge SOC"
@@ -799,6 +934,15 @@ parameters:
         rule: 1
         registers: [43011]
         icon: "mdi:battery"
+
+  - group: Settings
+    items:
+      - name: "Date & Time"
+        platform: datetime
+        update_interval: 60
+        rule: 8
+        code: 0x03
+        registers: [43000, 43001, 43002, 43003, 43004, 43005]
 
   - group: Time of Use
     items:
