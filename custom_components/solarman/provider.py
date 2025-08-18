@@ -90,11 +90,11 @@ class EndPointProvider:
         return self
 
     async def discover(self):
-        if self.ip.is_private and (devices := {k: v async for k, v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)}.items()):
-            self.serial, v = next(iter(devices))
-            self.host = v["ip"]
-            self.mac = v["mac"]
-            try:
+        try:
+            if self.ip.is_private and (d := await anext((v async for v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)))):
+                self.serial = d["serial"]
+                self.host = d["ip"]
+                self.mac = d["mac"]
                 self.info = await request(self.host, LOGGER_SET)
                 await request(self.host, LOGGER_CMD, LOGGER_SET,
                     {
@@ -106,8 +106,8 @@ class EndPointProvider:
                         "net_setting_to": "300"
                     }
                 )
-            except Exception as e:
-                _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
+        except Exception as e:
+            _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
 
     async def load(self):
         try:

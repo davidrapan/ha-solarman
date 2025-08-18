@@ -20,9 +20,9 @@ class DiscoveryProtocol(asyncio.DatagramProtocol):
                 transport.sendto(message, (address, DISCOVERY_PORT))
 
     def datagram_received(self, data, addr):
-        if len(d := data.decode().split(',')) == 3 and (s := int(d[2])):
-            self.responses.put_nowait((s, {"ip": d[0], "mac": d[1]}))
-            print(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {s}] from {addr}")
+        if len(d := data.decode().split(',')) == 3:
+            print(f"DiscoveryProtocol: [{d[0]}, {d[1]}, {d[2]}] from {addr}")
+            self.responses.put_nowait({"ip": d[0], "mac": d[1], "hostname": d[2]})
 
     def error_received(self, e):
         print(f"DiscoveryProtocol: {e!r}")

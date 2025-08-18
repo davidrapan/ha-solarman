@@ -37,8 +37,8 @@ async def async_setup(hass: HomeAssistant, _: ConfigType):
     register(hass)
 
     async def discovery(*_: datetime):
-        async for k, v in await discover(hass):
-            discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": SOURCE_INTEGRATION_DISCOVERY}, data = dict(v, serial = k))
+        async for v in await discover(hass):
+            discovery_flow.async_create_flow(hass, DOMAIN, context = {"source": SOURCE_INTEGRATION_DISCOVERY}, data = v)
 
     hass.async_create_background_task(discovery(), "Solarman setup discovery")
 

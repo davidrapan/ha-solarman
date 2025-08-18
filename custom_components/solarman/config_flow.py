@@ -114,7 +114,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         return await self._handle_discovery(**discovery_info)
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        return await self._handle_discovery(ip = discovery_info.ip, hostname = discovery_info.hostname, mac = discovery_info.macaddress)
+        return await self._handle_discovery(ip = discovery_info.ip, mac = discovery_info.macaddress, hostname = discovery_info.hostname)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
@@ -131,7 +131,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
             else:
                 name = None
             if not (ip := None if not user_input else user_input.get(CONF_HOST)):
-                async for _, v in await discover(self.hass):
+                async for v in await discover(self.hass):
                     try:
                         self._async_abort_entries_match({CONF_HOST: (ip := v["ip"])})
                         break
