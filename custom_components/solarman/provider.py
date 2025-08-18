@@ -96,24 +96,26 @@ class EndPointProvider:
                 self.host = d["ip"]
                 self.mac = d["mac"]
                 self.info = await request(self.host, LOGGER_SET)
-                await request(self.host, LOGGER_CMD, LOGGER_SET,
-                    {
-                        "net_setting_pro": "TCP" if "tcp" in self.transport else "UDP",
-                        "net_setting_cs": "SERVER" if "tcp" in self.transport else "",
-                        "net_setting_pro_sel": "TCPSERVER" if "tcp" in self.transport else "UDP",
-                        "net_setting_port": self.port,
-                        "net_setting_ip": "0.0.0.0",
-                        "net_setting_to": "300"
-                    }
-                )
+                if next(iter(LOGGER_REGEX["setting_protocol"].finditer(self.info))).group(1) != "TCP" if "tcp" in self.transport else "UDP" or next(iter(LOGGER_REGEX["setting_cs"].finditer(self.info))).group(1) != "SERVER" if "tcp" in self.transport else "" or next(iter(LOGGER_REGEX["setting_port"].finditer(self.info))).group(1) != self.port or next(iter(LOGGER_REGEX["setting_ip"].finditer(self.info))).group(1) != IP_ANY or next(iter(LOGGER_REGEX["setting_timeout"].finditer(self.info))).group(1) != "300":
+                    await request(self.host, LOGGER_CMD, LOGGER_SET,
+                        {
+                            "net_setting_pro": "TCP" if "tcp" in self.transport else "UDP",
+                            "net_setting_cs": "SERVER" if "tcp" in self.transport else "",
+                            "net_setting_pro_sel": "TCPSERVER" if "tcp" in self.transport else "UDP",
+                            "net_setting_port": self.port,
+                            "net_setting_ip": "0.0.0.0",
+                            "net_setting_to": "300"
+                        }
+                    )
+                    await request(self.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
         except Exception as e:
-            _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
+            _LOGGER.debug(f"[{self.host}] Error", exc_info = True)
 
     async def load(self):
         try:
             self.info = await request(self.host, LOGGER_SET)
         except Exception as e:
-            _LOGGER.debug(f"[{self.host}] Error: {strepr(e)}")
+            _LOGGER.debug(f"[{self.host}] Error", exc_info = True)
 
 @dataclass
 class ProfileProvider:
