@@ -4,6 +4,7 @@ import voluptuous as vol
 
 from typing import Any
 from logging import getLogger
+from dataclasses import asdict
 from socket import getaddrinfo, herror, gaierror, timeout
 
 from homeassistant.const import CONF_NAME
@@ -90,18 +91,18 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
 
     async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
-        if device := dr.async_get(self.hass).async_get_device(connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))}):
+        connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))}
+        if device := dr.async_get(self.hass).async_get_device(connections = connections):
             for entry in self._async_current_entries():
                 if entry.entry_id == device.primary_config_entry:
                     if entry.options.get(CONF_HOST) != discovery_info["ip"]:
                         self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
                     return self.async_abort(reason = "already_configured_device")
-        else:
-            for entry in self._async_current_entries():
-                if entry.options.get(CONF_HOST) == discovery_info["ip"]:
-                    if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
-                        dr.async_get(self.hass).async_update_device(device.id, new_connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))})
-                    return self.async_abort(reason = "already_configured_device")
+        for entry in self._async_current_entries():
+            if entry.options.get(CONF_HOST) == discovery_info["ip"]:
+                if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
+                    dr.async_get(self.hass).async_update_device(device.id, new_connections = connections)
+                return self.async_abort(reason = "already_configured_device")
         await self.async_set_unique_id(DEFAULT_DISCOVERY_UNIQUE_ID)
         self._abort_if_unique_id_configured()
         if self._async_in_progress(include_uninitialized = True):
@@ -114,7 +115,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         return await self._handle_discovery(**discovery_info)
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        return await self._handle_discovery(ip = discovery_info.ip, mac = discovery_info.macaddress, hostname = discovery_info.hostname)
+        return await self._handle_discovery(**asdict(discovery_info), mac = discovery_info.macaddress)
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         _LOGGER.debug(f"ConfigFlowHandler.async_step_user: {user_input}")
