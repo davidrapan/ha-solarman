@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import socket
-
 from typing import Any
 from logging import getLogger
 from dataclasses import dataclass
 from propcache import cached_property
 from collections.abc import Awaitable, Callable
-from ipaddress import IPv4Address, AddressValueError
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
@@ -80,10 +77,7 @@ class EndPointProvider:
 
     @cached_property
     def ip(self):
-        try:
-            return IPv4Address(self.host)
-        except AddressValueError:
-            return IPv4Address(socket.gethostbyname(self.host))    
+        return getipaddress(self.host) 
 
     async def init(self):
         await self.discover()

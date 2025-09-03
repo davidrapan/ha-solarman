@@ -4,6 +4,7 @@ import os
 import ast
 import time
 import yaml
+import socket
 import asyncio
 import aiofiles
 import voluptuous as vol
@@ -12,6 +13,7 @@ from functools import wraps
 from aiohttp import FormData
 from logging import getLogger
 from typing import Any, Iterable
+from ipaddress import IPv4Address, AddressValueError
 from aiohttp import ClientSession, ClientError, ContentTypeError
 
 from homeassistant.util import slugify as _slugify
@@ -80,6 +82,12 @@ def get_current_file_name(value):
 
 async def async_listdir(path, prefix = ""):
     return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []
+
+def getipaddress(address: str):
+    try:
+        return IPv4Address(address)
+    except AddressValueError:
+        return IPv4Address(socket.gethostbyname(address))
 
 def to_dict(*keys: list):
     return {k: k for k in keys}
