@@ -2189,7 +2189,15 @@ parameters:
           max: 1
         registers: [0x0119]
 
-      - name: Grid Frequency
+      - name: Grid reconnection time
+        platform: number
+        rule: 1
+        range:
+          min: 1
+          max: 300
+        registers: [0x011A]
+
+      - name: Grid frequency
         platform: "select"
         rule: 1
         registers: [0x011D]
