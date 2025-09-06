@@ -94,12 +94,13 @@ class Solarman:
 
     @serial.setter
     def serial(self, value: int | bytes) -> None:
-        if isinstance(value, int):
-            self._serial = value
-            self.serial_bytes = struct.pack("<I", value) if value > 0 else PROTOCOL.PLACEHOLDER3
-        else:
-            self._serial = int.from_bytes(value, "little")
-            self.serial_bytes = value
+        match value:
+            case int():
+                self._serial = value
+                self.serial_bytes = struct.pack("<I", value) if 2147483648 <= value <= 4294967295 else PROTOCOL.PLACEHOLDER3
+            case bytes():
+                self._serial = int.from_bytes(value, "little")
+                self.serial_bytes = value
 
     @property
     def transport(self) -> str:
