@@ -66,7 +66,8 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
         super().__init__(coordinator, {"key": "update_interval_sensor", "name": "Update Interval"})
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_native_unit_of_measurement = "s"
-        self._attr_state_class = "duration"
+        self._attr_state_class = "measurement"
+        self._attr_device_class = "duration"
         self._attr_icon = "mdi:update"
         self._attr_native_value = 0
 
