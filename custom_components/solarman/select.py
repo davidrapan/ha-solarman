@@ -96,7 +96,11 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
     @property
     def current_option(self):
         """Return the current option of this select."""
-        return self._attr_state if not self.mask else lookup_value(self._attr_value & self.mask, self.dictionary)
+        try:
+            return self._attr_state if not self.mask else lookup_value(self._attr_value & self.mask, self.dictionary)
+        except Exception as e:
+            _LOGGER.debug(f"SolarmanSelectEntity.current_option of {self._attr_name} w/ {self._attr_value}: {strepr(e)}")
+        return None
 
     async def async_select_option(self, option: str):
         """Change the selected option."""
