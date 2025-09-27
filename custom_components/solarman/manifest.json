@@ -10,6 +10,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidrapan/ha-solarman/issues",
   "quality_scale": "custom",
-  "requirements": ["propcache", "aiohttp", "aiofiles", "pyyaml"],
+  "requirements": ["aiofiles"],
   "version": "0.0.0"
 }
