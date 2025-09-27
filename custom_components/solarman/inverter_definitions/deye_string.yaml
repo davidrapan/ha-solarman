@@ -738,7 +738,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 1
+        rule: 2
         registers: [0x00C6, 0x00C7]
 
       - name: "Grid Power"
