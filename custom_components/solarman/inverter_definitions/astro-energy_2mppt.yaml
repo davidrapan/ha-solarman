@@ -5,6 +5,7 @@ info:
 default:
   update_interval: 5
   max_size: 60
+  code: 0x04
 
 parameters:
   - group: PV
