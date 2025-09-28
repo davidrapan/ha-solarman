@@ -114,6 +114,7 @@ parameters:
           invalidate_all:
 
       - name: "Total Production"
+        persistent:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"

@@ -321,6 +321,7 @@ parameters:
         icon: "mdi:clock-outline"
 
       - name: "Total Production"
+        persistent:
         class: "energy"
         state_class: "total_increasing"
         uom: "Wh"
