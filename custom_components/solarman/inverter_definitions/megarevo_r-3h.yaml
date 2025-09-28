@@ -23,7 +23,7 @@ parameters:
         state_class: "measurement"
         uom: "W"
         rule: 3
-        registers: [0x16A2]
+        registers: [0x16A2, 0x16A3]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
@@ -107,6 +107,7 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
+        scale: 0.1
         rule: 1
         registers: [0x3145]
 
@@ -114,6 +115,7 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
+        scale: 0.1
         rule: 1
         registers: [0x3146]
 
@@ -134,14 +136,14 @@ parameters:
         icon: "mdi:pipe-leak"
 
       - name: "Temperature"
-        class: "Temperature"
+        class: "temperature"
         state_class: "measurement"
         uom: "°C"
         rule: 2
         registers: [0x311A]
 
       - name: "Board Temperature"
-        class: "Temperature"
+        class: "temperature"
         state_class: "measurement"
         uom: "°C"
         rule: 2
@@ -178,7 +180,7 @@ parameters:
         scale: 0.001
         rule: 3
         registers: [0x3155, 0x3156]
-        icon: "mdi:transmission-tower-import"
+        icon: "mdi:transmission-tower-export"
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -231,7 +233,7 @@ parameters:
         scale: 0.001
         rule: 3
         registers: [0x316B, 0x316C]
-        icon: "mdi:transmission-tower-export"
+        icon: "mdi:transmission-tower-import"
 
       - name: "Today Battery Charge"
         friendly_name: Today's Battery Charge
@@ -287,33 +289,33 @@ parameters:
           min: 0.1
 
       - name: Today Losses
-        alt: Daily Losses
         friendly_name: Today's Losses
-        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        description: Includes inverter self-consumption and conversion losses (daily)
         class: "energy"
         state_class: "total_increasing"
-        ensure_increasing:
         uom: "kWh"
-        rule: 1
         digits: 1
         scale: 0.001
         uint: enforce
+        rule: 1
+        ensure_increasing: true
         sensors:
-          - registers: [0x3155, 0x3156]
-          - registers: [0x3153, 0x3154]
-          - registers: [0x316F, 0x3170]
+          - registers: [0x3153, 0x3154]   # PV today (add)
+          - registers: [0x316B, 0x316C]   # Grid import today (add)
+          - registers: [0x316F, 0x3170]   # Battery discharge today (add)
           - operator: subtract
-            registers: [0x3159, 0x315A]
+            registers: [0x3155, 0x3156]   # Grid export today (subtract)
           - operator: subtract
-            registers: [0x3157, 0x3158]
+            registers: [0x3157, 0x3158]   # Load today (subtract)
           - operator: subtract
-            registers: [0x316D, 0x316E]
+            registers: [0x316D, 0x316E]   # Battery charge today (subtract)
+
 
       - name: Total Losses
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
-        ensure_increasing:
+        ensure_increasing: true
         uom: "kWh"
         rule: 3
         digits: 1
@@ -414,7 +416,7 @@ parameters:
         registers: [0x3118]
 
       - name: "Grid Frequency"
-        class: "Frequency"
+        class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
