@@ -814,6 +814,9 @@ parameters:
             value: "Enabled"
           - key: 0x0002
             value: "Balanced"
+        writeback:
+          register: 0x1023
+          count: 2
 
       - name: Export Surplus Power
         platform: number
@@ -826,32 +829,65 @@ parameters:
         range:
           min: 0
           max: 65535
+        writeback:
+          register: 0x1023
+          count: 2
 
       - name: "Battery DOD"
         pack: 1
+        platform: number
         alt: "Battery Depth of Discharge"
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x104D]
         icon: "mdi:battery"
+        range:
+          min: 1
+          max: 90
+        writeback:
+          register: 0x1044
+          count: 19
+          overrides:
+            - register: 0x1053
+              value: 0x0001
 
       - name: "Battery EOD"
         pack: 1
+        platform: number
         alt: "Battery End of Discharge"
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x104E]
         icon: "mdi:battery"
+        range:
+          min: 1
+          max: 90
+        writeback:
+          register: 0x1044
+          count: 19
+          overrides:
+            - register: 0x1053
+              value: 0x0001
 
       - name: "Battery EPS Buffer"
         pack: 1
+        platform: number
         state_class: "measurement"
         uom: "%"
         rule: 1
         registers: [0x1052]
         icon: "mdi:battery-low"
+        range:
+          min: 5
+          max: 100
+        writeback:
+          register: 0x1044
+          count: 19
+          overrides:
+            - register: 0x1053
+              value: 0x0001
 
       - name: "Storage Control Mode"
         pack: 1
@@ -878,36 +914,48 @@ parameters:
 
       - name: "Passive: Grid power"
         pack: 1
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 2
         registers: [0x1188, 0x1187]
         range:
-          min: -2147483648 
+          min: -2147483648
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Minimum Battery power"
         pack: 1
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 2
         registers: [0x118A, 0x1189]
         range:
-          min: -2147483648 
+          min: -2147483648
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Maximum Battery power"
         pack: 1
+        platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
         rule: 2
         registers: [0x118C, 0x118B]
         range:
-          min: -2147483648 
+          min: -2147483648
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
   - group: Alarm
     items:
