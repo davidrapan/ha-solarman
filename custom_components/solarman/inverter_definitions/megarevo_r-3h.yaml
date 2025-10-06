@@ -298,7 +298,7 @@ parameters:
         scale: 0.001
         uint: enforce
         rule: 1
-        ensure_increasing: true
+        ensure_increasing:
         sensors:
           - registers: [0x3153, 0x3154]   # PV today (add)
           - registers: [0x316B, 0x316C]   # Grid import today (add)
@@ -315,7 +315,7 @@ parameters:
         description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
         class: "energy"
         state_class: "total_increasing"
-        ensure_increasing: true
+        ensure_increasing:
         uom: "kWh"
         rule: 3
         digits: 1
