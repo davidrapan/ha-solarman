@@ -7,6 +7,13 @@ default:
   max_size: 60
   code: 0x04
 
+requests_fine_control:
+requests:
+  - code: 0x04
+    start: 0x00
+    end: 0x3B
+    count: 0x3C
+
 parameters:
   - group: PV
     items:
