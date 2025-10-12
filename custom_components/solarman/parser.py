@@ -47,7 +47,7 @@ class ParameterParser:
 
         if "requests" in profile and "requests_fine_control" in profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
-            self._requests = profile["requests"]
+            self._requests = [create_request(get_request_code(r, self._code), r[REQUEST_START], r[REQUEST_END]) for r in profile["requests"]]
 
         _LOGGER.debug(f"{filename} w/ {'defaults' if 'default' in profile else 'stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 

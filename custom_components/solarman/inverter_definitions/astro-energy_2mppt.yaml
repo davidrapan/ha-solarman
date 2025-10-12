@@ -9,10 +9,8 @@ default:
 
 requests_fine_control:
 requests:
-  - code: 0x04
-    start: 0x00
+  - start: 0x00
     end: 0x3B
-    count: 0x3C
 
 parameters:
   - group: PV

@@ -122,7 +122,7 @@ def ensure_list(value):
 def ensure_list_safe_len(value: list):
     return ensure_list(value), len(value) if isinstance(value, list) else (1 if isinstance(value, dict) and value else 0)
 
-def create_request(code, start, end):
+def create_request(code: int, start: int, end: int):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
 
 async def lookup_profile(request, parameters):
@@ -341,8 +341,8 @@ def lookup_value(value, dictionary):
 def get_number(value, digits: int = -1):
     return int(value) if isinstance(value, int) or (isinstance(value, float) and value.is_integer()) else ((n if (n := round(value, digits)) and not n.is_integer() else int(n)) if digits > -1 else float(value))
 
-def get_request_code(request):
-    return request[REQUEST_CODE] if REQUEST_CODE in request else request[REQUEST_CODE_ALT]
+def get_request_code(request: dict[str, int], default: int | None = None):
+    return request[REQUEST_CODE] if REQUEST_CODE in request else request[REQUEST_CODE_ALT] if REQUEST_CODE_ALT in request else default
 
 def get_tuple(tuple, index = 0):
     return tuple[index] if tuple else None
