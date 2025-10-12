@@ -1627,6 +1627,16 @@ parameters:
           - key: 0x0003
             value: "Both"
 
+      - name: "MPPT Multi-point Scanning"
+        platform: "select"
+        rule: 1
+        registers: [0x0034]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Enabled"
+
   - group: Work Mode
     update_interval: 300
     items:
