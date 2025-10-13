@@ -58,7 +58,8 @@ class Device():
 
     async def shutdown(self):
         self.state.value = -1
-        await self.modbus.close()
+        if self.modbus:
+            await self.modbus.close()
 
     async def execute(self, code, address, **kwargs):
         _LOGGER.debug(f"[{self.endpoint.host}] Request {code:02} ❘ 0x{code:02X} ~ {address:04} ❘ 0x{address:04X}: {kwargs}")
