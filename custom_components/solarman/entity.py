@@ -155,19 +155,20 @@ class SolarmanWritableEntity(SolarmanEntity):
         if isinstance(data, list):
             while len(self.registers) > len(data):
                 data.insert(0, 0)
-        if self.writeback_registers is not None:
-            if (writeback_data := await self.coordinator.device.execute(self.writeback_read_code, self.writeback_start_register, count = self.writeback_count)) is not None:
-                for override in self.writeback_overrides:
-                    writeback_data[override["register"] - self.writeback_start_register] = override["value"]
-                if isinstance(data, int):
-                    writeback_data[self.register - self.writeback_start_register] = data
-                elif isinstance(data, list):
-                    for idx, val in enumerate(data):
-                        writeback_data[self.register + idx - self.writeback_start_register] = val
-                register = self.writeback_start_register
-                data = writeback_data
-        if await self.coordinator.device.execute(self.code, register, data = data) > 0 and state is not None:
-            self.set_state(state, value)
-            self.async_write_ha_state()
-            #await self.entity_description.update_fn(self.coordinator., int(value))
-            #await self.coordinator.async_request_refresh()
+        async with self.coordinator.device.modbus.semaphore:
+            if self.writeback_registers is not None:
+                if (writeback_data := await self.coordinator.device.execute(self.writeback_read_code, self.writeback_start_register, count = self.writeback_count)) is not None:
+                    for override in self.writeback_overrides:
+                        writeback_data[override["register"] - self.writeback_start_register] = override["value"]
+                    if isinstance(data, int):
+                        writeback_data[self.register - self.writeback_start_register] = data
+                    elif isinstance(data, list):
+                        for idx, val in enumerate(data):
+                            writeback_data[self.register + idx - self.writeback_start_register] = val
+                    register = self.writeback_start_register
+                    data = writeback_data
+            if await self.coordinator.device.execute(self.code, register, data = data) > 0 and state is not None:
+                self.set_state(state, value)
+                self.async_write_ha_state()
+                #await self.entity_description.update_fn(self.coordinator., int(value))
+                #await self.coordinator.async_request_refresh()
