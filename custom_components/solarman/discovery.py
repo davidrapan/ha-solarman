@@ -39,7 +39,7 @@ class DiscoveryProtocol(asyncio.DatagramProtocol):
 
 class Discovery:
     def __init__(self):
-        self._semaphore = asyncio.Semaphore(1)
+        self._lock = asyncio.Lock()
         self._transport: asyncio.DatagramTransport | None = None
         self._protocol: DiscoveryProtocol | None = None
 
@@ -49,7 +49,7 @@ class Discovery:
 
     @asynccontextmanager
     async def _context(self, address: str | None = None):
-        async with self._semaphore:
+        async with self._lock:
             if self._transport is None:
                 self._transport, self._protocol = await asyncio.get_running_loop().create_datagram_endpoint(lambda: DiscoveryProtocol(address or self._broadcast), family = socket.AF_INET, allow_broadcast = True)
         self._protocol.responses.append(responses := asyncio.Queue())

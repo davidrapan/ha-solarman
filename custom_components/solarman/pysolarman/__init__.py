@@ -72,7 +72,7 @@ class Solarman:
         self._keeper: asyncio.Task | None = None
         self._reader: asyncio.StreamReader | None = None
         self._writer: asyncio.StreamWriter | None = None
-        self._semaphore = asyncio.Semaphore(1)
+        self._lock = asyncio.Lock()
         self._data_queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize = 1)
         self._data_event = Event()
         self._last_frame: bytes | None = None
@@ -124,10 +124,6 @@ class Solarman:
     def sequence_number(self):
         self._sequence_number = ((self._sequence_number + 1) & 0xFF) if hasattr(self, "_sequence_number") else randrange(0x01, 0xFF)
         return self._sequence_number
-
-    @property
-    def semaphore(self):
-        return self._semaphore
 
     def _protocol_header(self, length: int, control: int, seq: bytes):
         return bytearray(PROTOCOL.START
@@ -321,12 +317,12 @@ class Solarman:
             raise Exception(f"Invalid modbus function code {code:02}")
 
         async with asyncio.timeout(self.timeout * 6):
-            async with self._semaphore:
+            async with self._lock:
                 return await self.get_response(code, address, **kwargs)
 
     @log_call("Closing connection")
     async def close(self):
-        async with self._semaphore:
+        async with self._lock:
             if self.connected:
                 self._keeper.cancel()
 
