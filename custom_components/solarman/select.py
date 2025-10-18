@@ -20,7 +20,7 @@ _PLATFORM = get_current_file_name(__name__)
 async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities([SolarmanCloud(config_entry.runtime_data)] + [SolarmanSelectEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
+    async_add_entities([SolarmanMode(config_entry.runtime_data), SolarmanCloud(config_entry.runtime_data)] + [SolarmanSelectEntity(config_entry.runtime_data, d).init() for d in postprocess_descriptions(config_entry.runtime_data, _PLATFORM)])
 
     return True
 
@@ -28,6 +28,34 @@ async def async_unload_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordin
     _LOGGER.debug(f"async_unload_entry: {config_entry.options}")
 
     return True
+
+class SolarmanMode(SolarmanEntity, SelectEntity):
+    def __init__(self, coordinator):
+        SolarmanEntity.__init__(self, coordinator, {"key": "mode_select", "name": "Mode"})
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_options = ["Data collection", "Transparency"]
+
+    @property
+    def available(self):
+        return self.coordinator.device.endpoint.info is not None and self.current_option is not None
+
+    @property
+    def current_option(self):
+        for i in LOGGER_REGEX["mode"].finditer(self.coordinator.device.endpoint.info):
+            match i.group(1):
+                case "cmd":
+                    return "Data collection"
+                case "throughput":
+                    return "Transparency"
+        return None
+
+    async def async_select_option(self, option: str):
+        await self.coordinator.device.endpoint.load()
+        if option:
+            await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET, {"yz_tmode": "cmd" if option == "Data collection" else "throughput"})
+            await self.coordinator.device.endpoint.load()
+            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
+        self.async_write_ha_state()
 
 class SolarmanCloud(SolarmanEntity, SelectEntity):
     def __init__(self, coordinator):
@@ -54,7 +82,7 @@ class SolarmanCloud(SolarmanEntity, SelectEntity):
 
     async def async_select_option(self, option: str):
         await self.coordinator.device.endpoint.load()
-        if (enabled := option != "Disabled") and (port := 10443 if option == "HTTPS" else 10000):
+        if (enabled := option != "Disabled") is not None and (port := 10443 if option == "HTTPS" else 10000):
             await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET,
                 {
                     "server_a": f"35.157.42.77,5406.deviceaccess.host,{port},TCP" if enabled else ",,,TCP",
