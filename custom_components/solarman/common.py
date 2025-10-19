@@ -178,8 +178,8 @@ def build_device_info(entry_id, serial, mac, host, info, name):
     device_info["identifiers"] = ({(DOMAIN, entry_id)} if entry_id else set()) | ({(DOMAIN, serial)} if serial else set())
     device_info["connections"] = {(CONNECTION_NETWORK_MAC, format_mac(mac))} if mac else set()
     device_info["configuration_url"] = build_configuration_url(host) if host else None
-    device_info["serial_number"] = serial if serial else None
     device_info["manufacturer"] = manufacturer
+    device_info["serial_number"] = serial
     device_info["model"] = model
     device_info["name"] = name
 
