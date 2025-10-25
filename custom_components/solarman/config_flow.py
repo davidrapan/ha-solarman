@@ -95,7 +95,7 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
         if device := dr.async_get(self.hass).async_get_device(connections = connections):
             for entry in self._async_current_entries():
                 if entry.entry_id == device.primary_config_entry:
-                    if str(getipaddress(entry.options.get(CONF_HOST))) != discovery_info["ip"]:
+                    if str(getipaddress(entry.options.get(CONF_HOST))) != discovery_info["ip"] and discovery_info["ip"] != IP_ANY:
                         self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
                     return self.async_abort(reason = "already_configured_device")
         for entry in self._async_current_entries():
