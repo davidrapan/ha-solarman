@@ -900,13 +900,14 @@ parameters:
         registers: [0x00C0]
 
       - name: "Generator"
+        description: Generator ready
         name_lookup: "io_mode_select"
         update_interval: 30
         platform: "binary_sensor"
         device_class: power
         rule: 1
         registers: [0x00C3]
-        bit: 0
+        bit: 8
 
       - name: "Output Frequency"
         l: 1
@@ -1513,10 +1514,13 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Generator"
+        description: Gen Force
         name_lookup: "io_mode_select"
         platform: "switch"
         rule: 1
-        registers: [0x00EA]
+        registers: [0x0146]
+        value:
+          bit: 13
 
       - name: "IO Mode"
         alt: Generator input mode
@@ -2317,16 +2321,10 @@ parameters:
             value: "Shenggao Electric CAN"
 
       - name: "Meter"
-        platform: select
+        description: Ex_Meter For CT
+        platform: "switch"
         rule: 1
         registers: [0x0146]
-        lookup:
-          - key: 0
-            value: Disabled
-          - bit: 0
-            value: Enabled
-          - bit: [0, 13]
-            value: Generator
 
       - name: AC Coupling
         description: Couple inverters and batteries using AC lines
