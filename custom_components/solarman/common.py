@@ -217,6 +217,9 @@ def slugify(*items: Iterable[str | None], separator: str = "_"):
 def entity_key(object: dict):
     return slugify(object["name"], object["platform"])
 
+def enforce_parameters(source: dict, parameters: dict):
+    return len((keys := source.keys() & parameters.keys())) == 0 or all(source[k] <= parameters[k] for k in keys)
+
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in dict(source):
@@ -241,11 +244,14 @@ def preprocess_descriptions(item, group, table, code, parameters):
         for s in sensors:
             modify(s)
             if r := s.get("registers"):
-                registers.extend(r)
-                if m := s.get("multiply"):
-                    modify(m)
-                    if m_r := m.get("registers"):
-                        registers.extend(m_r)
+                if enforce_parameters(s, parameters):
+                    registers.extend(r)
+                    if m := s.get("multiply"):
+                        modify(m)
+                        if m_r := m.get("registers"):
+                            registers.extend(m_r)
+                else:
+                    s["registers"] = []
 
     g = dict(group)
     g.pop("items")
@@ -256,9 +262,10 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     if sensors := item.get("sensors"):
         for s in sensors:
-            bulk_inherit(s, item, REQUEST_CODE, "scale")
-            if m := s.get("multiply"):
-                bulk_inherit(m, s, REQUEST_CODE, "scale")
+            if s.get("registers"):
+                bulk_inherit(s, item, REQUEST_CODE, "scale")
+                if m := s.get("multiply"):
+                    bulk_inherit(m, s, REQUEST_CODE, "scale")
 
     return item
 

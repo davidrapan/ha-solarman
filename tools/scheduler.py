@@ -26,6 +26,9 @@ def unwrap(source: dict, key: Any, mod: int = 0):
 def entity_key(object: dict):
     return '_'.join(filter(None, (object["name"], object["platform"]))).lower().replace(' ', '_')
 
+def enforce_parameters(source: dict, parameters: dict):
+    return len((keys := source.keys() & parameters.keys())) == 0 or all(source[k] <= parameters[k] for k in keys)
+
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in dict(source):
@@ -50,11 +53,14 @@ def preprocess_descriptions(item, group, table, code, parameters):
         for s in sensors:
             modify(s)
             if r := s.get("registers"):
-                registers.extend(r)
-                if m := s.get("multiply"):
-                    modify(m)
-                    if m_r := m.get("registers"):
-                        registers.extend(m_r)
+                if enforce_parameters(s, parameters):
+                    registers.extend(r)
+                    if m := s.get("multiply"):
+                        modify(m)
+                        if m_r := m.get("registers"):
+                            registers.extend(m_r)
+                else:
+                    s["registers"] = []
 
     g = dict(group)
     g.pop("items")
@@ -65,9 +71,10 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     if sensors := item.get("sensors"):
         for s in sensors:
-            bulk_inherit(s, item, "code", "scale")
-            if m := s.get("multiply"):
-                bulk_inherit(m, s, "code", "scale")
+            if s.get("registers"):
+                bulk_inherit(s, item, "code", "scale")
+                if m := s.get("multiply"):
+                    bulk_inherit(m, s, "code", "scale")
 
     return item
 
@@ -128,7 +135,7 @@ if __name__ == '__main__':
 
     parameters = {"mod": 0, "mppt": 2, "l": 3, "pack": 1}
 
-    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
+    items = [i for i in sorted([preprocess_descriptions(item, group, table, _code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", _code), max(x["registers"])) if x.get("registers") else (-1, -1)) if enforce_parameters(i, parameters)]
 
     _is_single_code = False
     if (items_codes := [get_code(i, "read", _code) for i in items if "registers" in i]) and (is_single_code := all_same(items_codes)):
