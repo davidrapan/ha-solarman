@@ -122,7 +122,7 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         self.code = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
-        self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
+        self.maxint = 0xFFFFFFFF if len(self.registers) >= 2 else 0xFFFF
 
         self.writeback_registers = sensor.get("writeback")
         if self.writeback_registers is not None:
@@ -147,9 +147,9 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         if isinstance(data, int):
             if data < 0:
-                data = data + self.maxint
+                data = data + self.maxint + 1
             if data > 0xFFFF:
-                data = list(split_p16b(data))
+                data = list(split_p16b(data))[::-1]
             if len(self.registers) > 1 or self.code > FUNCTION_CODE.WRITE_SINGLE_REGISTER:
                 data = ensure_list(data)
         if isinstance(data, list):
