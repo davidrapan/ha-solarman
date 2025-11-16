@@ -236,7 +236,7 @@ class ParameterParser:
             shift += 16
 
         if value > (maxint >> 1):
-            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+            value = (value - maxint - 1) if not magnitude else -(value & (maxint >> 1))
 
         if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
             return range.get("default")
