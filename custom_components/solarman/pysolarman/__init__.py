@@ -142,7 +142,7 @@ class Solarman:
             return False
         if frame[5] != self._sequence_number:
             if frame[4] == PROTOCOL.CONTROL_CODE.REQUEST and len(frame) > 6 and (f := int.from_bytes(frame[5:6], "big") == len(frame[6:])) and (int.from_bytes(frame[8:9], "big") == len(frame[9:]) if len(frame) > 9 else f):
-                _LOGGER.debug(f"[{self.host}] TCP_DETECTED: %s", self.host, frame.hex(" "))
+                _LOGGER.debug(f"[{self.host}] TCP_DETECTED: {frame.hex(" ")}")
                 self.transport = "modbus_tcp"
                 return True
             _LOGGER.debug(f"[{self.host}] SEQ_MISMATCH: {frame.hex(" ")}")
