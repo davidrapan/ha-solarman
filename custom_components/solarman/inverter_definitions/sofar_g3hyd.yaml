@@ -1323,33 +1323,42 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x1188, 0x1187]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Minimum Battery power"
         platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x118A, 0x1189]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Maximum Battery power"
         platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x118C, 0x118B]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
   - group: Alarm
     items:
