@@ -22,8 +22,13 @@ parameters:
         mppt: 1
         state_class: "measurement"
         uom: "W"
-        rule: 3
-        registers: [0x16A2, 0x16A3]
+        rule: 1
+        digits: 0
+        sensors:
+          - registers: [0x3132]
+          - registers: [0x3135]
+          - registers: [0x3138]
+          - registers: [0x313B]
         icon: "mdi:solar-power-variant"
 
       - name: "PV1 Voltage"
