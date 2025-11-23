@@ -623,3 +623,97 @@ parameters:
             value: "Lead Acid (No BMS)"
           - key: 2
             value: "Lithium"
+
+      - name: "EPS/Backup Enable"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3415]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Enable"
+
+      - name: "Battery Wake-Up"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3419]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Enable"
+
+      - name: "RSD Button Enable"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3426]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Enable"
+
+      - name: "Batt. Comm. Type"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340B]
+        lookup:
+          - key: 1
+            value: "CAN"
+          - key: 2
+            value: "RS485"
+
+      - name: "Anti Reflux"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340D]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Enable"
+
+      - name: "PV Input Type"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340E]
+        lookup:
+          - key: 0
+            value: "Independent"
+          - key: 1
+            value: "Parallel"
+          - key: 2
+            value: "CV"
+
+      - name: "ARC Enable"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x341F]
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 1
+            value: "Enable"
+
+      - name: "Grid Setting"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3425]
+        lookup:
+          - key: 0
+            value: "220V Single"
+          - key: 1
+            value: "120V/240V Split"
+          - key: 2
+            value: "120V/208V Split"
+          - key: 3
+            value: "120V Single"
