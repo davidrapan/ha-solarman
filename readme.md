@@ -22,7 +22,6 @@
 > - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Ethernet Loggers
 
 > [!NOTE]  
-> - It's still 🚧 work in progress  but currently very 🐎 stable 😉  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
 > - Use [💬 Discussions](https://github.com/davidrapan/ha-solarman/discussions) for 🙏 Q&A, 💡 Development Planning and 🎁 feature requests, etc. and [🚩 Issues](https://github.com/davidrapan/ha-solarman/issues) for 🐞 bug reporting and such...
 
@@ -35,7 +34,7 @@
 - Make sure it's the right one (using displayed frontpage) and click DOWNLOAD
 
 ### 🛠 Manually
-- Copy the contents of `custom_components/solarman` to `/config/custom_components/solarman` in Home Assistant
+- Copy the contents of `custom_components/` to `/homeassistant/custom_components/`
 
 ## ⚙️ Configuration
 
