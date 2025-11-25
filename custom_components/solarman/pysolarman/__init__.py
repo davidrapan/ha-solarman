@@ -1,7 +1,6 @@
 import time
 import types
 import struct
-import logging
 import asyncio
 
 from functools import wraps
@@ -305,7 +304,12 @@ class Solarman:
         res = await self._send_receive_frame(req)
         if 8 <= len(res) <= 10: # Incomplete response correction
             res = res[:5] + b'\x06' + res[6:] + (req[len(res):10] if len(req) > 12 else (b'\x00' * (10 - len(res)))) + b'\x00\x01'
-        return tcp.parse_response_adu(res, req)
+        try:
+            return tcp.parse_response_adu(res, req)
+        except struct.error:
+            req = req[6:]
+            res = res[6:6 + 3 + res[8]]
+            return rtu.parse_response_adu(res + get_crc(res), req + get_crc(req))
 
     @retry()
     async def get_response(self, code: int, address: int, **kwargs):
