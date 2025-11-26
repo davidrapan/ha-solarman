@@ -414,6 +414,14 @@ parameters:
         rule: 2
         registers: [0x0606]
 
+      - name: "Battery Power Total"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 100
+        rule: 2
+        registers: [0x667]
+
       - name: "Battery Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -427,6 +435,13 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x0608]
+
+      - name: "Battery SOC Average"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0668]
 
       - name: "Battery SOH"
         alt: "Battery State of Health"
