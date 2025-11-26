@@ -73,7 +73,7 @@ DEFAULT_ = {
     DIGITS: 6
 }
 
-AUTODETECTION_DEYE_OFF = ((0x0103), "deye_hybrid.yaml")
+AUTODETECTION_DEYE_OFF = ((0x0103,), "deye_hybrid.yaml")
 AUTODETECTION_DEYE_STRING = ((0x0002, 0x0200), "deye_string.yaml")
 AUTODETECTION_DEYE_P1 = ((0x0003, 0x0300), "deye_hybrid.yaml")
 AUTODETECTION_DEYE_MICRO = ((0x0004, 0x0400), "deye_micro.yaml")
