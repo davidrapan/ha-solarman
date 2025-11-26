@@ -2325,6 +2325,8 @@ parameters:
         platform: "switch"
         rule: 1
         registers: [0x0146]
+        value:
+          bit: 0
 
       - name: AC Coupling
         description: Couple inverters and batteries using AC lines
@@ -2341,3 +2343,48 @@ parameters:
           - bit: 7
             mode: "|"
             value: Load
+
+      - name: "Meter Type"
+        platform: select
+        rule: 1
+        registers: [0x0146]
+        display:
+          mask: 0x0F00           
+        icon: "mdi:meter-electric"
+        lookup:
+          - key: 0x0100
+            value: "Eastron 3P (SDM630)"
+          - key: 0x0200
+            value: "CHNT 3P (DTSU666)"
+          - key: 0x0300
+            value: "Eastron 1P (SDM230)"
+          - key: 0x0400
+            value: "CHNT 1P (DDSU666)"
+
+      - name: "Brid Tie Meter2"
+        platform: "switch"
+        rule: 1
+        registers: [0x0146]
+        value:
+          bit: 12
+
+      - name: "Phase A (Ex_Meter)"
+        platform: "switch"
+        rule: 1
+        registers: [0x0146]
+        value:
+          bit: 1
+
+      - name: "Phase B (Ex_Meter)"
+        platform: "switch"
+        rule: 1
+        registers: [0x0146]
+        value:
+          bit: 2
+
+      - name: "Phase C (Ex_Meter)"
+        platform: "switch"
+        rule: 1
+        registers: [0x0146]
+        value:
+          bit: 3            
