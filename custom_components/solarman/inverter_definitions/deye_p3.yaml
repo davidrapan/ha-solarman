@@ -2738,7 +2738,7 @@ parameters:
   - group: PV
     update_interval: 5
     items:
-      # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
+      # PV - The combined power of Input 1..8 (L:1W, H:10W)
       - name: "PV Power"
         alt: DC Power
         mppt: 1
@@ -2768,7 +2768,6 @@ parameters:
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 1 (L:1W, H:10W)
       - name: "PV1 Power"
         alt: DC1 Power
         mppt: 1
@@ -2780,7 +2779,6 @@ parameters:
         registers: [0x02A0]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 2 (L:1W, H:10W)
       - name: "PV2 Power"
         alt: DC2 Power
         mppt: 2
@@ -2792,7 +2790,6 @@ parameters:
         registers: [0x02A1]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         alt: DC3 Power
         mppt: 3
@@ -2804,7 +2801,6 @@ parameters:
         registers: [0x02A2]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         alt: DC4 Power
         mppt: 4
