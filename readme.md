@@ -19,7 +19,7 @@
 > [!IMPORTANT]  
 > - Made for [🏡 Home Assistant](https://www.home-assistant.io/)  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Ethernet Loggers
+> - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Modbus TCP (ESP, Waveshare, Ethernet logger, etc.)
 
 > [!NOTE]  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
