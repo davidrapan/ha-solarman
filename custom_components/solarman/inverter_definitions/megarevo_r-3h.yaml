@@ -625,39 +625,21 @@ parameters:
             value: "Lithium"
 
       - name: "EPS/Backup Enable"
-        platform: select
-        state_class: "measurement"
+        platform: switch
         rule: 1
         registers: [0x3415]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Enable"
 
-      - name: "Battery Wake-Up"
-        platform: select
-        state_class: "measurement"
+      - name: "Battery Wake Up"
+        platform: switch
         rule: 1
         registers: [0x3419]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Enable"
 
       - name: "RSD Button Enable"
-        platform: select
-        state_class: "measurement"
+        platform: switch
         rule: 1
         registers: [0x3426]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Enable"
 
-      - name: "Batt. Comm. Type"
+      - name: "Battery BMS Type"
         platform: select
         state_class: "measurement"
         rule: 1
@@ -669,15 +651,9 @@ parameters:
             value: "RS485"
 
       - name: "Anti Reflux"
-        platform: select
-        state_class: "measurement"
+        platform: switch
         rule: 1
         registers: [0x340D]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Enable"
 
       - name: "PV Input Type"
         platform: select
@@ -693,17 +669,11 @@ parameters:
             value: "CV"
 
       - name: "ARC Enable"
-        platform: select
-        state_class: "measurement"
+        platform: switch
         rule: 1
         registers: [0x341F]
-        lookup:
-          - key: 0
-            value: "Disable"
-          - key: 1
-            value: "Enable"
 
-      - name: "Grid Setting"
+      - name: "Grid"
         platform: select
         state_class: "measurement"
         rule: 1
