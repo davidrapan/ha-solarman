@@ -687,3 +687,199 @@ parameters:
             value: "120V/208V Split"
           - key: 3
             value: "120V Single"
+
+      - name: "Leak Current Detection"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 5
+
+      - name: "Insulation Detection"
+        description: Max grid power limiter
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 6
+
+      - name: "CT Inversely"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 9
+
+      - name: "Home Load"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 10
+
+      - name: "No Battery Function"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 11
+
+      - name: "Forced Off-Grid"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 14
+
+      - name: "Battery Grid Charging"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 2
+
+      - name: "Time of Use Enable"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 4
+
+      - name: "Charge Solar Only"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 7
+
+  - group: State
+    update_interval: 30
+    items:
+      - name: "Device Alarm 1"
+        class: "enum"
+        rule: 3
+        registers: [0x3100]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - key: 1
+            value: "Abnormal"
+          - bit: 0
+            value: "00:Battery Discharge Over Current"
+          - bit: 1
+            value: "01:Over Load"
+          - bit: 2
+            value: "02:Battery Disconnected"
+          - bit: 3
+            value: "03:Battery Under Voltage"
+          - bit: 4
+            value: "04:Battery Low Capacity"
+          - bit: 5
+            value: "05:Battery Over Voltage"
+          - bit: 6
+            value: "06:Grid Low Voltage"
+          - bit: 7
+            value: "07:Grid Over Voltage"
+          - bit: 8
+            value: "08:Grid Low Frequency"
+          - bit: 9
+            value: "09:Grid Over Frequency"
+          - bit: 10
+            value: "10:GFCI Triggered"
+          - bit: 11
+            value: "11:Parallel CAN Fail"
+          - bit: 12
+            value: "12:Grid CT Reverse"
+          - bit: 13
+            value: "13:BUS Under Volt"
+          - bit: 14
+            value: "14:BUS Over Volt"
+          - bit: 15
+            value: "15:Inverter Over Current"
+
+      - name: "Device Alarm 2"
+        class: "enum"
+        rule: 3
+        registers: [0x3101]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - key: 1
+            value: "Abnormal"
+          - bit: 0
+            value: "16:Charge Over Current"
+          - bit: 1
+            value: "17:BUS Voltage Instability"
+          - bit: 2
+            value: "18:Inverter Under Volt"
+          - bit: 3
+            value: "19:Inverter Over Volt"
+          - bit: 4
+            value: "20:Inverter Frequency Abnormal"
+          - bit: 5 
+            value: "21:Inverter Temperature High" 
+          - bit: 6
+            value: "22:BMS Sys Error"
+          - bit: 7
+            value: "23:Battery Over Temperature"
+          - bit: 8
+            value: "24:Battery Under Temperature"
+          - bit: 9
+            value: "25:Battery Cell Unbalance"
+          - bit: 10
+            value: "26:Battery Reverse"
+          - bit: 11
+            value: "27:BMS Communication Fail"
+          - bit: 12
+            value: "28:Fan Fail"
+          - bit: 13
+            value: "29:Grid Over Load"
+          - bit: 14
+            value: "30:Grid Phase Error"
+          - bit: 15
+            value: "31:PV ARC Fault"
+
+      - name: "Device Fault"
+        class: "enum"
+        rule: 3
+        registers: [0x3102]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - key: 1
+            value: "Abnormal"
+          - bit: 0
+            value: "32:BUS Soft Fail"
+          - bit: 1
+            value: "33:Inverter Soft Fail"
+          - bit: 2
+            value: "34:BUS Short"
+          - bit: 3
+            value: "35:Inverter Short"
+          - bit: 4
+            value: "36:Fan Fault"
+          - bit: 5
+            value: "37:PV Insulation Low"
+          - bit: 6
+            value: "38:BUS Relay Fault"
+          - bit: 7
+            value: "39:Grid Relay Fault"
+          - bit: 8
+            value: "40:EPS Relay Fault"
+          - bit: 9
+            value: "41:GFCI Fault"
+          - bit: 10
+            value: "42:CT Fault"
+          - bit: 11
+            value: "43:PV Short"
+          - bit: 12 
+            value: "44:Self Test Fail/Byp Relay Fault" 
+          - bit: 13
+            value: "45:System Fault"
+          - bit: 14
+            value: "46:Current DC Over" 
+          - bit: 15
+            value: "47:Voltage DC Over" 
