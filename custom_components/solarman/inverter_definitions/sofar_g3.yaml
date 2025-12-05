@@ -281,9 +281,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match standard behavior like the other inverters
-        #scale: -10
-        scale: 10
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
         rule: 2
         registers: [0x0606]
 
@@ -329,9 +328,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match standard behavior like the other inverters
-        #scale: -10
-        scale: 10
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
         rule: 2
         registers: [0x0488]
 
