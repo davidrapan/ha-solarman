@@ -47,13 +47,13 @@ class ParameterParser:
 
         if "requests" in profile and "requests_fine_control" in profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
-            self._requests = [create_request(get_request_code(r, self._code), r[REQUEST_START], r[REQUEST_END]) for r in profile["requests"]]
+            self._requests = profile["requests"]
 
         _LOGGER.debug(f"{filename} w/ {'defaults' if 'default' in profile else 'stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if enforce_parameters(i, parameters)]
+        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -236,7 +236,7 @@ class ParameterParser:
             shift += 16
 
         if value > (maxint >> 1):
-            value = (value - maxint - 1) if not magnitude else -(value & (maxint >> 1))
+            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
 
         if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
             return range.get("default")
@@ -256,10 +256,12 @@ class ParameterParser:
         value = 0
 
         for s in definition["sensors"]:
-            if not (registers := s.get("registers")):
+            single_operand = s.get("operator") in ["absolute", "abs", "positive", "pos", "negative", "neg", "invert", "flip", "inv", "reverse", "mirror", "sign", "square", "root", "sqrt"]
+            
+            if not (registers := s.get("registers")) and not single_operand:
                 continue
 
-            if (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
+            if not single_operand and (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
                 return None
 
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
@@ -274,12 +276,48 @@ class ParameterParser:
                 value += n
             else:
                 match o:
-                    case "subtract":
+                    case "subtract" | "sub" | "delta":
                         value -= n
-                    case "multiply":
+                    case "multiply" | "mul":
                         value *= n
-                    case "divide" if n != 0:
+                    case "divide" | "div" if n != 0:
                         value /= n
+                    case "modulus" | "mod" if n != 0:
+                        value %= n
+                    case "maximum" | "max":
+                        value = max(value, n)
+                    case "minimum" | "min":
+                        value = min(value, n)
+                    case "average" | "avg" | "mean":
+                        value = (value + n) * 0.5
+                    case "absolute" | "abs":
+                        value = abs(value)
+                    case "positive" | "pos":
+                        value = max(value, 0)
+                    case "negative" | "neg":
+                        value = min(value, 0)
+                    case "invert" | "flip" | "inv":
+                        value = -value
+                    case "reverse" | "mirror":
+                        value = 1 - value
+                    case "sign":
+                        value = (value > 0) - (value < 0)
+                    case "threshold" | "step":
+                        value = (value <= n) + 0
+                    case "imbalance" if min(n, value) + abs(n - value) == 0:
+                        value = abs(value − n) / max(value, n)
+                    case "difference" | "diff" if value != 0:
+                        value = (n - value) / value
+                    case "square":
+                        value = value * value
+                    case "root" | "sqrt":
+                        value = sqrt(value)
+                    case "length" | "magnitude":
+                        value = sqrt(value * value + n * n)
+                    case "harmonic" | "harm":
+                        value = 2 / (1 / value + 1 / n)
+                    case "geometric" | "geom":
+                        value = sqrt(value * n)
                     case _:
                         value += n
 
