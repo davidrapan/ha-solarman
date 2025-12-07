@@ -333,9 +333,9 @@ class ParameterParser:
                         value = 2 / (1 / value + 1 / n)
                     case "geometric" | "geom": # geometric mean between value and n (can also be achieved by combining multiply + sqrt)
                         value = sqrt(value * n)
-                    case "maxratio" if max(n, value) - abs(n - value) != 0: # ratio in reference to the max (can also be achieved by combining minrel + reciprocal)
+                    case "maxratio" if max(n, value) - abs(n - value) != 0: # ratio in reference to the max (can also be achieved by combining minratio + reciprocal)
                         value = max(value, n) / min(value, n)
-                    case "minratio" if min(n, value) + abs(n - value) != 0: # ratio in reference to the min (can also be achieved by combining maxrel + reciprocal)
+                    case "minratio" if min(n, value) + abs(n - value) != 0: # ratio in reference to the min (can also be achieved by combining maxratio + reciprocal)
                         value = min(value, n) / max(value, n)
                     case _: # add n to value
                         value += n
