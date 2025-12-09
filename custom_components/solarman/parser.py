@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import bisect
+import math
 
 from logging import getLogger
 from datetime import datetime
@@ -47,13 +48,13 @@ class ParameterParser:
 
         if "requests" in profile and "requests_fine_control" in profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
-            self._requests = profile["requests"]
+            self._requests = [create_request(get_request_code(r, self._code), r[REQUEST_START], r[REQUEST_END]) for r in profile["requests"]]
 
         _LOGGER.debug(f"{filename} w/ {'defaults' if 'default' in profile else 'stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
-        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if len((a := i.keys() & parameters.keys())) == 0 or all(i[k] <= parameters[k] for k in a)]
+        self._items = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if enforce_parameters(i, parameters)]
 
         if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
@@ -236,7 +237,7 @@ class ParameterParser:
             shift += 16
 
         if value > (maxint >> 1):
-            value = (value - maxint) if not magnitude else -(value & (maxint >> 1))
+            value = (value - maxint - 1) if not magnitude else -(value & (maxint >> 1))
 
         if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
             return range.get("default")
@@ -307,7 +308,7 @@ class ParameterParser:
                         value = -value
                     case "invert01": # invert a 0-1 value
                         value = 1 - value
-                    case "reciprocal": # reciprocal (or multiplicative inverse) of value
+                    case "reciprocal" if value != 0: # reciprocal (or multiplicative inverse) of value
                         value = 1 / value
                     case "sign": # return only the sign of value
                         value = (value > 0) - (value < 0)
@@ -320,19 +321,19 @@ class ParameterParser:
                     # ne, ge, le can be achieved in combination with invert01
                     case "divergence" if min(n, value) + abs(n - value) != 0: # absolute difference between value and n, normalized using the larger of the two
                         # divergence between the two sensor readings, scaled to the larger one
-                        value = abs(value − n) / max(value, n)
+                        value = abs(value - n) / max(value, n)
                     case "distance" | "dist": # can also be achieved with subtract (or delta) + absolute
                         value = abs(value - n)
                     case "square" | "pow2": # value squared (can also be achieved by multipling with the same register)
                         value = value * value
-                    case "root" | "sqrt": # square root of value
-                        value = sqrt(value)
-                    case "length" | "magnitude" | "hypot": # vector magnitude of (value, n)
-                        value = sqrt(value * value + n * n)
+                    case "root" | "sqrt" if value > 0: # square root of value
+                        value = math.sqrt(value)
+                    case "length" | "magnitude" | "hypot" if (value != 0 or n != 0): # vector magnitude of (value, n)
+                        value = math.sqrt(value * value + n * n)
                     case "harmonic" | "harm" if (value != 0 and n != 0): # harmonic mean between value and n
                         value = 2 / (1 / value + 1 / n)
-                    case "geometric" | "geom": # geometric mean between value and n (can also be achieved by combining multiply + sqrt)
-                        value = sqrt(value * n)
+                    case "geometric" | "geom" if value * n > 0: # geometric mean between value and n (can also be achieved by combining multiply + sqrt)
+                        value = math.sqrt(value * n)
                     case "maxratio" if max(n, value) - abs(n - value) != 0: # ratio in reference to the max (can also be achieved by combining minratio + reciprocal)
                         value = max(value, n) / min(value, n)
                     case "minratio" if min(n, value) + abs(n - value) != 0: # ratio in reference to the min (can also be achieved by combining maxratio + reciprocal)
