@@ -1,0 +1,64 @@
+device:
+  manufacturer: Deye
+  model: DS5000-5 Hybrid
+  description: Deye DS 5kW Hybrid inverter (Safe register set)
+
+requests:
+  - start: 0
+    end: 125
+    code: 3
+    count: 126
+
+parameters:
+  pv1_voltage:
+    start: 0
+    scale: 0.1
+
+  pv1_current:
+    start: 1
+    scale: 0.1
+
+  pv1_power:
+    start: 2
+    scale: 1
+
+  pv2_voltage:
+    start: 4
+    scale: 0.1
+
+  pv2_current:
+    start: 5
+    scale: 0.1
+
+  pv2_power:
+    start: 6
+    scale: 1
+
+  grid_voltage:
+    start: 50
+    scale: 0.1
+
+  grid_frequency:
+    start: 53
+    scale: 0.01
+
+  load_power:
+    start: 58
+    scale: 1
+
+  battery_voltage:
+    start: 90
+    scale: 0.01
+
+  battery_current:
+    start: 91
+    scale: 0.01
+    signed: true
+
+  battery_soc:
+    start: 100
+    scale: 1
+
+  inverter_temperature:
+    start: 110
+    scale: 0.1
