@@ -179,7 +179,7 @@ parameters:
         state_class: "measurement"
         uom: "°C"
         scale: 0.1
-        rule: 1
+        rule: 2
         registers: [0x3146]
 
       - name: "Battery Power"
