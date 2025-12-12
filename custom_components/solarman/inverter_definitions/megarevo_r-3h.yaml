@@ -623,3 +623,155 @@ parameters:
             value: "Lead Acid (No BMS)"
           - key: 2
             value: "Lithium"
+
+      - name: "Battery Grid DOD"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3401]
+        range:
+          min: 0
+          max: 100
+          
+      - name: "Battery Off-Grid DOD"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x341E]
+        range:
+          min: 0
+          max: 100
+          
+      - name: "Off-Grid EodHyst"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3418]
+        range:
+          min: 0
+          max: 100
+          
+      - name: "Grid EodHyst"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3467]
+        range:
+          min: 0
+          max: 100
+
+      - name: "Grid Power"
+        description: Max grid power limiter
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3403]
+        icon: "mdi:transmission-tower"
+        range:
+          min: 0
+          max: 100
+          
+      - name: "Discharge Pwr"
+        description: Max battery power limiter
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3404]
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 100
+
+      - name: "Zero Export Power" 
+        description: Positive (+) value buys electricity. Negative (-) value sells electricity
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x3466]
+        icon: "mdi:transmission-tower"
+        range:
+          min: -1000
+          max: 1000
+
+      - name: "Battery Capacity"
+        platform: number
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x341B]
+        icon: "mdi:battery"
+        range:
+          min: 7
+          max: 2000
+
+      - name: "SmartLoad On"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1774]
+        icon: "mdi:lightning-bolt-circle"
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: "SmartLoad Off"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x1775]
+        icon: "mdi:lightning-bolt-circle"
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: "SmartLoad On Voltage"
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x177A]
+        icon: "mdi:battery"
+        configurable:
+          min: 40.0
+          max: 59.5
+          step: 0.1
+          mode: box
+        range:
+          min: 400
+          max: 595
+
+      - name: "SmartLoad Off Voltage"
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x177B]
+        icon: "mdi:battery"
+        configurable:
+          min: 40.0
+          max: 59.5
+          step: 0.1
+          mode: box
+        range:
+          min: 400
+          max: 595
