@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import bisect
+import math
 
 from logging import getLogger
 from datetime import datetime
@@ -256,10 +257,12 @@ class ParameterParser:
         value = 0
 
         for s in definition["sensors"]:
-            if not (registers := s.get("registers")):
+            single_operand = s.get("operator") in ["absolute", "abs", "clamp+", "clamp-", "negate", "invert01", "reciprocal", "sign", "square", "root", "sqrt"]
+            
+            if not (registers := s.get("registers")) and not single_operand:
                 continue
 
-            if (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
+            if not single_operand and (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
                 return None
 
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
@@ -271,16 +274,71 @@ class ParameterParser:
                 n = d
 
             if (o := s.get("operator")) is None:
-                value += n
+                value += n # add n to value
             else:
                 match o:
-                    case "subtract":
+                    case "subtract" | "sub": # subtract n from value
                         value -= n
-                    case "multiply":
+                    case "delta": # subtract value from n
+                        value = n - value
+                    case "multiply" | "mul" | "product": # multiply value by n
                         value *= n
-                    case "divide" if n != 0:
+                    case "divide" | "div" | "ratio" if n != 0: # divide value by n
                         value /= n
-                    case _:
+                    case "invdivide" | "invdiv" | "invratio" if value != 0: # divide n by value (can also be achieved in combination with reciprocal)
+                        value = n / value
+                    case "modulus" | "mod" if n != 0: # remainder of value divided by n
+                        value %= n
+                    case "invmodulus" | "invmod" if value != 0: # remainder of n divided by value
+                        value = n % value
+                    case "maximum" | "max": # keep the larger of value and n
+                        value = max(value, n)
+                    case "minimum" | "min": # keep the smaller of value and n
+                        value = min(value, n)
+                    case "average" | "avg" | "mean": # arithmetic mean between value and n
+                        value = (value + n) * 0.5
+                    case "absolute" | "abs": # remove the sign of value
+                        value = abs(value)
+                    case "clamp+": # clamp to positive values only
+                        value = max(value, 0)
+                    case "clamp-": # clamp to negative values only
+                        value = min(value, 0)
+                    # clamping at both ends can be achived by combining max, min, clamp+ and clamp- in different ways
+                    case "negate": # swap the sign (inverted keyword doesn't work in this case)
+                        value = -value
+                    case "invert01": # invert a 0-1 value
+                        value = 1 - value
+                    case "reciprocal" if value != 0: # reciprocal (or multiplicative inverse) of value
+                        value = 1 / value
+                    case "sign": # return only the sign of value
+                        value = (value > 0) - (value < 0)
+                    case "threshold" | "step" | "greater" | "gt": # 1 if value is greater than n, otherwise 0
+                        value = (value > n) + 0
+                    case "invthreshold" | "invstep" | "less" | "lt": # 1 if n is greater than value, otherwise 0
+                        value = (value < n) + 0
+                    case "equal" | "eq": # 1 if value and n are equal, otherwise 0
+                        value = (value == n) + 0
+                    # ne, ge, le can be achieved in combination with invert01
+                    case "divergence" if min(n, value) + abs(n - value) != 0: # absolute difference between value and n, normalized using the larger of the two
+                        # divergence between the two sensor readings, scaled to the larger one
+                        value = abs(value - n) / max(value, n)
+                    case "distance" | "dist": # can also be achieved with subtract (or delta) + absolute
+                        value = abs(value - n)
+                    case "square" | "pow2": # value squared (can also be achieved by multipling with the same register)
+                        value = value * value
+                    case "root" | "sqrt" if value > 0: # square root of value
+                        value = math.sqrt(value)
+                    case "length" | "magnitude" | "hypot" if (value != 0 or n != 0): # vector magnitude of (value, n)
+                        value = math.sqrt(value * value + n * n)
+                    case "harmonic" | "harm" if (value != 0 and n != 0): # harmonic mean between value and n
+                        value = 2 / (1 / value + 1 / n)
+                    case "geometric" | "geom" if value * n > 0: # geometric mean between value and n (can also be achieved by combining multiply + sqrt)
+                        value = math.sqrt(value * n)
+                    case "maxratio" if max(n, value) - abs(n - value) != 0: # ratio in reference to the max (can also be achieved by combining minratio + reciprocal)
+                        value = max(value, n) / min(value, n)
+                    case "minratio" if min(n, value) + abs(n - value) != 0: # ratio in reference to the min (can also be achieved by combining maxratio + reciprocal)
+                        value = min(value, n) / max(value, n)
+                    case _: # add n to value
                         value += n
 
         return value
