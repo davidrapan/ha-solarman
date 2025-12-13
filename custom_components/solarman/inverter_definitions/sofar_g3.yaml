@@ -64,7 +64,7 @@ parameters:
         rule: 2
         registers: [0x0418]
 
-      - name: "Energy generation time today"
+      - name: "Production time - today"
         state_class: "measurement"
         uom: "min"
         rule: 1
