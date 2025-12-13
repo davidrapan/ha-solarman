@@ -65,6 +65,7 @@ parameters:
         registers: [0x0418]
 
       - name: "Production time - today"
+        class: "duration"
         state_class: "measurement"
         uom: "min"
         rule: 1
