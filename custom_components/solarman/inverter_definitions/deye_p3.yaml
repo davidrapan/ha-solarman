@@ -3090,7 +3090,7 @@ parameters:
         update_interval: 3600
         attribute:
         state_class: "measurement"
-        rule: 5
+        rule: 11
         registers:
           [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
 
