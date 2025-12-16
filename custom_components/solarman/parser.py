@@ -171,6 +171,8 @@ class ParameterParser:
                                 self.try_parse_time(data, i)
                             case 10:
                                 self.try_parse_raw(data, i)
+                            case 11:
+                                self.try_parse_ascii_reverse(data, i)
                     except Exception as e:
                         _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {i} [{strepr(e)}]")
                         raise
@@ -333,6 +335,20 @@ class ParameterParser:
                 return
 
             value += chr(temp >> 8) + chr(temp & 0xFF)
+
+        self.set_state(definition["key"], value)
+
+    def try_parse_ascii_reverse(self, data, definition):
+        code = get_code(definition, "read")
+        value = ""
+
+        for r in definition["registers"]:
+            if (temp := get_addr_value(data, code, r)) is None:
+                return
+
+            temp = chr(temp >> 8) + chr(temp & 0xFF)
+            temp = temp[::-1]
+            value += temp
 
         self.set_state(definition["key"], value)
 

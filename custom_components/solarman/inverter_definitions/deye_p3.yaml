@@ -278,14 +278,17 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        scale: [1, 10]
         rule: 1
         registers: [0x0068]
         range:
           min: 0
-          max: 65535
+          max: [65535, 655350]
         configurable:
-          min: -20
+          min: 0
           max: 500
+          step: 10
+          mode: box
         icon: "mdi:transmission-tower"
 
       - name: "Battery Equalization Cycle"
@@ -2346,18 +2349,16 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Power Factor"
-        platform: number
         class: "power_factor"
         state_class: "measurement"
-        uom: "%"
-        scale: 0.1
+        uom:
+        scale: 0.001
+        suggested_display_precision: 2
         rule: 1
         registers: [0x026D]
-        configurable:
-          mode: box
         range:
           min: 0
-          max: 1000
+          max: 1
         icon: "mdi:transmission-tower"
 
       # The following three (four) registers change according to the built-in and external settings
@@ -3331,7 +3332,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 2 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3345,7 +3346,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 2 MOS Temperature"
         class: "temperature"
@@ -3508,7 +3509,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 3 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3523,7 +3524,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 3 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3537,7 +3538,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 3 MOS Temperature"
         class: "temperature"
@@ -3635,7 +3636,7 @@ parameters:
         registers: [0x2796, 0x2797]
         icon: "mdi:battery-alert"
         attributes: ["value"]
-      
+
       - name: "Battery 3 Fault"
         platform: binary_sensor
         class: "problem"
@@ -3700,7 +3701,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 4 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3715,7 +3716,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 4 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3729,7 +3730,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 4 MOS Temperature"
         class: "temperature"
@@ -3892,7 +3893,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 5 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3907,7 +3908,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 5 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -3921,7 +3922,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 5 MOS Temperature"
         class: "temperature"
@@ -4084,7 +4085,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 6 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4099,7 +4100,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 6 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4113,7 +4114,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 6 MOS Temperature"
         class: "temperature"
@@ -4291,7 +4292,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 7 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4305,7 +4306,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 7 MOS Temperature"
         class: "temperature"
@@ -4468,7 +4469,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 8 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4483,7 +4484,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 8 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4497,7 +4498,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 8 MOS Temperature"
         class: "temperature"
@@ -4675,7 +4676,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 9 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4689,7 +4690,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 9 MOS Temperature"
         class: "temperature"
@@ -4867,7 +4868,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 10 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -4881,7 +4882,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 10 MOS Temperature"
         class: "temperature"
@@ -5059,7 +5060,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 11 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -5073,7 +5074,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 11 MOS Temperature"
         class: "temperature"
@@ -5251,7 +5252,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 12 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -5265,7 +5266,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 12 MOS Temperature"
         class: "temperature"
@@ -5443,7 +5444,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 13 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -5457,7 +5458,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 13 MOS Temperature"
         class: "temperature"
@@ -5635,7 +5636,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 14 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -5649,7 +5650,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 14 MOS Temperature"
         class: "temperature"
@@ -5827,7 +5828,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 15 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -5841,7 +5842,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 15 MOS Temperature"
         class: "temperature"
@@ -6019,7 +6020,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 16 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -6033,7 +6034,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 16 MOS Temperature"
         class: "temperature"
@@ -6211,7 +6212,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 17 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
@@ -6225,7 +6226,7 @@ parameters:
           max: 3000
         validation:
           min: -99
-          max: 99      
+          max: 99
 
       - name: "Battery 17 MOS Temperature"
         class: "temperature"
@@ -6403,7 +6404,7 @@ parameters:
         validation:
           min: -99
           max: 99
-      
+
       - name: "Battery 18 Min Cell Temperature"
         class: "temperature"
         state_class: "measurement"
