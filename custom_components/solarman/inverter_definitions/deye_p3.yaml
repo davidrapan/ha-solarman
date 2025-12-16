@@ -2358,7 +2358,7 @@ parameters:
         registers: [0x026D]
         range:
           min: 0
-          max: 1
+          max: 1000
         icon: "mdi:transmission-tower"
 
       # The following three (four) registers change according to the built-in and external settings
