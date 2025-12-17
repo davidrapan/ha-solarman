@@ -225,7 +225,7 @@ def enforce_parameters(source: dict, parameters: dict):
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in dict(source):
-            if i in ("scale", "min", "max"):
+            if i in ("scale", "min", "max", "default"):
                 unwrap(source, i, parameters[CONF_MOD])
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
                 unwrap(source, i, parameters[CONF_MOD])
@@ -291,6 +291,10 @@ def postprocess_descriptions(coordinator, platform):
             for sensor in list(sensors):
                 if not_enabled(sensor):
                     sensors.remove(sensor)
+
+        if (validation := description.get("validation")) and (vlookup := validation.get("lookup")) and (max_value := coordinator.data.get(vlookup)) is not None and (value := abs(get_tuple(max_value))):
+            validation["min"] = -value
+            validation["max"] = value
 
         # Temporary location of fix for latest HA changes regarding default precision behavior
         if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":

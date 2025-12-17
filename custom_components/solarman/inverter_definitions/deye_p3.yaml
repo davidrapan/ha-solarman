@@ -113,8 +113,9 @@ parameters:
         rule: 4
         registers: [0x0014, 0x0015]
         validation:
-          min: 0
+          min: 1
           max: [24000, 80000]
+          default: [24000, 80000]
 
       - name: "Device MPPTs"
         attribute:
@@ -2228,6 +2229,9 @@ parameters:
         uom: "W"
         rule: 4
         registers: [0x025F, 0x02BF]
+        validation:
+          lookup: "device_rated_power_sensor"
+          invalidate_all:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
@@ -2501,6 +2505,9 @@ parameters:
         uom: "W"
         rule: 4
         registers: [0x027C, 0x02B6]
+        validation:
+          lookup: "device_rated_power_sensor"
+          invalidate_all:
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses

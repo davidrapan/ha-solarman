@@ -120,8 +120,9 @@ parameters:
         rule: 4
         registers: [0x0010, 0x0011]
         validation:
-          min: 0
+          min: 1
           max: 4000
+          default: 4000
 
       - name: "Device MPPTs"
         attribute:
@@ -801,6 +802,9 @@ parameters:
         scale: 0.1
         rule: 3
         registers: [0x0056, 0x0057]
+        validation:
+          lookup: "device_rated_power_sensor"
+          invalidate_all:
 
       - name: Power losses
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
