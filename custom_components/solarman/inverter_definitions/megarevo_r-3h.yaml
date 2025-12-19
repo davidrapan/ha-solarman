@@ -189,6 +189,76 @@ parameters:
         rule: 2
         registers: [0x314A]
 
+      - name: "Battery BMS Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.1]
+        rule: 1
+        registers: [0x313E]
+
+      - name: "Battery BMS Charging Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: [0.1]
+        rule: 1
+        registers: [0x3147]
+
+      - name: "Battery BMS Max Charging Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: [0.1]
+        rule: 1
+        registers: [0x3148]
+        icon: "mdi:current-dc"
+
+      - name: "Battery BMS MAX Discharging Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: [0.1]
+        rule: 1
+        registers: [0x3149]
+        icon: "mdi:current-dc"
+
+      - name: "BMS Charging"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:battery"
+        mask: 0x1000
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 4096
+            value: "Enable"
+
+      - name: "BMS Discharging"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:battery"
+        mask: 0x2000
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 8192
+            value: "Enable"
+
+      - name: "BMS Force Charge"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:battery"
+        mask: 0x4000
+        lookup:
+          - key: 0
+            value: "Disable"
+          - key: 16384
+            value: "Enable"
+
   - group: Device
     items:
       - name: "GFCI Leakage Current"
@@ -490,6 +560,17 @@ parameters:
   - group: Load
     update_interval: 5
     items:
+      - name: "Load Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        sensors:
+          - registers: [0x3122]
+          - registers: [0x3126]
+          
       - name: "Load L1 Voltage"
         l: 1
         class: "voltage"
@@ -595,7 +676,7 @@ parameters:
         registers: [0x312B]
         icon: "mdi:percent"
 
-  - group: Settings
+  - group: Device Settings
     update_interval: 300
     items:
       - name: "Work Mode"
@@ -611,6 +692,87 @@ parameters:
           - key: 2
             value: "Battery Priority"
 
+      - name: "EPS/Backup Enable"
+        platform: switch
+        rule: 1
+        registers: [0x3415]
+
+      - name: "RSD Button Enable"
+        platform: switch
+        rule: 1
+        registers: [0x3426]
+
+      - name: "PV Input Type"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340E]
+        lookup:
+          - key: 0
+            value: "Independent"
+          - key: 1
+            value: "Parallel"
+          - key: 2
+            value: "CV"
+
+      - name: "ARC Enable"
+        platform: switch
+        rule: 1
+        registers: [0x341F]
+
+      - name: "Leak Current Detection"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 5
+
+      - name: "Insulation Detection"
+        description: Max grid power limiter
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 6
+
+      - name: "CT Inversely"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 9
+
+      - name: "Home Load"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 10
+
+      - name: "No Battery Function"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 11
+
+      - name: "Forced Off-Grid"
+        platform: "switch"
+        rule: 1
+        registers: [0x3414]
+        value:
+          bit: 14
+
+      - name: "Cancel Bat LV Alarm"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 10
+
+  - group: Battery Settings
+    update_interval: 300
+    items:
       - name: "Battery Control Mode"
         platform: select
         state_class: "measurement"
@@ -623,6 +785,30 @@ parameters:
             value: "Lead Acid (No BMS)"
           - key: 2
             value: "Lithium"
+
+      - name: "Battery BMS Type"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x340B]
+        lookup:
+          - key: 1
+            value: "CAN"
+          - key: 2
+            value: "RS485"
+
+      - name: "Discharge Pwr"
+        description: Max battery power limiter
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3404]
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 100
 
       - name: "Battery Grid DOD"
         platform: number
@@ -663,45 +849,6 @@ parameters:
         range:
           min: 0
           max: 100
-
-      - name: "Grid Power"
-        description: Max grid power limiter
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x3403]
-        icon: "mdi:transmission-tower"
-        range:
-          min: 0
-          max: 100
-          
-      - name: "Discharge Pwr"
-        description: Max battery power limiter
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x3404]
-        icon: "mdi:battery"
-        range:
-          min: 0
-          max: 100
-
-      - name: "Zero Export Power" 
-        description: Positive (+) value buys electricity. Negative (-) value sells electricity
-        platform: number
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x3466]
-        icon: "mdi:transmission-tower"
-        range:
-          min: -1000
-          max: 1000
 
       - name: "Battery Capacity"
         platform: number
@@ -775,3 +922,373 @@ parameters:
         range:
           min: 400
           max: 595
+
+      - name: "Battery Wake Up"
+        platform: switch
+        rule: 1
+        registers: [0x3419]
+
+      - name: "Charge Solar Only"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 7
+
+  - group: Grid Settings
+    update_interval: 300
+    items:
+      - name: "Grid"
+        platform: select
+        state_class: "measurement"
+        rule: 1
+        registers: [0x3425]
+        lookup:
+          - key: 0
+            value: "220V Single"
+          - key: 1
+            value: "120V/240V Split"
+          - key: 2
+            value: "120V/208V Split"
+          - key: 3
+            value: "120V Single"
+
+      - name: "Grid Power"
+        description: Max grid power limiter
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x3403]
+        icon: "mdi:transmission-tower"
+        range:
+          min: 0
+          max: 100
+
+      - name: "Anti Reflux"
+        platform: switch
+        rule: 1
+        registers: [0x340D]
+
+      - name: "Zero Export Power" 
+        description: Positive (+) value buys electricity. Negative (-) value sells electricity
+        platform: number
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x3466]
+        icon: "mdi:transmission-tower"
+        range:
+          min: -1000
+          max: 1000
+
+      - name: "Time of Use Enable"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 4
+
+      - name: "Battery Grid Charging"
+        platform: "switch"
+        rule: 1
+        registers: [0x3445]
+        value:
+          bit: 2
+
+  - group: State
+    update_interval: 30
+    items:
+      - name: "Device Alarm 1"
+        class: "enum"
+        rule: 3
+        registers: [0x3100]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 0
+            value: "00:Battery Discharge Over Current"
+          - bit: 1
+            value: "01:Over Load"
+          - bit: 2
+            value: "02:Battery Disconnected"
+          - bit: 3
+            value: "03:Battery Under Voltage"
+          - bit: 4
+            value: "04:Battery Low Capacity"
+          - bit: 5
+            value: "05:Battery Over Voltage"
+          - bit: 6
+            value: "06:Grid Low Voltage"
+          - bit: 7
+            value: "07:Grid Over Voltage"
+          - bit: 8
+            value: "08:Grid Low Frequency"
+          - bit: 9
+            value: "09:Grid Over Frequency"
+          - bit: 10
+            value: "10:GFCI Triggered"
+          - bit: 11
+            value: "11:Parallel CAN Fail"
+          - bit: 12
+            value: "12:Grid CT Reverse"
+          - bit: 13
+            value: "13:BUS Under Volt"
+          - bit: 14
+            value: "14:BUS Over Volt"
+          - bit: 15
+            value: "15:Inverter Over Current"
+          - bit: [3, 4]
+            value: "03:Battery Under Voltage, 04:Battery Low Capacity"
+          - key: default
+            value: "Abnormal"
+
+      - name: "Device Alarm 2"
+        class: "enum"
+        rule: 3
+        registers: [0x3101]
+        icon: "mdi:alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 0
+            value: "16:Charge Over Current"
+          - bit: 1
+            value: "17:BUS Voltage Instability"
+          - bit: 2
+            value: "18:Inverter Under Volt"
+          - bit: 3
+            value: "19:Inverter Over Volt"
+          - bit: 4
+            value: "20:Inverter Frequency Abnormal"
+          - bit: 5 
+            value: "21:Inverter Temperature High" 
+          - bit: 6
+            value: "22:BMS Sys Error"
+          - bit: 7
+            value: "23:Battery Over Temperature"
+          - bit: 8
+            value: "24:Battery Under Temperature"
+          - bit: 9
+            value: "25:Battery Cell Unbalance"
+          - bit: 10
+            value: "26:Battery Reverse"
+          - bit: 11
+            value: "27:BMS Communication Fail"
+          - bit: 12
+            value: "28:Fan Fail"
+          - bit: 13
+            value: "29:Grid Over Load"
+          - bit: 14
+            value: "30:Grid Phase Error"
+          - bit: 15
+            value: "31:PV ARC Fault"
+          - key: default
+            value: "Abnormal"
+
+      - name: "Device Fault"
+        class: "enum"
+        rule: 3
+        registers: [0x3102]
+        icon: "mdi:message-alert-outline"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 0
+            value: "32:BUS Soft Fail"
+          - bit: 1
+            value: "33:Inverter Soft Fail"
+          - bit: 2
+            value: "34:BUS Short"
+          - bit: 3
+            value: "35:Inverter Short"
+          - bit: 4
+            value: "36:Fan Fault"
+          - bit: 5
+            value: "37:PV Insulation Low"
+          - bit: 6
+            value: "38:BUS Relay Fault"
+          - bit: 7
+            value: "39:Grid Relay Fault"
+          - bit: 8
+            value: "40:EPS Relay Fault"
+          - bit: 9
+            value: "41:GFCI Fault"
+          - bit: 10
+            value: "42:CT Fault"
+          - bit: 11
+            value: "43:PV Short"
+          - bit: 12
+            value: "44:Self Test Fail/Byp Relay Fault" 
+          - bit: 13
+            value: "45:System Fault"
+          - bit: 14
+            value: "46:Current DC Over" 
+          - bit: 15
+            value: "47:Voltage DC Over"
+          - key: default
+            value: "Abnormal"
+
+      - name: "Device Status"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:state-machine"
+        mask: 0x1F
+        lookup:
+          - key: 0
+            value: "Initialization"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "PV Grid"
+          - key: 3
+            value: "Battery Grid"
+          - key: 4
+            value: "Hybrid Power"
+          - key: 5
+            value: "AC Battery Charge"
+          - key: 6
+            value: "PV Battery Charge"
+          - key: 7
+            value: "By-Pass"
+          - key: 8
+            value: "Fault"
+          - key: 9
+            value: "Self Check"
+          - key: 10
+            value: "DSP FU"
+          - key: 11
+            value: "ARM FU"
+          - key: 12
+            value: "Service"
+          - key: 13
+            value: "Inverter Test"
+          - key: 14
+            value: "PV Test"
+          - key: 15
+            value: "DC-DC Test"
+          - key: 16
+            value: "Test Mode"
+
+      - name: "Inverter Status"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:state-machine"
+        mask: 0xE0
+        lookup:
+          - key: 0
+            value: "Standby"
+          - key: 32
+            value: "Off-Grid"
+          - key: 64
+            value: "Grid"
+          - key: 96
+            value: "Off-Grid PL"
+          - key: 128
+            value: "Service"
+          - key: 160
+            value: "Open Test"
+          - key: 192
+            value: "Close Test"
+          - key: 224
+            value: "Inverter to PFC"
+
+      - name: "DC-DC Status"
+        class: "enum"
+        rule: 1
+        registers: [0x3104]
+        icon: "mdi:state-machine"
+        mask: 0x700
+        lookup:
+          - key: 0
+            value: "Standby"
+          - key: 256
+            value: "Charge"
+          - key: 512
+            value: "Discharge"
+          - key: 768
+            value: "Service"
+          - key: 1024
+            value: "Test"
+            
+      - name: "BMS Alarm 1"
+        class: "enum"
+        rule: 3
+        registers: [0x3109]
+        icon: "mdi:battery-alert"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 1
+            value: "Cell or Module High Voltage"
+          - bit: 2
+            value: "Cell or Module Low Voltage"
+          - bit: 3
+            value: "Cell High Temperature"
+          - bit: 4
+            value: "Cell Low Temperature"
+          - bit: 7
+            value: "Discharge High Current"
+          - bit: 8
+            value: "Charge High Current"
+          - bit: 11
+            value: "Internal Communication Fail"
+          - key: default
+            value: "Abnormal"
+
+      - name: "BMS Protect"
+        class: "enum"
+        rule: 3
+        registers: [0x310A]
+        icon: "mdi:battery-alert"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 1
+            value: "Cell or Module Over Voltage"
+          - bit: 2
+            value: "Cell or Module Over Voltage"
+          - bit: 3
+            value: "Cell Over Temperature"
+          - bit: 4
+            value: "Cell Under Temperature"
+          - bit: 7
+            value: "Discharge Over Current"
+          - bit: 8
+            value: "Charge Over Current"
+          - bit: 11
+            value: "System Error"
+          - key: default
+            value: "Abnormal"
+
+      - name: "BMS Error"
+        class: "enum"
+        rule: 3
+        registers: [0x310B]
+        icon: "mdi:battery-alert"
+        lookup:
+          - key: 0
+            value: "Normal"
+          - bit: 0
+            value: "Voltage Sensor Error"
+          - bit: 1
+            value: "Temperature Sensor Error"
+          - bit: 2
+            value: "Internal Communication Error"
+          - bit: 3
+            value: "Input Over Voltage Error"
+          - bit: 4
+            value: "Input Transposition Error"
+          - bit: 5
+            value: "Relay Check Error"
+          - bit: 6
+            value: "Battery Cell Error"
+          - bit: 7
+            value: "Other Error"
+          - key: default
+            value: "Abnormal"
