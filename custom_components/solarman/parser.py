@@ -255,14 +255,16 @@ class ParameterParser:
     
     def _read_registers_custom(self, data, definition):
         value = 0
+        variables = {}
 
         for s in definition["sensors"]:
             single_operand = s.get("operator") in ["absolute", "abs", "clamp+", "clamp-", "negate", "invert01", "reciprocal", "sign", "square", "root", "sqrt"]
             
-            if not (registers := s.get("registers")) and not single_operand:
+            var = s.get("variable")
+            if not (registers := s.get("registers")) and not single_operand and not var:
                 continue
 
-            if not single_operand and (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
+            if not single_operand and (not var and (not registers or (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None)):
                 return None
 
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
@@ -272,6 +274,12 @@ class ParameterParser:
                 if (d := validation.get("default")) is None:
                     continue
                 n = d
+
+            if var and var in variables:
+                if not registers:
+                    n = variables[var] # replace n with the specified variable if no registers where given
+                else:
+                    value = variables[var] # replace value otherwise
 
             if (o := s.get("operator")) is None:
                 value += n # add n to value
@@ -340,6 +348,10 @@ class ParameterParser:
                         value = min(value, n) / max(value, n)
                     case _: # add n to value
                         value += n
+                
+            if (var_define := s.get("define")):
+                variables[var_define] = value
+                value = 0 # reset value
 
         return value
 
