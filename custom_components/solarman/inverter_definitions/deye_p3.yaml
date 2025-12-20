@@ -2776,7 +2776,7 @@ parameters:
             mppt: 8
         validation:
           min: 0
-          max: [32000, 128000]
+          max: [40000, 160000]
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
