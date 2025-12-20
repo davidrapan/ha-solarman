@@ -1726,7 +1726,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
@@ -1738,7 +1738,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0209]
         icon: "mdi:transmission-tower-import"
@@ -1775,7 +1775,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x020E]
 
@@ -1794,7 +1794,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0218]
 
@@ -1815,7 +1815,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0211]
         icon: "mdi:solar-power"
@@ -1850,15 +1850,20 @@ parameters:
         uint: enforce
         sensors:
           - registers: [0x0208]
+            scale: [0.1, 0.1, 1]
           - registers: [0x0211]
+            scale: [0.1, 0.1, 1]
           - registers: [[], [0x0218]]
+            scale: [0.1, 0.1, 1]
             enabled_lookup:
               io_mode_select: [Generator, Microinverter]
           - registers: [0x0203]
           - operator: subtract
             registers: [0x0209]
+            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x020E]
+            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x0202]
 
