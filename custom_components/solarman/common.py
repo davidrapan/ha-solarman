@@ -277,12 +277,10 @@ def postprocess_descriptions(coordinator, platform):
 
     descriptions = coordinator.device.profile.parser.get_entity_descriptions(platform)
 
-    _LOGGER.debug(f"postprocess_descriptions for {platform} platform: {descriptions}")
-
     for description in descriptions:
         if not_enabled(description):
             continue
-        
+
         if (nlookup := description.get("name_lookup")) is not None and (prefix := coordinator.data.get(nlookup)) is not None:
             description["name"] = replace_first(description["name"], get_tuple(prefix))
             description["key"] = entity_key(description)
@@ -301,6 +299,8 @@ def postprocess_descriptions(coordinator, platform):
             description["suggested_display_precision"] = 1
 
         yield description
+
+    _LOGGER.debug(f"postprocess_descriptions for {platform} platform: {descriptions}")
 
 def get_code(item, type, default = None):
     if REQUEST_CODE in item and (code := item[REQUEST_CODE]):
