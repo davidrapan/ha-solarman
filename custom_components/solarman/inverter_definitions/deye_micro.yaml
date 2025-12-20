@@ -121,8 +121,8 @@ parameters:
         registers: [0x0010, 0x0011]
         validation:
           min: 1
-          max: 4000
-          default: 4000
+          max: 2250
+          default: 2250
 
       - name: "Device MPPTs"
         attribute:
@@ -284,7 +284,7 @@ parameters:
               registers: [0x0074]
         validation:
           min: 0
-          max: 4000
+          max: 3160
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
