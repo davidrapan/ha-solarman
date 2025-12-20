@@ -277,15 +277,21 @@ parameters:
         icon: "mdi:battery-sync"
 
       - name: "Battery Power"
-        pack: 1
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match standard behavior like the other inverters
-        #scale: -10
-        scale: 10
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
         rule: 2
-        registers: [0x0606]
+        sensors:
+          - registers: [0x0606]
+          - registers: [0x060D]
+          - registers: [0x0614]
+          - registers: [0x061B]
+          - registers: [0x0622]
+          - registers: [0x0629]
+          - registers: [0x0630]
+          - registers: [0x0637]
 
   - group: Grid
     update_interval: 5
