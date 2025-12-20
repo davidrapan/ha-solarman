@@ -1008,6 +1008,7 @@ parameters:
         registers: [0x00AF]
         validation:
           lookup: "device_rated_power_sensor"
+          scale: 1.1
           invalidate_all:
 
       - name: "Power losses"

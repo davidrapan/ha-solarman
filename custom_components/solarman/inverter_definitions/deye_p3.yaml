@@ -2236,6 +2236,7 @@ parameters:
         registers: [0x025F, 0x02BF]
         validation:
           lookup: "device_rated_power_sensor"
+          scale: 1.1
           invalidate_all:
         icon: "mdi:transmission-tower"
 
@@ -2512,6 +2513,7 @@ parameters:
         registers: [0x027C, 0x02B6]
         validation:
           lookup: "device_rated_power_sensor"
+          scale: 1.1
           invalidate_all:
 
       - name: "Power losses"

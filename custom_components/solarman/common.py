@@ -290,11 +290,17 @@ def postprocess_descriptions(coordinator, platform):
                 if not_enabled(sensor):
                     sensors.remove(sensor)
 
-        if (validation := description.get("validation")) and (vlookup := validation.get("lookup")) and (max_value := coordinator.data.get(vlookup)) is not None and (value := abs(get_tuple(max_value))):
-            if "min" not in validation:
-                validation["min"] = -value
-            if "max" not in validation:
-                validation["max"] = value
+        if validation := description.get("validation"):
+            if (vlookup := validation.get("lookup")) and (max_value := coordinator.data.get(vlookup)) is not None and (value := abs(get_tuple(max_value))):
+                if "min" not in validation:
+                    validation["min"] = -value
+                if "max" not in validation:
+                    validation["max"] = value
+            if s := validation.get("scale"):
+                if "min" in validation:
+                    validation["min"] *= s
+                if "max" in validation:
+                    validation["max"] *= s
 
         # Temporary location of fix for latest HA changes regarding default precision behavior
         if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":
