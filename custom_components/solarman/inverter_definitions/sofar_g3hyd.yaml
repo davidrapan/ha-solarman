@@ -488,6 +488,27 @@ parameters:
           - operator: subtract
             signed:
             registers: [0x0606]
+          - operator: subtract
+            signed:
+            registers: [0x060D]
+          - operator: subtract
+            signed:
+            registers: [0x0614]
+          - operator: subtract
+            signed:
+            registers: [0x061B]
+          - operator: subtract
+            signed:
+            registers: [0x0622]
+          - operator: subtract
+            signed:
+            registers: [0x0629]
+          - operator: subtract
+            signed:
+            registers: [0x0630]
+          - operator: subtract
+            signed:
+            registers: [0x0637]
           - registers: [0x05C4]
           - operator: subtract
             signed:
