@@ -410,6 +410,7 @@ parameters:
         # Inverse value to match standard behavior of the other inverters
         scale: -10
         rule: 2
+        # More accurate than 0x0667
         sensors:
           - registers: [0x0606]
           - registers: [0x060D]
