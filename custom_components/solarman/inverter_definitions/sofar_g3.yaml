@@ -242,22 +242,15 @@ parameters:
         registers: [0x0605]
         icon: "mdi:current-dc"
 
-      - name: "Battery"
-        pack: 1
-        class: "battery"
+      - name: "Battery 1 Power"
+        pack: 2
+        class: "power"
         state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x0608]
-
-      - name: "Battery SOH"
-        pack: 1
-        update_interval: 30
-        state_class: "measurement"
-        uom: "%"
-        rule: 1
-        registers: [0x0609]
-        icon: "mdi:battery-heart"
+        uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
+        rule: 2
+        registers: [0x0606]
 
       - name: "Battery Temperature"
         pack: 1
@@ -266,6 +259,23 @@ parameters:
         uom: "°C"
         rule: 2  # change this to 1 if it doesn't work
         registers: [0x0607]
+
+      - name: "Battery 1"
+        pack: 2
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0608]
+
+      - name: "Battery 1 SOH"
+        pack: 2
+        update_interval: 30
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0609]
+        icon: "mdi:battery-heart"
 
       - name: "Battery Cycles"
         pack: 1
@@ -293,6 +303,21 @@ parameters:
           - registers: [0x0629]
           - registers: [0x0630]
           - registers: [0x0637]
+
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0668]
+
+      - name: "Battery SOH"
+        update_interval: 30
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0669]
+        icon: "mdi:battery-heart"
 
   - group: Grid
     update_interval: 5
