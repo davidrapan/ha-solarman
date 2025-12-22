@@ -450,14 +450,22 @@ parameters:
         rule: 2
         # More accurate than 0x0667
         sensors:
-          - registers: [0x0606]
-          - registers: [0x060D]
-          - registers: [0x0614]
-          - registers: [0x061B]
-          - registers: [0x0622]
-          - registers: [0x0629]
-          - registers: [0x0630]
-          - registers: [0x0637]
+          - signed:
+            registers: [0x0606]
+          - signed:
+            registers: [0x060D]
+          - signed:
+            registers: [0x0614]
+          - signed:
+            registers: [0x061B]
+          - signed:
+            registers: [0x0622]
+          - signed:
+            registers: [0x0629]
+          - signed:
+            registers: [0x0630]
+          - signed:
+            registers: [0x0637]
 
       - name: "Battery"
         class: "battery"
