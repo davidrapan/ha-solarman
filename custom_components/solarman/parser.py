@@ -262,7 +262,7 @@ class ParameterParser:
             single_operand = operator in ["absolute", "abs", "clamp+", "clamp-", "negate", "invert01", "reciprocal", "sign", "square", "root", "sqrt"]
             var = s.get("variable")
 
-            if not (registers := s.get("registers")) and not single_operand and not var:
+            if not ((registers := s.get("registers")) or single_operand or var):
                 continue
 
             if not ((registers and (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is not None) or single_operand or var):
