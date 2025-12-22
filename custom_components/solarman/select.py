@@ -6,6 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -57,11 +58,11 @@ class SolarmanMode(SolarmanEntity, SelectEntity):
             await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
         self.async_write_ha_state()
 
-class SolarmanCloud(SolarmanEntity, SelectEntity):
+class SolarmanCloud(SolarmanEntity, SelectEntity, RestoreEntity):
     def __init__(self, coordinator):
         SolarmanEntity.__init__(self, coordinator, {"key": "cloud_select", "name": "Cloud"})
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_options = ["Disabled", "HTTP", "HTTPS"]
+        self._attr_options = ["Disabled", "Enabled", "Encrypted"]
         self._attr_icon = "mdi:cloud-upload-outline"
 
     @property
@@ -70,31 +71,39 @@ class SolarmanCloud(SolarmanEntity, SelectEntity):
 
     @property
     def current_option(self):
+        endpoints: list[str] = []
         for i in LOGGER_REGEX["server"].finditer(self.coordinator.device.endpoint.info):
-            match i.group(1):
-                case c if c.endswith("5406.deviceaccess.host,10443,TCP"):
-                    return "HTTPS"
-                case c if c.endswith("5406.deviceaccess.host,10000,TCP"):
-                    return "HTTP"
-                case c if c.startswith(",,"):
-                    return "Disabled"
+            if (value := i.group(1)) and not value.startswith(",,") and (endpoint := value.split(",")) and endpoint not in endpoints:
+                endpoints.append(endpoint)
+        if endpoints:
+            self._attr_extra_state_attributes["endpoints"] = endpoints
+            return "Enabled" if not endpoints[0][2].endswith("443") else "Encrypted"
+        if self._attr_extra_state_attributes["endpoints"]:
+            return "Disabled"
         return None
+
+    async def async_added_to_hass(self):
+        await super().async_added_to_hass()
+        if (state := await self.async_get_last_state()) and "endpoints" in state.attributes:
+            self._attr_extra_state_attributes["endpoints"] = state.attributes["endpoints"]
 
     async def async_select_option(self, option: str):
         await self.coordinator.device.endpoint.load()
-        if (enabled := option != "Disabled") is not None and (port := 10443 if option == "HTTPS" else 10000):
+        if (disabled := option == "Disabled") or (endpoints := self._attr_extra_state_attributes["endpoints"]):
+            address_a, domain_a, port_a, protocol_a = endpoints[0]
+            address_b, domain_b, port_b, protocol_b = endpoints[1] if len(endpoints) > 1 else ("", "", "", "TCP")
             await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET,
                 {
-                    "server_a": f"35.157.42.77,5406.deviceaccess.host,{port},TCP" if enabled else ",,,TCP",
-                    "cnmo_ip_a": "",
-                    "cnmo_ds_a": "5406.deviceaccess.host" if enabled else "",
-                    "cnmo_pt_a": port if enabled else "",
-                    "cnmo_tp_a": "TCP",
-                    "server_b": ",,,TCP",
-                    "cnmo_ip_b": "",
-                    "cnmo_ds_b": "",
-                    "cnmo_pt_b": "",
-                    "cnmo_tp_b": "TCP"
+                    "server_a": ",,,TCP" if disabled else f"{address_a},{domain_a},{port_a},{protocol_a}",
+                    "cnmo_ip_a": "" if disabled else address_a,
+                    "cnmo_ds_a": "" if disabled else domain_a,
+                    "cnmo_pt_a": "" if disabled else port_a,
+                    "cnmo_tp_a": "TCP" if disabled else protocol_a,
+                    "server_b": ",,,TCP" if disabled else f"{address_b},{domain_b},{port_b},{protocol_b}",
+                    "cnmo_ip_b": "" if disabled else address_b,
+                    "cnmo_ds_b": "" if disabled else domain_b,
+                    "cnmo_pt_b": "" if disabled else port_b,
+                    "cnmo_tp_b": "TCP" if disabled else protocol_b
                 }
             )
             await self.coordinator.device.endpoint.load()
