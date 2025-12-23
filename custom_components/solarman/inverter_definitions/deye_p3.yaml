@@ -1663,7 +1663,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0202]
         icon: "mdi:battery-plus"
@@ -1674,7 +1674,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0203]
         icon: "mdi:battery-minus"
@@ -1683,7 +1683,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0204, 0x0205]
         icon: "mdi:battery-plus"
@@ -1694,7 +1694,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0206, 0x0207]
         icon: "mdi:battery-minus"
@@ -1846,24 +1846,19 @@ parameters:
         uom: "kWh"
         rule: 1
         digits: 1
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         uint: enforce
         sensors:
           - registers: [0x0208]
-            scale: [0.1, 0.1, 1]
           - registers: [0x0211]
-            scale: [0.1, 0.1, 1]
           - registers: [[], [0x0218]]
-            scale: [0.1, 0.1, 1]
             enabled_lookup:
               io_mode_select: [Generator, Microinverter]
           - registers: [0x0203]
           - operator: subtract
             registers: [0x0209]
-            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x020E]
-            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x0202]
 
@@ -1875,24 +1870,19 @@ parameters:
         uom: "kWh"
         rule: 3
         digits: 1
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         uint: enforce
         sensors:
           - registers: [0x020A, 0x020B]
-            scale: [0.1, 0.1, 1]
           - registers: [0x0216, 0x0217]
-            scale: [0.1, 0.1, 1]
           - registers: [[], [0x0219, 0x021A]]
-            scale: [0.1, 0.1, 1]
             enabled_lookup:
               io_mode_select: [Generator, Microinverter]
           - registers: [0x0206, 0x0207]
           - operator: subtract
             registers: [0x020C, 0x020D]
-            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x020F, 0x0210]
-            scale: [0.1, 0.1, 1]
           - operator: subtract
             registers: [0x0204, 0x0205]
         validation:
