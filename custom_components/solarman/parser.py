@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import bisect
 import math
+from numbers import Number
 
 from logging import getLogger
 from datetime import datetime
