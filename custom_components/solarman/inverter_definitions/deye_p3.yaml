@@ -2537,6 +2537,14 @@ parameters:
           - registers: [0x02A1]
           - registers: [0x02A2]
           - registers: [0x02A3]
+          - registers: [0x02D7]
+            mppt: 5
+          - registers: [0x02D8]
+            mppt: 6
+          - registers: [0x02D9]
+            mppt: 7
+          - registers: [0x02DA]
+            mppt: 8
           - operator: subtract
             signed:
             scale: 1
