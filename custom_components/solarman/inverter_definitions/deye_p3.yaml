@@ -26,8 +26,6 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Unknown"
-          - key: 0x0103
-            value: "Off-Grid Inverter"
           - key: [0x0002, 0x0200]
             value: "String Inverter"
           - key: [0x0003, 0x0300]
@@ -42,6 +40,10 @@ parameters:
             value: "HV 3-Phase Inverter 6-15kw"
           - key: [0x0008, 0x0601]
             value: "HV 3-Phase Inverter 20-50kw"
+          - key: 0x0103
+            value: "Off-Grid Inverter"
+          - key: 0x0104
+            value: "Energy Storage System"
         attributes:
           [
             "Device Modbus Address",
