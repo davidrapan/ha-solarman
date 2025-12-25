@@ -271,11 +271,11 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     return item
 
-def postprocess_descriptions(coordinator, platform):
+def postprocess_descriptions(coordinator):
     def not_enabled(description):
         return (l := description.get("enabled_lookup")) is not None and (k := list(l)[0]) is not None and (v := coordinator.data.get(k)) is not None and not get_tuple(v) in l[k]
 
-    descriptions = coordinator.device.profile.parser.get_entity_descriptions(platform)
+    descriptions = coordinator.device.profile.parser.get_entity_descriptions()
 
     for description in descriptions:
         if not_enabled(description):
@@ -306,9 +306,7 @@ def postprocess_descriptions(coordinator, platform):
         if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":
             description["suggested_display_precision"] = 1
 
-        yield description
-
-    _LOGGER.debug(f"postprocess_descriptions for {platform} platform: {descriptions}")
+    _LOGGER.debug(f"postprocess_descriptions: {descriptions}")
 
 def get_code(item, type, default = None):
     if REQUEST_CODE in item and (code := item[REQUEST_CODE]):
