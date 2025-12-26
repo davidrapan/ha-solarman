@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import ast
 import time
 import yaml
@@ -9,6 +8,7 @@ import asyncio
 import aiofiles
 import voluptuous as vol
 
+from pathlib import Path
 from functools import wraps
 from aiohttp import FormData
 from logging import getLogger
@@ -80,8 +80,8 @@ def protected(value, error):
 def get_current_file_name(value):
     return result[-1] if len(result := value.rsplit('.', 1)) > 0 else ""
 
-async def async_listdir(path, prefix = ""):
-    return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []
+async def async_listdir(path, prefix = "", extensions = ("yaml", "yml")):
+    return sorted([prefix + f.name for f in await async_execute(lambda: p.glob('*')) if f.is_file() and f.name.endswith(extensions)]) if (p := Path(path)) and p.exists() else []
 
 def getipaddress(address: str):
     try:
