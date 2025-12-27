@@ -390,6 +390,22 @@ parameters:
         registers: [0x0239]
         icon: "mdi:transmission-tower"
 
+      - name: "State"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [0x0210]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "Initialization"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "AC power operation"
+          - key: 3
+            value: "Inverter operation"
+
   - group: Settings
     update_interval: 300
     items:
@@ -444,6 +460,96 @@ parameters:
         range:
           min: 0
           max: 100
+
+      - name: Battery Charge Current - Max
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE20A]
+        icon: mdi:current-dc
+        configurable:
+          min: 0
+          max: 200
+          step: 5
+          mode: box
+        range:
+          min: 0
+          max: 2000
+
+      - name: Battery Charge Current - AC power
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE205]
+        icon: mdi:current-dc
+        configurable:
+          mode: box
+          min: 0
+          max: 120
+          step: 5
+        range:
+          min: 0
+          max: 1200
+
+      - name: Timed Charge
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE02C]
+        icon: "mdi:battery-charging-high"
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+
+      - name: Timed Discharge
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE033]
+        icon: "mdi:battery-charging-low"
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+
+      - name: Work Priority Mode
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE204]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "Solar"
+          - key: 1
+            value: "Line"
+          - key: 2
+            value: "SBU"
+
+      - name: Charge Priority Mode
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE20F]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "PV priority"
+          - key: 1
+            value: "Utility priority"
+          - key: 2
+            value: "Hybrid Mode"
+          - key: 3
+            value: "PV only"
 
   - group: Meter
     update_interval: 30
