@@ -547,9 +547,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
       
       - name: "Soft start"
         platform: switch
@@ -563,9 +560,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
 
       - name: "UPS mode"
         platform: switch
@@ -579,9 +573,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
 
       - name: "Timed AC charging"
         platform: switch
@@ -595,9 +586,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
       
       - name: "Timed charging"
         platform: switch
@@ -611,9 +599,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
       
       - name: "Timed discharging"
         platform: switch
@@ -627,9 +612,6 @@ parameters:
         writeback:
           register: 0x00CE
           count: 2
-          overrides:
-            - register: 0x00CE
-              value: 0x00
 
       - name: Battery Charge & Discharge
         platform: switch
