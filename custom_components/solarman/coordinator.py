@@ -68,7 +68,8 @@ class Coordinator(DataUpdateCoordinator[dict[str, tuple[int | float | str | list
 
     async def init(self):
         await super().async_config_entry_first_refresh()
-        device_info = build_device_info(self.config_entry.entry_id, str(self.device.modbus.serial) if self.device.modbus.serial > 0 else None, self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
+        serial_number, _ = self.data.get(slugify("device", "serial", "number", "sensor"), (str(self.device.modbus.serial) if self.device.modbus.serial > 0 else None, None))
+        device_info = build_device_info(self.config_entry.entry_id, serial_number, self.device.endpoint.mac, self.device.endpoint.host, self.device.profile.info, self.device.config.name)
         self.device.info[self.config_entry.entry_id] = device_info
         postprocess_descriptions(self)
         _LOGGER.debug(device_info)
