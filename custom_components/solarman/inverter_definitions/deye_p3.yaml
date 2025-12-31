@@ -2631,8 +2631,58 @@ parameters:
         rule: 1
         registers: [0x0286]
 
-      # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x0279, 0x02B3]
+          - signed:
+            registers: [0x0268, 0x02C1]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027A, 0x02B4]
+          - signed:
+            registers: [0x0269, 0x02C2]
+
+      - name: "Load L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027B, 0x02B5]
+          - signed:
+            registers: [0x026A, 0x02C3]
+
+      - name: "Load Power"
+        l: 1
+        description: Combined power of all three phases
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027C, 0x02B6]
+          - signed:
+            registers: [0x026B, 0x02C4]
+
+      # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Load Consumption L1 Power"
+        hidden:
         l: 1
         class: "power"
         state_class: "measurement"
@@ -2641,7 +2691,8 @@ parameters:
         registers: [0x028A, 0x0290]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load L2 Power"
+      - name: "Load Consumption L2 Power"
+        hidden:
         l: 2
         class: "power"
         state_class: "measurement"
@@ -2650,7 +2701,8 @@ parameters:
         registers: [0x028B, 0x0291]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load L3 Power"
+      - name: "Load Consumption L3 Power"
+        hidden:
         l: 3
         class: "power"
         state_class: "measurement"
@@ -2659,7 +2711,8 @@ parameters:
         registers: [0x028C, 0x0292]
 
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load Power"
+      - name: "Load Consumption Power"
+        hidden:
         l: 1
         description: Combined power of all three phases
         class: "power"
