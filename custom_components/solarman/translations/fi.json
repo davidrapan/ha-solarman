@@ -1,0 +1,155 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Laite on jo määritetty",
+      "already_configured_device": "Laite on jo määritetty",
+      "already_in_progress": "Konfigurointi on jo käynnissä"
+    },
+    "error": {
+      "cannot_connect": "Yhdistäminen epäonnistui",
+      "invalid_host": "Virheellinen isäntänimi tai IP-osoite",
+      "timeout_connect": "Yhteyden aikakatkaisu",
+      "unknown": "Odottamaton virhe"
+    },
+    "step": {
+      "user": {
+        "title": "Invertterin asetukset",
+        "data": {
+          "name": "Laitteen nimi",
+          "host": "Isäntänimi tai IP-osoite",
+          "port": "Portti",
+          "transport": "Tiedonsiirtoprotokolla",
+          "lookup_file": "Profiili"
+        },
+        "data_description": {
+          "name": "Tämä nimi liitetään kaikkien antureiden nimen alkuun (muuta tarvittaessa)",
+          "host": "Yhdistettävän laitteen isäntänimi tai IP-osoite",
+          "port": "Yhdistettävän laitteen portti (normaalisti 8899)",
+          "transport": "Laitteen kanssa kommunikoitaessa käytettävä tiedonsiirtoprotokolla",
+          "lookup_file": "Invertterin parametrimääritykset sisältävä yaml-tiedosto"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Lisäasetukset",
+            "data": {
+              "mod": "Muunnin",
+              "mppt": "MPPT-kanavien määrä",
+              "phase": "Vaiheiden määrä",
+              "pack": "Akkupakettien määrä",
+              "battery_nominal_voltage": "Akuston nimellisjännite",
+              "battery_life_cycle_rating": "Akuston arvioitu elinkaari lataus-/purkaussykleinä",
+              "mb_slave_id": "Modbus Slave ID (yleensä 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Yhdistäminen epäonnistui",
+      "invalid_host": "Virheellinen isäntänimi tai IP-osoite",
+      "timeout_connect": "Yhteyden aikakatkaisu",
+      "unknown": "Odottamaton virhe"
+    },
+    "step": {
+      "init": {
+        "title": "Invertterin asetukset",
+        "data": {
+          "host": "Isäntänimi tai IP-osoite",
+          "port": "Portti",
+          "transport": "Tiedonsiirtoprotokolla",
+          "lookup_file": "Profiili"
+        },
+        "data_description": {
+          "host": "Yhdistettävän laitteen isäntänimi tai IP-osoite",
+          "port": "Yhdistettävän laitteen portti (normaalisti 8899)",
+          "transport": "Laitteen kanssa kommunikoitaessa käytettävä tiedonsiirtoprotokolla",
+          "lookup_file": "Invertterin parametrimääritykset sisältävä yaml-tiedosto"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Lisäasetukset",
+            "data": {
+              "mod": "Muunnin",
+              "mppt": "MPPT-kanavien määrä",
+              "phase": "Vaiheiden määrä",
+              "pack": "Akkupakettien määrä",
+              "battery_nominal_voltage": "Akuston nimellisjännite",
+              "battery_life_cycle_rating": "Akuston arvioitu elinkaari lataus-/purkaussykleinä",
+              "mb_slave_id": "Modbus Slave ID (yleensä 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Akun lataus tänään"
+      },
+      "today_battery_discharge": {
+        "name": "Akun purku tänään"
+      },
+      "today_battery_life_cycles": {
+        "name": "Akun syklit tänään"
+      },
+      "today_energy_export": {
+        "name": "Energian myynti tänään"
+      },
+      "today_energy_import": {
+        "name": "Energian osto tänään"
+      },
+      "generator_energy_today": {
+        "name": "Generaattorin tuotanto tänään"
+      },
+      "today_load_consumption": {
+        "name": "Kuorman energiankulutus tänään"
+      },
+      "today_losses": {
+        "name": "Energiahäviöt tänään"
+      },
+      "today_production": {
+        "name": "Aurinkoenergia tänään"
+      },
+      "total_battery_charge": {
+        "name": "Akun latauksen kokonaismäärä"
+      },
+      "total_battery_discharge": {
+        "name": "Akun purun kokonaismäärä"
+      },
+      "total_battery_life_cycles": {
+        "name": "Akun syklien kokonaismäärä"
+      },
+      "total_energy_export": {
+        "name": "Energian myynnin kokonaismäärä"
+      },
+      "total_energy_import": {
+        "name": "Energian oston kokonaismäärä"
+      },
+      "generator_energy": {
+        "name": "Generaattorin tuotannon kokonaismäärä"
+      },
+      "total_load_consumption": {
+        "name": "Kuorman energiankulutuksen kokonaismäärä"
+      },
+      "total_losses": {
+        "name": "Häviöiden kokonaismäärä"
+      },
+      "total_production": {
+        "name": "Aurinkoenergian kokonaismäärä"
+      }
+    }
+  }
+}
