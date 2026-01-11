@@ -78,7 +78,7 @@ class SolarmanCloud(SolarmanEntity, SelectEntity, RestoreEntity):
         if endpoints:
             self._attr_extra_state_attributes["endpoints"] = endpoints
             return "Enabled" if not endpoints[0][2].endswith("443") else "Encrypted"
-        if self._attr_extra_state_attributes["endpoints"]:
+        if self._attr_extra_state_attributes.get("endpoints"):
             return "Disabled"
         return None
 
