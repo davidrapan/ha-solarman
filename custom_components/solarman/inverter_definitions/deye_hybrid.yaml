@@ -2221,6 +2221,7 @@ parameters:
 
       - name: Grid reconnection time
         platform: number
+        uom: "s"
         rule: 1
         range:
           min: 1
