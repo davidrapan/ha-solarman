@@ -32,7 +32,7 @@
           "additional_options": {
             "name": "Lisäasetukset",
             "data": {
-              "mod": "Muokkaaja",
+              "mod": "Modifikaattori",
               "mppt": "MPPT-lukumäärä",
               "phase": "Vaiheiden määrä",
               "pack": "Akkupakettien määrä",
@@ -71,7 +71,7 @@
           "additional_options": {
             "name": "Lisäasetukset",
             "data": {
-              "mod": "Muokkaaja",
+              "mod": "Modifikaattori",
               "mppt": "MPPT-lukumäärä",
               "phase": "Vaiheiden määrä",
               "pack": "Akkupakettien määrä",
@@ -112,16 +112,43 @@
         "name": "Energian tuonti tänään"
       },
       "today_generation": {
-        "name": "Tuotto tänään"
+        "name": "Tuotanto tänään"
       },
       "today_load_consumption": {
         "name": "Kuorman energiankulutus tänään"
       },
       "today_losses": {
-        "name": "Häviöt tänään"
+        "name": "Energiahäviöt tänään"
       },
       "today_production": {
         "name": "Tuotanto tänään"
+      },
+      "total_battery_charge": {
+        "name": "Akun lataus yhteensä"
+      },
+      "total_battery_discharge": {
+        "name": "Akun purku yhteensä"
+      },
+      "total_battery_life_cycles": {
+        "name": "Akun syklit yhteensä"
+      },
+      "total_energy_export": {
+        "name": "Energian vienti yhteensä"
+      },
+      "total_energy_import": {
+        "name": "Energian tuonti yhteensä"
+      },
+      "total_generation": {
+        "name": "Tuotanto yhteensä"
+      },
+      "total_load_consumption": {
+        "name": "Kuorman energiankulutus yhteensä"
+      },
+      "total_losses": {
+        "name": "Energiahäviöt yhteensä"
+      },
+      "total_production": {
+        "name": "Tuotanto yhteensä"
       }
     }
   }
