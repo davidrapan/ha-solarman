@@ -918,7 +918,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse value to match standard behavior of the other inverters
+        # Inverse value to match standard behavior of the other inverters
         scale: -1
         rule: 2
         registers: [3100]
@@ -959,7 +959,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse value to match standard behavior of the other inverters
+        # Inverse value to match standard behavior of the other inverters
         scale: -1
         rule: 2
         registers: [3104]
@@ -1000,7 +1000,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse value to match standard behavior of the other inverters
+        # Inverse value to match standard behavior of the other inverters
         scale: -1
         rule: 2
         registers: [3108]
@@ -1011,7 +1011,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse value to match standard behavior of the other inverters
+        # Inverse value to match standard behavior of the other inverters
         scale: -1
         rule: 2
         sensors:

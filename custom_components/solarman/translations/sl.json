@@ -1,0 +1,128 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Naprava je že nastavljena",
+      "already_configured_device": "Naprava je že nastavljena",
+      "already_in_progress": "Postopek nastavitve je že v teku"
+    },
+    "error": {
+      "cannot_connect": "Povezava ni uspela",
+      "invalid_host": "Neveljavno ime gostitelja ali IP naslov",
+      "timeout_connect": "Časovna omejitev pri vzpostavljanju povezave",
+      "unknown": "Nepričakovana napaka"
+    },
+    "step": {
+      "user": {
+        "title": "Nastavitev razsmernika",
+        "data": {
+          "name": "Ime naprave",
+          "host": "Ime gostitelja ali IP naslov",
+          "port": "Vrata",
+          "transport": "Transportni protokol",
+          "lookup_file": "Profil"
+        },
+        "data_description": {
+          "name": "To ime bo dodano kot predpona vsem senzorjem (spremenite po želji)",
+          "host": "Ime gostitelja ali IP naslov naprave, s katero se želite povezati",
+          "port": "Vrata (8899) naprave, s katero se želite povezati",
+          "transport": "Transportni protokol, ki se uporablja pri komunikaciji z napravo",
+          "lookup_file": "Datoteka YAML, ki vsebuje definicije parametrov razsmernika"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Dodatne možnosti",
+            "data": {
+              "mod": "Modifikator",
+              "mppt": "Število MPPT",
+              "phase": "Število faz",
+              "pack": "Število baterijskih paketov",
+              "battery_nominal_voltage": "Nazivna napetost litij-ionske baterije",
+              "battery_life_cycle_rating": "Pričakovano število življenjskih ciklov litij-ionske baterije",
+              "mb_slave_id": "Modbus Slave ID (običajno 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Povezava ni uspela",
+      "invalid_host": "Neveljavno ime gostitelja ali IP naslov",
+      "timeout_connect": "Časovna omejitev pri vzpostavljanju povezave",
+      "unknown": "Nepričakovana napaka"
+    },
+    "step": {
+      "init": {
+        "title": "Nastavitev razsmernika",
+        "data": {
+          "host": "Ime gostitelja ali IP naslov",
+          "port": "Vrata",
+          "transport": "Transportni protokol",
+          "lookup_file": "Profil"
+        },
+        "data_description": {
+          "host": "Ime gostitelja ali IP naslov naprave, s katero se želite povezati",
+          "port": "Vrata (8899) naprave, s katero se želite povezati",
+          "transport": "Transportni protokol, ki se uporablja pri komunikaciji z napravo",
+          "lookup_file": "Datoteka YAML, ki vsebuje definicije parametrov razsmernika"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Dodatne možnosti",
+            "data": { 
+              "mod": "Modifikator",
+              "mppt": "Število MPPT",
+              "phase": "Število faz",
+              "pack": "Število baterijskih paketov",
+              "battery_nominal_voltage": "Nazivna napetost litij-ionske baterije",
+              "battery_life_cycle_rating": "Pričakovano število življenjskih ciklov litij-ionske baterije",
+              "mb_slave_id": "Modbus Slave ID (običajno 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      } 
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Današnje polnjenje baterije"
+      },
+      "today_battery_discharge": {
+        "name": "Današnje praznjenje baterije"
+      },
+      "today_battery_life_cycles": {
+        "name": "Današnji življenjski cikli baterije"
+      },
+      "today_energy_export": {
+        "name": "Današnji izvoz energije"
+      },
+      "today_energy_import": {
+        "name": "Današnji uvoz energije"
+      },
+      "today_generation": {
+        "name": "Današnja proizvodnja"
+      },
+      "today_load_consumption": {
+        "name": "Današnja poraba bremena"
+      },
+      "today_losses": {
+        "name": "Današnje izgube"
+      },
+      "today_production": {
+        "name": "Današnja proizvodnja"
+      }
+    }
+  }
+}
