@@ -290,7 +290,7 @@ parameters:
         configurable:
           min: 0
           max: 500
-          step: 10
+          step: [1, 10]
           mode: box
         icon: "mdi:transmission-tower"
 
@@ -2358,12 +2358,11 @@ parameters:
       - name: "Grid Power Factor"
         class: "power_factor"
         state_class: "measurement"
-        uom:
-        scale: 0.001
-        suggested_display_precision: 2
+        uom: "%"
+        scale: 0.1
         rule: 1
         registers: [0x026D]
-        range:
+        validation:
           min: 0
           max: 1000
         icon: "mdi:transmission-tower"
