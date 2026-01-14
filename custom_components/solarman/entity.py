@@ -82,7 +82,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
             self._attr_native_unit_of_measurement = unit_of_measurement
         if (suggested_unit_of_measurement := sensor.get("suggested_unit_of_measurement")):
             self._attr_suggested_unit_of_measurement = suggested_unit_of_measurement
-        if (suggested_display_precision := sensor.get("suggested_display_precision")):
+        if (suggested_display_precision := sensor.get("suggested_display_precision")) is not None:
             self._attr_suggested_display_precision = suggested_display_precision
         if (options := sensor.get("options")):
             self._attr_options = options
