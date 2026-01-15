@@ -286,7 +286,7 @@ parameters:
         registers: [0x0068]
         range:
           min: 0
-          max: [65535, 655350]
+          max: 65535
         configurable:
           min: [-20, 0]
           max: 500
