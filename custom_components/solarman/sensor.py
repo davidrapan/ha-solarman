@@ -93,7 +93,7 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
             self.coordinator.device.info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
             self.coordinator.device.info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
             self.coordinator.device.info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
-            self.coordinator.device.info[device_serial_number]["model"] = None
+            self.coordinator.device.info[device_serial_number]["model"] = sensor["group"]
         self._attr_device_info = self.coordinator.device.info[device_serial_number]
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
