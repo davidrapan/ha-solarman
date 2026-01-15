@@ -3151,6 +3151,7 @@ parameters:
   - group: "BMS 1 Battery 1"
     via_device: "inverter"
     update_interval: 300
+    bms: 1
     pack: 1
     items:
       - name: "BMS 1 Battery 1 Serial Number"
@@ -4082,6 +4083,7 @@ parameters:
   - group: "BMS 1 Battery 2"
     via_device: "inverter"
     update_interval: 300
+    bms: 1
     pack: 2
     items:
       - name: "BMS 1 Battery 2 Serial Number"
@@ -5013,6 +5015,7 @@ parameters:
   - group: "BMS 2 Battery 1"
     via_device: "inverter"
     update_interval: 300
+    bms: 2
     pack: 1
     items:
       - name: "BMS 2 Battery 1 Serial Number"
@@ -5944,6 +5947,7 @@ parameters:
   - group: "BMS 2 Battery 2"
     via_device: "inverter"
     update_interval: 300
+    bms: 2
     pack: 2
     items:
       - name: "BMS 2 Battery 2 Serial Number"

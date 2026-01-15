@@ -134,12 +134,26 @@ async def lookup_profile(request, parameters):
                 parameters[PARAM_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, parameters[PARAM_[CONF_PHASE]])
             if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
                 parameters[PARAM_[CONF_MPPT]], parameters[PARAM_[CONF_PHASE]] = min(t, parameters[PARAM_[CONF_MPPT]]), min(p, parameters[PARAM_[CONF_PHASE]])
-            try:
-                if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]) and (response := await request(requests = create_request(*AUTODETECTION_BATTERY_REQUEST_DEYE))) and (p := get_addr_value(response, *AUTODETECTION_BATTERY_NUMBER_DEYE)) is not None:
+            if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]):
+                try:
+                    p1 = p2 = 0
+                    b = 0
+                    if bms1_response := await request(requests = create_request(*AUTODETECTION_BATTERY_REQUEST_DEYE)):
+                        p1 = get_addr_value(bms1_response, *AUTODETECTION_BATTERY_NUMBER_DEYE)
+                        b = b + 1
+
+                    if device_type in AUTODETECTION_DEYE_4P3[0] and (bms2_response := await request(requests = create_request(*AUTODETECTION_BATTERY_REQUEST_DEYE_2))):
+                        p2 = get_addr_value(bms2_response, *AUTODETECTION_BATTERY_NUMBER_DEYE_2)
+                        b = b + 1
+
+                    p = max(p1, p2)
                     parameters[PARAM_[CONF_PACK]] = p if parameters[PARAM_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, parameters[PARAM_[CONF_PACK]])
-            except:
-                parameters[PARAM_[CONF_PACK]] = DEFAULT_[CONF_PACK]
-                _LOGGER.debug(f"Unable to read Number of Battery packs", exc_info = True)
+                    parameters[PARAM_[CONF_BMS]] = b if parameters[PARAM_[CONF_BMS]] == DEFAULT_[CONF_BMS] else min(b, parameters[PARAM_[CONF_BMS]])
+                    _LOGGER.debug(f"Detected BMS count: {b}, packs in BMS 1: {p1}, packs in BMS 2: {p2}")
+                except:
+                    parameters[PARAM_[CONF_BMS]] = DEFAULT_[CONF_BMS]
+                    parameters[PARAM_[CONF_PACK]] = DEFAULT_[CONF_PACK]
+                    _LOGGER.debug(f"Unable to read Number of Battery packs or BMS units", exc_info = True)
             return f
         except StopIteration:
             raise Exception(f"Unknown Device Type: {device_type}")
@@ -236,6 +250,9 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     if not "platform" in item:
         item["platform"] = "sensor" if not "configurable" in item else "number"
+
+    if ("bms" in group and parameters[CONF_BMS] < group["bms"]) or ("pack" in group and parameters[CONF_PACK] < group["pack"]):
+        item["disabled"] = "force"
 
     item["key"] = entity_key(item)
 
