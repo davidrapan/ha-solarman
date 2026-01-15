@@ -225,7 +225,7 @@ def enforce_parameters(source: dict, parameters: dict):
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in dict(source):
-            if i in ("scale", "min", "max", "default", "step"):
+            if i in ("scale", "min", "max", "default", "step", "offset"):
                 unwrap(source, i, parameters[CONF_MOD])
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
                 unwrap(source, i, parameters[CONF_MOD])

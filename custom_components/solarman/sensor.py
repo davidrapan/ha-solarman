@@ -85,6 +85,7 @@ class SolarmanSensor(SolarmanSensorEntity):
 
 class SolarmanNestedSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):
+        sensor["key"] = slugify(sensor["group"], sensor["key"])
         super().__init__(coordinator, sensor)
         parent_device_info = self.coordinator.device.info.get(self.coordinator.config_entry.entry_id)
         device_serial_number, _ = self.coordinator.data[slugify(sensor["group"], "serial", "number", "sensor")]
@@ -94,7 +95,6 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
             self.coordinator.device.info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
             self.coordinator.device.info[device_serial_number]["model"] = None
         self._attr_device_info = self.coordinator.device.info[device_serial_number]
-        self._attr_name.replace(f"{sensor["group"]} ", '')
 
 class SolarmanRestoreSensor(SolarmanSensor, RestoreSensor):
     async def async_added_to_hass(self) -> None:

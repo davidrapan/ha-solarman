@@ -63,6 +63,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Coord
 
     @callback
     def migrate(entity_entry: RegistryEntry):
+        if entity_entry.unique_id.lower().startswith(config_entry.entry_id.lower()):
+            return None
         if entity_entry.unique_id != (unique_id := slugify(config_entry.entry_id, entity_entry.original_name if entity_entry.has_entity_name or not entity_entry.original_name else entity_entry.original_name.replace(config_entry.title, '').strip(), split_entity_id(entity_entry.entity_id)[0])):
             if conflict_entity_id := async_get(hass).async_get_entity_id(entity_entry.domain, entity_entry.platform, unique_id):
                 _LOGGER.debug(f"Unique id '{unique_id}' is already in use by '{conflict_entity_id}'")
