@@ -2231,10 +2231,6 @@ parameters:
         uom: "W"
         rule: 4
         registers: [0x025F, 0x02BF]
-        validation:
-          lookup: "device_rated_power_sensor"
-          scale: 1.1
-          invalidate_all:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Frequency"
