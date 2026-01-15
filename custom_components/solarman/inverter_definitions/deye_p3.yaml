@@ -3154,6 +3154,7 @@ parameters:
     pack: 1
     items:
       - name: "BMS 1 Battery 1 Serial Number"
+        unique_id: "bms_1_battery_1_sn"
         update_interval: 3600
         attribute:
         state_class: "measurement"
@@ -3163,6 +3164,7 @@ parameters:
           [[0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737], [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]]
 
       - name: "Type"
+        unique_id: "bms_1_battery_1_device_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3178,6 +3180,7 @@ parameters:
         registers: [[], [0x2738]]
 
       - name: "Protocol"
+        unique_id: "bms_1_battery_1_pcs_protocol_id"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3203,6 +3206,7 @@ parameters:
         registers: [[], [0x2739]]
 
       - name: "Number of Clusters"
+        unique_id: "bms_1_battery_1_number_of_cluster"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3212,6 +3216,7 @@ parameters:
 
       # Always returning 0?
       - name: "Basic Status"
+        unique_id: "bms_1_battery_1_basic_status"
         attribute:
         update_interval: 5
         class: "enum"
@@ -3227,6 +3232,7 @@ parameters:
             value: "Discharging"
 
       - name: "Charging Allowed"
+        unique_id: "bms_1_battery_1_charge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -3240,6 +3246,7 @@ parameters:
             value: "Allowed"
 
       - name: "Discharging Allowed"
+        unique_id: "bms_1_battery_1_discharge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -3253,14 +3260,15 @@ parameters:
             value: "Allowed"
 
       - name: "Cycle Count"
+        unique_id: "bms_1_battery_1_cycle_number"
         category: "diagnostic"
         state_class: "measurement"
         rule: 1
         icon: "mdi:battery-sync"
         registers: [[0x2748], [0x273E]]
 
-      - name: "Module Voltage"
-        disabled:
+      - name: "Voltage"
+        unique_id: "bms_1_battery_1_module_voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -3270,6 +3278,7 @@ parameters:
         registers: [[0x2738], [0x273F]]
 
       - name: "Current"
+        unique_id: "bms_1_battery_1_module_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -3282,7 +3291,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Average Cell Temperature"
-        category: "diagnostic"
+        unique_id: "bms_1_battery_1_temperate_ave"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3299,6 +3308,7 @@ parameters:
           max: 99
 
       - name: "Max Cell Temperature"
+        unique_id: "bms_1_battery_1_temperate_cell_max"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
@@ -3320,6 +3330,7 @@ parameters:
         ]
 
       - name: "Max Cell Temperature BMU Number"
+        unique_id: "bms_1_battery_1_temperate_cell_max_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3327,6 +3338,7 @@ parameters:
         registers: [[], [0x274C]]
 
       - name: "Max Cell Temperature Cell Number"
+        unique_id: "bms_1_battery_1_temperate_cell_max_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3334,14 +3346,15 @@ parameters:
         registers: [[], [0x274D]]
 
       - name: "Min Cell Temperature"
+        unique_id: "bms_1_battery_1_temperate_cell_min"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         suggested_display_precision: 0
-        rule: 1
         scale: [0.1, 1]
         offset: [1000, 40]
+        rule: 1
         registers: [[0x273C], [0x274E]]
         range:
           min: 0
@@ -3355,6 +3368,7 @@ parameters:
         ]
 
       - name: "Min Cell Temperature BMU Number"
+        unique_id: "bms_1_battery_1_temperate_cell_min_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3362,6 +3376,7 @@ parameters:
         registers: [[], [0x274F]]
 
       - name: "Min Cell Temperature Cell Number"
+        unique_id: "bms_1_battery_1_temperate_cell_min_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3369,6 +3384,7 @@ parameters:
         registers: [[], [0x2750]]
 
       - name: "MOSFET Max Temperature"
+        unique_id: "bms_1_battery_1_temperate_mos_max"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -3386,6 +3402,7 @@ parameters:
           max: 99
 
       - name: "Heating Membrane Temperature"
+        unique_id: "bms_1_battery_1_temperate_heat_mem"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -3403,6 +3420,7 @@ parameters:
           max: 99
 
       - name: "BMS Temperature"
+        unique_id: "bms_1_battery_1_second_level_bms_temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3419,6 +3437,7 @@ parameters:
           max: 99
 
       - name: "Health"
+        unique_id: "bms_1_battery_1_soh"
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -3426,6 +3445,7 @@ parameters:
         icon: "mdi:battery-heart"
 
       - name: "Remaining Capacity"
+        unique_id: "bms_1_battery_1_remain_capacity"
         category: "diagnostic"
         state_class: "measurement"
         uom: "Ah"
@@ -3435,6 +3455,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Total Capacity"
+        unique_id: "bms_1_battery_1_total_capacity"
         category: "diagnostic"
         update_interval: 3600
         state_class: "measurement"
@@ -3445,6 +3466,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Charge Voltage"
+        unique_id: "bms_1_battery_1_charge_voltage"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3456,6 +3478,7 @@ parameters:
         registers: [[0x2743], []]
 
       - name: "Max Cell Voltage"
+        unique_id: "bms_1_battery_1_max_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -3470,6 +3493,7 @@ parameters:
         ]
 
       - name: "Max Cell Voltage BMU Number"
+        unique_id: "bms_1_battery_1_max_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3477,6 +3501,7 @@ parameters:
         registers: [[], [0x2745]]
 
       - name: "Max Cell Voltage Cell Number"
+        unique_id: "bms_1_battery_1_max_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3484,6 +3509,7 @@ parameters:
         registers: [[], [0x2746]]
 
       - name: "Min Cell Voltage"
+        unique_id: "bms_1_battery_1_min_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -3498,6 +3524,7 @@ parameters:
         ]
 
       - name: "Min Cell Voltage BMU Number"
+        unique_id: "bms_1_battery_1_min_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3505,6 +3532,7 @@ parameters:
         registers: [[], [0x2748]]
 
       - name: "Min Cell Voltage Cell Number"
+        unique_id: "bms_1_battery_1_min_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3512,6 +3540,7 @@ parameters:
         registers: [[], [0x2749]]
 
       - name: "Max Charge Current"
+        unique_id: "bms_1_battery_1_charge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -3523,6 +3552,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Max Discharge Current"
+        unique_id: "bms_1_battery_1_discharge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -3534,6 +3564,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Charge Relay On-Load Cut-Off Times"
+        unique_id: "bms_1_battery_1_chg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3543,6 +3574,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharge Relay On-Load Cut-Off Times"
+        unique_id: "bms_1_battery_1_dsg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3552,6 +3584,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Status"
+        unique_id: "bms_1_battery_1_system_sub_state"
         update_interval: 5
         class: "enum"
         rule: 1
@@ -3569,6 +3602,7 @@ parameters:
         attributes: ["Basic Status", "value"]
 
       - name: "Pack count"
+        unique_id: "bms_1_battery_1_number_of_pack"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3577,6 +3611,7 @@ parameters:
         registers: [[], [0x2756]]
 
       - name: "Overcharge Times"
+        unique_id: "bms_1_battery_1_over_charge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3586,6 +3621,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Overdischarge Times"
+        unique_id: "bms_1_battery_1_over_discharge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3595,6 +3631,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overcurrent Times"
+        unique_id: "bms_1_battery_1_occ_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3604,6 +3641,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overcurrent Times"
+        unique_id: "bms_1_battery_1_ocd_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3613,6 +3651,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overtemperature Times"
+        unique_id: "bms_1_battery_1_over_chg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3622,6 +3661,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overtemperature Times"
+        unique_id: "bms_1_battery_1_over_dsg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3631,6 +3671,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Total Charge Energy"
+        unique_id: "bms_1_battery_1_total_chg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -3640,6 +3681,7 @@ parameters:
         registers: [[], [0x275E, 0x275D]]
 
       - name: "Total Discharge Energy"
+        unique_id: "bms_1_battery_1_total_dsg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -3649,6 +3691,7 @@ parameters:
         registers: [[], [0x2760, 0x275F]]
 
       - name: "Mot Voltage"
+        unique_id: "bms_1_battery_1_mot_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -3658,7 +3701,10 @@ parameters:
         rule: 1
         registers: [[], [0x2761]]
 
-      - name: "Voltage"
+      - name: "Battery Voltage"
+        unique_id: "bms_1_battery_1_bat_volt"
+        disabled:
+        category: "diagnostic"
         update_interval: 5
         class: "voltage"
         state_class: "measurement"
@@ -3669,6 +3715,7 @@ parameters:
         registers: [[], [0x2762]]
 
       - name: "Fuse Voltage"
+        unique_id: "bms_1_battery_1_fuse_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -3679,6 +3726,7 @@ parameters:
         registers: [[], [0x2763]]
 
       - name: "Heat Voltage"
+        unique_id: "bms_1_battery_1_heat_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -3689,7 +3737,9 @@ parameters:
         registers: [[], [0x2764]]
 
       - name: "Precharge Resistor Temperature"
+        unique_id: "bms_1_battery_1_pre_chg_res_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3706,6 +3756,7 @@ parameters:
           max: 99
 
       - name: "Max Heater Temperature"
+        unique_id: "bms_1_battery_1_max_heater_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -3723,6 +3774,7 @@ parameters:
           max: 99
 
       - name: "BMS Positive Connector Temperature"
+        unique_id: "bms_1_battery_1_bms_north_connector_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -3740,7 +3792,9 @@ parameters:
           max: 99
 
       - name: "BMS Negative Connector Temperature"
+        unique_id: "bms_1_battery_1_bms_south_connector_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3757,7 +3811,9 @@ parameters:
           max: 99
 
       - name: "Max BMU Positive Connector Temperature"
+        unique_id: "bms_1_battery_1_max_bmu_conn_p_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3775,6 +3831,7 @@ parameters:
         attributes: ["Max BMU Positive Connector Temperature BMU Number"]
 
       - name: "Max BMU Positive Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_1_max_bmu_conn_p_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3782,7 +3839,9 @@ parameters:
         registers: [[], [0x276A]]
 
       - name: "Max BMU Negative Connector Temperature"
+        unique_id: "bms_1_battery_1_max_bmu_conn_n_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -3800,6 +3859,7 @@ parameters:
         attributes: ["Max BMU Negative Connector Temperature BMU Number"]
 
       - name: "Max BMU Negative Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_1_max_bmu_conn_n_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3807,6 +3867,7 @@ parameters:
         registers: [[], [0x276C]]
 
       - name: "Min BMU Connector Temperature"
+        unique_id: "bms_1_battery_1_min_bmu_conn_temp"
         disabled:
         category: "diagnostic"
         class: "temperature"
@@ -3826,6 +3887,7 @@ parameters:
         attributes: ["Min BMU Connector Temperature BMU Number"]
 
       - name: "Min BMU Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_1_min_bmu_conn_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -3833,6 +3895,7 @@ parameters:
         registers: [[], [0x276E]]
 
       - name: "Leakage Resistance"
+        unique_id: "bms_1_battery_1_leakage_res"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3844,6 +3907,7 @@ parameters:
         attributes: ["Positive Resistance", "Negative Resistance"]
 
       - name: "Positive Resistance"
+        unique_id: "bms_1_battery_1_res_p"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -3854,6 +3918,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "Negative Resistance"
+        unique_id: "bms_1_battery_1_res_n"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -3864,6 +3929,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "BMS Type"
+        unique_id: "bms_1_battery_1_bms_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -3883,11 +3949,13 @@ parameters:
             value: "LvCtrlBox"
 
       - name: "MOS Status"
+        unique_id: "bms_1_battery_1_mos_status"
         rule: 1
         icon: "mdi:state-machine"
         registers: [[0x2749], []]
 
       - name: "Relay State"
+        unique_id: "bms_1_battery_1_relay_state"
         disabled:
         state_class: "measurement"
         rule: 1
@@ -3895,6 +3963,7 @@ parameters:
         registers: [[], [0x277D]]
 
       - name: "Software Version"
+        unique_id: "bms_1_battery_1_software_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3902,6 +3971,7 @@ parameters:
         registers: [[0x274E], []]
 
       - name: "Hardware Version"
+        unique_id: "bms_1_battery_1_hardware_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3909,6 +3979,7 @@ parameters:
         registers: [[0x274F], []]
 
       - name: "BMS Software Version"
+        unique_id: "bms_1_battery_1_bms_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3916,6 +3987,7 @@ parameters:
         registers: [[], [0x2773, 0x2774]]
 
       - name: "BMU Software Version"
+        unique_id: "bms_1_battery_1_bmu_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3923,6 +3995,7 @@ parameters:
         registers: [[], [0x2775, 0x2776]]
 
       - name: "BMS Hardware Version"
+        unique_id: "bms_1_battery_1_bms_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3930,6 +4003,7 @@ parameters:
         registers: [[], [0x2779, 0x277A]]
 
       - name: "BMU Hardware Version"
+        unique_id: "bms_1_battery_1_bmu_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -3937,16 +4011,20 @@ parameters:
         registers: [[], [0x277B, 0x277C]]
 
       - name: "Temperature Sampling Count"
+        unique_id: "bms_1_battery_1_temp_sampling_count"
         disabled:
+        category: "diagnostic"
         rule: 1
         registers: [[], [0x2777]]
 
       - name: "Is Heat"
+        unique_id: "bms_1_battery_1_is_heat"
         disabled:
         rule: 1
         registers: [[], [0x2778]]
 
       - name: "Imbalance"
+        unique_id: "bms_1_battery_1_imbalance"
         class: "voltage"
         state_class: "measurement"
         uom: "mV"
@@ -3958,6 +4036,7 @@ parameters:
             registers: [[0x2747], [0x2747]]
 
       - name: "Alarm"
+        unique_id: "bms_1_battery_1_warning"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -3967,6 +4046,7 @@ parameters:
         attributes: ["value"]
 
       - name: "Fault"
+        unique_id: "bms_1_battery_1_fault"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -3976,6 +4056,7 @@ parameters:
         attributes: ["value"]
 
       - name: "State of Charge"
+        unique_id: "bms_1_battery_1_soc"
         update_interval: 5
         class: "battery"
         state_class: "measurement"
@@ -4004,6 +4085,7 @@ parameters:
     pack: 2
     items:
       - name: "BMS 1 Battery 2 Serial Number"
+        unique_id: "bms_1_battery_2_sn"
         update_interval: 3600
         attribute:
         state_class: "measurement"
@@ -4013,6 +4095,7 @@ parameters:
           [[0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D], [0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9, 0x27AA, 0x27AB, 0x27AC]]
 
       - name: "Type"
+        unique_id: "bms_1_battery_2_device_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4028,6 +4111,7 @@ parameters:
         registers: [[], [0x27AD]]
 
       - name: "Protocol"
+        unique_id: "bms_1_battery_2_pcs_protocol_id"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4053,6 +4137,7 @@ parameters:
         registers: [[], [0x27AE]]
 
       - name: "Number of Clusters"
+        unique_id: "bms_1_battery_2_number_of_cluster"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4062,6 +4147,7 @@ parameters:
 
       # Always returning 0?
       - name: "Basic Status"
+        unique_id: "bms_1_battery_2_basic_status"
         attribute:
         update_interval: 5
         class: "enum"
@@ -4077,6 +4163,7 @@ parameters:
             value: "Discharging"
 
       - name: "Charging Allowed"
+        unique_id: "bms_1_battery_2_charge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -4090,6 +4177,7 @@ parameters:
             value: "Allowed"
 
       - name: "Discharging Allowed"
+        unique_id: "bms_1_battery_2_discharge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -4103,14 +4191,15 @@ parameters:
             value: "Allowed"
 
       - name: "Cycle Count"
+        unique_id: "bms_1_battery_2_cycle_number"
         category: "diagnostic"
         state_class: "measurement"
         rule: 1
         icon: "mdi:battery-sync"
         registers: [[0x276E], [0x27B3]]
 
-      - name: "Module Voltage"
-        disabled:
+      - name: "Voltage"
+        unique_id: "bms_1_battery_2_module_voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -4120,6 +4209,7 @@ parameters:
         registers: [[0x275E], [0x27B4]]
 
       - name: "Current"
+        unique_id: "bms_1_battery_2_module_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -4132,7 +4222,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Average Cell Temperature"
-        category: "diagnostic"
+        unique_id: "bms_1_battery_2_temperate_ave"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4149,6 +4239,7 @@ parameters:
           max: 99
 
       - name: "Max Cell Temperature"
+        unique_id: "bms_1_battery_2_temperate_cell_max"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
@@ -4170,6 +4261,7 @@ parameters:
         ]
 
       - name: "Max Cell Temperature BMU Number"
+        unique_id: "bms_1_battery_2_temperate_cell_max_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4177,6 +4269,7 @@ parameters:
         registers: [[], [0x27C1]]
 
       - name: "Max Cell Temperature Cell Number"
+        unique_id: "bms_1_battery_2_temperate_cell_max_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4184,14 +4277,15 @@ parameters:
         registers: [[], [0x27C2]]
 
       - name: "Min Cell Temperature"
+        unique_id: "bms_1_battery_2_temperate_cell_min"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         suggested_display_precision: 0
-        rule: 1
         scale: [0.1, 1]
         offset: [1000, 40]
+        rule: 1
         registers: [[0x2762], [0x27C3]]
         range:
           min: 0
@@ -4205,6 +4299,7 @@ parameters:
         ]
 
       - name: "Min Cell Temperature BMU Number"
+        unique_id: "bms_1_battery_2_temperate_cell_min_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4212,6 +4307,7 @@ parameters:
         registers: [[], [0x27C4]]
 
       - name: "Min Cell Temperature Cell Number"
+        unique_id: "bms_1_battery_2_temperate_cell_min_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4219,6 +4315,7 @@ parameters:
         registers: [[], [0x27C5]]
 
       - name: "MOSFET Max Temperature"
+        unique_id: "bms_1_battery_2_temperate_mos_max"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -4236,6 +4333,7 @@ parameters:
           max: 99
 
       - name: "Heating Membrane Temperature"
+        unique_id: "bms_1_battery_2_temperate_heat_mem"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -4253,6 +4351,7 @@ parameters:
           max: 99
 
       - name: "BMS Temperature"
+        unique_id: "bms_1_battery_2_second_level_bms_temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4269,6 +4368,7 @@ parameters:
           max: 99
 
       - name: "Health"
+        unique_id: "bms_1_battery_2_soh"
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -4276,6 +4376,7 @@ parameters:
         icon: "mdi:battery-heart"
 
       - name: "Remaining Capacity"
+        unique_id: "bms_1_battery_2_remain_capacity"
         category: "diagnostic"
         state_class: "measurement"
         uom: "Ah"
@@ -4285,6 +4386,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Total Capacity"
+        unique_id: "bms_1_battery_2_total_capacity"
         category: "diagnostic"
         update_interval: 3600
         state_class: "measurement"
@@ -4295,6 +4397,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Charge Voltage"
+        unique_id: "bms_1_battery_2_charge_voltage"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4306,6 +4409,7 @@ parameters:
         registers: [[0x2769], []]
 
       - name: "Max Cell Voltage"
+        unique_id: "bms_1_battery_2_max_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -4320,6 +4424,7 @@ parameters:
         ]
 
       - name: "Max Cell Voltage BMU Number"
+        unique_id: "bms_1_battery_2_max_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4327,6 +4432,7 @@ parameters:
         registers: [[], [0x27BA]]
 
       - name: "Max Cell Voltage Cell Number"
+        unique_id: "bms_1_battery_2_max_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4334,6 +4440,7 @@ parameters:
         registers: [[], [0x27BB]]
 
       - name: "Min Cell Voltage"
+        unique_id: "bms_1_battery_2_min_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -4348,6 +4455,7 @@ parameters:
         ]
 
       - name: "Min Cell Voltage BMU Number"
+        unique_id: "bms_1_battery_2_min_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4355,6 +4463,7 @@ parameters:
         registers: [[], [0x27BD]]
 
       - name: "Min Cell Voltage Cell Number"
+        unique_id: "bms_1_battery_2_min_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4362,6 +4471,7 @@ parameters:
         registers: [[], [0x27BE]]
 
       - name: "Max Charge Current"
+        unique_id: "bms_1_battery_2_charge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -4373,6 +4483,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Max Discharge Current"
+        unique_id: "bms_1_battery_2_discharge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -4384,6 +4495,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Charge Relay On-Load Cut-Off Times"
+        unique_id: "bms_1_battery_2_chg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4393,6 +4505,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharge Relay On-Load Cut-Off Times"
+        unique_id: "bms_1_battery_2_dsg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4402,6 +4515,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Status"
+        unique_id: "bms_1_battery_2_system_sub_state"
         update_interval: 5
         class: "enum"
         rule: 1
@@ -4419,6 +4533,7 @@ parameters:
         attributes: ["Basic Status", "value"]
 
       - name: "Pack count"
+        unique_id: "bms_1_battery_2_number_of_pack"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4427,6 +4542,7 @@ parameters:
         registers: [[], [0x27CB]]
 
       - name: "Overcharge Times"
+        unique_id: "bms_1_battery_2_over_charge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4436,6 +4552,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Overdischarge Times"
+        unique_id: "bms_1_battery_2_over_discharge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4445,6 +4562,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overcurrent Times"
+        unique_id: "bms_1_battery_2_occ_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4454,6 +4572,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overcurrent Times"
+        unique_id: "bms_1_battery_2_ocd_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4463,6 +4582,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overtemperature Times"
+        unique_id: "bms_1_battery_2_over_chg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4472,6 +4592,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overtemperature Times"
+        unique_id: "bms_1_battery_2_over_dsg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4481,6 +4602,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Total Charge Energy"
+        unique_id: "bms_1_battery_2_total_chg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -4490,6 +4612,7 @@ parameters:
         registers: [[], [0x27D3, 0x27D2]]
 
       - name: "Total Discharge Energy"
+        unique_id: "bms_1_battery_2_total_dsg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -4499,6 +4622,7 @@ parameters:
         registers: [[], [0x27D5, 0x27D4]]
 
       - name: "Mot Voltage"
+        unique_id: "bms_1_battery_2_mot_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -4508,7 +4632,10 @@ parameters:
         rule: 1
         registers: [[], [0x27D6]]
 
-      - name: "Voltage"
+      - name: "Battery Voltage"
+        unique_id: "bms_1_battery_2_bat_volt"
+        disabled:
+        category: "diagnostic"
         update_interval: 5
         class: "voltage"
         state_class: "measurement"
@@ -4519,6 +4646,7 @@ parameters:
         registers: [[], [0x27D7]]
 
       - name: "Fuse Voltage"
+        unique_id: "bms_1_battery_2_fuse_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -4529,6 +4657,7 @@ parameters:
         registers: [[], [0x27D8]]
 
       - name: "Heat Voltage"
+        unique_id: "bms_1_battery_2_heat_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -4539,7 +4668,9 @@ parameters:
         registers: [[], [0x27D9]]
 
       - name: "Precharge Resistor Temperature"
+        unique_id: "bms_1_battery_2_pre_chg_res_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4556,6 +4687,7 @@ parameters:
           max: 99
 
       - name: "Max Heater Temperature"
+        unique_id: "bms_1_battery_2_max_heater_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -4573,6 +4705,7 @@ parameters:
           max: 99
 
       - name: "BMS Positive Connector Temperature"
+        unique_id: "bms_1_battery_2_bms_north_connector_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -4590,7 +4723,9 @@ parameters:
           max: 99
 
       - name: "BMS Negative Connector Temperature"
+        unique_id: "bms_1_battery_2_bms_south_connector_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4607,7 +4742,9 @@ parameters:
           max: 99
 
       - name: "Max BMU Positive Connector Temperature"
+        unique_id: "bms_1_battery_2_max_bmu_conn_p_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4625,6 +4762,7 @@ parameters:
         attributes: ["Max BMU Positive Connector Temperature BMU Number"]
 
       - name: "Max BMU Positive Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_2_max_bmu_conn_p_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4632,7 +4770,9 @@ parameters:
         registers: [[], [0x27DF]]
 
       - name: "Max BMU Negative Connector Temperature"
+        unique_id: "bms_1_battery_2_max_bmu_conn_n_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4650,6 +4790,7 @@ parameters:
         attributes: ["Max BMU Negative Connector Temperature BMU Number"]
 
       - name: "Max BMU Negative Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_2_max_bmu_conn_n_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4657,6 +4798,7 @@ parameters:
         registers: [[], [0x27E1]]
 
       - name: "Min BMU Connector Temperature"
+        unique_id: "bms_1_battery_2_min_bmu_conn_temp"
         disabled:
         category: "diagnostic"
         class: "temperature"
@@ -4676,6 +4818,7 @@ parameters:
         attributes: ["Min BMU Connector Temperature BMU Number"]
 
       - name: "Min BMU Connector Temperature BMU Number"
+        unique_id: "bms_1_battery_2_min_bmu_conn_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -4683,6 +4826,7 @@ parameters:
         registers: [[], [0x27E3]]
 
       - name: "Leakage Resistance"
+        unique_id: "bms_1_battery_2_leakage_res"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4694,6 +4838,7 @@ parameters:
         attributes: ["Positive Resistance", "Negative Resistance"]
 
       - name: "Positive Resistance"
+        unique_id: "bms_1_battery_2_res_p"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -4704,6 +4849,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "Negative Resistance"
+        unique_id: "bms_1_battery_2_res_n"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -4714,6 +4860,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "BMS Type"
+        unique_id: "bms_1_battery_2_bms_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4733,11 +4880,13 @@ parameters:
             value: "LvCtrlBox"
 
       - name: "MOS Status"
+        unique_id: "bms_1_battery_2_mos_status"
         rule: 1
         icon: "mdi:state-machine"
         registers: [[0x276F], []]
 
       - name: "Relay State"
+        unique_id: "bms_1_battery_2_relay_state"
         disabled:
         state_class: "measurement"
         rule: 1
@@ -4745,6 +4894,7 @@ parameters:
         registers: [[], [0x27F2]]
 
       - name: "Software Version"
+        unique_id: "bms_1_battery_2_software_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4752,6 +4902,7 @@ parameters:
         registers: [[0x2774], []]
 
       - name: "Hardware Version"
+        unique_id: "bms_1_battery_2_hardware_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4759,6 +4910,7 @@ parameters:
         registers: [[0x2775], []]
 
       - name: "BMS Software Version"
+        unique_id: "bms_1_battery_2_bms_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4766,6 +4918,7 @@ parameters:
         registers: [[], [0x27E8, 0x27E9]]
 
       - name: "BMU Software Version"
+        unique_id: "bms_1_battery_2_bmu_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4773,6 +4926,7 @@ parameters:
         registers: [[], [0x27EA, 0x27EB]]
 
       - name: "BMS Hardware Version"
+        unique_id: "bms_1_battery_2_bms_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4780,6 +4934,7 @@ parameters:
         registers: [[], [0x27EE, 0x27EF]]
 
       - name: "BMU Hardware Version"
+        unique_id: "bms_1_battery_2_bmu_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -4787,16 +4942,20 @@ parameters:
         registers: [[], [0x27F0, 0x27F1]]
 
       - name: "Temperature Sampling Count"
+        unique_id: "bms_1_battery_2_temp_sampling_count"
         disabled:
+        category: "diagnostic"
         rule: 1
         registers: [[], [0x27EC]]
 
       - name: "Is Heat"
+        unique_id: "bms_1_battery_2_is_heat"
         disabled:
         rule: 1
         registers: [[], [0x27ED]]
 
       - name: "Imbalance"
+        unique_id: "bms_1_battery_2_imbalance"
         class: "voltage"
         state_class: "measurement"
         uom: "mV"
@@ -4808,6 +4967,7 @@ parameters:
             registers: [[0x276D], [0x27BC]]
 
       - name: "Alarm"
+        unique_id: "bms_1_battery_2_warning"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -4817,6 +4977,7 @@ parameters:
         attributes: ["value"]
 
       - name: "Fault"
+        unique_id: "bms_1_battery_2_fault"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -4826,6 +4987,7 @@ parameters:
         attributes: ["value"]
 
       - name: "State of Charge"
+        unique_id: "bms_1_battery_2_soc"
         update_interval: 5
         class: "battery"
         state_class: "measurement"
@@ -4854,6 +5016,7 @@ parameters:
     pack: 1
     items:
       - name: "BMS 2 Battery 1 Serial Number"
+        unique_id: "bms_2_battery_1_sn"
         update_interval: 3600
         attribute:
         state_class: "measurement"
@@ -4863,6 +5026,7 @@ parameters:
           [[], [0x3AB8, 0x3AB9, 0x3ABA, 0x3ABB, 0x3ABC, 0x3ABD, 0x3ABE, 0x3ABF]]
 
       - name: "Type"
+        unique_id: "bms_2_battery_1_device_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4878,6 +5042,7 @@ parameters:
         registers: [[], [0x3AC0]]
 
       - name: "Protocol"
+        unique_id: "bms_2_battery_1_pcs_protocol_id"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4903,6 +5068,7 @@ parameters:
         registers: [[], [0x3AC1]]
 
       - name: "Number of Clusters"
+        unique_id: "bms_2_battery_1_number_of_cluster"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -4912,6 +5078,7 @@ parameters:
 
       # Always returning 0?
       - name: "Basic Status"
+        unique_id: "bms_2_battery_1_basic_status"
         attribute:
         update_interval: 5
         class: "enum"
@@ -4927,6 +5094,7 @@ parameters:
             value: "Discharging"
 
       - name: "Charging Allowed"
+        unique_id: "bms_2_battery_1_charge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -4940,6 +5108,7 @@ parameters:
             value: "Allowed"
 
       - name: "Discharging Allowed"
+        unique_id: "bms_2_battery_1_discharge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -4953,14 +5122,15 @@ parameters:
             value: "Allowed"
 
       - name: "Cycle Count"
+        unique_id: "bms_2_battery_1_cycle_number"
         category: "diagnostic"
         state_class: "measurement"
         rule: 1
         icon: "mdi:battery-sync"
         registers: [[], [0x3AC6]]
 
-      - name: "Module Voltage"
-        disabled:
+      - name: "Voltage"
+        unique_id: "bms_2_battery_1_module_voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -4970,6 +5140,7 @@ parameters:
         registers: [[], [0x3AC7]]
 
       - name: "Current"
+        unique_id: "bms_2_battery_1_module_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -4982,7 +5153,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Average Cell Temperature"
-        category: "diagnostic"
+        unique_id: "bms_2_battery_1_temperate_ave"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -4999,6 +5170,7 @@ parameters:
           max: 99
 
       - name: "Max Cell Temperature"
+        unique_id: "bms_2_battery_1_temperate_cell_max"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
@@ -5020,6 +5192,7 @@ parameters:
         ]
 
       - name: "Max Cell Temperature BMU Number"
+        unique_id: "bms_2_battery_1_temperate_cell_max_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5027,6 +5200,7 @@ parameters:
         registers: [[], [0x3AD4]]
 
       - name: "Max Cell Temperature Cell Number"
+        unique_id: "bms_2_battery_1_temperate_cell_max_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5034,14 +5208,15 @@ parameters:
         registers: [[], [0x3AD5]]
 
       - name: "Min Cell Temperature"
+        unique_id: "bms_2_battery_1_temperate_cell_min"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         suggested_display_precision: 0
-        rule: 1
         scale: [0.1, 1]
         offset: [1000, 40]
+        rule: 1
         registers: [[], [0x3AD6]]
         range:
           min: 0
@@ -5055,6 +5230,7 @@ parameters:
         ]
 
       - name: "Min Cell Temperature BMU Number"
+        unique_id: "bms_2_battery_1_temperate_cell_min_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5062,6 +5238,7 @@ parameters:
         registers: [[], [0x3AD7]]
 
       - name: "Min Cell Temperature Cell Number"
+        unique_id: "bms_2_battery_1_temperate_cell_min_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5069,6 +5246,7 @@ parameters:
         registers: [[], [0x3AD8]]
 
       - name: "MOSFET Max Temperature"
+        unique_id: "bms_2_battery_1_temperate_mos_max"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5086,6 +5264,7 @@ parameters:
           max: 99
 
       - name: "Heating Membrane Temperature"
+        unique_id: "bms_2_battery_1_temperate_heat_mem"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5103,6 +5282,7 @@ parameters:
           max: 99
 
       - name: "BMS Temperature"
+        unique_id: "bms_2_battery_1_second_level_bms_temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5119,6 +5299,7 @@ parameters:
           max: 99
 
       - name: "Health"
+        unique_id: "bms_2_battery_1_soh"
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -5126,6 +5307,7 @@ parameters:
         icon: "mdi:battery-heart"
 
       - name: "Remaining Capacity"
+        unique_id: "bms_2_battery_1_remain_capacity"
         category: "diagnostic"
         state_class: "measurement"
         uom: "Ah"
@@ -5135,6 +5317,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Total Capacity"
+        unique_id: "bms_2_battery_1_total_capacity"
         category: "diagnostic"
         update_interval: 3600
         state_class: "measurement"
@@ -5145,6 +5328,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Charge Voltage"
+        unique_id: "bms_2_battery_1_charge_voltage"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5156,6 +5340,7 @@ parameters:
         registers: [[], []]
 
       - name: "Max Cell Voltage"
+        unique_id: "bms_2_battery_1_max_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -5170,6 +5355,7 @@ parameters:
         ]
 
       - name: "Max Cell Voltage BMU Number"
+        unique_id: "bms_2_battery_1_max_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5177,6 +5363,7 @@ parameters:
         registers: [[], [0x3ACD]]
 
       - name: "Max Cell Voltage Cell Number"
+        unique_id: "bms_2_battery_1_max_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5184,6 +5371,7 @@ parameters:
         registers: [[], [0x3ACE]]
 
       - name: "Min Cell Voltage"
+        unique_id: "bms_2_battery_1_min_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -5198,6 +5386,7 @@ parameters:
         ]
 
       - name: "Min Cell Voltage BMU Number"
+        unique_id: "bms_2_battery_1_min_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5205,6 +5394,7 @@ parameters:
         registers: [[], [0x3AD0]]
 
       - name: "Min Cell Voltage Cell Number"
+        unique_id: "bms_2_battery_1_min_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5212,6 +5402,7 @@ parameters:
         registers: [[], [0x3AD1]]
 
       - name: "Max Charge Current"
+        unique_id: "bms_2_battery_1_charge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -5223,6 +5414,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Max Discharge Current"
+        unique_id: "bms_2_battery_1_discharge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -5234,6 +5426,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Charge Relay On-Load Cut-Off Times"
+        unique_id: "bms_2_battery_1_chg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5243,6 +5436,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharge Relay On-Load Cut-Off Times"
+        unique_id: "bms_2_battery_1_dsg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5252,6 +5446,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Status"
+        unique_id: "bms_2_battery_1_system_sub_state"
         update_interval: 5
         class: "enum"
         rule: 1
@@ -5269,6 +5464,7 @@ parameters:
         attributes: ["Basic Status", "value"]
 
       - name: "Pack count"
+        unique_id: "bms_2_battery_1_number_of_pack"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5277,6 +5473,7 @@ parameters:
         registers: [[], [0x3ADE]]
 
       - name: "Overcharge Times"
+        unique_id: "bms_2_battery_1_over_charge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5286,6 +5483,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Overdischarge Times"
+        unique_id: "bms_2_battery_1_over_discharge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5295,6 +5493,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overcurrent Times"
+        unique_id: "bms_2_battery_1_occ_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5304,6 +5503,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overcurrent Times"
+        unique_id: "bms_2_battery_1_ocd_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5313,6 +5513,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overtemperature Times"
+        unique_id: "bms_2_battery_1_over_chg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5322,6 +5523,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overtemperature Times"
+        unique_id: "bms_2_battery_1_over_dsg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5331,6 +5533,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Total Charge Energy"
+        unique_id: "bms_2_battery_1_total_chg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -5340,6 +5543,7 @@ parameters:
         registers: [[], [0x3AE6, 0x3AE5]]
 
       - name: "Total Discharge Energy"
+        unique_id: "bms_2_battery_1_total_dsg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -5349,6 +5553,7 @@ parameters:
         registers: [[], [0x3AE8, 0x3AE7]]
 
       - name: "Mot Voltage"
+        unique_id: "bms_2_battery_1_mot_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -5358,7 +5563,10 @@ parameters:
         rule: 1
         registers: [[], [0x3AE9]]
 
-      - name: "Voltage"
+      - name: "Battery Voltage"
+        unique_id: "bms_2_battery_1_bat_volt"
+        disabled:
+        category: "diagnostic"
         update_interval: 5
         class: "voltage"
         state_class: "measurement"
@@ -5369,6 +5577,7 @@ parameters:
         registers: [[], [0x3AEA]]
 
       - name: "Fuse Voltage"
+        unique_id: "bms_2_battery_1_fuse_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -5379,6 +5588,7 @@ parameters:
         registers: [[], [0x3AEB]]
 
       - name: "Heat Voltage"
+        unique_id: "bms_2_battery_1_heat_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -5389,7 +5599,9 @@ parameters:
         registers: [[], [0x3AEC]]
 
       - name: "Precharge Resistor Temperature"
+        unique_id: "bms_2_battery_1_pre_chg_res_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5406,6 +5618,7 @@ parameters:
           max: 99
 
       - name: "Max Heater Temperature"
+        unique_id: "bms_2_battery_1_max_heater_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5423,6 +5636,7 @@ parameters:
           max: 99
 
       - name: "BMS Positive Connector Temperature"
+        unique_id: "bms_2_battery_1_bms_north_connector_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5440,7 +5654,9 @@ parameters:
           max: 99
 
       - name: "BMS Negative Connector Temperature"
+        unique_id: "bms_2_battery_1_bms_south_connector_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5457,7 +5673,9 @@ parameters:
           max: 99
 
       - name: "Max BMU Positive Connector Temperature"
+        unique_id: "bms_2_battery_1_max_bmu_conn_p_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5475,6 +5693,7 @@ parameters:
         attributes: ["Max BMU Positive Connector Temperature BMU Number"]
 
       - name: "Max BMU Positive Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_1_max_bmu_conn_p_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5482,7 +5701,9 @@ parameters:
         registers: [[], [0x3AF2]]
 
       - name: "Max BMU Negative Connector Temperature"
+        unique_id: "bms_2_battery_1_max_bmu_conn_n_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5500,6 +5721,7 @@ parameters:
         attributes: ["Max BMU Negative Connector Temperature BMU Number"]
 
       - name: "Max BMU Negative Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_1_max_bmu_conn_n_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5507,6 +5729,7 @@ parameters:
         registers: [[], [0x3AF4]]
 
       - name: "Min BMU Connector Temperature"
+        unique_id: "bms_2_battery_1_min_bmu_conn_temp"
         disabled:
         category: "diagnostic"
         class: "temperature"
@@ -5526,6 +5749,7 @@ parameters:
         attributes: ["Min BMU Connector Temperature BMU Number"]
 
       - name: "Min BMU Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_1_min_bmu_conn_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5533,6 +5757,7 @@ parameters:
         registers: [[], [0x3AF6]]
 
       - name: "Leakage Resistance"
+        unique_id: "bms_2_battery_1_leakage_res"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5544,6 +5769,7 @@ parameters:
         attributes: ["Positive Resistance", "Negative Resistance"]
 
       - name: "Positive Resistance"
+        unique_id: "bms_2_battery_1_res_p"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -5554,6 +5780,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "Negative Resistance"
+        unique_id: "bms_2_battery_1_res_n"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -5564,6 +5791,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "BMS Type"
+        unique_id: "bms_2_battery_1_bms_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5583,11 +5811,13 @@ parameters:
             value: "LvCtrlBox"
 
       - name: "MOS Status"
+        unique_id: "bms_2_battery_1_mos_status"
         rule: 1
         icon: "mdi:state-machine"
         registers: [[], []]
 
       - name: "Relay State"
+        unique_id: "bms_2_battery_1_relay_state"
         disabled:
         state_class: "measurement"
         rule: 1
@@ -5595,6 +5825,7 @@ parameters:
         registers: [[], [0x3B05]]
 
       - name: "Software Version"
+        unique_id: "bms_2_battery_1_software_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5602,6 +5833,7 @@ parameters:
         registers: [[], []]
 
       - name: "Hardware Version"
+        unique_id: "bms_2_battery_1_hardware_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5609,6 +5841,7 @@ parameters:
         registers: [[], []]
 
       - name: "BMS Software Version"
+        unique_id: "bms_2_battery_1_bms_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5616,6 +5849,7 @@ parameters:
         registers: [[], [0x3AFB, 0x3AFC]]
 
       - name: "BMU Software Version"
+        unique_id: "bms_2_battery_1_bmu_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5623,6 +5857,7 @@ parameters:
         registers: [[], [0x3AFD, 0x3AFE]]
 
       - name: "BMS Hardware Version"
+        unique_id: "bms_2_battery_1_bms_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5630,6 +5865,7 @@ parameters:
         registers: [[], [0x3B01, 0x3B02]]
 
       - name: "BMU Hardware Version"
+        unique_id: "bms_2_battery_1_bmu_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -5637,16 +5873,20 @@ parameters:
         registers: [[], [0x3B03, 0x3B04]]
 
       - name: "Temperature Sampling Count"
+        unique_id: "bms_2_battery_1_temp_sampling_count"
         disabled:
+        category: "diagnostic"
         rule: 1
         registers: [[], [0x3AFF]]
 
       - name: "Is Heat"
+        unique_id: "bms_2_battery_1_is_heat"
         disabled:
         rule: 1
         registers: [[], [0x3B00]]
 
       - name: "Imbalance"
+        unique_id: "bms_2_battery_1_imbalance"
         class: "voltage"
         state_class: "measurement"
         uom: "mV"
@@ -5658,6 +5898,7 @@ parameters:
             registers: [[], [0x3ACF]]
 
       - name: "Alarm"
+        unique_id: "bms_2_battery_1_warning"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -5667,6 +5908,7 @@ parameters:
         attributes: ["value"]
 
       - name: "Fault"
+        unique_id: "bms_2_battery_1_fault"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -5676,6 +5918,7 @@ parameters:
         attributes: ["value"]
 
       - name: "State of Charge"
+        unique_id: "bms_2_battery_1_soc"
         update_interval: 5
         class: "battery"
         state_class: "measurement"
@@ -5704,6 +5947,7 @@ parameters:
     pack: 2
     items:
       - name: "BMS 2 Battery 2 Serial Number"
+        unique_id: "bms_2_battery_2_sn"
         update_interval: 3600
         attribute:
         state_class: "measurement"
@@ -5713,6 +5957,7 @@ parameters:
           [[], [0x3B2D, 0x3B2E, 0x3B2F, 0x3B30, 0x3B31, 0x3B32, 0x3B33, 0x3B34]]
 
       - name: "Type"
+        unique_id: "bms_2_battery_2_device_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5728,6 +5973,7 @@ parameters:
         registers: [[], [0x3B35]]
 
       - name: "Protocol"
+        unique_id: "bms_2_battery_2_pcs_protocol_id"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5753,6 +5999,7 @@ parameters:
         registers: [[], [0x3B36]]
 
       - name: "Number of Clusters"
+        unique_id: "bms_2_battery_2_number_of_cluster"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -5762,6 +6009,7 @@ parameters:
 
       # Always returning 0?
       - name: "Basic Status"
+        unique_id: "bms_2_battery_2_basic_status"
         attribute:
         update_interval: 5
         class: "enum"
@@ -5777,6 +6025,7 @@ parameters:
             value: "Discharging"
 
       - name: "Charging Allowed"
+        unique_id: "bms_2_battery_2_charge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -5790,6 +6039,7 @@ parameters:
             value: "Allowed"
 
       - name: "Discharging Allowed"
+        unique_id: "bms_2_battery_2_discharge_forbidden_mark"
         category: "diagnostic"
         update_interval: 5
         class: "enum"
@@ -5803,14 +6053,15 @@ parameters:
             value: "Allowed"
 
       - name: "Cycle Count"
+        unique_id: "bms_2_battery_2_cycle_number"
         category: "diagnostic"
         state_class: "measurement"
         rule: 1
         icon: "mdi:battery-sync"
         registers: [[], [0x3B3B]]
 
-      - name: "Module Voltage"
-        disabled:
+      - name: "Voltage"
+        unique_id: "bms_2_battery_2_module_voltage"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -5820,6 +6071,7 @@ parameters:
         registers: [[], [0x3B3C]]
 
       - name: "Current"
+        unique_id: "bms_2_battery_2_module_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -5832,7 +6084,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Average Cell Temperature"
-        category: "diagnostic"
+        unique_id: "bms_2_battery_2_temperate_ave"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5849,6 +6101,7 @@ parameters:
           max: 99
 
       - name: "Max Cell Temperature"
+        unique_id: "bms_2_battery_2_temperate_cell_max"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
@@ -5870,6 +6123,7 @@ parameters:
         ]
 
       - name: "Max Cell Temperature BMU Number"
+        unique_id: "bms_2_battery_2_temperate_cell_max_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5877,6 +6131,7 @@ parameters:
         registers: [[], [0x3B49]]
 
       - name: "Max Cell Temperature Cell Number"
+        unique_id: "bms_2_battery_2_temperate_cell_max_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5884,14 +6139,15 @@ parameters:
         registers: [[], [0x3B4A]]
 
       - name: "Min Cell Temperature"
+        unique_id: "bms_2_battery_2_temperate_cell_min"
         category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
         suggested_display_precision: 0
-        rule: 1
         scale: [0.1, 1]
         offset: [1000, 40]
+        rule: 1
         registers: [[], [0x3B4B]]
         range:
           min: 0
@@ -5905,6 +6161,7 @@ parameters:
         ]
 
       - name: "Min Cell Temperature BMU Number"
+        unique_id: "bms_2_battery_2_temperate_cell_min_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5912,6 +6169,7 @@ parameters:
         registers: [[], [0x3B4C]]
 
       - name: "Min Cell Temperature Cell Number"
+        unique_id: "bms_2_battery_2_temperate_cell_min_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -5919,6 +6177,7 @@ parameters:
         registers: [[], [0x3B4D]]
 
       - name: "MOSFET Max Temperature"
+        unique_id: "bms_2_battery_2_temperate_mos_max"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5936,6 +6195,7 @@ parameters:
           max: 99
 
       - name: "Heating Membrane Temperature"
+        unique_id: "bms_2_battery_2_temperate_heat_mem"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -5953,6 +6213,7 @@ parameters:
           max: 99
 
       - name: "BMS Temperature"
+        unique_id: "bms_2_battery_2_second_level_bms_temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -5969,6 +6230,7 @@ parameters:
           max: 99
 
       - name: "Health"
+        unique_id: "bms_2_battery_2_soh"
         state_class: "measurement"
         uom: "%"
         rule: 1
@@ -5976,6 +6238,7 @@ parameters:
         icon: "mdi:battery-heart"
 
       - name: "Remaining Capacity"
+        unique_id: "bms_2_battery_2_remain_capacity"
         category: "diagnostic"
         state_class: "measurement"
         uom: "Ah"
@@ -5985,6 +6248,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Total Capacity"
+        unique_id: "bms_2_battery_2_total_capacity"
         category: "diagnostic"
         update_interval: 3600
         state_class: "measurement"
@@ -5995,6 +6259,7 @@ parameters:
         icon: "mdi:battery"
 
       - name: "Charge Voltage"
+        unique_id: "bms_2_battery_2_charge_voltage"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6006,6 +6271,7 @@ parameters:
         registers: [[], []]
 
       - name: "Max Cell Voltage"
+        unique_id: "bms_2_battery_2_max_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -6020,6 +6286,7 @@ parameters:
         ]
 
       - name: "Max Cell Voltage BMU Number"
+        unique_id: "bms_2_battery_2_max_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6027,6 +6294,7 @@ parameters:
         registers: [[], [0x3B42]]
 
       - name: "Max Cell Voltage Cell Number"
+        unique_id: "bms_2_battery_2_max_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6034,6 +6302,7 @@ parameters:
         registers: [[], [0x3B43]]
 
       - name: "Min Cell Voltage"
+        unique_id: "bms_2_battery_2_min_cell_v"
         category: "diagnostic"
         class: "voltage"
         state_class: "measurement"
@@ -6048,6 +6317,7 @@ parameters:
         ]
 
       - name: "Min Cell Voltage BMU Number"
+        unique_id: "bms_2_battery_2_min_cell_v_num"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6055,6 +6325,7 @@ parameters:
         registers: [[], [0x3B45]]
 
       - name: "Min Cell Voltage Cell Number"
+        unique_id: "bms_2_battery_2_min_cell_v_local"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6062,6 +6333,7 @@ parameters:
         registers: [[], [0x3B46]]
 
       - name: "Max Charge Current"
+        unique_id: "bms_2_battery_2_charge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -6073,6 +6345,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Max Discharge Current"
+        unique_id: "bms_2_battery_2_discharge_current"
         update_interval: 5
         class: "current"
         state_class: "measurement"
@@ -6084,6 +6357,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Charge Relay On-Load Cut-Off Times"
+        unique_id: "bms_2_battery_2_chg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6093,6 +6367,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharge Relay On-Load Cut-Off Times"
+        unique_id: "bms_2_battery_2_dsg_relay_on_load_cut_off_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6102,6 +6377,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Status"
+        unique_id: "bms_2_battery_2_system_sub_state"
         update_interval: 5
         class: "enum"
         rule: 1
@@ -6119,6 +6395,7 @@ parameters:
         attributes: ["Basic Status", "value"]
 
       - name: "Pack count"
+        unique_id: "bms_2_battery_2_number_of_pack"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6127,6 +6404,7 @@ parameters:
         registers: [[], [0x3B53]]
 
       - name: "Overcharge Times"
+        unique_id: "bms_2_battery_2_over_charge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6136,6 +6414,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Overdischarge Times"
+        unique_id: "bms_2_battery_2_over_discharge_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6145,6 +6424,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overcurrent Times"
+        unique_id: "bms_2_battery_2_occ_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6154,6 +6434,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overcurrent Times"
+        unique_id: "bms_2_battery_2_ocd_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6163,6 +6444,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Charging Overtemperature Times"
+        unique_id: "bms_2_battery_2_over_chg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6172,6 +6454,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Discharging Overtemperature Times"
+        unique_id: "bms_2_battery_2_over_dsg_t_times"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6181,6 +6464,7 @@ parameters:
         icon: "mdi:battery-alert"
 
       - name: "Total Charge Energy"
+        unique_id: "bms_2_battery_2_total_chg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -6190,6 +6474,7 @@ parameters:
         registers: [[], [0x3B5B, 0x3B5A]]
 
       - name: "Total Discharge Energy"
+        unique_id: "bms_2_battery_2_total_dsg_energy"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -6199,6 +6484,7 @@ parameters:
         registers: [[], [0x3B5D, 0x3B5C]]
 
       - name: "Mot Voltage"
+        unique_id: "bms_2_battery_2_mot_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -6208,7 +6494,10 @@ parameters:
         rule: 1
         registers: [[], [0x3B5E]]
 
-      - name: "Voltage"
+      - name: "Battery Voltage"
+        unique_id: "bms_2_battery_2_bat_volt"
+        disabled:
+        category: "diagnostic"
         update_interval: 5
         class: "voltage"
         state_class: "measurement"
@@ -6219,6 +6508,7 @@ parameters:
         registers: [[], [0x3B5F]]
 
       - name: "Fuse Voltage"
+        unique_id: "bms_2_battery_2_fuse_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -6229,6 +6519,7 @@ parameters:
         registers: [[], [0x3B60]]
 
       - name: "Heat Voltage"
+        unique_id: "bms_2_battery_2_heat_volt"
         disabled:
         class: "voltage"
         state_class: "measurement"
@@ -6239,7 +6530,9 @@ parameters:
         registers: [[], [0x3B61]]
 
       - name: "Precharge Resistor Temperature"
+        unique_id: "bms_2_battery_2_pre_chg_res_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -6256,6 +6549,7 @@ parameters:
           max: 99
 
       - name: "Max Heater Temperature"
+        unique_id: "bms_2_battery_2_max_heater_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -6273,6 +6567,7 @@ parameters:
           max: 99
 
       - name: "BMS Positive Connector Temperature"
+        unique_id: "bms_2_battery_2_bms_north_connector_temp"
         disabled:
         class: "temperature"
         state_class: "measurement"
@@ -6290,7 +6585,9 @@ parameters:
           max: 99
 
       - name: "BMS Negative Connector Temperature"
+        unique_id: "bms_2_battery_2_bms_south_connector_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -6307,7 +6604,9 @@ parameters:
           max: 99
 
       - name: "Max BMU Positive Connector Temperature"
+        unique_id: "bms_2_battery_2_max_bmu_conn_p_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -6325,6 +6624,7 @@ parameters:
         attributes: ["Max BMU Positive Connector Temperature BMU Number"]
 
       - name: "Max BMU Positive Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_2_max_bmu_conn_p_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6332,7 +6632,9 @@ parameters:
         registers: [[], [0x3B67]]
 
       - name: "Max BMU Negative Connector Temperature"
+        unique_id: "bms_2_battery_2_max_bmu_conn_n_temp"
         disabled:
+        category: "diagnostic"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -6350,6 +6652,7 @@ parameters:
         attributes: ["Max BMU Negative Connector Temperature BMU Number"]
 
       - name: "Max BMU Negative Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_2_max_bmu_conn_n_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6357,6 +6660,7 @@ parameters:
         registers: [[], [0x3B69]]
 
       - name: "Min BMU Connector Temperature"
+        unique_id: "bms_2_battery_2_min_bmu_conn_temp"
         disabled:
         category: "diagnostic"
         class: "temperature"
@@ -6376,6 +6680,7 @@ parameters:
         attributes: ["Min BMU Connector Temperature BMU Number"]
 
       - name: "Min BMU Connector Temperature BMU Number"
+        unique_id: "bms_2_battery_2_min_bmu_conn_temp_bmu_no"
         attribute:
         category: "diagnostic"
         state_class: "measurement"
@@ -6383,6 +6688,7 @@ parameters:
         registers: [[], [0x3B6B]]
 
       - name: "Leakage Resistance"
+        unique_id: "bms_2_battery_2_leakage_res"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6394,6 +6700,7 @@ parameters:
         attributes: ["Positive Resistance", "Negative Resistance"]
 
       - name: "Positive Resistance"
+        unique_id: "bms_2_battery_2_res_p"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -6404,6 +6711,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "Negative Resistance"
+        unique_id: "bms_2_battery_2_res_n"
         attribute:
         category: "diagnostic"
         update_interval: 3600
@@ -6414,6 +6722,7 @@ parameters:
         icon: "mdi:omega"
 
       - name: "BMS Type"
+        unique_id: "bms_2_battery_2_bms_type"
         disabled:
         category: "diagnostic"
         update_interval: 3600
@@ -6433,11 +6742,13 @@ parameters:
             value: "LvCtrlBox"
 
       - name: "MOS Status"
+        unique_id: "bms_2_battery_2_mos_status"
         rule: 1
         icon: "mdi:state-machine"
         registers: [[], []]
 
       - name: "Relay State"
+        unique_id: "bms_2_battery_2_relay_state"
         disabled:
         state_class: "measurement"
         rule: 1
@@ -6445,6 +6756,7 @@ parameters:
         registers: [[], [0x3B7A]]
 
       - name: "Software Version"
+        unique_id: "bms_2_battery_2_software_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6452,6 +6764,7 @@ parameters:
         registers: [[], []]
 
       - name: "Hardware Version"
+        unique_id: "bms_2_battery_2_hardware_version"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6459,6 +6772,7 @@ parameters:
         registers: [[], []]
 
       - name: "BMS Software Version"
+        unique_id: "bms_2_battery_2_bms_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6466,6 +6780,7 @@ parameters:
         registers: [[], [0x3B70, 0x3B71]]
 
       - name: "BMU Software Version"
+        unique_id: "bms_2_battery_2_bmu_software_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6473,6 +6788,7 @@ parameters:
         registers: [[], [0x3B72, 0x3B73]]
 
       - name: "BMS Hardware Version"
+        unique_id: "bms_2_battery_2_bms_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6480,6 +6796,7 @@ parameters:
         registers: [[], [0x3B76, 0x3B77]]
 
       - name: "BMU Hardware Version"
+        unique_id: "bms_2_battery_2_bmu_hardware_v"
         update_interval: 3600
         attribute:
         rule: 7
@@ -6487,16 +6804,20 @@ parameters:
         registers: [[], [0x3B78, 0x3B79]]
 
       - name: "Temperature Sampling Count"
+        unique_id: "bms_2_battery_2_temp_sampling_count"
         disabled:
+        category: "diagnostic"
         rule: 1
         registers: [[], [0x3B74]]
 
       - name: "Is Heat"
+        unique_id: "bms_2_battery_2_is_heat"
         disabled:
         rule: 1
         registers: [[], [0x3B75]]
 
       - name: "Imbalance"
+        unique_id: "bms_2_battery_2_imbalance"
         class: "voltage"
         state_class: "measurement"
         uom: "mV"
@@ -6508,6 +6829,7 @@ parameters:
             registers: [[], [0x3B44]]
 
       - name: "Alarm"
+        unique_id: "bms_2_battery_2_warning"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -6517,6 +6839,7 @@ parameters:
         attributes: ["value"]
 
       - name: "Fault"
+        unique_id: "bms_2_battery_2_fault"
         update_interval: 5
         platform: binary_sensor
         class: "problem"
@@ -6526,6 +6849,7 @@ parameters:
         attributes: ["value"]
 
       - name: "State of Charge"
+        unique_id: "bms_2_battery_2_soc"
         update_interval: 5
         class: "battery"
         state_class: "measurement"
