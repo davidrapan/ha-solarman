@@ -2361,7 +2361,7 @@ parameters:
         registers: [0x026D]
         validation:
           min: 0
-          max: 1000
+          max: 100
         icon: "mdi:transmission-tower"
 
       # The following three (four) registers change according to the built-in and external settings
