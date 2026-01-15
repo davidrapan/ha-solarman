@@ -1,0 +1,155 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Seade on juba seadistatud",
+      "already_configured_device": "Seade on juba seadistatud",
+      "already_in_progress": "Seadistamine on juba käimas"
+    },
+    "error": {
+      "cannot_connect": "Ühenduse loomine ebaõnnestus",
+      "invalid_host": "Vigane hostinimi või IP-aadress",
+      "timeout_connect": "Ühendus aegus",
+      "unknown": "Ootamatu viga"
+    },
+    "step": {
+      "user": {
+        "title": "Inverteri seadistamine",
+        "data": {
+          "name": "Seadme nimi",
+          "host": "Hostinimi või IP-aadress",
+          "port": "Port",
+          "transport": "Transpordiprotokoll",
+          "lookup_file": "Profiil"
+        },
+        "data_description": {
+          "name": "See nimi lisatakse kõigi andurite nime ette (muuta vastavalt soovile)",
+          "host": "Ühendatava seadme hostinimi või IP-aadress",
+          "port": "Ühendatava seadme port (8899)",
+          "transport": "Seadmega suhtlemisel kasutatav transpordiprotokoll",
+          "lookup_file": "Inverteri parameetrite määratlusi sisaldav yaml-fail"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Lisavalikud",
+            "data": {
+              "mod": "Modifikaator",
+              "mppt": "MPPT-de arv",
+              "phase": "Faaside arv",
+              "pack": "Akkupakkide arv",
+              "battery_nominal_voltage": "Liitiumioonaku nimipinge",
+              "battery_life_cycle_rating": "Liitiumioonaku eeldatav eluaja tsüklide arv",
+              "mb_slave_id": "Modbus Slave ID (tavaliselt 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Ühenduse loomine ebaõnnestus",
+      "invalid_host": "Vigane hostinimi või IP-aadress",
+      "timeout_connect": "Ühendus aegus",
+      "unknown": "Ootamatu viga"
+    },
+    "step": {
+      "init": {
+        "title": "Inverteri seadistamine",
+        "data": {
+          "host": "Hostinimi või IP-aadress",
+          "port": "Port",
+          "transport": "Transpordiprotokoll",
+          "lookup_file": "Profiil"
+        },
+        "data_description": {
+          "host": "Ühendatava seadme hostinimi või IP-aadress",
+          "port": "Ühendatava seadme port (8899)",
+          "transport": "Seadmega suhtlemisel kasutatav transpordiprotokoll",
+          "lookup_file": "Inverteri parameetrite määratlusi sisaldav yaml-fail"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Lisavalikud",
+            "data": {
+              "mod": "Modifikaator",
+              "mppt": "MPPT-de arv",
+              "phase": "Faaside arv",
+              "pack": "Akkupakkide arv",
+              "battery_nominal_voltage": "Liitiumioonaku nimipinge",
+              "battery_life_cycle_rating": "Liitiumioonaku eeldatav eluaja tsüklide arv",
+              "mb_slave_id": "Modbus Slave ID (tavaliselt 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Aku laadimine täna"
+      },
+      "today_battery_discharge": {
+        "name": "Aku mahalaadimine täna"
+      },
+      "today_battery_life_cycles": {
+        "name": "Aku tsüklid täna"
+      },
+      "today_energy_export": {
+        "name": "Energia eksport täna"
+      },
+      "today_energy_import": {
+        "name": "Energia import täna"
+      },
+      "today_generation": {
+        "name": "Toodang täna"
+      },
+      "today_load_consumption": {
+        "name": "Koormuse energiatarbimine täna"
+      },
+      "today_losses": {
+        "name": "Kaod täna"
+      },
+      "today_production": {
+        "name": "Toodang täna"
+      },
+      "total_battery_charge": {
+        "name": "Aku laadimine kokku"
+      },
+      "total_battery_discharge": {
+        "name": "Aku mahalaadimine kokku"
+      },
+      "total_battery_life_cycles": {
+        "name": "Aku tsüklid kokku"
+      },
+      "total_energy_export": {
+        "name": "Energia eksport kokku"
+      },
+      "total_energy_import": {
+        "name": "Energia import kokku"
+      },
+      "total_generation": {
+        "name": "Toodang kokku"
+      },
+      "total_load_consumption": {
+        "name": "Koormuse energiatarbimine kokku"
+      },
+      "total_losses": {
+        "name": "Kaod kokku"
+      },
+      "total_production": {
+        "name": "Toodang kokku"
+      }
+    }
+  }
+}
