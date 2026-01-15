@@ -70,7 +70,7 @@ class ParameterParser:
         return "name" in parameters and "rule" in parameters # and "registers" in parameters
 
     def is_enabled(self, parameters):
-        return not "disabled" in parameters
+        return not "disabled" in parameters or parameters["disabled"] != "force"
 
     def is_requestable(self, parameters):
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
