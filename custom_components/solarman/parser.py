@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 import bisect
+import math
+from numbers import Number
 
 from logging import getLogger
 from datetime import datetime
@@ -254,13 +256,26 @@ class ParameterParser:
     
     def _read_registers_custom(self, data, definition):
         value = 0
+        variables = {}
 
         for s in definition["sensors"]:
-            if not (registers := s.get("registers")):
+            operator = s.get("operator")
+            isUnary = operator in ["absolute", "abs", "positive", "negative", "clamp", "clip", "limit", "negate", "flip01", "oneminus", "reciprocal", "sign", "round", "floor", "truncate", "trunc", "ceil", "fractional", "fract", "not", "square", "pow2", "root", "sqrt", "percentage", "percent"]
+            var = s.get("variable")
+            varIsNum = isinstance(var, Number) # returns true for booleans as well, but it's fine, it'll be cast into a number later
+
+            if not ((registers := s.get("registers")) or isUnary or var or varIsNum):
                 continue
 
-            if (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is None:
+            if not ((registers and (n := self._read_registers(data, s) if not "signed" in s else self._read_registers_signed(data, s)) is not None) or isUnary or var or varIsNum):
                 return None
+
+            # accept both a previously defined variable or a plain number
+            if (isinstance(var, str) and var in variables) or varIsNum:
+                if not registers:
+                    n = variables[var] if not varIsNum else float(var) # replace n with the specified variable if no registers where given
+                else:
+                    value = variables[var] if not varIsNum else float(var) # replace value otherwise
 
             if (m := s.get("multiply")) and (c := self._read_registers(data, m) if not "signed" in m else self._read_registers_signed(data, m)) is not None:
                 n *= c
@@ -270,18 +285,110 @@ class ParameterParser:
                     continue
                 n = d
 
-            if (o := s.get("operator")) is None:
-                value += n
-            else:
-                match o:
-                    case "subtract":
-                        value -= n
-                    case "multiply":
-                        value *= n
-                    case "divide" if n != 0:
-                        value /= n
-                    case _:
-                        value += n
+            match operator:
+                case "add" | "addition": # add n to value
+                    value += n
+                case "subtract" | "sub" | "difference" | "diff": # subtract n from value
+                    value -= n
+                case "rsubtract" | "rsub" | "rdifference" | "rdiff": # subtract value from n
+                    value = n - value
+                case "multiply" | "mul" | "product": # multiply value by n
+                    value *= n
+                case "divide" | "div" | "ratio" | "division" if n != 0: # divide value by n
+                    value /= n
+                case "rdivide" | "rdiv" | "rratio" | "rdivision" if value != 0: # divide n by value (can also be achieved in combination with reciprocal)
+                    value = n / value
+                case "modulus" | "mod" if n != 0: # remainder of value divided by n
+                    value %= n
+                case "rmodulus" | "rmod" if value != 0: # remainder of n divided by value
+                    value = n % value
+                case "maximum" | "max": # keep the larger of value and n
+                    value = max(value, n)
+                case "minimum" | "min": # keep the smaller of value and n
+                    value = min(value, n)
+                case "average" | "avg" | "mean": # arithmetic mean between value and n
+                    value = (value + n) * 0.5
+                case "absolute" | "abs": # remove the sign of value
+                    value = abs(value)
+                case "positive": # clamp to positive values only (can also be achieved with clamp)
+                    value = max(value, 0)
+                case "negative": # clamp to negative values only (can also be achieved with clamp)
+                    value = min(value, 0)
+                case "clamp" | "clip" | "limit": # clamp value between given constants
+                    isList = isinstance(bounds := s.get("bounds"), (list, tuple))
+                    if isinstance(bounds, Number) or (isList and len(bounds) == 1):
+                        bounds = bounds[0] if isList else bounds # a number and a list/tuple with 1 item are considered equivalent
+                        bounds = [min(0.0, float(bounds)), max(0.0, float(bounds))] # if only one value is provided, assume the other one to be 0
+                    elif not bounds:
+                        continue # empty list/tuple or null (None), do nothing
+
+                    bounds[0] = -math.inf if bounds[0] is None else float(bounds[0]) # null (None) means no lower limit, and boolean gets parsed to 0 or 1
+                    bounds[1] = math.inf if bounds[1] is None else float(bounds[1]) # null (None) means no upper limit, and boolean gets parsed to 0 or 1
+                    bounds = [min(bounds[0], bounds[1]), max(bounds[0], bounds[1])] # order indipendence
+
+                    value = min(max(bounds[0], value), bounds[1])
+                case "negate": # swap the sign (inverted keyword doesn't work in this case)
+                    value = -value
+                case "flip01" | "oneminus": # invert a 0-1 value
+                    value = 1 - value
+                case "reciprocal" if value != 0: # reciprocal (or multiplicative inverse) of value
+                    value = 1 / value
+                case "sign": # return only the sign of value
+                    value = (value > 0) - (value < 0)
+                case "round": # rounds value to the nearest integer
+                    value = math.floor(value + 0.5) # avoids the "round half to even" behavior of python's round function
+                case "floor" | "truncate" | "trunc": # removes the fractional part
+                    value = math.floor(value)
+                case "ceil": # rounds value to the higher integer
+                    value = math.ceil(value)
+                case "fractional" | "fract": # returns only the fractional part
+                    value -= int(value)
+                case "greater" | "gt" | "above": # 1 if value is greater than n, otherwise 0
+                    value = int(value > n)
+                case "less" | "lt" | "below": # 1 if n is greater than value, otherwise 0
+                    value = int(value < n)
+                case "equal" | "eq" | "match": # 1 if value and n are equal, otherwise 0
+                    if isinstance(tolerance := s.get("tolerance"), Number) and not isinstance(tolerance, bool):
+                        tolerance = abs(tolerance) # negative tolerance makes no sense
+                    else:
+                        tolerance = 1e-6 # default tolerance
+                    value = int(abs(value - n) < tolerance)
+                # ne, ge, le can be achieved in combination with "not"
+                case "and": # logical AND, returns binary value
+                    value, n = value != 0, n != 0
+                    value = int(value and n)
+                case "or": # logical OR, returns binary value
+                    value, n = value != 0, n != 0
+                    value = int(value or n)
+                case "xor": # logical XOR (exclusive or), returns binary value
+                    value, n = value != 0, n != 0
+                    value = int(value != n)
+                case "not": # logical NOT, returns binary value
+                    value = int(value == 0)
+                case "variation" | "spread" if max(value, n) != 0: # proportional difference between value and n, returns a 0-1 value
+                    value = abs(value - n) / max(value, n)
+                case "distance" | "dist": # can also be achieved with subtract + absolute
+                    value = abs(value - n)
+                case "square" | "pow2": # value squared (can also be achieved by multipling with the same register)
+                    value = value * value
+                case "root" | "sqrt" if value > 0: # square root of value
+                    value = math.sqrt(value)
+                case "magnitude" | "hypot" if (value != 0 or n != 0): # vector magnitude of (value, n)
+                    value = math.sqrt(value * value + n * n)
+                case "harmonic" | "harm" if (value != 0 and n != 0): # harmonic mean between value and n
+                    value = 2 / (1 / value + 1 / n)
+                case "geometric" | "geom" if value * n > 0: # geometric mean between value and n (can also be achieved by combining multiply + sqrt)
+                    value = math.sqrt(value * n)
+                case "balance" if max(value, n) != 0: # ratio min over max, proportional difference between min and max, returns a 0-1 value
+                    value = min(value, n) / max(value, n)
+                case "percentage" | "percent": # transform a 0-1 value into a classic percentage
+                    value *= 100
+                case _: # add n to value
+                    value += n
+
+            if (var_define := s.get("define")):
+                variables[var_define] = value
+                value = 0 # reset value
 
         return value
 
