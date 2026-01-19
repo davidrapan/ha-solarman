@@ -393,6 +393,13 @@ parameters:
   - group: Settings
     update_interval: 300
     items:
+      - name: "System Date & Time"
+        platform: datetime
+        update_interval: 60
+        rule: 8
+        registers: [0x020C, 0x020D, 0x020E]
+        icon: "mdi:clock-outline"
+
       - name: Batttery Discharge Limit
         platform: number
         state_class: measurement
@@ -439,6 +446,126 @@ parameters:
         rule: 1
         registers: [0xE020]
         icon: mdi:battery
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Battery Discharge Mode
+        description: Choose when and how battery can discharge during grid operation
+        platform: select
+        rule: 1
+        registers: [0xE42A]
+        icon: mdi:battery-sync
+        lookup:
+          - key: 0
+            value: "Standby (Emergency Backup Only)"
+          - key: 1
+            value: "Self-Consumption (UPS Loads)"
+          - key: 2
+            value: "Self-Consumption (All Loads)"
+          - key: 3
+            value: "Export Enabled (Sell to Grid)"
+
+      - name: Peak Shaving Scheduled Charging
+        description: Enable scheduled grid charging during off-peak hours
+        platform: switch
+        rule: 1
+        registers: [0xE02C]
+        icon: mdi:battery-clock
+        value:
+          on: 1
+          off: 0
+
+      - name: Peak Shaving Scheduled Discharging
+        description: Enable scheduled battery discharge during peak rate hours
+        platform: switch
+        rule: 1
+        registers: [0xE033]
+        icon: mdi:battery-clock-outline
+        value:
+          on: 1
+          off: 0
+
+      - name: Off-Peak Charge 1 Target SOC
+        description: Charge battery to this level during first off-peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE03B]
+        icon: mdi:battery-charging-high
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Off-Peak Charge 2 Target SOC
+        description: Charge battery to this level during second off-peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE03C]
+        icon: mdi:battery-charging-high
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Off-Peak Charge 3 Target SOC
+        description: Charge battery to this level during third off-peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE03D]
+        icon: mdi:battery-charging-high
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Peak Rate Discharge 1 Minimum SOC
+        description: Stop discharging at this battery level during first peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE03E]
+        icon: mdi:battery-alert-variant-outline
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Peak Rate Discharge 2 Minimum SOC
+        description: Stop discharging at this battery level during second peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE03F]
+        icon: mdi:battery-alert-variant-outline
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Peak Rate Discharge 3 Minimum SOC
+        description: Stop discharging at this battery level during third peak period
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE040]
+        icon: mdi:battery-alert-variant-outline
         configurable:
           mode: box
         range:
