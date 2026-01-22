@@ -226,12 +226,12 @@ def send_message(adu, serial_port):
 
 
 function_code_to_function_map = {
-    FUNCTION_CODE.READ_COILS: lambda slave_id, address, count, **kwargs: read_coils(slave_id, address, count),
-    FUNCTION_CODE.READ_DISCRETE_INPUTS: lambda slave_id, address, count, **kwargs: read_discrete_inputs(slave_id, address, count),
-    FUNCTION_CODE.READ_HOLDING_REGISTERS: lambda slave_id, address, count, **kwargs: read_holding_registers(slave_id, address, count),
-    FUNCTION_CODE.READ_INPUT_REGISTERS: lambda slave_id, address, count, **kwargs: read_input_registers(slave_id, address, count),
-    FUNCTION_CODE.WRITE_SINGLE_COIL: lambda slave_id, address, data, **kwargs: write_single_coil(slave_id, address, data),
-    FUNCTION_CODE.WRITE_SINGLE_REGISTER: lambda slave_id, address, data, **kwargs: write_single_register(slave_id, address, data),
-    FUNCTION_CODE.WRITE_MULTIPLE_COILS: lambda slave_id, address, data, **kwargs: write_multiple_coils(slave_id, address, data),
-    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: lambda slave_id, address, data, **kwargs: write_multiple_registers(slave_id, address, data)
+    FUNCTION_CODE.READ_COILS: lambda slave_id, address, count, **_: read_coils(slave_id, address, count),
+    FUNCTION_CODE.READ_DISCRETE_INPUTS: lambda slave_id, address, count, **_: read_discrete_inputs(slave_id, address, count),
+    FUNCTION_CODE.READ_HOLDING_REGISTERS: lambda slave_id, address, count, **_: read_holding_registers(slave_id, address, count),
+    FUNCTION_CODE.READ_INPUT_REGISTERS: lambda slave_id, address, count, **_: read_input_registers(slave_id, address, count),
+    FUNCTION_CODE.WRITE_SINGLE_COIL: lambda slave_id, address, data, **_: write_single_coil(slave_id, address, data),
+    FUNCTION_CODE.WRITE_SINGLE_REGISTER: lambda slave_id, address, data, **_: write_single_register(slave_id, address, data),
+    FUNCTION_CODE.WRITE_MULTIPLE_COILS: lambda slave_id, address, data, **_: write_multiple_coils(slave_id, address, data),
+    FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS: lambda slave_id, address, data, **_: write_multiple_registers(slave_id, address, data)
 }

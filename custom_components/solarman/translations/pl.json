@@ -87,8 +87,8 @@
       "options": {
         "tcp": "TCP",
         "udp": "UDP",
-        "modbus_rtu": "Modbus RTU",
-        "modbus_tcp": "Modbus TCP"
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
       } 
     }
   },

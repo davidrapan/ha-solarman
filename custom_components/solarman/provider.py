@@ -85,7 +85,7 @@ class EndPointProvider:
 
     async def discover(self):
         try:
-            if self.ip.is_private and (d := await anext((v async for v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)))):
+            if "modbus" not in self.transport and self.ip.is_private and (d := await anext((v async for v in await discover(self.hass, str(self.ip)) if v["ip"] == str(self.ip)))):
                 self.serial = d["serial"]
                 self.host = d["ip"]
                 self.mac = d["mac"]

@@ -26,8 +26,6 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Unknown"
-          - key: 0x0103
-            value: "Off-Grid Inverter"
           - key: [0x0002, 0x0200]
             value: "String Inverter"
           - key: [0x0003, 0x0300]
@@ -42,6 +40,10 @@ parameters:
             value: "HV 3-Phase Inverter 6-15kw"
           - key: [0x0008, 0x0601]
             value: "HV 3-Phase Inverter 20-50kw"
+          - key: 0x0103
+            value: "Off-Grid Inverter"
+          - key: 0x0104
+            value: "Energy Storage System"
         attributes:
           [
             "Device Modbus Address",
@@ -122,8 +124,9 @@ parameters:
         rule: 4
         registers: [0x0010, 0x0011]
         validation:
-          min: 0
-          max: 24000
+          min: 1
+          max: 18000
+          default: 18000
 
       - name: "Device MPPTs"
         attribute:
@@ -265,7 +268,7 @@ parameters:
           - registers: [0x00BD]
         validation:
           min: 0
-          max: 24000
+          max: 36000
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
@@ -647,6 +650,25 @@ parameters:
         uom: "%"
         rule: 1
         registers: [0x00B8]
+        range:
+          min: 0
+          max: 100
+        validation:
+          min: 0
+          max: 101
+        attributes:
+          [
+            "Battery BMS SOC",
+            "Battery BMS Current",
+            "Battery BMS Voltage",
+            "Battery BMS Other Symbol",
+            "Battery BMS Charging Voltage",
+            "Battery BMS Discharging Voltage",
+            "Battery BMS Charging Current",
+            "Battery BMS Discharging Current",
+            "Battery BMS Max Charging Current",
+            "Battery BMS Max Discharging Current",
+          ]
 
       - name: "Battery State"
         description: Determines battery state from battery power by +-50 W
@@ -986,6 +1008,10 @@ parameters:
         uom: "W"
         rule: 2
         registers: [0x00AF]
+        validation:
+          lookup: "device_rated_power_sensor"
+          scale: 1.1
+          invalidate_all:
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
@@ -2195,6 +2221,7 @@ parameters:
 
       - name: Grid reconnection time
         platform: number
+        uom: "s"
         rule: 1
         range:
           min: 1
@@ -2341,3 +2368,124 @@ parameters:
           - bit: 7
             mode: "|"
             value: Load
+
+  - group: BMS
+    update_interval: 60
+    items:
+      - name: "Battery BMS Charging Voltage"
+        attribute:
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x0138]
+
+      - name: "Battery BMS Discharging Voltage"
+        attribute:
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x0139]
+
+      - name: "Battery BMS Charging Current"
+        attribute:
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        registers: [0x013A]
+        icon: "mdi:current-dc"
+
+      - name: "Battery BMS Discharging Current"
+        attribute:
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        registers: [0x013B]
+        icon: "mdi:current-dc"
+
+      - name: "Battery BMS SOC"
+        attribute:
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x013C]
+        icon: "mdi:battery"
+        validation:
+          min: 0
+          max: 101
+
+      - name: "Battery BMS Voltage"
+        attribute:
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x013D]
+
+      - name: "Battery BMS Current"
+        attribute:
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 2
+        registers: [0x013E]
+        icon: "mdi:current-dc"
+
+      - name: "Battery BMS Max Charging Current"
+        attribute:
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        registers: [0x0140]
+        icon: "mdi:current-dc"
+
+      - name: "Battery BMS Max Discharging Current"
+        attribute:
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        registers: [0x0141]
+        icon: "mdi:current-dc"
+
+      - name: "Battery Alarm"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x0142]
+        icon: "mdi:battery-alert"
+        attributes: ["value"]
+
+      - name: "Battery Fault"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x0143]
+        icon: "mdi:battery-alert-variant"
+        range:
+          min: 0
+          max: 65535
+        attributes: ["value"]
+
+      - name: "Battery BMS Other Symbol"
+        attribute:
+        rule: 1
+        registers: [0x0144]
+        icon: "mdi:battery-unknown"
+        range:
+          min: 0
+          max: 65535
+        lookup:
+          - key: 0
+            value: "OK"
+          - bit: 0
+            value: "Vacancy"
+          - bit: 1
+            value: "OCP"

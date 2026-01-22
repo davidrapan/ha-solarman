@@ -347,18 +347,16 @@ class ReadCoils(ModbusFunction):
         :param quantity: Number of coils read.
         :return: Instance of :class:`ReadCoils`.
         """
-        read_coils = cls()
-        read_coils.quantity = struct.unpack('>H', req_pdu[-2:])[0]
-        byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
+        instance = cls()
+        instance.quantity = struct.unpack('>H', req_pdu[-2:])[0]
+        instance.byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
 
-        fmt = '>' + ('B' * byte_count)
-        bytes_ = struct.unpack(fmt, resp_pdu[2:])
-
+        fmt = '>' + ('B' * instance.byte_count)
         data = list()
 
-        for i, value in enumerate(bytes_):
-            padding = 8 if (read_coils.quantity - (8 * i)) // 8 > 0 \
-                else read_coils.quantity % 8
+        for i, value in enumerate(struct.unpack(fmt, resp_pdu[2:2 + instance.byte_count])):
+            padding = 8 if (instance.quantity - (8 * i)) // 8 > 0 \
+                else instance.quantity % 8
 
             fmt = '{{0:0{padding}b}}'.format(padding=padding)
 
@@ -366,8 +364,9 @@ class ReadCoils(ModbusFunction):
             # and reverse the list.
             data = data + [int(i) for i in fmt.format(value)][::-1]
 
-        read_coils.data = data
-        return read_coils
+        instance.data = data
+
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -555,18 +554,16 @@ class ReadDiscreteInputs(ModbusFunction):
         :param quantity: Number of inputs read.
         :return: Instance of :class:`ReadDiscreteInputs`.
         """
-        read_discrete_inputs = cls()
-        read_discrete_inputs.quantity = struct.unpack('>H', req_pdu[-2:])[0]
-        byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
+        instance = cls()
+        instance.quantity = struct.unpack('>H', req_pdu[-2:])[0]
+        instance.byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
 
-        fmt = '>' + ('B' * byte_count)
-        bytes_ = struct.unpack(fmt, resp_pdu[2:])
-
+        fmt = '>' + ('B' * instance.byte_count)
         data = list()
 
-        for i, value in enumerate(bytes_):
-            padding = 8 if (read_discrete_inputs.quantity - (8 * i)) // 8 > 0 \
-                else read_discrete_inputs.quantity % 8
+        for i, value in enumerate(struct.unpack(fmt, resp_pdu[2:2 + instance.byte_count])):
+            padding = 8 if (instance.quantity - (8 * i)) // 8 > 0 \
+                else instance.quantity % 8
 
             fmt = '{{0:0{padding}b}}'.format(padding=padding)
 
@@ -574,8 +571,9 @@ class ReadDiscreteInputs(ModbusFunction):
             # and reverse the list.
             data = data + [int(i) for i in fmt.format(value)][::-1]
 
-        read_discrete_inputs.data = data
-        return read_discrete_inputs
+        instance.data = data
+
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -742,15 +740,17 @@ class ReadHoldingRegisters(ModbusFunction):
         :param quantity: Number of coils read.
         :return: Instance of :class:`ReadCoils`.
         """
-        read_holding_registers = cls()
-        read_holding_registers.quantity = struct.unpack('>H', req_pdu[-2:])[0]
-        read_holding_registers.byte_count = \
-            struct.unpack('>B', resp_pdu[1:2])[0]
+        instance = cls()
+        instance.quantity = struct.unpack('>H', req_pdu[-2:])[0]
+        instance.byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
+        instance.data = list(
+            struct.unpack(
+                '>' + (conf.TYPE_CHAR * instance.quantity),
+                resp_pdu[2:2 + instance.byte_count]
+            )
+        )
 
-        fmt = '>' + (conf.TYPE_CHAR * read_holding_registers.quantity)
-        read_holding_registers.data = list(struct.unpack(fmt, resp_pdu[2:]))
-
-        return read_holding_registers
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -917,13 +917,17 @@ class ReadInputRegisters(ModbusFunction):
         :param quantity: Number of coils read.
         :return: Instance of :class:`ReadCoils`.
         """
-        read_input_registers = cls()
-        read_input_registers.quantity = struct.unpack('>H', req_pdu[-2:])[0]
+        instance = cls()
+        instance.quantity = struct.unpack('>H', req_pdu[-2:])[0]
+        instance.byte_count = struct.unpack('>B', resp_pdu[1:2])[0]
+        instance.data = list(
+            struct.unpack(
+                '>' + (conf.TYPE_CHAR * instance.quantity),
+                resp_pdu[2:2 + instance.byte_count]
+            )
+        )
 
-        fmt = '>' + (conf.TYPE_CHAR * read_input_registers.quantity)
-        read_input_registers.data = list(struct.unpack(fmt, resp_pdu[2:]))
-
-        return read_input_registers
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -1078,15 +1082,15 @@ class WriteSingleCoil(ModbusFunction):
         :param resp_pdu: Byte array with request PDU.
         :return: Instance of :class:`WriteSingleCoil`.
         """
-        write_single_coil = cls()
+        instance = cls()
 
         address, value = struct.unpack('>HH', resp_pdu[1:5])
         value = 1 if value == 0xFF00 else value
 
-        write_single_coil.address = address
-        write_single_coil.data = value
+        instance.address = address
+        instance.data = value
 
-        return write_single_coil
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -1221,14 +1225,14 @@ class WriteSingleRegister(ModbusFunction):
         :param resp_pdu: Byte array with request PDU.
         :return: Instance of :class:`WriteSingleRegister`.
         """
-        write_single_register = cls()
+        instance = cls()
 
         address, value = struct.unpack('>H' + conf.TYPE_CHAR, resp_pdu[1:5])
 
-        write_single_register.address = address
-        write_single_register.data = value
+        instance.address = address
+        instance.data = value
 
-        return write_single_register
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -1432,14 +1436,19 @@ class WriteMultipleCoils(ModbusFunction):
 
     @classmethod
     def create_from_response_pdu(cls, resp_pdu):
-        write_multiple_coils = cls()
+        """ Create instance from response PDU.
+
+        :param resp_pdu: Byte array with request PDU.
+        :return: Instance of :class:`WriteMultipleCoils`.
+        """
+        instance = cls()
 
         starting_address, data = struct.unpack('>HH', resp_pdu[1:5])
 
-        write_multiple_coils.starting_address = starting_address
-        write_multiple_coils.data = data
+        instance.starting_address = starting_address
+        instance.data = data
 
-        return write_multiple_coils
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.
@@ -1546,7 +1555,7 @@ class WriteMultipleRegisters(ModbusFunction):
         :param pdu: A request PDU.
         :return: Instance of this class.
         """
-        _, starting_address, quantity, byte_count = \
+        _, starting_address, _, byte_count = \
             struct.unpack('>BHHB', pdu[:6])
 
         # Values are 16 bit, so each value takes up 2 bytes.
@@ -1580,14 +1589,19 @@ class WriteMultipleRegisters(ModbusFunction):
 
     @classmethod
     def create_from_response_pdu(cls, resp_pdu):
-        write_multiple_registers = cls()
+        """ Create instance from response PDU.
+
+        :param resp_pdu: Byte array with request PDU.
+        :return: Instance of :class:`WriteMultipleRegisters`.
+        """
+        instance = cls()
 
         starting_address, data = struct.unpack('>HH', resp_pdu[1:5])
 
-        write_multiple_registers.starting_address = starting_address
-        write_multiple_registers.data = data
+        instance.starting_address = starting_address
+        instance.data = data
 
-        return write_multiple_registers
+        return instance
 
     def execute(self, slave_id, route_map):
         """ Execute the Modbus function registered for a route.

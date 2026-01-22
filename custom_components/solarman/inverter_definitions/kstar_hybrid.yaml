@@ -148,17 +148,6 @@ parameters:
 
   - group: Power Grid
     items:
-      # Should this be the sum of the 3 phases "Meter Power"?
-      - name: "Grid Power"
-        alt: "Total Grid Power"
-        update_interval: 5
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 2
-        registers: [3100]
-        icon: "mdi:transmission-tower"
-
       - name: Today Energy Import
         alt: Daily Energy Purchased
         friendly_name: Today's Energy Import
@@ -929,6 +918,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
         rule: 2
         registers: [3100]
         icon: "mdi:transmission-tower"
@@ -968,6 +959,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
         rule: 2
         registers: [3104]
         icon: "mdi:transmission-tower"
@@ -1007,6 +1000,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
         rule: 2
         registers: [3108]
         icon: "mdi:transmission-tower"
@@ -1016,6 +1011,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
         rule: 2
         sensors:
           - signed:

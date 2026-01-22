@@ -407,10 +407,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match standard behavior like the other inverters
-        # https://github.com/davidrapan/ha-solarman/discussions/458
-        #scale: -10
-        scale: 10
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
         rule: 2
         registers: [0x0606]
 
@@ -501,10 +499,8 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        # Reverse the original value to match standard behavior like the other inverters
-        # https://github.com/davidrapan/ha-solarman/discussions/458
-        #scale: -10
-        scale: 10
+        # Inverse value to match standard behavior of the other inverters
+        scale: -10
         rule: 2
         registers: [0x0488]
 
@@ -522,10 +518,8 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        # Reverse the original value to match standard behavior like the other inverters
-        # https://github.com/davidrapan/ha-solarman/discussions/458
-        #scale: -0.1
-        scale: 0.1
+        # Inverse value to match standard behavior of the other inverters
+        scale: -0.1
         rule: 2
         registers: [0x048A]
 
@@ -1323,33 +1317,42 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x1188, 0x1187]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Minimum Battery power"
         platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x118A, 0x1189]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
       - name: "Passive: Maximum Battery power"
         platform: number
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 2
+        rule: 4
         registers: [0x118C, 0x118B]
         range:
           min: -2147483648 
           max: 2147483647
+        writeback:
+          register: 0x1187
+          count: 6
 
   - group: Alarm
     items:

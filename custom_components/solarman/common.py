@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import ast
 import time
 import yaml
@@ -9,6 +8,7 @@ import asyncio
 import aiofiles
 import voluptuous as vol
 
+from pathlib import Path
 from functools import wraps
 from aiohttp import FormData
 from logging import getLogger
@@ -80,8 +80,8 @@ def protected(value, error):
 def get_current_file_name(value):
     return result[-1] if len(result := value.rsplit('.', 1)) > 0 else ""
 
-async def async_listdir(path, prefix = ""):
-    return sorted([prefix + f for f in await async_execute(lambda: os.listdir(path)) if os.path.isfile(path + f)]) if os.path.exists(path) else []
+async def async_listdir(path, prefix = "", extensions = ("yaml", "yml")):
+    return sorted([prefix + f.name for f in await async_execute(lambda: p.glob('*')) if f.is_file() and f.name.endswith(extensions)]) if (p := Path(path)) and p.exists() else []
 
 def getipaddress(address: str):
     try:
@@ -129,15 +129,17 @@ async def lookup_profile(request, parameters):
     if (response := await request(requests = create_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         try:
             f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))
-            if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in AUTODETECTION_DEYE_OFF[0] + AUTODETECTION_DEYE_P1[0]:
+            parameters[PARAM_[CONF_MOD]] = max(m, parameters[PARAM_[CONF_MOD]])
+            if (t := get_addr_value(response, *AUTODETECTION_TYPE_DEYE)) and device_type in AUTODETECTION_DEYE_P1[0]:
                 parameters[PARAM_[CONF_PHASE]] = min(1 if t <= 2 or t == 8 else 3, parameters[PARAM_[CONF_PHASE]])
             if (v := get_addr_value(response, AUTODETECTION_CODE_DEYE, c)) and (t := (v & 0x0F00) // 0x100) and (p := v & 0x000F) and (t := 2 if t > 12 else t) and (p := 3 if p > 3 else p):
-                parameters[PARAM_[CONF_MOD]], parameters[PARAM_[CONF_MPPT]], parameters[PARAM_[CONF_PHASE]] = max(m, parameters[PARAM_[CONF_MOD]]), min(t, parameters[PARAM_[CONF_MPPT]]), min(p, parameters[PARAM_[CONF_PHASE]])
+                parameters[PARAM_[CONF_MPPT]], parameters[PARAM_[CONF_PHASE]] = min(t, parameters[PARAM_[CONF_MPPT]]), min(p, parameters[PARAM_[CONF_PHASE]])
             try:
                 if device_type in (*AUTODETECTION_DEYE_4P3[0], *AUTODETECTION_DEYE_1P3[0]) and (response := await request(requests = create_request(*AUTODETECTION_BATTERY_REQUEST_DEYE))) and (p := get_addr_value(response, *AUTODETECTION_BATTERY_NUMBER_DEYE)) is not None:
                     parameters[PARAM_[CONF_PACK]] = p if parameters[PARAM_[CONF_PACK]] == DEFAULT_[CONF_PACK] else min(p, parameters[PARAM_[CONF_PACK]])
             except:
-                _LOGGER.debug(f"Unable to read Number of Battery packs. Continuing with the configured value", exc_info = True)
+                parameters[PARAM_[CONF_PACK]] = DEFAULT_[CONF_PACK]
+                _LOGGER.debug(f"Unable to read Number of Battery packs", exc_info = True)
             return f
         except StopIteration:
             raise Exception(f"Unknown Device Type: {device_type}")
@@ -217,10 +219,13 @@ def slugify(*items: Iterable[str | None], separator: str = "_"):
 def entity_key(object: dict):
     return slugify(object["name"], object["platform"])
 
+def enforce_parameters(source: dict, parameters: dict):
+    return len((keys := source.keys() & parameters.keys())) == 0 or all(source[k] <= parameters[k] for k in keys)
+
 def preprocess_descriptions(item, group, table, code, parameters):
     def modify(source: dict):
         for i in dict(source):
-            if i in ("scale", "min", "max"):
+            if i in ("scale", "min", "max", "default", "step"):
                 unwrap(source, i, parameters[CONF_MOD])
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
                 unwrap(source, i, parameters[CONF_MOD])
@@ -241,11 +246,14 @@ def preprocess_descriptions(item, group, table, code, parameters):
         for s in sensors:
             modify(s)
             if r := s.get("registers"):
-                registers.extend(r)
-                if m := s.get("multiply"):
-                    modify(m)
-                    if m_r := m.get("registers"):
-                        registers.extend(m_r)
+                if enforce_parameters(s, parameters):
+                    registers.extend(r)
+                    if m := s.get("multiply"):
+                        modify(m)
+                        if m_r := m.get("registers"):
+                            registers.extend(m_r)
+                else:
+                    s["registers"] = []
 
     g = dict(group)
     g.pop("items")
@@ -256,24 +264,23 @@ def preprocess_descriptions(item, group, table, code, parameters):
 
     if sensors := item.get("sensors"):
         for s in sensors:
-            bulk_inherit(s, item, REQUEST_CODE, "scale")
-            if m := s.get("multiply"):
-                bulk_inherit(m, s, REQUEST_CODE, "scale")
+            if s.get("registers"):
+                bulk_inherit(s, item, REQUEST_CODE, "scale")
+                if m := s.get("multiply"):
+                    bulk_inherit(m, s, REQUEST_CODE, "scale")
 
     return item
 
-def postprocess_descriptions(coordinator, platform):
+def postprocess_descriptions(coordinator):
     def not_enabled(description):
         return (l := description.get("enabled_lookup")) is not None and (k := list(l)[0]) is not None and (v := coordinator.data.get(k)) is not None and not get_tuple(v) in l[k]
 
-    descriptions = coordinator.device.profile.parser.get_entity_descriptions(platform)
-
-    _LOGGER.debug(f"postprocess_descriptions for {platform} platform: {descriptions}")
+    descriptions = coordinator.device.profile.parser.get_entity_descriptions()
 
     for description in descriptions:
         if not_enabled(description):
             continue
-        
+
         if (nlookup := description.get("name_lookup")) is not None and (prefix := coordinator.data.get(nlookup)) is not None:
             description["name"] = replace_first(description["name"], get_tuple(prefix))
             description["key"] = entity_key(description)
@@ -283,11 +290,23 @@ def postprocess_descriptions(coordinator, platform):
                 if not_enabled(sensor):
                     sensors.remove(sensor)
 
+        if validation := description.get("validation"):
+            if (vlookup := validation.get("lookup")) and (max_value := coordinator.data.get(vlookup)) is not None and (value := abs(get_tuple(max_value))):
+                if "min" not in validation:
+                    validation["min"] = -value
+                if "max" not in validation:
+                    validation["max"] = value
+            if s := validation.get("scale"):
+                if "min" in validation:
+                    validation["min"] *= s
+                if "max" in validation:
+                    validation["max"] *= s
+
         # Temporary location of fix for latest HA changes regarding default precision behavior
-        if description["platform"] == "sensor" and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":
+        if description["platform"] == "sensor" and description.get('suggested_display_precision') is None and (description.get("class") or description.get("device_class")) in ("energy", "energy_storage") and (description.get("suggested_unit_of_measurement") or description.get("unit_of_measurement") or description.get("uom")) == "kWh":
             description["suggested_display_precision"] = 1
 
-        yield description
+    _LOGGER.debug(f"postprocess_descriptions: {descriptions}")
 
 def get_code(item, type, default = None):
     if REQUEST_CODE in item and (code := item[REQUEST_CODE]):

@@ -82,7 +82,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
             self._attr_native_unit_of_measurement = unit_of_measurement
         if (suggested_unit_of_measurement := sensor.get("suggested_unit_of_measurement")):
             self._attr_suggested_unit_of_measurement = suggested_unit_of_measurement
-        if (suggested_display_precision := sensor.get("suggested_display_precision")):
+        if (suggested_display_precision := sensor.get("suggested_display_precision")) is not None:
             self._attr_suggested_display_precision = suggested_display_precision
         if (options := sensor.get("options")):
             self._attr_options = options
@@ -120,16 +120,16 @@ class SolarmanWritableEntity(SolarmanEntity):
         if not "control" in sensor:
             self._attr_entity_category = EntityCategory.CONFIG
 
-        self.code = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
+        self.code_read = get_code(sensor, "read", FUNCTION_CODE.READ_HOLDING_REGISTERS)
+        self.code_write = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
-        self.maxint = 0xFFFFFFFF if len(self.registers) > 2 else 0xFFFF
+        self.maxint = (1 << (16 * len(self.registers))) - 1
 
-        self.writeback_registers = sensor.get("writeback")
-        if self.writeback_registers is not None:
-            self.writeback_read_code = get_code(self.writeback_registers, "read", FUNCTION_CODE.READ_HOLDING_REGISTERS)
-            self.writeback_start_register = self.writeback_registers["register"]
-            self.writeback_count = self.writeback_registers["count"]
-            self.writeback_overrides = self.writeback_registers.get("overrides") or []
+        self.writeback = sensor.get("writeback")
+        if self.writeback is not None:
+            self.writeback_register = self.writeback["register"]
+            self.writeback_count = self.writeback["count"]
+            self.writeback_overrides = self.writeback.get("overrides") or []
 
     @property
     def _get_attr_native_value(self):
@@ -147,26 +147,26 @@ class SolarmanWritableEntity(SolarmanEntity):
 
         if isinstance(data, int):
             if data < 0:
-                data = data + self.maxint
+                data = data + self.maxint + 1
             if data > 0xFFFF:
-                data = list(split_p16b(data))
-            if len(self.registers) > 1 or self.code > FUNCTION_CODE.WRITE_SINGLE_REGISTER:
+                data = list(split_p16b(data))[::-1]
+            if len(self.registers) > 1 or self.code_write > FUNCTION_CODE.WRITE_SINGLE_REGISTER:
                 data = ensure_list(data)
         if isinstance(data, list):
             while len(self.registers) > len(data):
                 data.insert(0, 0)
-        if self.writeback_registers is not None:
-            if (writeback_data := await self.coordinator.device.execute(self.writeback_read_code, self.writeback_start_register, count = self.writeback_count)) is not None:
-                for override in self.writeback_overrides:
-                    writeback_data[override["register"] - self.writeback_start_register] = override["value"]
-                if isinstance(data, int):
-                    writeback_data[self.register - self.writeback_start_register] = data
-                elif isinstance(data, list):
-                    for idx, val in enumerate(data):
-                        writeback_data[self.register + idx - self.writeback_start_register] = val
-                register = self.writeback_start_register
-                data = writeback_data
-        if await self.coordinator.device.execute(self.code, register, data = data) > 0 and state is not None:
+        current_data = await self.coordinator.device.execute(self.code_read, self.register if not self.writeback else self.writeback_register, count = (1 if not isinstance(data, list) else len(data)) if not self.writeback else self.writeback_count)
+        if self.writeback and (writeback_data := list(current_data)):
+            for override in self.writeback_overrides:
+                writeback_data[override["register"] - self.writeback_register] = override["value"]
+            if isinstance(data, int):
+                writeback_data[self.register - self.writeback_register] = data
+            elif isinstance(data, list):
+                for idx, val in enumerate(data):
+                    writeback_data[self.register + idx - self.writeback_register] = val
+            register = self.writeback_register
+            data = writeback_data
+        if (current_data == (data if self.code_write > FUNCTION_CODE.WRITE_SINGLE_REGISTER else ensure_list(data)) or await self.coordinator.device.execute(self.code_write, register, data = data) > 0) and state is not None:
             self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))

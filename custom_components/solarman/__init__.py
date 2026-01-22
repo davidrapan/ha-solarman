@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from logging import getLogger
 from datetime import datetime
 
@@ -22,7 +23,8 @@ from .config_flow import ConfigFlowHandler
 
 _LOGGER = getLogger(__name__)
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SWITCH, Platform.BUTTON, Platform.SELECT, Platform.DATETIME, Platform.TIME]
+_DIRECTORY = Path(__file__).parent
+_PLATFORMS = [i for i in Platform._member_map_.values() if _DIRECTORY.joinpath(i.value + ".py").is_file()]
 
 CONFIG_SCHEMA = config_validation.empty_config_schema(DOMAIN)
 

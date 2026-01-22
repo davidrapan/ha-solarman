@@ -26,8 +26,6 @@ parameters:
         lookup:
           - key: 0x0000
             value: "Unknown"
-          - key: 0x0103
-            value: "Off-Grid Inverter"
           - key: [0x0002, 0x0200]
             value: "String Inverter"
           - key: [0x0003, 0x0300]
@@ -42,6 +40,10 @@ parameters:
             value: "HV 3-Phase Inverter 6-15kw"
           - key: [0x0008, 0x0601]
             value: "HV 3-Phase Inverter 20-50kw"
+          - key: 0x0103
+            value: "Off-Grid Inverter"
+          - key: 0x0104
+            value: "Energy Storage System"
         attributes:
           [
             "Device Modbus Address",
@@ -113,8 +115,9 @@ parameters:
         rule: 4
         registers: [0x0014, 0x0015]
         validation:
-          min: 0
+          min: 1
           max: [24000, 80000]
+          default: [24000, 80000]
 
       - name: "Device MPPTs"
         attribute:
@@ -201,7 +204,7 @@ parameters:
         registers: [0x0063]
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         icon: "mdi:battery"
@@ -219,7 +222,7 @@ parameters:
         registers: [0x0064]
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         icon: "mdi:battery"
@@ -237,7 +240,7 @@ parameters:
         registers: [0x0065]
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         icon: "mdi:battery"
@@ -268,7 +271,7 @@ parameters:
         registers: [0x0067]
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         icon: "mdi:battery"
@@ -278,14 +281,17 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
+        scale: [1, 10]
         rule: 1
         registers: [0x0068]
         range:
           min: 0
           max: 65535
         configurable:
-          min: -20
+          min: [-20, 0]
           max: 500
+          step: [1, 10]
+          mode: box
         icon: "mdi:transmission-tower"
 
       - name: "Battery Equalization Cycle"
@@ -461,7 +467,7 @@ parameters:
         icon: mdi:battery
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         range:
@@ -479,7 +485,7 @@ parameters:
         icon: mdi:battery
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         range:
@@ -497,7 +503,7 @@ parameters:
         icon: mdi:battery
         configurable:
           min: 38
-          max: [61, 80]
+          max: [61, 800]
           step: 0.1
           mode: box
         range:
@@ -549,7 +555,7 @@ parameters:
         icon: mdi:battery
         configurable:
           min: 00
-          max: [63, 80]
+          max: [63, 800]
           step: 0.1
           mode: box
         range:
@@ -594,7 +600,7 @@ parameters:
         icon: "mdi:battery"
         configurable:
           min: 00
-          max: [63, 80]
+          max: [63, 800]
           step: 0.1
           mode: box
         range:
@@ -672,7 +678,7 @@ parameters:
         icon: "mdi:battery"
         configurable:
           min: 38
-          max: [63, 80]
+          max: [63, 800]
           step: 0.1
           mode: box
         range:
@@ -703,7 +709,7 @@ parameters:
         icon: "mdi:battery"
         configurable:
           min: 38
-          max: [63, 80]
+          max: [63, 800]
           step: 0.1
           mode: box
         range:
@@ -1371,6 +1377,7 @@ parameters:
 
       - name: Grid reconnection time
         platform: number
+        uom: "s"
         rule: 1
         range:
           min: 1
@@ -1662,7 +1669,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0202]
         icon: "mdi:battery-plus"
@@ -1673,7 +1680,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0203]
         icon: "mdi:battery-minus"
@@ -1682,7 +1689,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0204, 0x0205]
         icon: "mdi:battery-plus"
@@ -1693,7 +1700,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0206, 0x0207]
         icon: "mdi:battery-minus"
@@ -1725,7 +1732,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0208]
         icon: "mdi:transmission-tower-export"
@@ -1737,7 +1744,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0209]
         icon: "mdi:transmission-tower-import"
@@ -1748,7 +1755,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x020A, 0x020B]
         icon: "mdi:transmission-tower-export"
@@ -1761,7 +1768,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x020C, 0x020D]
         icon: "mdi:transmission-tower-import"
@@ -1774,7 +1781,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x020E]
 
@@ -1782,7 +1789,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x020F, 0x0210]
         validation:
@@ -1793,7 +1800,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0218]
 
@@ -1802,7 +1809,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0219, 0x021A]
         validation:
@@ -1814,7 +1821,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 1
         registers: [0x0211]
         icon: "mdi:solar-power"
@@ -1826,7 +1833,7 @@ parameters:
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         rule: 3
         registers: [0x0216, 0x0217]
         icon: "mdi:solar-power"
@@ -1845,7 +1852,7 @@ parameters:
         uom: "kWh"
         rule: 1
         digits: 1
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         uint: enforce
         sensors:
           - registers: [0x0208]
@@ -1869,7 +1876,7 @@ parameters:
         uom: "kWh"
         rule: 3
         digits: 1
-        scale: 0.1
+        scale: [0.1, 0.1, 1]
         uint: enforce
         sensors:
           - registers: [0x020A, 0x020B]
@@ -2346,18 +2353,15 @@ parameters:
         icon: "mdi:transmission-tower"
 
       - name: "Grid Power Factor"
-        platform: number
         class: "power_factor"
         state_class: "measurement"
         uom: "%"
         scale: 0.1
         rule: 1
         registers: [0x026D]
-        configurable:
-          mode: box
-        range:
+        validation:
           min: 0
-          max: 1000
+          max: 100
         icon: "mdi:transmission-tower"
 
       # The following three (four) registers change according to the built-in and external settings
@@ -2501,6 +2505,10 @@ parameters:
         uom: "W"
         rule: 4
         registers: [0x027C, 0x02B6]
+        validation:
+          lookup: "device_rated_power_sensor"
+          scale: 1.1
+          invalidate_all:
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
@@ -2518,6 +2526,14 @@ parameters:
           - registers: [0x02A1]
           - registers: [0x02A2]
           - registers: [0x02A3]
+          - registers: [0x02D7]
+            mppt: 5
+          - registers: [0x02D8]
+            mppt: 6
+          - registers: [0x02D9]
+            mppt: 7
+          - registers: [0x02DA]
+            mppt: 8
           - operator: subtract
             signed:
             scale: 1
@@ -2612,8 +2628,58 @@ parameters:
         rule: 1
         registers: [0x0286]
 
-      # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
       - name: "Load L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x0279, 0x02B3]
+          - signed:
+            registers: [0x0268, 0x02C1]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027A, 0x02B4]
+          - signed:
+            registers: [0x0269, 0x02C2]
+
+      - name: "Load L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027B, 0x02B5]
+          - signed:
+            registers: [0x026A, 0x02C3]
+
+      - name: "Load Power"
+        l: 1
+        description: Combined power of all three phases
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        sensors:
+          - signed:
+            registers: [0x027C, 0x02B6]
+          - signed:
+            registers: [0x026B, 0x02C4]
+
+      # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
+      - name: "Load Consumption L1 Power"
+        hidden:
         l: 1
         class: "power"
         state_class: "measurement"
@@ -2622,7 +2688,8 @@ parameters:
         registers: [0x028A, 0x0290]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load L2 Power"
+      - name: "Load Consumption L2 Power"
+        hidden:
         l: 2
         class: "power"
         state_class: "measurement"
@@ -2631,7 +2698,8 @@ parameters:
         registers: [0x028B, 0x0291]
 
       # Load - The power of phase A is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load L3 Power"
+      - name: "Load Consumption L3 Power"
+        hidden:
         l: 3
         class: "power"
         state_class: "measurement"
@@ -2640,7 +2708,8 @@ parameters:
         registers: [0x028C, 0x0292]
 
       # Load - The Power is S16bit (low 16 bits) + S16bit (high 16 bits)
-      - name: "Load Power"
+      - name: "Load Consumption Power"
+        hidden:
         l: 1
         description: Combined power of all three phases
         class: "power"
@@ -2738,7 +2807,7 @@ parameters:
   - group: PV
     update_interval: 5
     items:
-      # PV - The combined power of Input 1 & 2 & 3 & 4 (L:1W, H:10W)
+      # PV - The combined power of Input 1..8 (L:1W, H:10W)
       - name: "PV Power"
         alt: DC Power
         mppt: 1
@@ -2754,13 +2823,20 @@ parameters:
           - registers: [0x02A1]
           - registers: [0x02A2]
           - registers: [0x02A3]
+          - registers: [0x02D7]
+            mppt: 5
+          - registers: [0x02D8]
+            mppt: 6
+          - registers: [0x02D9]
+            mppt: 7
+          - registers: [0x02DA]
+            mppt: 8
         validation:
           min: 0
-          max: [32000, 128000]
+          max: [40000, 160000]
           invalidate_all:
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 1 (L:1W, H:10W)
       - name: "PV1 Power"
         alt: DC1 Power
         mppt: 1
@@ -2772,7 +2848,6 @@ parameters:
         registers: [0x02A0]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 2 (L:1W, H:10W)
       - name: "PV2 Power"
         alt: DC2 Power
         mppt: 2
@@ -2784,7 +2859,6 @@ parameters:
         registers: [0x02A1]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 3 (L:1W, H:10W)
       - name: "PV3 Power"
         alt: DC3 Power
         mppt: 3
@@ -2796,7 +2870,6 @@ parameters:
         registers: [0x02A2]
         icon: "mdi:solar-power-variant"
 
-      # PV - The power of Input 4 (L:1W, H:10W)
       - name: "PV4 Power"
         alt: DC4 Power
         mppt: 4
@@ -2919,6 +2992,162 @@ parameters:
         range:
           min: 0
           max: 65535
+
+      - name: "PV5 Voltage"
+        alt: DC5 Voltage
+        mppt: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x02CF]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 10000
+
+      - name: "PV6 Voltage"
+        alt: DC6 Voltage
+        mppt: 6
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D0]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 10000
+
+      - name: "PV7 Voltage"
+        alt: DC7 Voltage
+        mppt: 7
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D1]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 10000
+
+      - name: "PV8 Voltage"
+        alt: DC8 Voltage
+        mppt: 8
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D2]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 10000
+
+      - name: "PV5 Current"
+        alt: DC5 Current
+        mppt: 5
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D3]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 1000
+
+      - name: "PV6 Current"
+        alt: DC6 Current
+        mppt: 6
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D4]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 1000
+
+      - name: "PV7 Current"
+        alt: DC7 Current
+        mppt: 7
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D5]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 1000
+
+      - name: "PV8 Current"
+        alt: DC8 Current
+        mppt: 8
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x02D6]
+        icon: "mdi:solar-power-variant"
+        range:
+          min: 0
+          max: 1000
+
+      - name: "PV5 Power"
+        alt: DC5 Power
+        mppt: 5
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: [1, 10]
+        rule: 1
+        registers: [0x02D7]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV6 Power"
+        alt: DC6 Power
+        mppt: 6
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: [1, 10]
+        rule: 1
+        registers: [0x02D8]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV7 Power"
+        alt: DC7 Power
+        mppt: 7
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: [1, 10]
+        rule: 1
+        registers: [0x02D9]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV8 Power"
+        alt: DC8 Power
+        mppt: 8
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: [1, 10]
+        rule: 1
+        registers: [0x02DA]
+        icon: "mdi:solar-power-variant"
 
   - group: Battery 1
     via_device: "inverter"
