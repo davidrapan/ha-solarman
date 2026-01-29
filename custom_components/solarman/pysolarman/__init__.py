@@ -275,7 +275,7 @@ class Solarman:
             return await self._send_receive_frame(request_frame + self._protocol_trailer(request_frame))
         req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
         res = await _get_sol_response(req)
-        if self.serial_bytes == PROTOCOL.PLACEHOLDER3:
+        if self.serial_bytes == PROTOCOL.PLACEHOLDER3 and self.transport == "tcp":
             self.serial = res[7:11]
             _LOGGER.debug(f"[{self.host}] SERIAL_SET: {self.serial}")
             res = await _get_sol_response(req)
