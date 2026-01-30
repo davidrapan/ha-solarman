@@ -118,6 +118,16 @@ parameters:
             value: "SVG"
           - key: 9
             value: "PID"
+        attributes:
+          [
+            "Device Serial Number",
+            "Device Hardware Version",
+            "Device Software Version Master",
+            "Device Software Version Slave",
+            "Device Safety Version",
+            "Device Safety Firmware Version",
+            "Device Safety Hardware Version",
+          ]
 
       - name: "Ambient temperature 1"
         class: "temperature"
@@ -203,7 +213,8 @@ parameters:
   - group: Info
     update_interval: 3600
     items:
-      - name: "Serial Number"
+      - name: "Device Serial Number"
+        attribute:
         rule: 5
         registers: [
             0x0445,
@@ -216,35 +227,35 @@ parameters:
             0x044C,
           ] # serial number 17th to 20th digits are in 0x0470 and 0x0471
 
-      - name: "Hardware Version"
+      - name: "Device Hardware Version"
+        attribute:
         rule: 5
         registers: [0x044D, 0x044E]
-        icon: "mdi:alpha-v"
 
-      - name: "Software Version Master"
+      - name: "Device Software Version Master"
+        attribute:
         rule: 5
         registers: [0x0453, 0x0454, 0x0455, 0x0456]
-        icon: "mdi:alpha-v"
 
-      - name: "Software Version Slave"
+      - name: "Device Software Version Slave"
+        attribute:
         rule: 5
         registers: [0x0457, 0x0458, 0x0459, 0x045A]
-        icon: "mdi:alpha-v"
 
-      - name: "Safety Version"
-        rule: 7
+      - name: "Device Safety Version"
+        attribute:
+        rule: 5
         registers: [0x045B, 0x045C]
-        icon: "mdi:alpha-v"
 
-      - name: "Safety Firmware Version"
+      - name: "Device Safety Firmware Version"
+        attribute:
         rule: 5
         registers: [0x0460, 0x0461, 0x0462, 0x0463]
-        icon: "mdi:alpha-v"
 
-      - name: "Safety Hardware Version"
+      - name: "Device Safety Hardware Version"
+        attribute:
         rule: 5
         registers: [0x0464, 0x0465]
-        icon: "mdi:alpha-v"
 
   - group: PV
     update_interval: 5
