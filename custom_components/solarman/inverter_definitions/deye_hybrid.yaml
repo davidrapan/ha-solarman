@@ -895,7 +895,7 @@ parameters:
         scale: 10
         registers: [0x00B2]
 
-      - name: "Load L1 Current"
+      - name: "Backup L1 Current"
         l: 1
         class: "current"
         state_class: "measurement"
@@ -904,7 +904,7 @@ parameters:
         rule: 2
         registers: [0x00B3]
 
-      - name: "Load L2 Current"
+      - name: "Backup L2 Current"
         l: 2
         class: "current"
         state_class: "measurement"
