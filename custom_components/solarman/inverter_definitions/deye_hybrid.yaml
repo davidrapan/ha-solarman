@@ -692,7 +692,7 @@ parameters:
         class: "current"
         state_class: "measurement"
         uom: "A"
-        scale: 0.01
+        scale: 0.1
         rule: 2
         registers: [0x00BF]
         icon: "mdi:current-dc"
