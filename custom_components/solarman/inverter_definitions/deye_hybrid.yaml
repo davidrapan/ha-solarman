@@ -1828,7 +1828,7 @@ parameters:
         registers: [0x0100]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 2 Power"
@@ -1840,7 +1840,7 @@ parameters:
         registers: [0x0101]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 3 Power"
@@ -1852,7 +1852,7 @@ parameters:
         registers: [0x0102]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 4 Power"
@@ -1864,7 +1864,7 @@ parameters:
         registers: [0x0103]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 5 Power"
@@ -1876,7 +1876,7 @@ parameters:
         registers: [0x0104]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 6 Power"
@@ -1888,7 +1888,7 @@ parameters:
         registers: [0x0105]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: Program 1 Voltage
