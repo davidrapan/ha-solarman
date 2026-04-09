@@ -124,6 +124,26 @@ parameters:
           dev: 100
           invalidate_all: 2
 
+      - name: "Reactive Power"
+        alt: Qinv
+        class: "reactive_power"
+        state_class: "measurement"
+        uom: "var"
+        scale: 1
+        rule: 2
+        registers: [0x020D, 0x020C]
+        icon: "mdi:sine-wave"
+
+      - name: "Apparent Power"
+        alt: Sinv
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        scale: 1
+        rule: 2
+        registers: [0x0210, 0x020F]
+        icon: "mdi:flash-outline"
+
   - group: Output
     items:
       - name: "L1 Voltage"
