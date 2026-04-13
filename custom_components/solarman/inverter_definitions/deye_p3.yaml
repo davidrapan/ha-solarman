@@ -128,6 +128,7 @@ parameters:
         range:
           min: 257
         validation:
+          min: 1
           max: 12
           default: 2
 
@@ -139,6 +140,7 @@ parameters:
         range:
           min: 257
         validation:
+          min: 3
           max: 3
           default: 3
 
