@@ -1755,6 +1755,349 @@ parameters:
         alt: Total Energy Bought
         description: Total energy imported from the grid
         class: "energy"
+
+  - group: Remote Control
+    update_interval: 30
+    items:
+      - name: Remote control mode
+        platform: select
+        rule: 1
+        registers: [0x044C]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Remote mode 1"
+          - key: 0x0002
+            value: "Remote mode 2"
+          - key: 0x0003
+            value: "Remote mode 3"
+
+      - name: Remote mode watchdog time
+        platform: number
+        uom: "s"
+        rule: 1
+        registers: [0x044D]
+        configurable:
+          min: 0
+          max: 18000
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Remote control active power limit
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x044E]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Remote control reactive power limit
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x044F]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Power control mode selection
+        platform: select
+        rule: 1
+        registers: [0x0450]
+        lookup:
+          - key: 0x0000
+            value: "AC-side control"
+          - key: 0x0001
+            value: "Battery-side control"
+          - key: 0x0002
+            value: "Grid-side control"
+
+      - name: Battery-side control strategy
+        platform: select
+        rule: 1
+        registers: [0x0451]
+        lookup:
+          - key: 0x0000
+            value: "Voltage"
+          - key: 0x0001
+            value: "Current"
+          - key: 0x0002
+            value: "Power"
+          - key: 0x0003
+            value: "SOC"
+          - key: 0x0004
+            value: "Volt+Current"
+          - key: 0x0005
+            value: "Power+SOC"
+
+      - name: Constant-voltage setpoint
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x0452]
+        configurable:
+          min: 0
+          max: 655.35
+          step: 0.01
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Constant-current setpoint
+        platform: number
+        class: "current"
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x0453]
+        icon: "mdi:current-dc"
+        configurable:
+          min: -18.5
+          max: 18.5
+          step: 0.1
+          mode: box
+        range:
+          min: -185
+          max: 185
+
+      - name: Constant-SOC setpoint
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0x0454]
+        icon: "mdi:battery"
+        configurable:
+          min: 0
+          max: 100
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Constant-power setpoint
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0455]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      - name: Reactive power control mode
+        platform: select
+        rule: 1
+        registers: [0x0456]
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "PF"
+          - key: 0x0002
+            value: "Q"
+          - key: 0x0003
+            value: "Volt-VAR"
+
+      - name: Power factor setpoint
+        platform: number
+        state_class: measurement
+        scale: 0.001
+        rule: 1
+        registers: [0x0457]
+        configurable:
+          min: 0
+          max: 1
+          step: 0.001
+          mode: box
+        range:
+          min: 0
+          max: 1000
+
+      - name: Reactive power setpoint
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0458]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Volt-VAR curve point 1 voltage
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x0459]
+        configurable:
+          min: 0
+          max: 655.35
+          step: 0.01
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Volt-VAR curve point 1 reactive power
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x045A]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Volt-VAR curve point 2 voltage
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x045B]
+        configurable:
+          min: 0
+          max: 655.35
+          step: 0.01
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Volt-VAR curve point 2 reactive power
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x045C]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Volt-VAR curve point 3 voltage
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x045D]
+        configurable:
+          min: 0
+          max: 655.35
+          step: 0.01
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Volt-VAR curve point 3 reactive power
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x045E]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Volt-VAR curve point 4 voltage
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [0x045F]
+        configurable:
+          min: 0
+          max: 655.35
+          step: 0.01
+          mode: box
+        range:
+          min: 0
+          max: 65535
+
+      - name: Volt-VAR curve point 4 reactive power
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0460]
+        configurable:
+          min: -100
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: -1000
+          max: 1000
+
+      - name: Remote control status
+        rule: 1
+        registers: [0x0461]
+        icon: "mdi:remote"
+        range:
+          min: 0
+          max: 65535
         state_class: "total_increasing"
         uom: "kWh"
         scale: [0.1, 0.1, 1]
