@@ -312,6 +312,14 @@ parameters:
         scale: 10
         rule: 2
         registers: [0x0485]
+        
+      - name: "Reactive Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "kVar"
+        scale: 10
+        rule: 2
+        registers: [0x0486]
 
       - name: "Power losses"
         description: Includes consumption of the inverter device itself as well AC/DC conversion losses
