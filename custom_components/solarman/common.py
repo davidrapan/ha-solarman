@@ -230,7 +230,7 @@ def preprocess_descriptions(item, group, table, code, parameters):
             if i == "registers" and source[i] and (isinstance(source[i], list) and isinstance(source[i][0], list)):
                 unwrap(source, i, parameters[CONF_MOD])
                 if not source[i]:
-                    source["disabled"] = True
+                    source["disabled"] = "force"
             elif isinstance(source[i], dict):
                 modify(source[i])
 
