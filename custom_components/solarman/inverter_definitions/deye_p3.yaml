@@ -3560,7 +3560,7 @@ parameters:
           min: -99
           max: 99
 
-      - name: "Battery 1"
+      - name: "Battery"
         class: "battery"
         state_class: "measurement"
         uom: "%"
