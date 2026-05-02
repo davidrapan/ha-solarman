@@ -84,9 +84,10 @@ def remove_defaults(user_input: dict[str, Any]):
             del user_input[k]
     return user_input
 
-class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
+class ConfigFlowHandler(ConfigFlow):
     MINOR_VERSION = 0
     VERSION = 2
+    domain = DOMAIN
 
     async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
