@@ -24,6 +24,8 @@ LOOKUP_CUSTOM_DIRECTORY_PATH = f"{COMPONENTS_DIRECTORY}/{DOMAIN}/{LOOKUP_DIRECTO
 CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_TRANSPORT = "transport"
+CONF_USERNAME = "username"
+CONF_PASSWORD = "password"
 CONF_LOOKUP_FILE = "lookup_file"
 CONF_ADDITIONAL_OPTIONS = "additional_options"
 CONF_MOD = "mod"
@@ -57,6 +59,8 @@ DEFAULT_ = {
     CONF_HOST: "",
     CONF_PORT: 8899,
     CONF_TRANSPORT: "tcp",
+    CONF_USERNAME: "admin",
+    CONF_PASSWORD: "admin",
     CONF_MB_SLAVE_ID: 1,
     CONF_LOOKUP_FILE: "Auto",
     CONF_MOD: 0,

@@ -54,9 +54,9 @@ class SolarmanAccessPoint(SolarmanEntity, SwitchEntity):
     async def async_turn_(self, mode: int):
         await self.coordinator.device.endpoint.load()
         if self.is_on is False:
-            await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET, {"apsta_mode": mode, "mode_sel": mode})
+            await request(self.coordinator.device.config.host, LOGGER_CMD, LOGGER_SET, {"apsta_mode": mode, "mode_sel": mode}, auth = self.coordinator.device.config.auth)
             await self.coordinator.device.endpoint.load()
-            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
+            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA, auth = self.coordinator.device.config.auth)
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):

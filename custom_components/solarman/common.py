@@ -63,8 +63,13 @@ async def _request(url: str, **kwargs: Any):
     except ClientError as e:
         raise e
 
-async def request(domain: str, path: str, referer: str = "", data: FormData | dict = None):
-    return await _request(f"http://{domain}/{path}", auth = LOGGER_AUTH, headers = {"Referer": f"http://{domain}/{referer}"}, data = (data if isinstance(data, FormData) else FormData(data)) if data else None)
+async def request(domain: str, path: str, referer: str = "", data: FormData | dict = None, auth = None):
+    return await _request(
+        f"http://{domain}/{path}",
+        auth = LOGGER_AUTH if auth is None else auth,
+        headers = {"Referer": f"http://{domain}/{referer}"},
+        data = (data if isinstance(data, FormData) else FormData(data)) if data else None
+    )
 
 async def async_execute(x):
     return await asyncio.get_running_loop().run_in_executor(None, x)

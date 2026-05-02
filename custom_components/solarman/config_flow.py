@@ -30,6 +30,8 @@ CONFIGURATION_SCHEMA = {
     vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
     vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}): SelectSelector(SelectSelectorConfig(options = ["tcp", "modbus_tcp", "modbus_rtu"], mode = "dropdown", translation_key = "transport")),
+    vol.Optional(CONF_USERNAME, default = DEFAULT_[CONF_USERNAME], description = {SUGGESTED_VALUE: DEFAULT_[CONF_USERNAME]}): str,
+    vol.Optional(CONF_PASSWORD, default = DEFAULT_[CONF_PASSWORD], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PASSWORD]}): str,
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema({

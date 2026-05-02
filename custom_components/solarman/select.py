@@ -104,10 +104,11 @@ class SolarmanCloud(SolarmanEntity, SelectEntity, RestoreEntity):
                     "cnmo_ds_b": "" if disabled else domain_b,
                     "cnmo_pt_b": "" if disabled else port_b,
                     "cnmo_tp_b": "TCP" if disabled else protocol_b
-                }
+                },
+                auth = self.coordinator.device.config.auth
             )
             await self.coordinator.device.endpoint.load()
-            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
+            await request(self.coordinator.device.config.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA, auth = self.coordinator.device.config.auth)
         self.async_write_ha_state()
 
 class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):

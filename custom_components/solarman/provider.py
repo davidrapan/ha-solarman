@@ -50,6 +50,18 @@ class ConfigurationProvider:
         return self._options.get(CONF_LOOKUP_FILE, DEFAULT_[CONF_LOOKUP_FILE])
 
     @cached_property
+    def username(self) -> str:
+        return self._options.get(CONF_USERNAME, DEFAULT_[CONF_USERNAME])
+
+    @cached_property
+    def password(self) -> str:
+        return self._options.get(CONF_PASSWORD, DEFAULT_[CONF_PASSWORD])
+
+    @cached_property
+    def auth(self):
+        return BasicAuth(self.username, self.password) if self.username or self.password else LOGGER_AUTH
+
+    @cached_property
     def mb_slave_id(self) -> int:
         return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_[CONF_MB_SLAVE_ID])
 
@@ -89,7 +101,7 @@ class EndPointProvider:
                 self.serial = d["serial"]
                 self.host = d["ip"]
                 self.mac = d["mac"]
-                self.info = await request(self.host, LOGGER_SET)
+                self.info = await request(self.host, LOGGER_SET, auth = self.config.auth)
                 if next(iter(LOGGER_REGEX["setting_protocol"].finditer(self.info))).group(1) != "TCP" if "tcp" in self.transport else "UDP" or next(iter(LOGGER_REGEX["setting_cs"].finditer(self.info))).group(1) != "SERVER" if "tcp" in self.transport else "" or next(iter(LOGGER_REGEX["setting_port"].finditer(self.info))).group(1) != self.port or next(iter(LOGGER_REGEX["setting_ip"].finditer(self.info))).group(1) != IP_ANY or next(iter(LOGGER_REGEX["setting_timeout"].finditer(self.info))).group(1) != "300":
                     await request(self.host, LOGGER_CMD, LOGGER_SET,
                         {
@@ -99,15 +111,16 @@ class EndPointProvider:
                             "net_setting_port": self.port,
                             "net_setting_ip": "0.0.0.0",
                             "net_setting_to": "300"
-                        }
+                        },
+                        auth = self.config.auth
                     )
-                    await request(self.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA)
+                    await request(self.host, LOGGER_SUCCESS, LOGGER_CMD, LOGGER_RESTART_DATA, auth = self.config.auth)
         except Exception as e:
             _LOGGER.debug(f"[{self.host}] Error", exc_info = True)
 
     async def load(self):
         try:
-            self.info = await request(self.host, LOGGER_SET)
+            self.info = await request(self.host, LOGGER_SET, auth = self.config.auth)
         except Exception as e:
             _LOGGER.debug(f"[{self.host}] Error", exc_info = True)
 
