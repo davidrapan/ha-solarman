@@ -5,6 +5,7 @@ from logging import getLogger
 from dataclasses import dataclass
 from propcache import cached_property
 from collections.abc import Awaitable, Callable
+from aiohttp import BasicAuth
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
