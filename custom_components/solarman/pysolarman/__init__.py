@@ -293,7 +293,10 @@ class Solarman:
                 raise modbusError()
             raise FrameError("Invalid modbus frame")
         if res.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(res[:-4]) == res[-4:-2]: # Double CRC (XXXX0000) correction
-            res = res[:-2]
+            try:
+                return rtu.parse_response_adu(res, req)
+            except:
+                res = res[:-2]
         return rtu.parse_response_adu(res, req)
 
     async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
