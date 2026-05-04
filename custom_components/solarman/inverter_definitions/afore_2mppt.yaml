@@ -19,8 +19,7 @@ parameters:
     items:
       - name: PV Power
         alt: DC Power
-        mppt: 1
-        description: Combined power of all inputs
+        description: Combined power of all PV inputs
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -29,7 +28,7 @@ parameters:
         registers: [0x022A, 0x0229]
         icon: "mdi:home-lightning-bolt"
 
-      - name: PV1 Power
+      - name: "PV1 Power"
         alt: DC1 Power
         mppt: 1
         class: "power"
@@ -63,7 +62,7 @@ parameters:
         registers: [0x022C]
         icon: "mdi:solar-power"
 
-      - name: PV2 Power
+      - name: "PV2 Power"
         alt: DC2 Power
         mppt: 2
         class: "power"
@@ -72,7 +71,7 @@ parameters:
         rule: 1
         digits: 3
         scale: 1
-        registers: [0x022C]
+        registers: [0x0230]
         icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
@@ -101,8 +100,9 @@ parameters:
         friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
+        uom: "kWh"
         scale: 0.1
+        suggested_display_precision: 1
         rule: 1
         registers: [0x03E8]
         icon: "mdi:solar-power"
@@ -114,8 +114,9 @@ parameters:
         persistent:
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
+        uom: "kWh"
         scale: 0.1
+        suggested_display_precision: 1
         rule: 1
         registers: [0x03F7, 0x03F6]
         icon: "mdi:solar-power"
@@ -123,6 +124,54 @@ parameters:
           min: 0.1
           dev: 100
           invalidate_all: 2
+
+      - name: "Reactive Power"
+        alt: Qinv
+        class: "reactive_power"
+        state_class: "measurement"
+        uom: "var"
+        scale: 1
+        rule: 2
+        registers: [0x020D, 0x020C]
+        icon: "mdi:sine-wave"
+
+      - name: "Apparent Power"
+        alt: Sinv
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        scale: 1
+        rule: 2
+        registers: [0x0210, 0x020F]
+        icon: "mdi:flash-outline"
+
+      - name: "Reactive Power"
+        alt: Qinv
+        class: "reactive_power"
+        state_class: "measurement"
+        uom: "var"
+        scale: 1
+        rule: 2
+        registers: [0x020D, 0x020C]
+        icon: "mdi:sine-wave"
+
+      - name: "Apparent Power"
+        alt: Sinv
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        scale: 1
+        rule: 1
+        registers: [0x0210, 0x020F]
+        icon: "mdi:flash-outline"
+
+      - name: "Power Factor"
+        alt: PFinv
+        state_class: "measurement"
+        uom: ""
+        scale: 0.001
+        rule: 2
+        registers: [0x020E]
 
   - group: Output
     items:
@@ -179,7 +228,37 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x0200]
-      
+
+      - name: "L1 Active Power"
+        alt: PinvR
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 2
+        registers: [0x0205, 0x0204]
+
+      - name: "L2 Active Power"
+        alt: PinvS
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 2
+        registers: [0x0207, 0x0206]
+
+      - name: "L3 Active Power"
+        alt: PinvT
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 2
+        registers: [0x0209, 0x0208]
+
       - name: "L1 Frequency"
         l: 1
         class: "frequency"
@@ -188,7 +267,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0201]
-        
+
       - name: "L2 Frequency"
         l: 2
         class: "frequency"
@@ -197,7 +276,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0202]
-        
+
       - name: "L3 Frequency"
         l: 3
         class: "frequency"
@@ -208,6 +287,7 @@ parameters:
         registers: [0x0203]
 
       - name: "Temperature"
+        alt: Tinner
         class: "temperature"
         uom: "°C"
         scale: 0.1
@@ -216,6 +296,7 @@ parameters:
         icon: "mdi:thermometer"
 
       - name: "DC Temperature"
+        alt: Ttransf
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -224,7 +305,8 @@ parameters:
         registers: [0x09D3]
         icon: "mdi:thermometer"
 
-      - name: Power
+      - name: "Power"
+        alt: Pinv
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -248,6 +330,7 @@ parameters:
             registers: [0x020B, 0x020A]
 
       - name: "Device State"
+        alt: RunState
         rule: 1
         registers: [0x09C4]
         icon: "mdi:state-machine"
@@ -282,3 +365,35 @@ parameters:
             value: "Open loop"
           - key: 14
             value: "Sampling calibration"
+
+  - group: Faults
+    update_interval: 30
+    items:
+      - name: "Grid Error"
+        alt: GridErr
+        rule: 1
+        registers: [0x0BC1, 0x0BC0]
+        icon: "mdi:alert-circle"
+        lookup:
+          - key: 0
+            value: "No fault"
+          - key: 1
+            value: "C01 - GridLossFault"
+          - key: 2
+            value: "C02 - GridVoltUnbalanFault"
+          - key: 4
+            value: "C03 - GridInstVoltHighFault"
+          - key: 8
+            value: "C04 - Grid10MinOverFault"
+          - key: 16
+            value: "C05 - GridOverVoltFault"
+          - key: 32
+            value: "C06 - GridUnderVoltFault"
+          - key: 64
+            value: "C07 - GridOverLineVoltFault"
+          - key: 128
+            value: "C08 - GridUnderLineVoltFault"
+          - key: 256
+            value: "C09 - GridOverFreqFault"
+          - key: 512
+            value: "C10 - GridUnderFreqFault"
