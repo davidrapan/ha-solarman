@@ -1,0 +1,153 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "El dispositivo ya está configurado",
+            "already_configured_device": "El dispositivo ya está configurado",
+            "already_in_progress": "El flujo de configuración ya está en curso"
+        },
+        "error": {
+            "cannot_connect": "No se ha podido conectar",
+            "invalid_host": "El nombre del host o la dirección IP no es válida",
+            "timeout_connect": "Superado el tiempo de espera para establecer la conexión",
+            "unknown": "Error inesperado"
+        },
+        "step": {
+            "user": {
+                "title": "Configuración del inversor",
+                "data": {
+                    "name": "Nombre del dispositivo",
+                    "host": "Host o dirección IP",
+                    "port": "Puerto",
+                    "transport": "Protocolo de transporte",
+                    "lookup_file": "Perfil"
+                },
+                "data_description": {
+                    "name": "Este nombre se usará como prefijo para todos los dispositivos",
+                    "host": "El host o la dirección IP del dispositivo para conectar",
+                    "port": "El puerto (8899) del dispositivo a conectar",
+                    "lookup_file": "El archivo YAML que contiene las definiciones de los parámetros del inversor"
+                },
+                "sections": {
+                    "additional_options": {
+                        "name": "Opciones adicionales",
+                        "data": {
+                            "mod": "Modificador",
+                            "mppt": "Número de entradas MPPT",
+                            "phase": "Número de fases",
+                            "pack": "Número de paquetes de baterías",
+                            "battery_nominal_voltage": "tensión nominal de la batería de iones de litio",
+                            "battery_life_cycle_rating": "Ciclo de vida estimado de la batería de iones de litio",
+                            "mb_slave_id": "ID del esclavo Modbus (normalmente 1)"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "options": {
+        "error": {
+            "cannot_connect": "No se ha podido conectar",
+            "invalid_host": "El nombre del host o la dirección IP no es válida",
+            "timeout_connect": "Superado el tiempo de espera para establecer la conexión",
+            "unknown": "Error inesperado"
+        },
+        "step": {
+            "init": {
+                "title": "Configuración del inversor",
+                "data": {
+                    "host": "Host o dirección IP",
+                    "port": "Puerto",
+                    "transport": "Protocolo de transporte",
+                    "lookup_file": "Perfil"
+                },
+                "data_description": {
+                    "host": "El host o la dirección IP del dispositivo para conectar",
+                    "port": "El puerto (8899) del dispositivo a conectar",
+                    "lookup_file": "El archivo YAML que contiene las definiciones de los parámetros del inversor"
+                },
+                "sections": {
+                    "additional_options": {
+                        "name": "Opciones adicionales",
+                        "data": {
+                            "mod": "Modificador",
+                            "mppt": "Número de entradas MPPT",
+                            "phase": "Número de fases",
+                            "pack": "Número de paquetes de baterías",
+                            "battery_nominal_voltage": "tensión nominal de la batería de iones de litio",
+                            "battery_life_cycle_rating": "Ciclo de vida estimado de la batería de iones de litio",
+                            "mb_slave_id": "ID del esclavo Modbus (normalmente 1)"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "selector": {
+        "transport": {
+            "options": {
+                "tcp": "TCP",
+                "udp": "UDP",
+                "modbus_rtu": "Modbus RTU",
+                "modbus_tcp": "Modbus TCP"
+            }
+        }
+    },
+    "entity": {
+        "sensor": {
+            "today_battery_charge": {
+                "name": "Carga diaria de la batería"
+            },
+            "today_battery_discharge": {
+                "name": "Descarga diaria de la batería"
+            },
+            "today_battery_life_cycles": {
+                "name": "Ciclos diarios de carga de la batería"
+            },
+            "today_energy_export": {
+                "name": "Exportación diaria de energía"
+            },
+            "today_energy_import": {
+                "name": "Importación diaria de energía"
+            },
+            "today_generation": {
+                "name": "Generación diaria"
+            },
+            "today_load_consumption": {
+                "name": "Consumo diario de carga"
+            },
+            "today_losses": {
+                "name": "Pérdidas de energía diarias"
+            },
+            "today_production": {
+                "name": "Producción diaria"
+            },
+            "total_battery_charge": {
+                "name": "Carga total de la batería"
+            },
+            "total_battery_discharge": {
+                "name": "Descarga total de la batería"
+            },
+            "total_battery_life_cycles": {
+                "name": "Ciclos totales de la batería"
+            },
+            "total_energy_export": {
+                "name": "Exportación total de energía"
+            },
+            "total_energy_import": {
+                "name": "Importación total de energía"
+            },
+            "total_generation": {
+                "name": "Generación total"
+            },
+            "total_load_consumption": {
+                "name": "Consumo total de carga"
+            },
+            "total_losses": {
+                "name": "Pérdidas totales"
+            },
+            "total_production": {
+                "name": "Producción total"
+            }
+        }
+    }
+}
