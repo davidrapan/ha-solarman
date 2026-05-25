@@ -1,0 +1,803 @@
+#
+# SRNE HEBP Pro | Hybrid Inverter
+# Covers: HEBP4880U240-Pro, HEBP48100U240-Pro, HEBP48120U240-Pro
+# Also covers rebrands: SunGold SGS-12K18MAX, SEI-12K-UPRO, and similar
+#
+# Supports:
+#   - Single Phase (set phases: 1)
+#   - Split Phase 120/240V US (set phases: 2)  <-- default US configuration
+#   - Three Phase 120/208V US (set phases: 3)
+#
+# Reference (Modbus): SRNE Energy Storage Inverter MODBUS Protocol V1.7
+# Reference (Manual): SRNE HEBP Pro Series 8-12kW US Split Phase User Manual V1.2
+#
+# Tested on: SunGold SGS-12K18MAX (HEBP48120U240-Pro), Split Phase
+#
+# Known issues:
+#   - Register 0x0223 (Ambient Temperature) returns invalid data on HEBP hardware.
+#     Validated out with min/max range. Root cause: register appears unmapped on this model.
+#
+
+info:
+  manufacturer: SRNE
+  model: HEBP Pro
+
+default:
+  update_interval: 5
+  max_size: 30
+  digits: 6
+
+parameters:
+  - group: Battery
+    items:
+      - name: "Battery"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x0100]
+
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0101]
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x0102]
+        icon: "mdi:current-dc"
+
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        digits: 3
+        scale: 0.1
+        sensors:
+          - registers: [0x0101]
+          - operator: multiply
+            signed:
+            registers: [0x0102]
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0103]
+
+  - group: PV
+    items:
+      - name: "PV1 Voltage"
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0107]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        mppt: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0108]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0109]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV Power"
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x010A]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV+AC Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x010E]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        mppt: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x010F]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        mppt: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0110]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0111]
+        icon: "mdi:solar-power-variant"
+
+  - group: Inverter
+    items:
+      - name: "PV Voltage"
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0212]
+        icon: "mdi:solar-power-variant"
+
+      # L1 - present in all phase configurations
+      - name: "Grid L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0213]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0214]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0215]
+
+      - name: "Output L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0216]
+
+      - name: "Output L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x0217]
+
+      - name: "Output Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0218]
+
+      - name: "Load L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0219]
+
+      - name: "Load L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x021B]
+
+      - name: "Load L1 Apparent Power"
+        l: 1
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x021C]
+
+      # Temperatures - not phase dependent
+      - name: "DC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0220]
+
+      - name: "AC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0221]
+
+      - name: "Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        registers: [0x0222]
+
+      # Register 0x0223 is defined as "Heat sink D" in SRNE Modbus V1.7 protocol
+      # but returns invalid data (~65000) on HEBP hardware - register appears unmapped.
+      # Validated out to show as Unknown rather than bogus value.  Disabled by default.
+      - name: "Ambient Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        disabled:
+        registers: [0x0223]
+        validation:
+          min: -40
+          max: 100
+
+      # L2 - shown for split-phase (2) and three-phase (3) configurations
+      - name: "Grid L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022A]
+        icon: "mdi:transmission-tower"
+
+      - name: "Output L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022C]
+
+      - name: "Output L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022E]
+
+      - name: "Load L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0230]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0232]
+
+      - name: "Load L2 Apparent Power"
+        l: 2
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x0234]
+
+      - name: "Grid L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0238]
+        icon: "mdi:transmission-tower"
+
+      # L3 - shown only for three-phase configuration
+      - name: "Grid L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022B]
+        icon: "mdi:transmission-tower"
+
+      - name: "Output L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022D]
+
+      - name: "Output L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022F]
+
+      - name: "Load L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0231]
+
+      - name: "Load L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0233]
+
+      - name: "Load L3 Apparent Power"
+        l: 3
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x0235]
+
+      - name: "Grid L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0239]
+        icon: "mdi:transmission-tower"
+
+  - group: Settings
+    update_interval: 300
+    items:
+      - name: Output Priority
+        platform: select
+        rule: 1
+        registers: [0xE204]
+        icon: mdi:priority-high
+        lookup:
+          - key: 0
+            value: "Solar First"
+          - key: 1
+            value: "Grid First"
+          - key: 2
+            value: "SBU"
+
+      - name: Charge Priority
+        platform: select
+        rule: 1
+        registers: [0xE20F]
+        icon: mdi:battery-charging
+        lookup:
+          - key: 0
+            value: "PV Preferred"
+          - key: 1
+            value: "Grid Preferred"
+          - key: 2
+            value: "Hybrid"
+          - key: 3
+            value: "PV Only"
+
+      - name: Max Grid Charging Current
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE205]
+        icon: mdi:transmission-tower
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 2000
+
+      - name: Max PV Charging Current
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE001]
+        icon: mdi:solar-power
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 2400
+
+      - name: Output Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE208]
+        icon: mdi:sine-wave
+        configurable:
+          mode: box
+        range:
+          min: 1000
+          max: 1270
+
+      - name: Battery Discharge Stop SOC
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        registers: [0xE00F]
+        icon: mdi:battery-arrow-down
+        configurable:
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+      - name: Timed Charging Enable
+        platform: switch
+        rule: 1
+        registers: [0xE02C]
+        icon: mdi:clock-check
+
+      - name: Timed Charging Period 1 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE026]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Charging Period 1 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE027]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Charging Period 2 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE028]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Charging Period 2 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE029]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Charging Period 3 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE02A]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Charging Period 3 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE02B]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Enable
+        platform: switch
+        rule: 1
+        registers: [0xE033]
+        icon: mdi:clock-check
+
+      - name: Timed Discharging Period 1 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE02D]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Period 1 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE02E]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Period 2 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE02F]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Period 2 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE030]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Period 3 Start
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE031]
+        icon: mdi:clock-start
+        range:
+          min: 0
+          max: 5947
+
+      - name: Timed Discharging Period 3 Stop
+        platform: number
+        state_class: measurement
+        uom: "h/m"
+        rule: 1
+        registers: [0xE032]
+        icon: mdi:clock-end
+        range:
+          min: 0
+          max: 5947
+
+  - group: Meter
+    update_interval: 30
+    items:
+      - name: "Today Production"
+        alt: Daily Production
+        friendly_name: Today's Production
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF02F]
+        icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF038, 0xF039]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
+
+      - name: Today Energy Export
+        alt: Daily Energy Sold
+        friendly_name: Today's Energy Export
+        description: Today's energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF02C]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Total Energy Export
+        alt: Total Energy Sold
+        description: Total energy exported/returned to the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF032, 0xF033]
+        icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
+
+      - name: "Today Energy Import"
+        alt: Daily Energy Bought
+        friendly_name: Today's Energy Import
+        description: Today's energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF03D]
+        icon: "mdi:transmission-tower-export"
+
+      - name: "Total Energy Import"
+        alt: Total Energy Bought
+        description: Total energy imported from the grid
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF048, 0xF049]
+        icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
+
+      - name: "Today Load Consumption"
+        alt: Daily Load Consumption
+        friendly_name: Today's Load Consumption
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0xF030]
+
+      - name: "Total Load Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [0xF03A, 0xF03B]
+        validation:
+          min: 0.1
+
+      - name: Today Battery Charge Ampere-hour
+        alt: Daily Battery Charge
+        friendly_name: Today's Battery Charge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF02D]
+        icon: "mdi:battery-plus"
+
+      - name: Today Battery Discharge Ampere-hour
+        alt: Daily Battery Discharge
+        friendly_name: Today's Battery Discharge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF02E]
+        icon: "mdi:battery-minus"
+
+      - name: "Total Battery Charge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF034, 0xF035]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
+
+      - name: "Total Battery Discharge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF036, 0xF037]
+        icon: "mdi:battery-minus"
+        validation:
+          min: 0.1
+
+      - name: Today Battery Grid Charge Ampere-hour
+        alt: Daily Battery Grid Charge
+        friendly_name: Today's Battery Grid Charge
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 1
+        registers: [0xF03C]
+        icon: "mdi:battery-plus"
+
+      - name: "Total Battery Grid Charge Ampere-hour"
+        state_class: "total_increasing"
+        uom: "Ah"
+        rule: 3
+        registers: [0xF046, 0xF047]
+        icon: "mdi:battery-plus"
+        validation:
+          min: 0.1
