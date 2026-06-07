@@ -141,9 +141,24 @@ class SolarmanWritableEntity(SolarmanEntity):
         return self._attr_native_value
 
     async def write(self, value, state = None) -> None:
+        # The whole transaction (read, merge, write) is serialized, so entities sharing a register can't overwrite each other
+        async with self.coordinator.device.write_lock:
+            await self._write(value, state)
+
+    async def _write(self, value, state = None) -> None:
         #self.coordinator.device.check(self._write_lock)
         data = value
         register = self.register
+        mask = getattr(self, "mask", None)
+        current_data = None
+
+        if mask is not None and isinstance(data, int) and not self.writeback:
+            # Masked entities own only some bits: merge with the live value of all registers (the first register is the lowest word)
+            current_data = await self.coordinator.device.execute(self.code_read, self.register, count = len(self.registers))
+            current = 0
+            for i, r in enumerate(self.registers):
+                current |= (current_data[r - self.register] & 0xFFFF) << (16 * i)
+            data = (current & ~mask) | (data & mask)
 
         if isinstance(data, int):
             if data < 0:
@@ -155,7 +170,8 @@ class SolarmanWritableEntity(SolarmanEntity):
         if isinstance(data, list):
             while len(self.registers) > len(data):
                 data.insert(0, 0)
-        current_data = await self.coordinator.device.execute(self.code_read, self.register if not self.writeback else self.writeback_register, count = (1 if not isinstance(data, list) else len(data)) if not self.writeback else self.writeback_count)
+        if current_data is None:
+            current_data = await self.coordinator.device.execute(self.code_read, self.register if not self.writeback else self.writeback_register, count = (1 if not isinstance(data, list) else len(data)) if not self.writeback else self.writeback_count)
         if self.writeback and (writeback_data := list(current_data)):
             for override in self.writeback_overrides:
                 writeback_data[override["register"] - self.writeback_register] = override["value"]
@@ -170,4 +186,6 @@ class SolarmanWritableEntity(SolarmanEntity):
             self.set_state(state, value)
             self.async_write_ha_state()
             #await self.entity_description.update_fn(self.coordinator., int(value))
-            #await self.coordinator.async_request_refresh()
+            if mask is not None and (result := await self.coordinator.device.refresh(self.code_read, self.registers)):
+                # Update sibling entities sharing the register(s) now, regardless of their update interval
+                self.coordinator.async_set_updated_data({**(self.coordinator.data or {}), **result})

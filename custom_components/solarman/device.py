@@ -1,3 +1,5 @@
+import asyncio
+
 from logging import getLogger
 from datetime import datetime, timedelta
 
@@ -39,6 +41,8 @@ class Device():
         self.endpoint: EndPointProvider | None = None
         self.profile: ProfileProvider | None = None
         self.modbus: Solarman | None = None
+        # Serializes whole read-modify-write transactions (the modbus lock only covers single frames)
+        self.write_lock = asyncio.Lock()
         self.state = DeviceState()
         self.info = {}
 
@@ -69,6 +73,12 @@ class Device():
         except TimeoutError:
             await self.endpoint.discover()
             raise
+
+    async def refresh(self, code, registers):
+        """Re-read just the given registers, ignoring update intervals, and parse the entities using them."""
+        start = min(registers)
+        data = await self.execute(code, start, count = max(registers) - start + 1)
+        return self.profile.parser.process_isolated({(code, start): data})
 
     @retry(ignore = TimeoutError)
     async def execute_bulk(self, requests, scheduled) -> dict[str | tuple[int, int], tuple[int | float | str | list, int | float | None] | list[int]]:

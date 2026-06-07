@@ -177,6 +177,14 @@ class ParameterParser:
 
         return self._result
 
+    def process_isolated(self, data):
+        """Parse the given data without touching the result of the scheduled poll."""
+        previous, self._result = self._result, {}
+        try:
+            return self.process(data)
+        finally:
+            self._result = previous
+
     def _read_registers(self, data, definition):
         code = get_code(definition, "read")
         value = 0
