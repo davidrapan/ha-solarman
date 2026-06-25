@@ -91,7 +91,10 @@ def getipaddress(address: str):
 
 async def discover_mac(hass, host):
     from .discovery import discover
-    ip = str(getipaddress(host))
+    try:
+        ip = str(getipaddress(host))
+    except Exception:
+        return None
     async for v in await discover(hass, ip):
         if v["ip"] == ip and v.get("mac"):
             return format_mac(v["mac"])

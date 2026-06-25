@@ -90,3 +90,35 @@ async def test_runtime_backfill_sets_unique_id_from_probe(hass):
         assert await async_setup_entry(hass, entry) is True
 
     assert entry.unique_id == "e8:fd:f8:11:22:33"
+
+
+@pytest.mark.asyncio
+async def test_backfill_guard_skips_duplicate_unique_id(hass):
+    first = MockConfigEntry(domain=DOMAIN, title="Inverter A", unique_id="e8:fd:f8:11:22:33",
+                            options={CONF_HOST: "192.168.1.60", CONF_TRANSPORT: "modbus_tcp"})
+    first.add_to_hass(hass)
+
+    second = MockConfigEntry(domain=DOMAIN, title="Inverter B", unique_id=None,
+                             options={CONF_HOST: "192.168.1.60", CONF_TRANSPORT: "tcp"})
+    second.add_to_hass(hass)
+
+    class _EP:
+        mac = ""
+        host = "192.168.1.60"
+
+    class _Dev:
+        endpoint = _EP()
+
+    class _Coord:
+        device = _Dev()
+        async def init(self):
+            return self
+
+    with patch("custom_components.solarman.Coordinator", return_value=_Coord()), \
+         patch("custom_components.solarman.discover_mac", new=AsyncMock(return_value="e8:fd:f8:11:22:33")), \
+         patch.object(hass.config_entries, "async_forward_entry_setups", new=AsyncMock(return_value=True)), \
+         patch("custom_components.solarman.async_migrate_entries", new=AsyncMock(return_value=None)):
+        from custom_components.solarman import async_setup_entry
+        assert await async_setup_entry(hass, second) is True
+
+    assert second.unique_id is None
