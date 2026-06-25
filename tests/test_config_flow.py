@@ -39,6 +39,7 @@ async def test_legacy_entry_matched_by_ip_gets_unique_id_backfilled(hass):
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "already_configured_device"
     assert entry.unique_id == "e8:fd:f8:11:22:33"
+    assert entry.options[CONF_HOST] == "192.168.1.60"
 
 
 @pytest.mark.asyncio
@@ -51,3 +52,5 @@ async def test_unknown_device_shows_user_form_with_unique_id_set(hass):
             DOMAIN, context={"source": SOURCE_INTEGRATION_DISCOVERY}, data=DISCOVERY)
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "user"
+    flow = next(f for f in hass.config_entries.flow.async_progress() if f["flow_id"] == result["flow_id"])
+    assert flow["context"]["unique_id"] == "e8:fd:f8:11:22:33"
