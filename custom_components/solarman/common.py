@@ -20,7 +20,6 @@ from homeassistant.util import slugify as _slugify
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
 
 from .const import *
-from .discovery import discover
 
 _LOGGER = getLogger(__name__)
 
@@ -91,6 +90,7 @@ def getipaddress(address: str):
         return IPv4Address(socket.gethostbyname(address))
 
 async def discover_mac(hass, host):
+    from .discovery import discover
     ip = str(getipaddress(host))
     async for v in await discover(hass, ip):
         if v["ip"] == ip and v.get("mac"):
