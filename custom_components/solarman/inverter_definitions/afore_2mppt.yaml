@@ -72,7 +72,7 @@ parameters:
         rule: 1
         digits: 3
         scale: 1
-        registers: [0x022C]
+        registers: [0x0230]
         icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
@@ -101,7 +101,7 @@ parameters:
         friendly_name: Today's Production
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
+        uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03E8]
@@ -111,10 +111,9 @@ parameters:
           invalidate_all:
 
       - name: "Total Production"
-        persistent:
         class: "energy"
         state_class: "total_increasing"
-        uom: "Wh"
+        uom: "kWh"
         scale: 0.1
         rule: 1
         registers: [0x03F7, 0x03F6]
