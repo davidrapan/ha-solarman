@@ -72,7 +72,7 @@ parameters:
         rule: 1
         digits: 3
         scale: 1
-        registers: [0x022C]
+        registers: [0x0230]
         icon: "mdi:solar-power-variant"
 
       - name: "PV2 Voltage"
