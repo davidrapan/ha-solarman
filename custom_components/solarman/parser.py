@@ -325,14 +325,8 @@ class ParameterParser:
         self.set_state(key, get_number(value, get_or_def(definition, DIGITS, self._digits)))
 
     def try_parse_ascii(self, data, definition):
-        code = get_code(definition, "read")
-        value = ""
-
-        for r in definition["registers"]:
-            if (temp := get_addr_value(data, code, r)) is None:
-                return
-
-            value += chr(temp >> 8) + chr(temp & 0xFF)
+        if (value := decode_ascii(data, get_code(definition, "read"), definition["registers"])) is None:
+            return
 
         self.set_state(definition["key"], value)
 

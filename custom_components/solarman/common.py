@@ -125,7 +125,49 @@ def ensure_list_safe_len(value: list):
 def create_request(code: int, start: int, end: int):
     return { REQUEST_CODE: code, REQUEST_START: start, REQUEST_END: end, REQUEST_COUNT: end - start + 1 }
 
-async def lookup_profile(request, parameters):
+def decode_ascii(data, code, registers):
+    value = ""
+
+    for r in registers:
+        if (temp := get_addr_value(data, code, r)) is None:
+            return None
+
+        value += chr(temp >> 8) + chr(temp & 0xFF)
+
+    return value
+
+async def lookup_profile(request, parameters, directory):
+    # A profile can declare its own identification under "autodetection" (code/start/end
+    # to probe, "equals" to match the decoded ASCII value against — a single string or a
+    # list of confirmed strings, e.g. distinct model numbers on the same register layout),
+    # so adding autodetection support for a new profile is a YAML-only change. Tried before
+    # the Deye-specific probe below: an explicit, confirmed exact-string match is higher
+    # confidence than inferring a profile from a numeric code at register 0.
+    for file in sorted(Path(directory).glob("*.yaml")):
+        try:
+            if not (auto := (await yaml_open(file)).get("autodetection")):
+                continue
+        except Exception:
+            continue
+
+        try:
+            response = await request(requests = create_request(auto["code"], auto["start"], auto["end"]))
+        except TimeoutError:
+            raise
+        except Exception:
+            continue
+
+        if response and (value := decode_ascii(response, auto["code"], list(range(auto["start"], auto["end"] + 1)))) is not None:
+            # Padding byte is device-specific and unconfirmed (nulls, spaces, 0xFF, ...),
+            # so strip anything outside printable ASCII rather than assuming which one it is.
+            filtered = "".join(c for c in value if "\x20" <= c <= "\x7e").strip()
+            equals = auto["equals"]
+            if filtered in (equals if isinstance(equals, list) else (equals,)):
+                return file.name
+
+    return await lookup_profile_deye(request, parameters)
+
+async def lookup_profile_deye(request, parameters):
     if (response := await request(requests = create_request(*AUTODETECTION_REQUEST_DEYE))) and (device_type := get_addr_value(response, *AUTODETECTION_DEVICE_DEYE)):
         try:
             f, m, c = next(iter([AUTODETECTION_DEYE[i] for i in AUTODETECTION_DEYE if device_type in i]))

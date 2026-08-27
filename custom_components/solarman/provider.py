@@ -133,6 +133,6 @@ class ProfileProvider:
         return self.parser.info
 
     async def init(self, request: Callable[[int, dict], Awaitable[dict]] | None = None):
-        if (f := await lookup_profile(request, self.parameters) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)):
+        if (f := await lookup_profile(request, self.parameters, self.config.directory) if self.auto else self.filename) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)):
             self.parser = await ParameterParser().init(self.config.directory, n, self.parameters)
         return self

@@ -1,0 +1,575 @@
+#
+# Bexie | Hybrid Inverter | Single Phase | LV Battery | 2 MPPT
+#
+# https://bexieenergy.com/product/be3-6-6kw-1ph/
+#
+# Reference: https://github.com/user-attachments/files/17295986/Hybrid.Modbus.Protocol.per.inverter.ibridi.pdf
+# Register map closely matches CHINT CPS-SCETL pattern (same Modbus protocol document).
+#
+# Notes:
+#   - 32-bit registers use inverted word order: [high_addr, low_addr] (same as CHINT)
+#   - Battery Temperature: 0x201B confirmed (0x2001 returns 0 on this device)
+#   - Battery Power: 0x200A/0x2009 pair confirmed (781W @ 52.7V / 14.81A).
+#     Reading 0x200A alone as signed 16 (rule 2) overflows above 3276.7W,
+#     flipping the sign and misreporting high-power discharge as charging —
+#     reproduced live under Feed-in Priority (5397W discharge, confirmed via
+#     Battery Current x Voltage, read back as -1156.6W under the old rule 2
+#     definition; 0x2009 read 0x0000, the expected high word for a value that
+#     fits in the low 16 bits). Fixed by reading the signed 32-bit pair
+#     (rule 4), matching Battery Current's pattern.
+#
+# Differences from CHINT CPS-SCETL:
+#   1. Single phase only — no L1/L2/L3 output, grid current, or per-phase load entities.
+#   2. 2 MPPTs only — CHINT supports up to 9; PV3–PV9 entries are absent here.
+#   3. Battery Temperature uses 0x201B (unsigned 16, rule 1); CHINT uses 0x2001
+#      (signed 16, rule 2). Register 0x2001 returns 0 on this device.
+#   4. Battery Power reads the same [0x200A, 0x2009] pair as CHINT, but as
+#      signed 32-bit (rule 4) rather than CHINT's unsigned 32-bit (rule 3) —
+#      needed so discharge (positive) and charge (negative) both read correctly.
+#   5. Writable control registers added (0x2100+): Work Mode (select),
+#      Grid Charge (switch), Grid Charge End SOC (number). Not present in CHINT profile.
+#   6. Inverter Mode sensor added (0x101D). Not present in CHINT profile.
+#   7. Device info block at 0x1A00+ confirmed on this device, offsets match
+#      CHINT exactly. "Device Protocol Version" (CHINT: 0x1A1C, rule 7) is
+#      omitted here — that register overlaps the start of Master Software
+#      Version and decodes to garbage when nibble-split. CHINT's "EMS
+#      firmware" fields are named "CSB" here per the Bexie app's own naming
+#      for the same registers. "Device" (0x1A00+) decodes to "BE6KW-1PH" on
+#      this unit — the SKU string, not a manufacturer name; do not assume
+#      other Bexie models share this prefix.
+#   8. No EPS group — not available on this model.
+#   9. No fault registers — 0x101E–0x1020 and 0x2013 not yet confirmed on this device.
+#  10. Default update_interval is 30 s (CHINT uses 60 s).
+#
+
+info:
+  manufacturer: Bexie
+  model: Hybrid
+
+# Lets "Auto" profile selection identify this device: reads the "Device" ASCII block
+# below (0x1A00-0x1A0F) and matches on the exact SKU string confirmed on real hardware.
+# CHINT CPS-SCETL shares this same register block but reports a different string, so an
+# exact match (not a prefix/substring match) is required to tell the two apart.
+autodetection:
+  code: 0x03
+  start: 0x1A00
+  end: 0x1A0F
+  equals: "BE6KW-1PH"
+
+default:
+  update_interval: 30
+  digits: 6
+
+parameters:
+  - group: info
+    update_interval: 3600
+    items:
+      - name: "Device"
+        rule: 5 # ASCII String
+        registers:
+          [
+            0x1A00,
+            0x1A01,
+            0x1A02,
+            0x1A03,
+            0x1A04,
+            0x1A05,
+            0x1A06,
+            0x1A07,
+            0x1A08,
+            0x1A09,
+            0x1A0A,
+            0x1A0B,
+            0x1A0C,
+            0x1A0D,
+            0x1A0E,
+            0x1A0F,
+          ]
+        icon: "mdi:information"
+        attributes:
+          [
+            "Device Serial Number",
+            "Master Software Version",
+            "Master Software Build Date",
+            "Slave Firmware Version",
+            "Slave Firmware Build Date",
+            "Device MPPTs",
+            "Device Rated Voltage",
+            "Device Rated Frequency",
+            "Device Rated Power",
+            "Device Phases",
+            "Production Type",
+            "CSB Firmware Version",
+            "CSB Firmware Build Date",
+            "DCDC Firmware Version",
+            "DCDC Firmware Build Date",
+          ]
+
+      - name: "Device Serial Number"
+        attribute:
+        rule: 5 # ASCII String
+        registers:
+          [0x1A10, 0x1A11, 0x1A12, 0x1A13, 0x1A14, 0x1A15, 0x1A16, 0x1A17]
+
+      - name: "Master Software Version"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A1C, 0x1A1D, 0x1A1E]
+
+      - name: "Master Software Build Date"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A23, 0x1A24, 0x1A25]
+
+      - name: "Slave Firmware Version"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A26, 0x1A27, 0x1A28]
+
+      - name: "Slave Firmware Build Date"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A2D, 0x1A2E, 0x1A2F]
+
+      - name: "Device MPPTs"
+        attribute:
+        rule: 1 # unsigned data
+        registers: [0x1A3B]
+
+      - name: "Device Rated Voltage"
+        attribute:
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1A44]
+
+      - name: "Device Rated Frequency"
+        attribute:
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x1A45]
+
+      - name: "Device Rated Power"
+        attribute:
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 1
+        rule: 1
+        registers: [0x1A46]
+
+      - name: "Device Phases"
+        attribute:
+        rule: 1
+        registers: [0x1A48]
+
+      - name: "Production Type"
+        attribute:
+        class: "enum"
+        rule: 1
+        registers: [0x1A5A]
+        lookup:
+          - key: 0x0000
+            value: "On grid"
+          - key: [0x0001]
+            value: "AC couple no smart load"
+          - key: [0x0002]
+            value: "Hybrid no smart load"
+          - key: [0x0003]
+            value: "Hybrid with smart load"
+          - key: [0x0004]
+            value: "AC couple with smart load"
+
+      - name: "CSB Firmware Version"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A60, 0x1A61, 0x1A62]
+
+      - name: "CSB Firmware Build Date"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A67, 0x1A68, 0x1A69]
+
+      - name: "DCDC Firmware Version"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A6F, 0x1A70, 0x1A71]
+
+      - name: "DCDC Firmware Build Date"
+        attribute:
+        rule: 5 # ASCII String
+        registers: [0x1A76, 0x1A77, 0x1A78]
+
+  - group: PV
+    items:
+      - name: "PV Power"
+        alt: "DC Power"
+        mppt: 1
+        description: "Combined power of all inputs"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1049, 0x1048]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Voltage"
+        alt: "DC1 Voltage"
+        mppt: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1010]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Current"
+        alt: "DC1 Current"
+        mppt: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1011]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        alt: "DC1 Power"
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1013, 0x1012]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Voltage"
+        alt: "DC2 Voltage"
+        mppt: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x1014]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Current"
+        alt: "DC2 Current"
+        mppt: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [0x1015]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV2 Power"
+        alt: "DC2 Power"
+        mppt: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 3 # unsigned 32
+        registers: [0x1017, 0x1016]
+        icon: "mdi:solar-power-variant"
+
+  - group: meter
+    items:
+      - name: "Inverter Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 1
+        rule: 2 # signed 16
+        update_interval: 90
+        registers: [0x101C]
+        icon: "mdi:thermometer"
+
+      - name: "Inverter Mode"
+        class: "enum"
+        rule: 1
+        registers: [0x101D]
+        icon: "mdi:information"
+        lookup:
+          - key: 0x0000
+            value: "Waiting"
+          - key: 0x0001
+            value: "Self-test"
+          - key: 0x0002
+            value: "On grid"
+          - key: 0x0003
+            value: "Back-up"
+          - key: 0x0004
+            value: "Flash"
+          - key: 0x0005
+            value: "Fault"
+
+  - group: energy
+    update_interval: 300
+    items:
+      - name: "Today Production"
+        alt: "Daily Production"
+        friendly_name: "Today's Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 1
+        rule: 3 # unsigned 32
+        registers: [0x1028, 0x1027]
+        icon: "mdi:solar-power"
+
+      - name: "Total Production"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        icon: "mdi:solar-power"
+        sensors:
+          - registers: [0x1022, 0x1021]
+          - registers: [0x104C]
+            scale: 0.001
+        validation:
+          min: 0.001
+          dev: 100
+          invalidate_all: 2
+
+      - name: "Today Energy Import"
+        alt: "Today Energy Bought"
+        description: "Energy imported from the grid today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1333, 0x1332]
+        icon: "mdi:transmission-tower-export"
+
+      - name: "Today Energy Export"
+        alt: "Today Energy Sold"
+        description: "Energy exported to the grid today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1335, 0x1334]
+        icon: "mdi:transmission-tower-import"
+
+      - name: "Today Load Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x1337, 0x1336]
+
+      - name: "Total Energy Import"
+        alt: "Total Energy Bought"
+        description: "Total energy imported from the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        digits: 2
+        rule: 3
+        registers: [0x1307, 0x1306]
+        icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.01
+
+      - name: "Total Energy Export"
+        alt: "Total Energy Sold"
+        description: "Total energy exported to the grid"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        digits: 2
+        rule: 3
+        registers: [0x1309, 0x1308]
+        icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.01
+
+      - name: "Total Load Consumption"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.01
+        rule: 3
+        registers: [0x1311, 0x1310]
+        validation:
+          min: 0.01
+
+  - group: grid
+    items:
+      - name: "Grid Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        update_interval: 90
+        registers: [0x131A]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        update_interval: 90
+        registers: [0x1338]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x1301, 0x1300]
+        icon: "mdi:transmission-tower"
+
+  - group: load
+    items:
+      - name: "Load Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32
+        registers: [0x130B, 0x130A]
+        icon: "mdi:home-lightning-bolt"
+
+  - group: control
+    update_interval: 60
+    items:
+      - name: "Work Mode"
+        platform: select
+        rule: 1
+        registers: [0x2100]
+        icon: "mdi:solar-power"
+        lookup:
+          - key: 0x0000
+            value: "Self Use"
+          - key: 0x0001
+            value: "Feed-in Priority"
+          - key: 0x0002
+            value: "Time-based Control"
+          - key: 0x0003
+            value: "Back-up"
+
+      - name: "Grid Charge"
+        platform: switch
+        rule: 1
+        registers: [0x2115]
+        icon: "mdi:transmission-tower-export"
+        value:
+          on: 0x0001
+          off: 0x0000
+
+      - name: "Grid Charge End SOC"
+        platform: number
+        class: "battery"
+        uom: "%"
+        rule: 1
+        registers: [0x2117]
+        icon: "mdi:battery-charging"
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+
+  - group: battery
+    items:
+      - name: "Battery SOC"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x2000]
+        icon: "mdi:battery"
+
+      - name: "Battery Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 1
+        rule: 1 # unsigned 16 — 0x201B confirmed on this device (0x2001 returns 0)
+        update_interval: 90
+        registers: [0x201B]
+        icon: "mdi:thermometer"
+
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x2006]
+        icon: "mdi:voltage-dc"
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 4 # signed 32 — negative = charging, positive = discharging
+        registers: [0x2008, 0x2007]
+        icon: "mdi:current-dc"
+
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 0.1
+        rule: 4 # signed 32 — negative = charging, positive = discharging
+        registers: [0x200A, 0x2009]
+        icon: "mdi:battery-charging"
+
+  - group: battery_energy
+    update_interval: 300
+    items:
+      - name: "Today Battery Charge"
+        alt: "Daily Battery Charge"
+        friendly_name: "Today's Battery Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x200C, 0x200B]
+        icon: "mdi:battery-plus"
+        range:
+          max: 0xFFFFFFF9
+
+      - name: "Today Battery Discharge"
+        alt: "Daily Battery Discharge"
+        friendly_name: "Today's Battery Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "Wh"
+        scale: 10
+        rule: 3
+        registers: [0x2010, 0x200F]
+        icon: "mdi:battery-minus"
+        range:
+          max: 0xFFFFFFF9
