@@ -1361,16 +1361,15 @@ parameters:
 
       - name: "ARM Error Text"
         update_interval: 30
-        rule: 1
-        lookup:
-          - {key: 0, value: "DSP communication error"}
-          - {key: default, value: "Unknown ARM error"}
+        rule: 11
         registers: [3194]
+        bit_messages:
+          - {bit: 0, value: "F32: DSP communication error"}
         icon: "mdi:alert-circle-outline"
 
       - name: "ARM Error Code"
         update_interval: 30
-        rule: 1
+        rule: 6
         registers: [3194]
         icon: "mdi:alert-circle-outline"
 
