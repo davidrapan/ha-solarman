@@ -171,6 +171,8 @@ class ParameterParser:
                                 self.try_parse_time(data, i)
                             case 10:
                                 self.try_parse_raw(data, i)
+                            case 11:
+                                self.try_parse_diagnostic(data, i)
                     except Exception as e:
                         _LOGGER.error(f"ParameterParser.try_parse: data: {data}, definition: {i} [{strepr(e)}]")
                         raise
@@ -308,6 +310,17 @@ class ParameterParser:
         if (a := definition.get("attributes")) is not None and "value" in a:
             self.set_state(key, self._result[key][0], int(value))
 
+    def try_parse_diagnostic(self, data, definition):
+        if (value := self._read_registers(data, definition)) is None:
+            return
+
+        self.set_state(definition["key"], self._decode_diagnostic(value, definition))
+
+    def _decode_diagnostic(self, value, definition):
+        entries = definition.get("bit_messages", [])
+        active = [entry["value"] for entry in entries if value & (1 << entry["bit"])]
+        return ", ".join(active) if active else "None"
+
     def try_parse_signed(self, data, definition):
         if (value := self._read_registers_signed(data, definition) if not "sensors" in definition else self._read_registers_custom(data, definition)) is None:
             return
@@ -350,6 +363,25 @@ class ParameterParser:
 
     def try_parse_version(self, data, definition):
         code = get_code(definition, "read")
+
+        # Extendable to support other version encodings in the future
+        if (encoding := definition.get("version_encoding")) is not None:
+            if encoding != "u8_major_minor_patch":
+                raise ValueError(f"Unsupported version encoding: {encoding}")
+
+            delimiter_digit, delimiter_register = (d, "-") if (d := definition.get("delimiter", ".")) is not None and isinstance(d, str) else (d.get("digit", "."), d.get("register", "-"))
+            components = []
+            for r in definition["registers"]:
+                if (temp := get_addr_value(data, code, r)) is None:
+                    return
+
+                major_minor = (temp >> 8) & 0xFF
+                components.append(delimiter_digit.join((str(major_minor // 10), str(major_minor % 10), str(temp & 0xFF))))
+
+            self.set_state(definition["key"], delimiter_register.join(components))
+            return
+
+        # Fallback parsing for non-version values
         f = "{:1x}" if "hex" in definition else "{:1d}"
         delimiter_digit, delimiter_register = (d, "-") if (d := definition.get("delimiter", '.')) is not None and isinstance(d, str) else (d.get("digit", "."), d.get("register", "-"))
         value = ""

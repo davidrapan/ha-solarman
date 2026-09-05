@@ -806,19 +806,20 @@ parameters:
         code: 0x03
         icon: "mdi:wrench"
 
-      # ARM AND DSP version numbers ("VX.Y.Z") are set in the two bytes on each register. The first byte contains the
-      # X.Y part (scale 0.1), and the second by contains the Z part. How should we transform these values from a number
-      # to a parsed string?
+      # ARM AND DSP version numbers ("X.Y.Z") are set in the two bytes on each register. 
+      # The first byte contains the X.Y part (scale 0.1), and the second byte contains the Z part.
       - name: "ARM Version Number"
         update_interval: 600
-        rule: 1
+        rule: 7
+        version_encoding: "u8_major_minor_patch"
         registers: [3216]
         code: 0x03
         icon: "mdi:wrench"
 
       - name: "DSP Version Number"
         update_interval: 600
-        rule: 1
+        rule: 7
+        version_encoding: "u8_major_minor_patch"
         registers: [3217]
         code: 0x03
         icon: "mdi:wrench"
