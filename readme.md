@@ -19,7 +19,7 @@
 > [!IMPORTANT]  
 > - Made for [🏡 Home Assistant](https://www.home-assistant.io/)  
 > - Read about [✍ crucial changes & new features](https://github.com/davidrapan/ha-solarman/wiki#-changes)  
-> - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Modbus TCP ([ESP](https://github.com/davidrapan/esphome-modbus_bridge), [Waveshare](https://www.waveshare.com/wiki/RS485_TO_ETH_(B)), [Ethernet logger](https://www.solarmanpv.com/download/lse-3/), etc.)
+> - Built on asynchronous [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) and supports Modbus TCP ([ESP](https://github.com/davidrapan/esphome-modbus_bridge), [Waveshare](https://www.waveshare.com/wiki/RS485_TO_ETH_(B)), [Ethernet logger](https://www.solarmanpv.com/download/lse-3/), etc.) as well as a [Shelly Modbus add-on](contrib/shelly_modbus_proxy) as a dongle-free alternative
 
 > [!NOTE]  
 > - If you are curious about what's planned next look into [🪧 Milestones](https://github.com/davidrapan/ha-solarman/milestones)  
