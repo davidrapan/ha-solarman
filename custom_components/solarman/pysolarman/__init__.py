@@ -97,7 +97,8 @@ class Solarman:
         match value:
             case int():
                 self._serial = value
-                self.serial_bytes = struct.pack("<I", value) if 2147483648 <= value <= 4294967295 else PROTOCOL.PLACEHOLDER3
+                # Any non-zero 32-bit serial is valid, older loggers use serials < 2^31 (e.g. LSW-3 17xxxxxxxx) and do not answer a placeholder serial
+                self.serial_bytes = struct.pack("<I", value) if 0 < value <= 0xFFFFFFFF else PROTOCOL.PLACEHOLDER3
             case bytes():
                 self._serial = int.from_bytes(value, "little")
                 self.serial_bytes = value
