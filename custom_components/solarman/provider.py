@@ -133,6 +133,7 @@ class ProfileProvider:
         return self.parser.info
 
     async def init(self, request: Callable[[int, dict], Awaitable[dict]] | None = None):
+        # Run lookup_profile for deye_hybrid_new.yaml as well to auto-detect MPPT and phase count from hardware registers while keeping the selected profile filename
         if (f := (await lookup_profile(request, self.parameters) if self.auto else (await lookup_profile(request, self.parameters) and self.filename if self.filename == "deye_hybrid_new.yaml" else self.filename))) and f != DEFAULT_[CONF_LOOKUP_FILE] and (n := process_profile(f, self.parameters)):
             self.parser = await ParameterParser().init(self.config.directory, n, self.parameters)
         return self

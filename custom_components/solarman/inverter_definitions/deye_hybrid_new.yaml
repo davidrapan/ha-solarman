@@ -5,7 +5,23 @@
 #   Modbus RTU single phase (1P) V119
 #   https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
 #
-# Full register set including all V119 sensors, BMS entities, energy counters, and controls.
+# Full register set including all V119 sensors, BMS entities, energy counters, and controls:
+#   - Includes all V119 compliance fixes from deye_hybrid.yaml (0x0009 Chip Type, 0x0012 MPPT/Phase range,
+#     0x002B Main Switch, 0x00A6 signed Generator Power, 0x00D6 inverted Battery Wake Up, 0x00F2 masked Charging Signal,
+#     0x0106..0x010B 63V Program Voltage, 0x011A Grid Reconnection Time, 0x0146 bit-masked Meter & AC Coupling,
+#     0x0144 Force Charge bit).
+#   - Adds V119-specific controls: Remote Lock (0x0014), ATS Enable/Status, Low Power Mode & MPPT Multi-Point Scanning (0x001C),
+#     Low Noise Mode (0x0022), Import Power Limiter (0x0024), Battery Absorption Time (0x002E), BMS Lithium Protocol (0x0030).
+#   - Adds Hardware Matching sensors (0x0035), AC Power Ratio (0x0036), Rated Grid Voltage (0x0013), and full F01..F64 Fault lookup (0x0067..0x006A).
+#   - Adds Monthly & Yearly energy counters (0x0041..0x0045, 0x0057..0x0058, 0x0062..0x0063), Generator Daily Operating Time (0x0053),
+#     Battery SOH & Life Cycles (rule 0), Battery Hardware Status (0x00B9), Battery Corrected Capacity (0x006B),
+#     Relay Middle Voltage (0x0099), UPS Power sensors (0x0075..0x0077), and Gen/SmartLoad & Grid Relay Status (0x00C3).
+#   - Exposes all BMS metrics (0x0138..0x0144, including 0x013F BMS Temperature) as standalone sensors as well as Battery attributes.
+#   - Adds extended Work Mode & Grid settings: Solar Input Mode (0x00E9), Generator Force Load (0x00EA), TOU GM/BU/CH modes (0x0112..0x0117),
+#     External Relay / Lithium Loss Fault / DRM (0x0118), External CT Direction Auto-Detect (0x0119), Force Off-Grid enabled by default (0x01A0),
+#     Solar Arc Fault Mode (0x011B), Grid Mode standards (0x011C), Grid Type (0x011E), SmartLoad Open Delay (0x0126), Output PF Value (0x0127),
+#     UPS Time (0x0137), Meter Phase A/B/C, Meter Type & Meter 2 (0x0146), External CT Ratio (0x0147), AC Couple Frequency High (0x0149),
+#     and Solar 1/2 Wind Input switches (0x0186..0x0187).
 #
 
 info:

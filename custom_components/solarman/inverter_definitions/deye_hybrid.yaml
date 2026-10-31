@@ -7,6 +7,21 @@
 #
 # Tested (backward-compatible with older firmware versions)
 #
+# Recent V119 & Legacy Compatibility Changes:
+#   - 0x0009 (Device Chip Type): Added mask 0x000F, 0x0000 "Unknown" fallback, and aligned 1..4 chip codes with V119.
+#   - 0x0012 (Device MPPTs / Phases): Updated range.min to 1 (post-mask/divide validation) and default phases to 1.
+#   - 0x002B (Main On/Off Switch): Removed microinverter-only off=0x0002 override; uses standard 0=off, 1=on per V119.
+#   - 0x006B (Battery Corrected Capacity) & 0x013F (Battery BMS Temperature): Added as attributes on Battery (0x00B8).
+#   - Power losses: Included MPPT 3 (0x00BC) and MPPT 4 (0x00BD) for 3/4-MPPT hybrid models.
+#   - 0x00A6 (Generator Power): Changed rule from 1 (unsigned) to 2 (signed) for negative Microinverter input power.
+#   - 0x00D6 (Battery Wake Up): Inverted switch logic (on: 0x0000, off: 0x0001) per V119 (0=Enabled, 1=Disable).
+#   - 0x00F2 (Charging Signal): Added display.mask 0x0003 so upper bits do not break lookup or get overwritten.
+#   - 0x0106..0x010B (Program 1..6 Voltage): Raised max voltage limit from 61V to 63V (6300) per V119.
+#   - 0x01A0 (Off Grid): Moved from 0x0119 (External CT Auto-Detect) to 0x01A0 (416) and disabled by default for legacy firmware safety.
+#   - 0x011A (Grid reconnection time): Updated range.min from 1s to 10s per V119 [10, 300].
+#   - 0x0146 (Meter & AC Coupling): Added bit 0 mask for Meter and display.mask 0x00C0 for AC Coupling to preserve other bits in Ex_MeterCT.
+#   - 0x0144 (Battery BMS Other Symbol): Corrected Bit 1 from "OCP" to "Force charge" per V119.
+#
 
 info:
   manufacturer: Deye
@@ -89,6 +104,7 @@ parameters:
           - key: 8
             value: "Single-Phase Storage"
 
+      # V119 reg 9: Low 4 bits select MCU chip type (1=AT32F403A, 2=SXX32F103, 3=GD32F103, 4=GD32F303; 0=Unknown on older firmware)
       - name: "Device Chip Type"
         attribute:
         class: "enum"
@@ -133,6 +149,8 @@ parameters:
           max: 18000
           default: 18000
 
+      # V119 reg 18: High byte (bits 8-11) = MPPT count, Low nibble (bits 0-3) = Phase count.
+      # Note: range.min is 1 because ParameterParser evaluates range after mask and divide.
       - name: "Device MPPTs"
         attribute:
         rule: 1
@@ -176,6 +194,7 @@ parameters:
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
 
+      # V119 reg 43 (0x002B): 0 = Power Off, 1 = Power On (uses default switch values on=1, off=0; value 2 is for microinverters only)
       - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: switch
         update_interval: 30
@@ -2409,6 +2428,8 @@ parameters:
         value:
           bit: 12
 
+      # V119 reg 416 (0x01A0): Force off-grid operation bit (previously misassigned to 0x0119 which is External CT Auto-Detect).
+      # Disabled by default in deye_hybrid.yaml so older firmwares do not poll register 416 unless enabled by the user.
       - name: Off Grid
         description: Force off-grid operation (disabled by default to avoid polling register 0x01A0 on older firmware)
         disabled:
@@ -2419,6 +2440,7 @@ parameters:
           max: 1
         registers: [0x01A0]
 
+      # V119 reg 282 (0x011A): Valid range is [10, 300] seconds
       - name: Grid reconnection time
         platform: number
         uom: "s"
@@ -2547,6 +2569,8 @@ parameters:
           - key: 0x000A
             value: "Shenggao Electric CAN"
 
+      # V119 reg 326 (0x0146, Ex_MeterCT): Packed bitfield register.
+      # Bit 0 = Meter 1 enable, Bits 1-3 = Phase A/B/C, Bits 6-7 = AC Couple side (0x00C0), Bits 8-11 = Meter type, Bit 12 = Meter 2, Bit 13 = Gen Force.
       - name: "Meter"
         description: Ex_Meter For CT
         platform: "switch"
