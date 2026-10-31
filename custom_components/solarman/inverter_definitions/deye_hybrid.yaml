@@ -1,9 +1,11 @@
 #
 # Deye | Hybrid Inverter
 #
-# Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+# Reference:
+#   https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+#   Modbus RTU single phase (1P) V119
 #
-# Tested
+# Tested (backward-compatible with older firmware versions)
 #
 
 info:
@@ -91,15 +93,18 @@ parameters:
         attribute:
         class: "enum"
         rule: 1
+        mask: 0x000F
         registers: [0x0009]
         lookup:
           - key: 0x0000
-            value: "AT32F403A"
+            value: "Unknown"
           - key: 0x0001
-            value: "SXX32F103"
+            value: "AT32F403A"
           - key: 0x0002
-            value: "GD32F103"
+            value: "SXX32F103"
           - key: 0x0003
+            value: "GD32F103"
+          - key: 0x0004
             value: "GD32F303"
 
       - name: "Device Control Board Firmware Version"
@@ -135,7 +140,7 @@ parameters:
         divide: 256
         registers: [0x0012]
         range:
-          min: 257
+          min: 1
         validation:
           max: 12
           default: 2
@@ -146,10 +151,10 @@ parameters:
         mask: 0x000F
         registers: [0x0012]
         range:
-          min: 257
+          min: 1
         validation:
           max: 3
-          default: 3
+          default: 1
 
   - group: Control
     update_interval: 5
@@ -176,9 +181,6 @@ parameters:
         update_interval: 30
         rule: 1
         registers: [0x002B]
-        value:
-          on: 0x0001
-          off: 0x0002
 
       - name: "Device State"
         class: "enum"
@@ -658,9 +660,11 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery Corrected Capacity",
             "Battery BMS SOC",
             "Battery BMS Current",
             "Battery BMS Voltage",
+            "Battery BMS Temperature",
             "Battery BMS Other Symbol",
             "Battery BMS Charging Voltage",
             "Battery BMS Discharging Voltage",
@@ -675,7 +679,7 @@ parameters:
         class: "enum"
         rule: 0
         #rule: 1 # Not working???
-        #registers: [0x00BD]
+        #registers: [0x00B9]
         #lookup: - key: 0 value: "charging" - key: 1 value: "idle" - key: 2 value: "discharging"
         options: ["charging", "idle", "discharging"]
         icon: "mdi:battery"
@@ -705,6 +709,17 @@ parameters:
         rule: 0
         digits: 1
         icon: "mdi:battery-check"
+
+      - name: "Battery Corrected Capacity"
+        attribute:
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x006B]
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 3000
 
   - group: Grid
     items:
@@ -1024,6 +1039,10 @@ parameters:
         sensors:
           - registers: [0x00BA]
           - registers: [0x00BB]
+          - mppt: 3
+            registers: [0x00BC]
+          - mppt: 4
+            registers: [0x00BD]
           - signed:
             registers: [0x00BE]
           - operator: subtract
@@ -1061,7 +1080,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 1
+        rule: 2
         registers: [0x00A6]
 
       - name: "Generator Voltage"
@@ -1283,6 +1302,9 @@ parameters:
         platform: "switch"
         rule: 1
         registers: [0x00D6]
+        value:
+          on: 0x0000
+          off: 0x0001
 
       - name: Battery Resistance
         platform: number
@@ -1647,6 +1669,8 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x00F2]
+        display:
+          mask: 0x0003
         lookup:
           - key: 0x0000
             value: "Normal"
@@ -1701,7 +1725,7 @@ parameters:
         registers: [0x00F7]
 
       - name: PV Power
-        description: Max PV power limiter
+        description: Max PV power limiter (supported on older firmware; newer V119 firmware uses 0x0035 for Hardware Matching)
         alt: Max Solar Power
         platform: number
         class: "power"
@@ -1901,12 +1925,12 @@ parameters:
         registers: [0x0106]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 2 Voltage
@@ -1919,12 +1943,12 @@ parameters:
         registers: [0x0107]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 3 Voltage
@@ -1937,12 +1961,12 @@ parameters:
         registers: [0x0108]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 4 Voltage
@@ -1955,12 +1979,12 @@ parameters:
         registers: [0x0109]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 5 Voltage
@@ -1973,12 +1997,12 @@ parameters:
         registers: [0x010A]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 6 Voltage
@@ -1991,12 +2015,12 @@ parameters:
         registers: [0x010B]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: "Program 1 SOC"
@@ -2386,19 +2410,21 @@ parameters:
           bit: 12
 
       - name: Off Grid
+        description: Force off-grid operation (disabled by default to avoid polling register 0x01A0 on older firmware)
+        disabled:
         platform: switch
         rule: 1
         range:
           min: 0
           max: 1
-        registers: [0x0119]
+        registers: [0x01A0]
 
       - name: Grid reconnection time
         platform: number
         uom: "s"
         rule: 1
         range:
-          min: 1
+          min: 10
           max: 300
         registers: [0x011A]
 
@@ -2526,21 +2552,22 @@ parameters:
         platform: "switch"
         rule: 1
         registers: [0x0146]
+        value:
+          bit: 0
 
       - name: AC Coupling
         description: Couple inverters and batteries using AC lines
         platform: "select"
         rule: 1
         registers: [0x0146]
+        display:
+          mask: 0x00C0
         lookup:
-          - bit: 0
-            mode: "|"
+          - key: 0
             value: Disabled
           - bit: 6
-            mode: "|"
             value: Grid
           - bit: 7
-            mode: "|"
             value: Load
 
   - group: BMS
@@ -2611,6 +2638,16 @@ parameters:
         registers: [0x013E]
         icon: "mdi:current-dc"
 
+      - name: "Battery BMS Temperature"
+        attribute:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x013F]
+
       - name: "Battery BMS Max Charging Current"
         attribute:
         class: "current"
@@ -2662,4 +2699,4 @@ parameters:
           - bit: 0
             value: "Vacancy"
           - bit: 1
-            value: "OCP"
+            value: "Force charge"
