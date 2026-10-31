@@ -664,6 +664,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00B7]
+        suggested_display_precision: 2
 
       - name: "Battery"
         class: "battery"

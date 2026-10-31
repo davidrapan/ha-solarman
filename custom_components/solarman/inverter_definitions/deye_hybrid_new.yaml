@@ -15,7 +15,8 @@
 #   - Adds AC Power Ratio (0x0036), Rated Grid Voltage (0x0013), and full F01..F64 Fault lookup (0x0067..0x006A).
 #   - Adds Generator Daily Operating Time (0x0053), Battery SOH & Life Cycles (rule 0), Battery Hardware Status (0x00B9),
 #     Battery Corrected Capacity (0x006B), UPS Power sensors (0x0075..0x0077), and Gen/SmartLoad & Grid Relay Status (0x00C3).
-#   - Exposes all BMS metrics (0x0138..0x0144, including 0x013F BMS Temperature) as standalone sensors as well as Battery attributes.
+#   - Exposes active CAN BMS metrics (0x0138, 0x013A..0x013F, including 0x013F BMS Temperature) as standalone sensors as well as Battery attributes,
+#     while keeping unused/RS485-only BMS registers (0x0139, 0x0140..0x0141, 0x0144) as Battery attributes only (matching main).
 #   - Adds extended Work Mode & Grid settings: Solar Input Mode (0x00E9), Generator Force Load (0x00EA),
 #     External Relay / Lithium Loss Fault / DRM (0x0118), External CT Direction Auto-Detect (0x0119), Force Off-Grid enabled by default (0x01A0),
 #     Solar Arc Fault Mode (0x011B), Grid Mode standards (0x011C), Grid Type (0x011E), SmartLoad Open Delay (0x0126), Output PF Value (0x0127),
@@ -883,6 +884,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00B7]
+        suggested_display_precision: 2
 
       - name: "Battery"
         class: "battery"
@@ -3146,8 +3148,10 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0138]
+        suggested_display_precision: 2
 
       - name: "Battery BMS Discharging Voltage"
+        attribute:
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -3189,6 +3193,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x013D]
+        suggested_display_precision: 2
 
       - name: "Battery BMS Current"
         class: "current"
@@ -3208,6 +3213,7 @@ parameters:
         registers: [0x013F]
 
       - name: "Battery BMS Max Charging Current"
+        attribute:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -3216,6 +3222,7 @@ parameters:
         icon: "mdi:current-dc"
 
       - name: "Battery BMS Max Discharging Current"
+        attribute:
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -3243,7 +3250,7 @@ parameters:
         attributes: ["value"]
 
       - name: "Battery BMS Other Symbol"
-        class: "enum"
+        attribute:
         rule: 1
         registers: [0x0144]
         icon: "mdi:battery-unknown"
