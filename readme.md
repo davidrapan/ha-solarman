@@ -38,6 +38,9 @@
 
 ## ⚙️ Configuration
 
+SOFAR 4KTLM-G3 users: see the [tested single-phase profile](docs/sofar_4ktlm-g3.md)
+for installation, aligned request ranges and validation details.
+
 [![⚙️ Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=solarman)
 
 - Go to Settings > Devices & services > Integrations
