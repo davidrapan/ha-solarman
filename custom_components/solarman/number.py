@@ -43,6 +43,10 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
         if "offset" in sensor:
             self.offset = get_number(sensor["offset"])
 
+        self.divide = None
+        if "divide" in sensor:
+            self.divide = get_number(sensor["divide"])
+
         if "configurable" in sensor and (configurable := sensor["configurable"]):
             if "mode" in configurable:
                 self._attr_mode = configurable["mode"]
@@ -63,6 +67,8 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Update the setting."""
         value_int = int(value if self.scale is None else value / self.scale)
+        if self.divide is not None:
+            value_int *= int(self.divide)
         if self.offset is not None:
             value_int += self.offset
         await self.write(value_int if value_int < 0xFFFF else 0xFFFF, get_number(value))

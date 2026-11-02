@@ -192,9 +192,6 @@ class ParameterParser:
             value += (temp & 0xFFFF) << shift
             shift += 16
 
-        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
-            return range.get("default")
-
         if (mask := definition.get("mask")) is not None:
             value &= mask
 
@@ -205,14 +202,18 @@ class ParameterParser:
             value = int((value & bitmask) / bitmask)
 
         if "lookup" not in definition:
+            if (divide := definition.get("divide")) is not None:
+                value //= divide
+
             if (offset := definition.get("offset")) is not None:
                 value -= offset
 
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
+
+        if "lookup" not in definition:
             if (scale := definition.get("scale")) is not None:
                 value *= scale
-
-            if (divide := definition.get("divide")) is not None:
-                value //= divide
 
         return value
 
@@ -238,17 +239,17 @@ class ParameterParser:
         if value > (maxint >> 1):
             value = (value - maxint - 1) if not magnitude else -(value & (maxint >> 1))
 
-        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
-            return range.get("default")
+        if (divide := definition.get("divide")) is not None:
+            value //= divide
 
         if (offset := definition.get("offset")) is not None:
             value -= offset
 
+        if (range := definition.get("range")) and not self.in_range(definition["key"], value, range):
+            return range.get("default")
+
         if (scale := definition.get("scale")) is not None:
             value *= scale
-
-        if (divide := definition.get("divide")) is not None:
-            value //= divide
 
         return value
     

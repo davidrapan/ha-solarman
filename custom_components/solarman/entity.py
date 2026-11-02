@@ -124,6 +124,7 @@ class SolarmanWritableEntity(SolarmanEntity):
         self.code_write = get_code(sensor, "write", FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS)
         self.register = min(self.registers) if len(self.registers) > 0 else None
         self.maxint = (1 << (16 * len(self.registers))) - 1
+        self.mask = sensor.get("mask")
 
         self.writeback = sensor.get("writeback")
         if self.writeback is not None:
@@ -156,6 +157,12 @@ class SolarmanWritableEntity(SolarmanEntity):
             while len(self.registers) > len(data):
                 data.insert(0, 0)
         current_data = await self.coordinator.device.execute(self.code_read, self.register if not self.writeback else self.writeback_register, count = (1 if not isinstance(data, list) else len(data)) if not self.writeback else self.writeback_count)
+        if self.mask is not None and current_data and len(current_data) > 0:
+            current_val = current_data[0]
+            if isinstance(data, int):
+                data = (current_val & ~self.mask) | (data & self.mask)
+            elif isinstance(data, list) and len(data) > 0:
+                data[0] = (current_val & ~self.mask) | (data[0] & self.mask)
         if self.writeback and (writeback_data := list(current_data)):
             for override in self.writeback_overrides:
                 writeback_data[override["register"] - self.writeback_register] = override["value"]

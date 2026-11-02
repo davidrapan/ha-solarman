@@ -1,9 +1,26 @@
 #
 # Deye | Hybrid Inverter
 #
-# Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+# Reference:
+#   https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+#   Modbus RTU single phase (1P) V119
 #
-# Tested
+# Tested (backward-compatible with older firmware versions)
+#
+# Recent V119 & Legacy Compatibility Changes:
+#   - 0x0009 (Device Chip Type): Added mask 0x000F, 0x0000 "Unknown" fallback, and aligned 1..4 chip codes with V119.
+#   - 0x0012 (Device MPPTs / Phases): Updated range.min to 1 (post-mask/divide validation) and default phases to 1.
+#   - 0x002B (Main On/Off Switch): Removed microinverter-only off=0x0002 override; uses standard 0=off, 1=on per V119.
+#   - 0x006B (Battery Corrected Capacity) & 0x013F (Battery BMS Temperature): Added as attributes on Battery (0x00B8).
+#   - Power losses: Included MPPT 3 (0x00BC) and MPPT 4 (0x00BD) for 3/4-MPPT hybrid models.
+#   - 0x00A6 (Generator Power): Changed rule from 1 (unsigned) to 2 (signed) for negative Microinverter input power.
+#   - 0x00D6 (Battery Wake Up): Inverted switch logic (on: 0x0000, off: 0x0001) per V119 (0=Enabled, 1=Disable).
+#   - 0x00F2 (Charging Signal): Added display.mask 0x0003 so upper bits do not break lookup or get overwritten.
+#   - 0x0106..0x010B (Program 1..6 Voltage): Raised max voltage limit from 61V to 63V (6300) per V119.
+#   - 0x01A0 (Off Grid): Moved from 0x0119 (External CT Auto-Detect) to 0x01A0 (416) and disabled by default for legacy firmware safety.
+#   - 0x011A (Grid reconnection time): Updated range.min from 1s to 10s per V119 [10, 300].
+#   - 0x0146 (Meter & AC Coupling): Added bit 0 mask for Meter and display.mask 0x00C0 for AC Coupling to preserve other bits in Ex_MeterCT.
+#   - 0x0144 (Battery BMS Other Symbol): Corrected Bit 1 from "OCP" to "Force charge" per V119.
 #
 
 info:
@@ -87,19 +104,23 @@ parameters:
           - key: 8
             value: "Single-Phase Storage"
 
+      # V119 reg 9: Low 4 bits select MCU chip type (1=AT32F403A, 2=SXX32F103, 3=GD32F103, 4=GD32F303; 0=Unknown on older firmware)
       - name: "Device Chip Type"
         attribute:
         class: "enum"
         rule: 1
+        mask: 0x000F
         registers: [0x0009]
         lookup:
           - key: 0x0000
-            value: "AT32F403A"
+            value: "Unknown"
           - key: 0x0001
-            value: "SXX32F103"
+            value: "AT32F403A"
           - key: 0x0002
-            value: "GD32F103"
+            value: "SXX32F103"
           - key: 0x0003
+            value: "GD32F103"
+          - key: 0x0004
             value: "GD32F303"
 
       - name: "Device Control Board Firmware Version"
@@ -128,6 +149,8 @@ parameters:
           max: 18000
           default: 18000
 
+      # V119 reg 18: High byte (bits 8-11) = MPPT count, Low nibble (bits 0-3) = Phase count.
+      # Note: range.min is 1 because ParameterParser evaluates range after mask and divide.
       - name: "Device MPPTs"
         attribute:
         rule: 1
@@ -135,7 +158,7 @@ parameters:
         divide: 256
         registers: [0x0012]
         range:
-          min: 257
+          min: 1
         validation:
           max: 12
           default: 2
@@ -146,10 +169,10 @@ parameters:
         mask: 0x000F
         registers: [0x0012]
         range:
-          min: 257
+          min: 1
         validation:
           max: 3
-          default: 3
+          default: 1
 
   - group: Control
     update_interval: 5
@@ -171,14 +194,12 @@ parameters:
         rule: 8
         registers: [0x0016, 0x0017, 0x0018]
 
+      # V119 reg 43 (0x002B): 0 = Power Off, 1 = Power On (uses default switch values on=1, off=0; value 2 is for microinverters only)
       - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: switch
         update_interval: 30
         rule: 1
         registers: [0x002B]
-        value:
-          on: 0x0001
-          off: 0x0002
 
       - name: "Device State"
         class: "enum"
@@ -449,7 +470,7 @@ parameters:
         registers: [0x0048, 0x0049]
         icon: "mdi:battery-plus"
         validation:
-          min: 0.1
+          min: 0
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -460,7 +481,7 @@ parameters:
         registers: [0x004A, 0x004B]
         icon: "mdi:battery-minus"
         validation:
-          min: 0.1
+          min: 0
 
       - name: Today Energy Import
         alt: Today Energy Bought
@@ -494,7 +515,7 @@ parameters:
         registers: [0x004E, 0x0050]
         icon: "mdi:transmission-tower-export"
         validation:
-          min: 0.1
+          min: 0
 
       - name: Total Energy Export
         alt: Total Energy Sold
@@ -506,7 +527,7 @@ parameters:
         registers: [0x0051, 0x0052]
         icon: "mdi:transmission-tower-import"
         validation:
-          min: 0.1
+          min: 0
 
       - name: "Today Load Consumption"
         friendly_name: Today's Load Consumption
@@ -525,7 +546,7 @@ parameters:
         rule: 3
         registers: [0x0055, 0x0056]
         validation:
-          min: 0.1
+          min: 0
 
       - name: Generator Energy - today
         name_lookup: "io_mode_select"
@@ -545,7 +566,7 @@ parameters:
         rule: 3
         registers: [0x005C, 0x005F]
         validation:
-          min: 0.1
+          min: 0
 
       - name: "Today Production"
         friendly_name: Today's Production
@@ -643,6 +664,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x00B7]
+        suggested_display_precision: 2
 
       - name: "Battery"
         class: "battery"
@@ -658,9 +680,11 @@ parameters:
           max: 101
         attributes:
           [
+            "Battery Corrected Capacity",
             "Battery BMS SOC",
             "Battery BMS Current",
             "Battery BMS Voltage",
+            "Battery BMS Temperature",
             "Battery BMS Other Symbol",
             "Battery BMS Charging Voltage",
             "Battery BMS Discharging Voltage",
@@ -675,7 +699,7 @@ parameters:
         class: "enum"
         rule: 0
         #rule: 1 # Not working???
-        #registers: [0x00BD]
+        #registers: [0x00B9]
         #lookup: - key: 0 value: "charging" - key: 1 value: "idle" - key: 2 value: "discharging"
         options: ["charging", "idle", "discharging"]
         icon: "mdi:battery"
@@ -705,6 +729,17 @@ parameters:
         rule: 0
         digits: 1
         icon: "mdi:battery-check"
+
+      - name: "Battery Corrected Capacity"
+        attribute:
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x006B]
+        icon: "mdi:battery"
+        range:
+          min: 0
+          max: 3000
 
   - group: Grid
     items:
@@ -1024,6 +1059,10 @@ parameters:
         sensors:
           - registers: [0x00BA]
           - registers: [0x00BB]
+          - mppt: 3
+            registers: [0x00BC]
+          - mppt: 4
+            registers: [0x00BD]
           - signed:
             registers: [0x00BE]
           - operator: subtract
@@ -1061,7 +1100,7 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 1
+        rule: 2
         registers: [0x00A6]
 
       - name: "Generator Voltage"
@@ -1283,6 +1322,9 @@ parameters:
         platform: "switch"
         rule: 1
         registers: [0x00D6]
+        value:
+          on: 0x0000
+          off: 0x0001
 
       - name: Battery Resistance
         platform: number
@@ -1647,6 +1689,8 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x00F2]
+        display:
+          mask: 0x0003
         lookup:
           - key: 0x0000
             value: "Normal"
@@ -1701,7 +1745,7 @@ parameters:
         registers: [0x00F7]
 
       - name: PV Power
-        description: Max PV power limiter
+        description: Max PV power limiter (supported on older firmware; newer V119 firmware uses 0x0035 for Hardware Matching)
         alt: Max Solar Power
         platform: number
         class: "power"
@@ -1901,12 +1945,12 @@ parameters:
         registers: [0x0106]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 2 Voltage
@@ -1919,12 +1963,12 @@ parameters:
         registers: [0x0107]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 3 Voltage
@@ -1937,12 +1981,12 @@ parameters:
         registers: [0x0108]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 4 Voltage
@@ -1955,12 +1999,12 @@ parameters:
         registers: [0x0109]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 5 Voltage
@@ -1973,12 +2017,12 @@ parameters:
         registers: [0x010A]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: Program 6 Voltage
@@ -1991,12 +2035,12 @@ parameters:
         registers: [0x010B]
         configurable:
           min: 00
-          max: 61
+          max: 63
           step: 0.1
           mode: box
         range:
           min: 0000
-          max: 6100
+          max: 6300
         icon: mdi:sun-clock
 
       - name: "Program 1 SOC"
@@ -2004,180 +2048,354 @@ parameters:
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x010C]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
+
+      - name: "Program 1 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x010C]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
 
       - name: "Program 2 SOC"
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x010D]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
+
+      - name: "Program 2 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x010D]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
 
       - name: "Program 3 SOC"
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x010E]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
+
+      - name: "Program 3 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x010E]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
 
       - name: "Program 4 SOC"
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x010F]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
+
+      - name: "Program 4 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x010F]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
 
       - name: "Program 5 SOC"
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x0110]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
+
+      - name: "Program 5 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x0110]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
 
       - name: "Program 6 SOC"
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x0111]
         configurable:
+          min: 0
+          max: 100
+          step: 1
           mode: box
         range:
           min: 0
           max: 100
         icon: mdi:sun-clock
 
-      - name: Program 1 Charging
-        platform: select
+      - name: "Program 6 Gen SOC"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x0111]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+        range:
+          min: 0
+          max: 100
+        icon: mdi:generator-stationary
+
+      - name: "Program 1 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0112]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
 
-      - name: Program 2 Charging
-        platform: select
+      - name: "Program 1 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0112]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 1 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0112]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
+
+      - name: "Program 2 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0113]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
 
-      - name: Program 3 Charging
-        platform: select
+      - name: "Program 2 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0113]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 2 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0113]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
+
+      - name: "Program 3 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0114]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
 
-      - name: Program 4 Charging
-        platform: select
+      - name: "Program 3 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0114]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 3 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0114]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
+
+      - name: "Program 4 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0115]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
 
-      - name: Program 5 Charging
-        platform: select
+      - name: "Program 4 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0115]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 4 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0115]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
+
+      - name: "Program 5 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0116]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
 
-      - name: Program 6 Charging
-        platform: select
+      - name: "Program 5 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0116]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 5 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0116]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
+
+      - name: "Program 6 Grid Charge"
+        platform: "switch"
         rule: 1
         registers: [0x0117]
-        display:
-          mask: 0x3
-        icon: mdi:sun-clock
-        lookup:
-          - key: 0x0000
-            value: "Disabled"
-          - key: 0x0001
-            value: "Grid"
-          - key: 0x0002
-            value: "Generator"
-          - key: 0x0003
-            value: "Both"
+        value:
+          bit: 0
+        icon: mdi:transmission-tower
+
+      - name: "Program 6 Gen Charge"
+        platform: "switch"
+        rule: 1
+        registers: [0x0117]
+        value:
+          bit: 1
+        icon: mdi:generator-stationary
+
+      - name: "Program 6 Sell"
+        platform: "switch"
+        rule: 1
+        registers: [0x0117]
+        value:
+          bit: 6
+        icon: mdi:cash-refund
 
       - name: Microinverter Export cut-off
         platform: "switch"
@@ -2211,20 +2429,25 @@ parameters:
         value:
           bit: 12
 
+      # V119 reg 416 (0x01A0): Force off-grid operation bit (previously misassigned to 0x0119 which is External CT Auto-Detect).
+      # Disabled by default in deye_hybrid.yaml so older firmwares do not poll register 416 unless enabled by the user.
       - name: Off Grid
+        description: Force off-grid operation (disabled by default to avoid polling register 0x01A0 on older firmware)
+        disabled:
         platform: switch
         rule: 1
         range:
           min: 0
           max: 1
-        registers: [0x0119]
+        registers: [0x01A0]
 
+      # V119 reg 282 (0x011A): Valid range is [10, 300] seconds
       - name: Grid reconnection time
         platform: number
         uom: "s"
         rule: 1
         range:
-          min: 1
+          min: 10
           max: 300
         registers: [0x011A]
 
@@ -2347,26 +2570,29 @@ parameters:
           - key: 0x000A
             value: "Shenggao Electric CAN"
 
+      # V119 reg 326 (0x0146, Ex_MeterCT): Packed bitfield register.
+      # Bit 0 = Meter 1 enable, Bits 1-3 = Phase A/B/C, Bits 6-7 = AC Couple side (0x00C0), Bits 8-11 = Meter type, Bit 12 = Meter 2, Bit 13 = Gen Force.
       - name: "Meter"
         description: Ex_Meter For CT
         platform: "switch"
         rule: 1
         registers: [0x0146]
+        value:
+          bit: 0
 
       - name: AC Coupling
         description: Couple inverters and batteries using AC lines
         platform: "select"
         rule: 1
         registers: [0x0146]
+        display:
+          mask: 0x00C0
         lookup:
-          - bit: 0
-            mode: "|"
+          - key: 0
             value: Disabled
           - bit: 6
-            mode: "|"
             value: Grid
           - bit: 7
-            mode: "|"
             value: Load
 
   - group: BMS
@@ -2437,6 +2663,16 @@ parameters:
         registers: [0x013E]
         icon: "mdi:current-dc"
 
+      - name: "Battery BMS Temperature"
+        attribute:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 1
+        offset: 1000
+        registers: [0x013F]
+
       - name: "Battery BMS Max Charging Current"
         attribute:
         class: "current"
@@ -2488,4 +2724,4 @@ parameters:
           - bit: 0
             value: "Vacancy"
           - bit: 1
-            value: "OCP"
+            value: "Force charge"
