@@ -817,10 +817,10 @@ parameters:
         registers: [0x008F]
         configurable:
           min: 0
-          max: [24000, 80000]
+          max: [30000, 80000]
         range:
           min: 0
-          max: [24000, 8000]
+          max: [30000, 8000]
 
       - name: Export Surplus
         alt: Solar Sell
