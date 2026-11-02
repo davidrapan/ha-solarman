@@ -1182,13 +1182,13 @@ parameters:
         class: "power"
         state_class: "measurement"
         uom: "W"
-        rule: 1
+        rule: 2
         registers: [0x00CE]
         range:
-          min: 0
-          max: 65535
+          min: -200
+          max: 500
         configurable:
-          min: -20
+          min: -200
           max: 500
         icon: "mdi:transmission-tower"
 
