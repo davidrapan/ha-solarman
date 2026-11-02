@@ -3,9 +3,10 @@ from __future__ import annotations
 from logging import getLogger
 
 from homeassistant.core import HomeAssistant
-from homeassistant.const import EntityCategory
+from homeassistant.const import MAJOR_VERSION, MINOR_VERSION, EntityCategory
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.sensor import RestoreSensor, SensorEntity
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import *
@@ -90,7 +91,11 @@ class SolarmanNestedSensor(SolarmanSensorEntity):
         device_serial_number, _ = self.coordinator.data[slugify(sensor["group"], "serial", "number", "sensor")]
         if not device_serial_number in self.coordinator.device.info:
             self.coordinator.device.info[device_serial_number] = build_device_info(None, str(device_serial_number), None, None, None, parent_device_info["name"])
-            self.coordinator.device.info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
+            if (MAJOR_VERSION, MINOR_VERSION) >= (2026, 8):
+                # via_device is deprecated since HA 2026.8 (removed in 2027.8), link the parent by its device registry id instead
+                self.coordinator.device.info[device_serial_number]["via_device_id"] = dr.async_get(self.coordinator.hass).async_get_or_create(config_entry_id = self.coordinator.config_entry.entry_id, **parent_device_info).id
+            else:
+                self.coordinator.device.info[device_serial_number]["via_device"] = (DOMAIN, parent_device_info.get("serial_number", self.coordinator.config_entry.entry_id))
             self.coordinator.device.info[device_serial_number]["manufacturer"] = parent_device_info["manufacturer"]
             self.coordinator.device.info[device_serial_number]["model"] = None
         self._attr_device_info = self.coordinator.device.info[device_serial_number]
