@@ -211,7 +211,7 @@ parameters:
           mode: box
         icon: "mdi:battery"
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: "Battery Absorption"
@@ -229,7 +229,7 @@ parameters:
           mode: box
         icon: "mdi:battery"
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: "Battery Float"
@@ -247,7 +247,7 @@ parameters:
           mode: box
         icon: "mdi:battery"
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: "Battery Capacity"
@@ -473,7 +473,7 @@ parameters:
           step: 0.1
           mode: box
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: Battery Restart Voltage
@@ -491,7 +491,7 @@ parameters:
           step: 0.1
           mode: box
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: Battery Low Voltage
@@ -509,7 +509,7 @@ parameters:
           step: 0.1
           mode: box
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6100, 8000]
 
       - name: "Generator Operating Time"
@@ -684,7 +684,7 @@ parameters:
           step: 0.1
           mode: box
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6300, 8000]
 
       - name: "SmartLoad Off"
@@ -715,7 +715,7 @@ parameters:
           step: 0.1
           mode: box
         range:
-          min: 3800
+          min: [3800, 380]
           max: [6300, 8000]
 
       - name: "SmartLoad On"
