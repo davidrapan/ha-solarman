@@ -332,7 +332,11 @@ class ParameterParser:
             if (temp := get_addr_value(data, code, r)) is None:
                 return
 
-            value += chr(temp >> 8) + chr(temp & 0xFF)
+            temp = chr(temp >> 8) + chr(temp & 0xFF)
+            if "reverse_bytes" in definition:
+                temp = temp[::-1]
+
+            value += temp
 
         self.set_state(definition["key"], value)
 
