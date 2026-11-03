@@ -1,0 +1,128 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "El dispositivo ya está configurado",
+      "already_configured_device": "El dispositivo ya está configurado",
+      "already_in_progress": "Ya hay un proceso de configuración en curso"
+    },
+    "error": {
+      "cannot_connect": "No se ha podido conectar",
+      "invalid_host": "Nombre de host o dirección IP no válidos",
+      "timeout_connect": "Se ha agotado el tiempo de espera al establecer la conexión",
+      "unknown": "Error inesperado"
+    },
+    "step": {
+      "user": {
+        "title": "Configuración del inversor",
+        "data": {
+          "name": "Nombre del dispositivo",
+          "host": "Nombre de host o dirección IP",
+          "port": "Puerto",
+          "transport": "Protocolo de transporte",
+          "lookup_file": "Perfil"
+        },
+        "data_description": {
+          "name": "Este nombre se añadirá como prefijo a todos los sensores (puedes cambiarlo)",
+          "host": "Nombre de host o dirección IP del dispositivo al que conectarse",
+          "port": "Puerto (8899) del dispositivo al que conectarse",
+          "transport": "Protocolo de transporte utilizado para comunicarse con el dispositivo",
+          "lookup_file": "Archivo YAML que contiene las definiciones de los parámetros del inversor"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opciones adicionales",
+            "data": {
+              "mod": "Modificador",
+              "mppt": "Número de MPPT",
+              "phase": "Número de fases",
+              "pack": "Número de módulos de batería",
+              "battery_nominal_voltage": "Tensión nominal de la batería de iones de litio",
+              "battery_life_cycle_rating": "Vida útil prevista de la batería de iones de litio (ciclos)",
+              "mb_slave_id": "ID del dispositivo esclavo Modbus (normalmente 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "No se ha podido conectar",
+      "invalid_host": "Nombre de host o dirección IP no válidos",
+      "timeout_connect": "Se ha agotado el tiempo de espera al establecer la conexión",
+      "unknown": "Error inesperado"
+    },
+    "step": {
+      "init": {
+        "title": "Configuración del inversor",
+        "data": {
+          "host": "Nombre de host o dirección IP",
+          "port": "Puerto",
+          "transport": "Protocolo de transporte",
+          "lookup_file": "Perfil"
+        },
+        "data_description": {
+          "host": "Nombre de host o dirección IP del dispositivo al que conectarse",
+          "port": "Puerto (8899) del dispositivo al que conectarse",
+          "transport": "Protocolo de transporte utilizado para comunicarse con el dispositivo",
+          "lookup_file": "Archivo YAML que contiene las definiciones de los parámetros del inversor"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Opciones adicionales",
+            "data": {
+              "mod": "Modificador",
+              "mppt": "Número de MPPT",
+              "phase": "Número de fases",
+              "pack": "Número de módulos de batería",
+              "battery_nominal_voltage": "Tensión nominal de la batería de iones de litio",
+              "battery_life_cycle_rating": "Vida útil prevista de la batería de iones de litio (ciclos)",
+              "mb_slave_id": "ID del dispositivo esclavo Modbus (normalmente 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Carga de la batería de hoy"
+      },
+      "today_battery_discharge": {
+        "name": "Descarga de la batería de hoy"
+      },
+      "today_battery_life_cycles": {
+        "name": "Ciclos de la batería de hoy"
+      },
+      "today_energy_export": {
+        "name": "Energía exportada hoy"
+      },
+      "today_energy_import": {
+        "name": "Energía importada hoy"
+      },
+      "today_generation": {
+        "name": "Generación de hoy"
+      },
+      "today_load_consumption": {
+        "name": "Consumo de las cargas de hoy"
+      },
+      "today_losses": {
+        "name": "Pérdidas de hoy"
+      },
+      "today_production": {
+        "name": "Producción de hoy"
+      }
+    }
+  }
+}
