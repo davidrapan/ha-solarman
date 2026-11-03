@@ -3161,6 +3161,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2730, 0x2731, 0x2732, 0x2733, 0x2734, 0x2735, 0x2736, 0x2737]
 
@@ -3353,6 +3354,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2756, 0x2757, 0x2758, 0x2759, 0x275A, 0x275B, 0x275C, 0x275D]
 
@@ -3545,6 +3547,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x277C, 0x277D, 0x277E, 0x277F, 0x2780, 0x2781, 0x2782, 0x2783]
 
@@ -3737,6 +3740,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x27A2, 0x27A3, 0x27A4, 0x27A5, 0x27A6, 0x27A7, 0x27A8, 0x27A9]
 
@@ -3929,6 +3933,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x27C8, 0x27C9, 0x27CA, 0x27CB, 0x27CC, 0x27CD, 0x27CE, 0x27CF]
 
@@ -4121,6 +4126,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x27EE, 0x27EF, 0x27F0, 0x27F1, 0x27F2, 0x27F3, 0x27F4, 0x27F5]
 
@@ -4313,6 +4319,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2814, 0x2815, 0x2816, 0x2817, 0x2818, 0x2819, 0x281A, 0x281B]
 
@@ -4505,6 +4512,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x283A, 0x283B, 0x283C, 0x283D, 0x283E, 0x283F, 0x2840, 0x2841]
 
@@ -4697,6 +4705,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2860, 0x2861, 0x2862, 0x2863, 0x2864, 0x2865, 0x2866, 0x2867]
 
@@ -4889,6 +4898,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2886, 0x2887, 0x2888, 0x2889, 0x288A, 0x288B, 0x288C, 0x288D]
 
@@ -5081,6 +5091,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x28AC, 0x28AD, 0x28AE, 0x28AF, 0x28B0, 0x28B1, 0x28B2, 0x28B3]
 
@@ -5273,6 +5284,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x28D2, 0x28D3, 0x28D4, 0x28D5, 0x28D6, 0x28D7, 0x28D8, 0x28D9]
 
@@ -5465,6 +5477,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x28F8, 0x28F9, 0x28FA, 0x28FB, 0x28FC, 0x28FD, 0x28FE, 0x28FF]
 
@@ -5657,6 +5670,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x291E, 0x291F, 0x2920, 0x2921, 0x2922, 0x2923, 0x2924, 0x2925]
 
@@ -5849,6 +5863,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2944, 0x2945, 0x2946, 0x2947, 0x2948, 0x2949, 0x294A, 0x294B]
 
@@ -6041,6 +6056,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x296A, 0x296B, 0x296C, 0x296D, 0x296E, 0x296F, 0x2970, 0x2971]
 
@@ -6233,6 +6249,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2990, 0x2991, 0x2992, 0x2993, 0x2994, 0x2995, 0x2996, 0x2997]
 
@@ -6425,6 +6442,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x29B6, 0x29B7, 0x29B8, 0x29B9, 0x29BA, 0x29BB, 0x29BC, 0x29BD]
 
@@ -6617,6 +6635,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x29DC, 0x29DD, 0x29DE, 0x29DF, 0x29E0, 0x29E1, 0x29E2, 0x29E3]
 
@@ -6809,6 +6828,7 @@ parameters:
         attribute:
         state_class: "measurement"
         rule: 5
+        reverse_bytes:
         registers:
           [0x2A02, 0x2A03, 0x2A04, 0x2A05, 0x2A06, 0x2A07, 0x2A08, 0x2A09]
 
