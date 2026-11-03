@@ -5,16 +5,6 @@
 #
 # Tested with 25K-SG01HP3 12K-SG04LP3 and LSW3_15_FFFF_1.0.91R Stick Logger
 #
-# Remote Control group (EMS registers 0x044C-0x045B / dec 1100-1115): the register mapping
-# is derived from Deye's "MODBUS RTU protocol V105.4 (2024-08-14)" doc and corroborated by
-# Deye's EMS control usage note. It is DOC-DERIVED ONLY and has NOT been hardware-verified
-# via a read-back on a real inverter/logger. The reviewer's reference hardware is a
-# SUN-15K-SG05LP3 (firmware HMI 1001-C05F / MAIN 2107-1184-1809). Deye states remote/EMS
-# control is "currently only supported by the RS-485 adapter"; it may not be writable (or
-# may silently no-op) through a Solarman/LSW stick logger. Transport used for verification:
-# none yet (doc-only). Register 1100 (0x044C) 0-vs-1 meaning is firmware-specific (see the
-# entity description).
-#
 
 info:
   manufacturer: Deye
@@ -1933,40 +1923,28 @@ parameters:
           min: 0
           max: 3000
 
-  # EMS / Remote Control registers (dec 1100-1115 = 0x044C-0x045B).
-  # Mapping per Deye MODBUS RTU protocol V105.4 (doc-derived; see file header). NOT yet
-  # hardware-verified via a logger read-back. Reactive-power registers 1117-1121
-  # (0x045D-0x0461) are intentionally omitted until they can be added with correct dual
-  # PF/Var scaling. Invented registers 1102/1103 ("active/reactive power limit") and a
-  # 1121 read-only "status" register are NOT included: they are absent from Deye's RTU doc.
+  # EMS / Remote Control (dec 1100-1115) - mapping per Deye MODBUS RTU V105.4, doc-derived, not hardware-verified
   - group: Remote Control
     update_interval: 30
     items:
+      # 1100 (0x044C) - Remote mode enable; 0-vs-1 meaning is firmware-specific (protocol: 0=disable/1-3=modes; EMS doc: 0=enter/1=exit)
       - name: Remote control mode
-        # 1100 (0x044C). Modes 1/2/3 all ENABLE remote control; Deye does not document how
-        # they differ, so labels stay neutral and keep the mode number.
-        # AMBIGUITY (firmware-specific, documented in Deye's own sources): the general RTU
-        # protocol V105.4 says 0 = disable remote mode and 1/2/3 = remote modes 1/2/3,
-        # while Deye's EMS control note says 0 = ENTER remote mode and 1 = EXIT. These
-        # disagree and the behaviour is firmware-specific - verify on hardware before
-        # trusting a label. Labels below follow the general-protocol meaning.
         platform: select
         rule: 1
         registers: [0x044C]
         icon: "mdi:remote"
         lookup:
           - key: 0x0000
-            value: "Disabled"         # general protocol: disable | EMS doc: ENTER
+            value: "Disabled"
           - key: 0x0001
-            value: "Enabled (Mode 1)" # general protocol: mode 1 | EMS doc: EXIT
+            value: "Enabled (Mode 1)"
           - key: 0x0002
             value: "Enabled (Mode 2)"
           - key: 0x0003
             value: "Enabled (Mode 3)"
 
+      # 1101 (0x044D) - Watchdog timeout; 0xFFFF (65535) disables it, otherwise inverter exits remote mode on timeout
       - name: Remote mode watchdog time
-        # 1101 (0x044D). 0xFFFF (65535) disables the watchdog (default); with any other
-        # value the inverter exits remote mode when the timeout expires.
         platform: number
         uom: "s"
         rule: 1
@@ -1979,8 +1957,8 @@ parameters:
           min: 10
           max: 65535
 
+      # 1104 (0x0450) - Inverter output power control mode (AC / battery / grid side)
       - name: Power control mode selection
-        # 1104 (0x0450). Inverter output power control mode.
         platform: select
         rule: 1
         registers: [0x0450]
@@ -1992,8 +1970,8 @@ parameters:
           - key: 0x0002
             value: "Grid-side control"
 
+      # 1105 (0x0451) - Battery-side control strategy (0=voltage and 1=current are reserved in the doc)
       - name: Battery-side control strategy
-        # 1105 (0x0451). Values 0 (voltage) and 1 (current) are reserved in the doc.
         platform: select
         rule: 1
         registers: [0x0451]
@@ -2011,9 +1989,8 @@ parameters:
           - key: 0x0005
             value: "Power+SOC"
 
+      # 1106 (0x0452) - AC power control mode (0=three phases together via 1111; 1=per phase via 1112/1113/1114)
       - name: AC power control mode
-        # 1106 (0x0452). 0 = control all three phases together via 1111;
-        # 1 = control phases independently via 1112/1113/1114.
         platform: select
         rule: 1
         registers: [0x0452]
@@ -2023,8 +2000,8 @@ parameters:
           - key: 0x0001
             value: "Per phase"
 
+      # 1107 (0x0453) - Battery constant-voltage setpoint (0.1 V, unsigned)
       - name: Battery constant-voltage setpoint
-        # 1107 (0x0453). 0.1 V, unsigned. Range [0, 10000] raw = 0-1000.0 V.
         platform: number
         class: "voltage"
         state_class: measurement
@@ -2041,8 +2018,8 @@ parameters:
           min: 0
           max: 10000
 
+      # 1108 (0x0454) - Battery constant-current setpoint (0.1 A, unsigned)
       - name: Battery constant-current setpoint
-        # 1108 (0x0454). 0.1 A, unsigned. Range [0, 2000] raw = 0-200.0 A.
         platform: number
         class: "current"
         state_class: measurement
@@ -2060,9 +2037,8 @@ parameters:
           min: 0
           max: 2000
 
+      # 1109 (0x0455) - Battery constant-power setpoint (0.1 % of rated, signed: negative=charge, positive=discharge)
       - name: Battery constant-power setpoint
-        # 1109 (0x0455). 0.1 % of rated, SIGNED (rule 2): negative = charge,
-        # positive = discharge. Range [-1200, +1200] raw = -120.0 % to +120.0 %.
         platform: number
         state_class: measurement
         uom: "%"
@@ -2078,8 +2054,8 @@ parameters:
           min: -1200
           max: 1200
 
+      # 1110 (0x0456) - Battery target SOC (0.1 %, unsigned)
       - name: Battery target SOC
-        # 1110 (0x0456). 0.1 %, unsigned. Range [0, 1000] raw = 0-100.0 %.
         platform: number
         state_class: measurement
         uom: "%"
@@ -2096,9 +2072,8 @@ parameters:
           min: 0
           max: 1000
 
+      # 1111 (0x0457) - INV output power, ABC 3-phase total (0.1 % of rated, signed: positive=export, negative=import)
       - name: INV output power total
-        # 1111 (0x0457). ABC 3-phase total. 0.1 % of rated, SIGNED (rule 2):
-        # positive = output/export, negative = input/import. Range [-1200, +1200].
         platform: number
         state_class: measurement
         uom: "%"
@@ -2114,8 +2089,8 @@ parameters:
           min: -1200
           max: 1200
 
+      # 1112 (0x0458) - INV output power, phase A (0.1 % of rated, signed)
       - name: INV output power phase A
-        # 1112 (0x0458). 0.1 % of rated, SIGNED (rule 2). Range [-1200, +1200].
         platform: number
         state_class: measurement
         uom: "%"
@@ -2131,8 +2106,8 @@ parameters:
           min: -1200
           max: 1200
 
+      # 1113 (0x0459) - INV output power, phase B (0.1 % of rated, signed)
       - name: INV output power phase B
-        # 1113 (0x0459). 0.1 % of rated, SIGNED (rule 2). Range [-1200, +1200].
         platform: number
         state_class: measurement
         uom: "%"
@@ -2148,8 +2123,8 @@ parameters:
           min: -1200
           max: 1200
 
+      # 1114 (0x045A) - INV output power, phase C (0.1 % of rated, signed)
       - name: INV output power phase C
-        # 1114 (0x045A). 0.1 % of rated, SIGNED (rule 2). Range [-1200, +1200].
         platform: number
         state_class: measurement
         uom: "%"
@@ -2165,8 +2140,8 @@ parameters:
           min: -1200
           max: 1200
 
+      # 1115 (0x045B) - Max solar power (0.1 % of rated, unsigned)
       - name: Max solar power
-        # 1115 (0x045B). 0.1 % of rated, unsigned. Range [0, 2000] raw = 0-200.0 %.
         platform: number
         state_class: measurement
         uom: "%"
