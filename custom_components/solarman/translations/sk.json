@@ -1,0 +1,128 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Zariadenie je už nakonfigurované",
+      "already_configured_device": "Zariadenie je už nakonfigurované",
+      "already_in_progress": "Konfigurácia už prebieha"
+    },
+    "error": {
+      "cannot_connect": "Nepodarilo sa pripojiť",
+      "invalid_host": "Neplatný názov hostiteľa alebo IP adresa",
+      "timeout_connect": "Vypršal časový limit na nadviazanie spojenia",
+      "unknown": "Neočakávaná chyba"
+    },
+    "step": {
+      "user": {
+        "title": "Konfigurácia meniča",
+        "data": {
+          "name": "Názov zariadenia",
+          "host": "Názov hostiteľa alebo IP adresa",
+          "port": "Port",
+          "transport": "Transportný protokol",
+          "lookup_file": "Profil"
+        },
+        "data_description": {
+          "name": "Tento názov sa pridá na začiatok názvov všetkých senzorov (upravte podľa potreby)",
+          "host": "Názov hostiteľa alebo IP adresa zariadenia, ku ktorému sa chcete pripojiť",
+          "port": "Port (8899) zariadenia, ku ktorému sa chcete pripojiť",
+          "transport": "Transportný protokol používaný pri komunikácii so zariadením",
+          "lookup_file": "Súbor YAML obsahujúci definície parametrov meniča"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Ďalšie možnosti",
+            "data": {
+              "mod": "Modifikátor",
+              "mppt": "Počet MPPT",
+              "phase": "Počet fáz",
+              "pack": "Počet batériových súprav",
+              "battery_nominal_voltage": "Menovité napätie lítium-iónovej batérie",
+              "battery_life_cycle_rating": "Predpokladaná životnosť lítium-iónovej batérie v cykloch",
+              "mb_slave_id": "ID podriadeného zariadenia Modbus (zvyčajne 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Nepodarilo sa pripojiť",
+      "invalid_host": "Neplatný názov hostiteľa alebo IP adresa",
+      "timeout_connect": "Vypršal časový limit na nadviazanie spojenia",
+      "unknown": "Neočakávaná chyba"
+    },
+    "step": {
+      "init": {
+        "title": "Konfigurácia meniča",
+        "data": {
+          "host": "Názov hostiteľa alebo IP adresa",
+          "port": "Port",
+          "transport": "Transportný protokol",
+          "lookup_file": "Profil"
+        },
+        "data_description": {
+          "host": "Názov hostiteľa alebo IP adresa zariadenia, ku ktorému sa chcete pripojiť",
+          "port": "Port (8899) zariadenia, ku ktorému sa chcete pripojiť",
+          "transport": "Transportný protokol používaný pri komunikácii so zariadením",
+          "lookup_file": "Súbor YAML obsahujúci definície parametrov meniča"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Ďalšie možnosti",
+            "data": {
+              "mod": "Modifikátor",
+              "mppt": "Počet MPPT",
+              "phase": "Počet fáz",
+              "pack": "Počet batériových súprav",
+              "battery_nominal_voltage": "Menovité napätie lítium-iónovej batérie",
+              "battery_life_cycle_rating": "Predpokladaná životnosť lítium-iónovej batérie v cykloch",
+              "mb_slave_id": "ID podriadeného zariadenia Modbus (zvyčajne 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Dnešné nabitie batérie"
+      },
+      "today_battery_discharge": {
+        "name": "Dnešné vybitie batérie"
+      },
+      "today_battery_life_cycles": {
+        "name": "Dnešný počet cyklov batérie"
+      },
+      "today_energy_export": {
+        "name": "Dnešný export energie"
+      },
+      "today_energy_import": {
+        "name": "Dnešný import energie"
+      },
+      "today_generation": {
+        "name": "Dnešná výroba energie"
+      },
+      "today_load_consumption": {
+        "name": "Dnešná spotreba záťaže"
+      },
+      "today_losses": {
+        "name": "Dnešné straty"
+      },
+      "today_production": {
+        "name": "Dnešná produkcia energie"
+      }
+    }
+  }
+}
