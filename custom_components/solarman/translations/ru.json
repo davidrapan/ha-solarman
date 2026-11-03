@@ -1,0 +1,155 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Устройство уже настроено",
+      "already_configured_device": "Устройство уже настроено",
+      "already_in_progress": "Настройка уже выполняется"
+    },
+    "error": {
+      "cannot_connect": "Не удалось подключиться",
+      "invalid_host": "Неверное имя хоста или IP-адрес",
+      "timeout_connect": "Превышено время ожидания подключения",
+      "unknown": "Непредвиденная ошибка"
+    },
+    "step": {
+      "user": {
+        "title": "Настройка инвертора",
+        "data": {
+          "name": "Имя устройства",
+          "host": "Имя хоста или IP-адрес",
+          "port": "Порт",
+          "transport": "Транспортный протокол",
+          "lookup_file": "Профиль"
+        },
+        "data_description": {
+          "name": "Это имя будет использоваться как префикс для всех датчиков (измените по своему усмотрению)",
+          "host": "Имя хоста или IP-адрес устройства для подключения",
+          "port": "Порт (8899) устройства для подключения",
+          "transport": "Транспортный протокол, используемый при связи с устройством",
+          "lookup_file": "Файл yaml с определениями параметров инвертора"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Дополнительные параметры",
+            "data": {
+              "mod": "Модификатор",
+              "mppt": "Количество MPPT",
+              "phase": "Количество фаз",
+              "pack": "Количество аккумуляторных блоков",
+              "battery_nominal_voltage": "Номинальное напряжение литий-ионного аккумулятора",
+              "battery_life_cycle_rating": "Ожидаемый ресурс циклов литий-ионного аккумулятора",
+              "mb_slave_id": "Modbus Slave ID (обычно 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "cannot_connect": "Не удалось подключиться",
+      "invalid_host": "Неверное имя хоста или IP-адрес",
+      "timeout_connect": "Превышено время ожидания подключения",
+      "unknown": "Непредвиденная ошибка"
+    },
+    "step": {
+      "init": {
+        "title": "Настройка инвертора",
+        "data": {
+          "host": "Имя хоста или IP-адрес",
+          "port": "Порт",
+          "transport": "Транспортный протокол",
+          "lookup_file": "Профиль"
+        },
+        "data_description": {
+          "host": "Имя хоста или IP-адрес устройства для подключения",
+          "port": "Порт (8899) устройства для подключения",
+          "transport": "Транспортный протокол, используемый при связи с устройством",
+          "lookup_file": "Файл yaml с определениями параметров инвертора"
+        },
+        "sections": {
+          "additional_options": {
+            "name": "Дополнительные параметры",
+            "data": {
+              "mod": "Модификатор",
+              "mppt": "Количество MPPT",
+              "phase": "Количество фаз",
+              "pack": "Количество аккумуляторных блоков",
+              "battery_nominal_voltage": "Номинальное напряжение литий-ионного аккумулятора",
+              "battery_life_cycle_rating": "Ожидаемый ресурс циклов литий-ионного аккумулятора",
+              "mb_slave_id": "Modbus Slave ID (обычно 1)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "transport": {
+      "options": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "modbus_tcp": "Modbus TCP",
+        "modbus_rtu": "Modbus RTU"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "today_battery_charge": {
+        "name": "Заряд аккумулятора сегодня"
+      },
+      "today_battery_discharge": {
+        "name": "Разряд аккумулятора сегодня"
+      },
+      "today_battery_life_cycles": {
+        "name": "Циклы аккумулятора сегодня"
+      },
+      "today_energy_export": {
+        "name": "Экспорт электроэнергии сегодня"
+      },
+      "today_energy_import": {
+        "name": "Импорт электроэнергии сегодня"
+      },
+      "today_generation": {
+        "name": "Генерация сегодня"
+      },
+      "today_load_consumption": {
+        "name": "Потребление нагрузки сегодня"
+      },
+      "today_losses": {
+        "name": "Потери сегодня"
+      },
+      "today_production": {
+        "name": "Выработка сегодня"
+      },
+      "total_battery_charge": {
+        "name": "Суммарный заряд аккумулятора"
+      },
+      "total_battery_discharge": {
+        "name": "Суммарный разряд аккумулятора"
+      },
+      "total_battery_life_cycles": {
+        "name": "Суммарные циклы аккумулятора"
+      },
+      "total_energy_export": {
+        "name": "Суммарный экспорт электроэнергии"
+      },
+      "total_energy_import": {
+        "name": "Суммарный импорт электроэнергии"
+      },
+      "total_generation": {
+        "name": "Суммарная генерация"
+      },
+      "total_load_consumption": {
+        "name": "Суммарное потребление нагрузки"
+      },
+      "total_losses": {
+        "name": "Суммарные потери"
+      },
+      "total_production": {
+        "name": "Суммарная выработка"
+      }
+    }
+  }
+}
