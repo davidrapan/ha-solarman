@@ -43,6 +43,9 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
         if "offset" in sensor:
             self.offset = get_number(sensor["offset"])
 
+        self.mask = sensor.get("mask")
+        self.divide = sensor.get("divide")
+
         if "configurable" in sensor and (configurable := sensor["configurable"]):
             if "mode" in configurable:
                 self._attr_mode = configurable["mode"]
@@ -65,4 +68,6 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
         value_int = round(value if self.scale is None else value / self.scale)
         if self.offset is not None:
             value_int += self.offset
-        await self.write(value_int if value_int < 0xFFFF else 0xFFFF, get_number(value))
+        if self.divide is not None:
+            value_int *= self.divide
+        await self.write(value_int if self.mask is not None or value_int <= 0xFFFF else 0xFFFF, get_number(value))
