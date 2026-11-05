@@ -452,6 +452,53 @@ parameters:
         registers: [[5302], [], [5302]]
         icon: "mdi:thermometer"
 
+        
+  - group: Battery Module 7
+    hidden:
+    pack: 8
+    items:
+      - name: "Battery Module 7 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [[5223], [], [5223]]
+        icon: "mdi:battery"
+
+      - name: "Battery Module 7 Temperature"
+        update_interval: 10
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[5303], [], [5303]]
+        icon: "mdi:thermometer"
+
+  - group: Battery Module 8
+    hidden:
+    pack: 8
+    items:
+      - name: "Battery Module 8 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [[5224], [], [5224]]
+        icon: "mdi:battery"
+
+      - name: "Battery Module 8 Temperature"
+        update_interval: 10
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [[5304], [], [5304]]
+        icon: "mdi:thermometer"
+
   - group: Battery Module 0 Cells
     update_interval: 60
     hidden:
