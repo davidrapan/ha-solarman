@@ -1657,6 +1657,12 @@ parameters:
           - key: 0x0003
             value: "Both"
 
+      - name: "MPPT Multi-point Scanning"
+        platform: "switch"
+        rule: 1
+        registers: [0x0034]
+
+
   - group: Work Mode
     update_interval: 300
     items:
