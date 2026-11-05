@@ -287,6 +287,10 @@ parameters:
         uom: "W"
         scale: 10
         rule: 1
+        validation:
+          min: 0
+          max: 25000
+          invalidate_all:           
         registers: [0x0586]
         icon: "mdi:solar-power-variant"
 
@@ -317,6 +321,10 @@ parameters:
         uom: "W"
         scale: 10
         rule: 1
+        validation:
+          min: 0
+          max: 25000
+          invalidate_all:           
         registers: [0x0589]
         icon: "mdi:solar-power-variant"
 
@@ -347,6 +355,10 @@ parameters:
         uom: "W"
         scale: 10
         rule: 1
+        validation:
+          min: 0
+          max: 25000
+          invalidate_all:           
         registers: [0x058c]
         icon: "mdi:solar-power-variant"
 
@@ -377,6 +389,10 @@ parameters:
         uom: "W"
         scale: 10
         rule: 1
+        validation:
+          min: 0
+          max: 25000
+          invalidate_all:           
         registers: [0x058f]
         icon: "mdi:solar-power-variant"
 
@@ -421,6 +437,10 @@ parameters:
         # Inverse value to match standard behavior of the other inverters
         scale: -10
         rule: 2
+        validation:
+          min: -50000
+          max: 50000
+          invalidate_all:        
         registers: [0x0606]
 
       - name: "Battery Temperature"
@@ -435,6 +455,9 @@ parameters:
         state_class: "measurement"
         uom: "%"
         rule: 1
+        validation:
+          min: 0
+          max: 101           
         registers: [0x0608]
 
       - name: "Battery SOH"
@@ -792,6 +815,10 @@ parameters:
         uom: "W"
         scale: 10
         rule: 2
+        validation:
+          min: 0
+          max: 50000
+          invalidate_all:          
         registers: [0x04AF]
 
   - group: GridEPS
@@ -1049,6 +1076,10 @@ parameters:
         uom: "kWh"
         scale: 0.01
         rule: 3
+        validation:
+          min: 0
+          dev: 10000
+          invalidate_all: 2        
         registers: [0x068D, 0x068C]
         icon: "mdi:transmission-tower-export"
 
@@ -1059,6 +1090,8 @@ parameters:
         uom: "kWh"
         scale: 0.1
         rule: 3
+        validation:
+          min: 0.1        
         registers: [0x068F, 0x068E]
         icon: "mdi:transmission-tower-export"
         validation:
@@ -1072,6 +1105,10 @@ parameters:
         uom: "kWh"
         scale: 0.01
         rule: 3
+        validation:
+          min: 0
+          dev: 10000
+          invalidate_all: 2        
         registers: [0x0691, 0x0690]
         icon: "mdi:transmission-tower-import"
 
@@ -1107,6 +1144,8 @@ parameters:
         icon: "mdi:battery-plus"
         validation:
           min: 0.1
+          dev: 10000
+          invalidate_all: 2
 
       - name: "Today Battery Discharge"
         friendly_name: Today's Battery Discharge
@@ -1117,6 +1156,10 @@ parameters:
         rule: 3
         registers: [0x0699, 0x0698]
         icon: "mdi:battery-minus"
+        validation:
+          min: 0
+          dev: 10000
+          invalidate_all: 2                  
 
       - name: "Total Battery Discharge"
         class: "energy"
@@ -1128,6 +1171,8 @@ parameters:
         icon: "mdi:battery-minus"
         validation:
           min: 0.1
+          dev: 10000
+          invalidate_all: 2          
 
       - name: Today Losses
         alt: Daily Losses
