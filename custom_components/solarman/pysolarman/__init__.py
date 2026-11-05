@@ -8,6 +8,7 @@ from functools import wraps
 from random import randrange
 from logging import getLogger
 from multiprocessing import Event
+from aiohttp import ClientError
 
 from .umodbus.functions import FUNCTION_CODES
 from .umodbus.exceptions import error_code_to_exception_map
@@ -15,7 +16,7 @@ from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
-from ..common import retry, throttle, create_task, format
+from ..common import retry, throttle, create_task, format, request
 
 _LOGGER = getLogger(__name__)
 
@@ -112,6 +113,9 @@ class Solarman:
         if value == "tcp":
             self._get_response = self._parse_adu_from_sol_response
             self._handle_frame = self._handle_protocol_frame
+        elif value == "shelly_modbus":
+            self._get_response = self._parse_adu_from_shelly_response
+            self._handle_frame = None
         else:
             self._get_response = self._parse_adu_from_tcp_response if not value.endswith("rtu") else self._parse_adu_from_rtu_response
             self._handle_frame = None
@@ -302,6 +306,32 @@ class Solarman:
     async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
         req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
         return rtu.parse_response_adu(await self._send_receive_frame(req), req)
+
+    async def _parse_adu_from_shelly_response(self, code: int, address: int, **kwargs) -> list[int]:
+        """Relay a Modbus RTU request through a Shelly's HTTP Modbus proxy
+        script instead of a Solarman WiFi datalogger dongle. `self.host` is
+        the Shelly's IP and `self.port` is the id of the script exposing
+        the proxy endpoint (see contrib/shelly_modbus_proxy/proxy.js).
+
+        The proxy shares the Shelly's single UART with any other
+        script-driven traffic on the device (e.g. a periodic poller
+        mirroring readings into virtual components), so "busy" collisions
+        are expected and are retried transparently here rather than
+        surfaced as a failure."""
+        req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
+        for attempt in range(5):
+            try:
+                res = await request(f"http://{self.host}/script/{self.port}/modbus", data = req.hex())
+            except ClientError as e:
+                raise TimeoutError("Peer is unreachable") from e
+            if "error" not in res:
+                return rtu.parse_response_adu(bytes.fromhex(res["resp"]), req)
+            if res["error"] == "busy" and attempt < 4:
+                await asyncio.sleep(0.2)
+                continue
+            if res["error"] == "timeout" or res["error"] == "busy":
+                raise TimeoutError(f"Shelly Modbus proxy: {res['error']}")
+            raise FrameError(f"Shelly Modbus proxy: {res['error']}")
 
     async def _parse_adu_from_tcp_response(self, code: int, address: int, **kwargs) -> list[int]:
         req = tcp.function_code_to_function_map[code](self.slave, address, **kwargs)
