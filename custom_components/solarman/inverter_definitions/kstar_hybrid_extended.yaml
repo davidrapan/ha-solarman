@@ -1,0 +1,2036 @@
+#
+# KSTAR | Hybrid Inverter
+#
+# Reference: https://github.com/user-attachments/files/17555061/KSTAR.Hybrid.Inverter.Modbus.V2.9.1_2024.07.21.pdf
+# - MODBUS document has been provided directly from KSTAR support
+#
+# Registers
+# INPUT_REGISTERS   3000 - 3792 decimal, 0x0BB8 - 0x0ED0 hexadecimal, 0x04 function code
+# HOLDING_REGISTERS 3200 - 3246 decimal, 0x0C80 - 0x0CAE hexadecimal, 0x03 function code
+#
+# Note: not all of them are used by this definition file
+#
+
+info:
+  manufacturer: KSTAR
+  model: Hybrid Inverter
+
+default:
+  update_interval: 60
+  code: 0x04
+  min_span: -1
+  digits: 6
+
+parameters:
+  - group: PV
+    update_interval: 5
+    items:
+      - name: "PV1 Voltage"
+        class: "voltage"
+        mppt: 1
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3000]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        mppt: 2
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3001]
+        icon: "mdi:solar-power"
+
+      - name: "PV1 Current"
+        class: "current"
+        mppt: 1
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3012]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Current"
+        class: "current"
+        mppt: 2
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3013]
+        icon: "mdi:solar-power"
+
+      # PV - The combined power of Input 1 & 2 (L:1W, H:10W)
+      - name: "PV Power"
+        description: Combined power of all inputs
+        mppt: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        sensors:
+          - signed:
+            registers: [3024]
+          - signed:
+            registers: [3025]
+        icon: "mdi:solar-power-variant"
+
+      - name: "PV1 Power"
+        class: "power"
+        mppt: 1
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3024]
+        icon: "mdi:solar-power"
+
+      - name: "PV2 Power"
+        class: "power"
+        mppt: 2
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3025]
+        icon: "mdi:solar-power"
+
+      - name: "Today Production"
+        friendly_name: Today's Production
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3036]
+        icon: "mdi:solar-power"
+        validation:
+          dev: 100
+          invalidate_all:
+
+      - name: "Monthly Production"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3038, 3037]
+        icon: "mdi:solar-power"
+
+      - name: "Yearly Production"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3040, 3039]
+        icon: "mdi:solar-power"
+
+      - name: "Total Production"
+        alt: "Cumulative Production"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [3042, 3041]
+        icon: "mdi:solar-power"
+        validation:
+          min: 0.1
+          dev: 100
+          invalidate_all: 2
+
+  - group: Power Grid
+    items:
+      - name: Today Energy Import
+        alt: Daily Energy Purchased
+        friendly_name: Today's Energy Import
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3109]
+        icon: "mdi:transmission-tower-export"
+
+      - name: Monthly Energy Import
+        alt: Monthly Energy Purchased
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3111, 3110]
+        icon: "mdi:transmission-tower-export"
+
+      - name: Yearly Energy Import
+        alt: Yearly Energy Purchased
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3113, 3112]
+        icon: "mdi:transmission-tower-export"
+
+      - name: Total Energy Import
+        alt: Cumulative Energy Purchased
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [3115, 3114]
+        icon: "mdi:transmission-tower-export"
+        validation:
+          min: 0.1
+
+      - name: Today Energy Export
+        alt: Daily Energy Feed-In
+        friendly_name: Today's Energy Export
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3116]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Monthly Energy Export
+        alt: Monthly Energy Feed-In
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3118, 3117]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Yearly Energy Export
+        alt: Yearly Energy Feed-In
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3120, 3119]
+        icon: "mdi:transmission-tower-import"
+
+      - name: Total Energy Export
+        alt: Cumulative Grid Feed-In
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [3122, 3121]
+        icon: "mdi:transmission-tower-import"
+        validation:
+          min: 0.1
+
+  - group: Electricity Consumption
+    items:
+      # Should this be the sum of the 3 phases "Load Power"?
+      - name: "Load Power"
+        alt: "Total Consumption Power"
+        update_interval: 5
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3144]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: Today Load Consumption
+        alt: Daily Consumption
+        friendly_name: Today's Load Consumption
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3147]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Monthly Load Consumption"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3149, 3148]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Yearly Load Consumption"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3151, 3150]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Total Load Consumption"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [3153, 3152]
+        icon: "mdi:home-lightning-bolt"
+        validation:
+          min: 0.1
+
+  - group: Battery
+    items:
+      - name: "Battery Type"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [3062]
+        icon: "mdi:battery"
+        lookup:
+          - key: 1
+            value: "Lead-Acid"
+          - key: 6
+            value: "LFP"
+
+      - name: "Battery Voltage"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3063]
+        icon: "mdi:battery-charging"
+
+      - name: "Battery Current"
+        update_interval: 5
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [3064]
+        icon: "mdi:battery-charging-10"
+
+      - name: "Battery Power"
+        update_interval: 5
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3065]
+        icon: "mdi:battery-charging-high"
+
+      - name: "Battery"
+        update_interval: 5
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [3066]
+
+      - name: "Battery 1"
+        hidden:
+        update_interval: 5
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3450]
+        icon: "mdi:battery"
+
+      - name: "Battery 2"
+        hidden:
+        update_interval: 5
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3494]
+        icon: "mdi:battery"
+
+      - name: "Battery 3"
+        hidden:
+        update_interval: 5
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3538]
+        icon: "mdi:battery"
+
+      - name: "Battery Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3067]
+        icon: "mdi:battery-heart-outline"
+
+      - name: "Battery Discharge Capacity Depth"
+        update_interval: 300
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3068]
+        icon: "mdi:battery-20"
+        validation:
+          min: 10
+          max: 95
+
+      - name: "Battery Heatsink Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3056]
+        icon: "mdi:battery-heart-outline"
+
+      - name: "Battery SOH"
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        digits: 2
+        registers: [3075]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery Discharging Power"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3078]
+        range:
+          min: 1
+          max: 100
+
+      - name: "Battery Charging Power"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3079]
+        range:
+          min: 1
+          max: 100
+
+      - name: "Battery Grid Max Charge"
+        platform: number
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3260]
+        range:
+          min: 20
+          max: 100
+
+      - name: Total Battery Discharge
+        alt: Battery Total Discharge
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3293, 3292]
+        icon: "mdi:battery-minus-variant"
+        validation:
+          min: 0.1
+
+      - name: "Today Battery Discharge"
+        alt: Battery Daily Discharge
+        friendly_name: Today's Battery Discharge
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3294]
+        icon: "mdi:battery-minus-variant"
+
+      - name: "Total Battery Charge"
+        alt: "Battery Total Charge"
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [3300, 3299]
+        icon: "mdi:battery-minus-variant"
+        validation:
+          min: 0.1
+
+      - name: "Today Battery Charge"
+        alt: Battery Daily Charge
+        friendly_name: Today's Battery Charge
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [3301]
+        icon: "mdi:battery-plus-variant"
+
+      - name: "Battery Grid Charging"
+        platform: switch
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3314]
+
+      - name: "Battery Grid Charging Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3317]
+        hex:
+
+      - name: "Battery Grid Charging End"
+        platform: time
+        state_class: measurement
+        rule: 9
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3318]
+        hex:
+        
+      - name: "BMS Status Pack 1"
+        update_interval: 5
+        rule: 6
+        registers: [3444]
+        icon: "mdi:battery-check"
+
+      - name: "BMS Warning Code Pack 1"
+        update_interval: 5
+        rule: 6
+        registers: [3442]
+        icon: "mdi:battery-alert"
+
+      - name: "BMS Protection Flags Pack 1"
+        update_interval: 5
+        rule: 6
+        registers: [3443]
+        icon: "mdi:battery-lock"
+
+      - name: "BMS Status Text Pack 1"
+        update_interval: 5
+        rule: 11
+        registers: [3444]
+        bit_messages:
+          - {bit: 0, value: "Charge MOSFET fault"}
+          - {bit: 1, value: "Discharge MOSFET fault"}
+          - {bit: 2, value: "Temperature sensor failure"}
+          - {bit: 3, value: "Cell sampling failure"}
+          - {bit: 4, value: "Battery cell fault"}
+          - {bit: 5, value: "Front-end sampling communication fault"}
+          - {bit: 6, value: "Heater MOSFET fault"}
+          - {bit: 7, value: "Battery pack shutdown"}
+          - {bit: 8, value: "Charging"}
+          - {bit: 9, value: "Discharging"}
+          - {bit: 10, value: "Charge MOSFET on"}
+          - {bit: 11, value: "Discharge MOSFET on"}
+          - {bit: 12, value: "Discharge limit enabled"}
+          - {bit: 13, value: "Circuit breaker on"}
+          - {bit: 14, value: "Charging reverse"}
+          - {bit: 15, value: "Heater on"}
+        icon: "mdi:battery-check-outline"
+
+      - name: "BMS Warning Text Pack 1"
+        update_interval: 5
+        rule: 11
+        registers: [3442]
+        bit_messages:
+          - {bit: 0, value: "Cell over-voltage alarm"}
+          - {bit: 1, value: "Cell under-voltage alarm"}
+          - {bit: 2, value: "Pack over-voltage alarm"}
+          - {bit: 3, value: "Pack under-voltage alarm"}
+          - {bit: 4, value: "Charge over-current alarm"}
+          - {bit: 5, value: "Discharge over-current alarm"}
+          - {bit: 8, value: "Charge high-temperature alarm"}
+          - {bit: 9, value: "Discharge high-temperature alarm"}
+          - {bit: 10, value: "Charge low-temperature alarm"}
+          - {bit: 11, value: "Discharge low-temperature alarm"}
+          - {bit: 12, value: "Ambient temperature high"}
+          - {bit: 13, value: "Ambient temperature low"}
+          - {bit: 14, value: "MOSFET high-temperature alarm"}
+          - {bit: 15, value: "SOC low alarm"}
+        icon: "mdi:battery-alert-outline"
+
+      - name: "BMS Protection Text Pack 1"
+        update_interval: 5
+        rule: 11
+        registers: [3443]
+        bit_messages:
+          - {bit: 0, value: "Cell over-voltage protection"}
+          - {bit: 1, value: "Cell under-voltage protection"}
+          - {bit: 2, value: "Pack over-voltage protection"}
+          - {bit: 3, value: "Pack under-voltage protection"}
+          - {bit: 4, value: "Charge over-current protection"}
+          - {bit: 5, value: "Discharge over-current protection"}
+          - {bit: 6, value: "Short-circuit current protection"}
+          - {bit: 7, value: "Charge over-voltage protection"}
+          - {bit: 8, value: "Charge high-temperature protection"}
+          - {bit: 9, value: "Discharge high-temperature protection"}
+          - {bit: 10, value: "Charge low-temperature protection"}
+          - {bit: 11, value: "Discharge low-temperature protection"}
+          - {bit: 12, value: "MOSFET high-temperature protection"}
+          - {bit: 13, value: "Ambient temperature high protection"}
+          - {bit: 14, value: "Ambient temperature low protection"}
+        icon: "mdi:battery-lock-outline"
+
+      - name: "BMS Online Pack 1"
+        update_interval: 5
+        class: "enum"
+        rule: 1
+        registers: [3452]
+        lookup:
+          - key: 0
+            value: "Offline"
+          - key: 1
+            value: "Online"
+        icon: "mdi:battery-network"
+
+      - name: "BMS Voltage Pack 1"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3445]
+        icon: "mdi:battery-charging"
+
+      - name: "BMS Current Pack 1"
+        update_interval: 5
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3446]
+        icon: "mdi:current-dc"
+
+      - name: "BMS SOH Pack 1"
+        update_interval: 5
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3449]
+        icon: "mdi:battery-heart"
+
+      - name: "BMS Balance Status Pack 1"
+        update_interval: 5
+        rule: 6
+        registers: [3447]
+        icon: "mdi:scale-balance"
+
+      - name: "BMS Cycle Count Pack 1"
+        update_interval: 30
+        state_class: "total_increasing"
+        rule: 1
+        registers: [3448]
+        icon: "mdi:counter"
+
+      - name: "BMS Cell Temperature Average Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3460]
+        icon: "mdi:thermometer"
+
+      - name: "BMS Cell Temperature Maximum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3461]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS Cell Temperature Minimum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3462]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS Environment Temperature Average Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3466]
+        icon: "mdi:thermometer"
+
+      - name: "BMS Environment Temperature Maximum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3467]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS Environment Temperature Minimum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3468]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS MOSFET Temperature Average Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3463]
+        icon: "mdi:thermometer"
+
+      - name: "BMS MOSFET Temperature Maximum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3464]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS MOSFET Temperature Minimum Pack 1"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3465]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS Cell Voltage Average Pack 1"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3469]
+        icon: "mdi:flash"
+
+      - name: "BMS Cell Voltage Maximum Pack 1"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3470]
+        icon: "mdi:flash-alert"
+
+      - name: "BMS Cell Voltage Minimum Pack 1"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3471]
+        icon: "mdi:flash-outline"
+
+      - name: "BMS Status Pack 2"
+        update_interval: 5
+        rule: 6
+        registers: [3488]
+        icon: "mdi:battery-check"
+
+      - name: "BMS Warning Code Pack 2"
+        update_interval: 5
+        rule: 6
+        registers: [3486]
+        icon: "mdi:battery-alert"
+
+      - name: "BMS Protection Flags Pack 2"
+        update_interval: 5
+        rule: 6
+        registers: [3487]
+        icon: "mdi:battery-lock"
+
+      - name: "BMS Status Text Pack 2"
+        update_interval: 5
+        rule: 11
+        registers: [3488]
+        bit_messages:
+          - {bit: 0, value: "Charge MOSFET fault"}
+          - {bit: 1, value: "Discharge MOSFET fault"}
+          - {bit: 2, value: "Temperature sensor failure"}
+          - {bit: 3, value: "Cell sampling failure"}
+          - {bit: 4, value: "Battery cell fault"}
+          - {bit: 5, value: "Front-end sampling communication fault"}
+          - {bit: 6, value: "Heater MOSFET fault"}
+          - {bit: 7, value: "Battery pack shutdown"}
+          - {bit: 8, value: "Charging"}
+          - {bit: 9, value: "Discharging"}
+          - {bit: 10, value: "Charge MOSFET on"}
+          - {bit: 11, value: "Discharge MOSFET on"}
+          - {bit: 12, value: "Discharge limit enabled"}
+          - {bit: 13, value: "Circuit breaker on"}
+          - {bit: 14, value: "Charging reverse"}
+          - {bit: 15, value: "Heater on"}
+        icon: "mdi:battery-check-outline"
+
+      - name: "BMS Warning Text Pack 2"
+        update_interval: 5
+        rule: 11
+        registers: [3486]
+        bit_messages:
+          - {bit: 0, value: "Cell over-voltage alarm"}
+          - {bit: 1, value: "Cell under-voltage alarm"}
+          - {bit: 2, value: "Pack over-voltage alarm"}
+          - {bit: 3, value: "Pack under-voltage alarm"}
+          - {bit: 4, value: "Charge over-current alarm"}
+          - {bit: 5, value: "Discharge over-current alarm"}
+          - {bit: 8, value: "Charge high-temperature alarm"}
+          - {bit: 9, value: "Discharge high-temperature alarm"}
+          - {bit: 10, value: "Charge low-temperature alarm"}
+          - {bit: 11, value: "Discharge low-temperature alarm"}
+          - {bit: 12, value: "Ambient temperature high"}
+          - {bit: 13, value: "Ambient temperature low"}
+          - {bit: 14, value: "MOSFET high-temperature alarm"}
+          - {bit: 15, value: "SOC low alarm"}
+        icon: "mdi:battery-alert-outline"
+
+      - name: "BMS Protection Text Pack 2"
+        update_interval: 5
+        rule: 11
+        registers: [3487]
+        bit_messages:
+          - {bit: 0, value: "Cell over-voltage protection"}
+          - {bit: 1, value: "Cell under-voltage protection"}
+          - {bit: 2, value: "Pack over-voltage protection"}
+          - {bit: 3, value: "Pack under-voltage protection"}
+          - {bit: 4, value: "Charge over-current protection"}
+          - {bit: 5, value: "Discharge over-current protection"}
+          - {bit: 6, value: "Short-circuit current protection"}
+          - {bit: 7, value: "Charge over-voltage protection"}
+          - {bit: 8, value: "Charge high-temperature protection"}
+          - {bit: 9, value: "Discharge high-temperature protection"}
+          - {bit: 10, value: "Charge low-temperature protection"}
+          - {bit: 11, value: "Discharge low-temperature protection"}
+          - {bit: 12, value: "MOSFET high-temperature protection"}
+          - {bit: 13, value: "Ambient temperature high protection"}
+          - {bit: 14, value: "Ambient temperature low protection"}
+        icon: "mdi:battery-lock-outline"
+
+      - name: "BMS Online Pack 2"
+        update_interval: 5
+        class: "enum"
+        rule: 1
+        registers: [3496]
+        lookup:
+          - key: 0
+            value: "Offline"
+          - key: 1
+            value: "Online"
+        icon: "mdi:battery-network"
+
+      - name: "BMS Voltage Pack 2"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3489]
+        icon: "mdi:battery-charging"
+
+      - name: "BMS Current Pack 2"
+        update_interval: 5
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3490]
+        icon: "mdi:current-dc"
+
+      - name: "BMS SOH Pack 2"
+        update_interval: 5
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [3493]
+        icon: "mdi:battery-heart"
+
+      - name: "BMS Balance Status Pack 2"
+        update_interval: 5
+        rule: 6
+        registers: [3491]
+        icon: "mdi:scale-balance"
+
+      - name: "BMS Cycle Count Pack 2"
+        update_interval: 30
+        state_class: "total_increasing"
+        rule: 1
+        registers: [3492]
+        icon: "mdi:counter"
+
+      - name: "BMS Cell Temperature Average Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3504]
+        icon: "mdi:thermometer"
+
+      - name: "BMS Cell Temperature Maximum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3505]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS Cell Temperature Minimum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3506]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS Environment Temperature Average Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3510]
+        icon: "mdi:thermometer"
+
+      - name: "BMS Environment Temperature Maximum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3511]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS Environment Temperature Minimum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3512]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS MOSFET Temperature Average Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3507]
+        icon: "mdi:thermometer"
+
+      - name: "BMS MOSFET Temperature Maximum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3508]
+        icon: "mdi:thermometer-alert"
+
+      - name: "BMS MOSFET Temperature Minimum Pack 2"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3509]
+        icon: "mdi:thermometer-low"
+
+      - name: "BMS Cell Voltage Average Pack 2"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3513]
+        icon: "mdi:flash"
+
+      - name: "BMS Cell Voltage Maximum Pack 2"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3514]
+        icon: "mdi:flash-alert"
+
+      - name: "BMS Cell Voltage Minimum Pack 2"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.01
+        rule: 1
+        registers: [3515]
+        icon: "mdi:flash-outline"
+
+  - group: Losses
+    update_interval: 30
+    items:
+      - name: Today Losses
+        alt: Daily Losses
+        friendly_name: Today's Losses
+        description: Includes today's consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 1
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [3109]
+          - registers: [3036]
+          - registers: [3294]
+          - operator: subtract
+            registers: [3116]
+          - operator: subtract
+            registers: [3147]
+          - operator: subtract
+            registers: [3301]
+
+      - name: Total Losses
+        description: Includes total consumption of the inverter device itself as well AC/DC conversion losses
+        update_interval: 30
+        class: "energy"
+        state_class: "total_increasing"
+        ensure_increasing:
+        uom: "kWh"
+        rule: 3
+        digits: 1
+        scale: 0.1
+        uint: enforce
+        sensors:
+          - registers: [3115, 3114]
+          - registers: [3042, 3041]
+          - registers: [3293, 3292]
+          - operator: subtract
+            registers: [3122, 3121]
+          - operator: subtract
+            registers: [3153, 3152]
+          - operator: subtract
+            registers: [3300, 3299]
+        validation:
+          min: 1
+
+  - group: Inverter Information
+    items:
+      - name: Work Mode
+        update_interval: 300
+        platform: "select"
+        rule: 1
+        code:
+          read: 0x04
+          write: 0x06
+        registers: [3044]
+        lookup:
+          - key: 0x0000
+            value: "Self Use"
+          - key: 0x0001
+            value: "Time of Use"
+          - key: 0x0002
+            value: "Battery Priority"
+
+      - name: "Inverter Working Mode"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [3044]
+        lookup:
+          - key: 0
+            value: "Self Consumption"
+          - key: 1
+            value: "Peak Shift"
+          - key: 2
+            value: "Battery Priority"
+        icon: "mdi:wrench"
+
+      - name: "PV Input Mode"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [3179]
+        lookup:
+          - key: 0
+            value: "Independent input"
+          - key: 1
+            value: "Parallel input"
+          - key: 2
+            value: "Constant voltage input"
+        icon: "mdi:solar-power"
+
+      - name: "PV Start Voltage"
+        update_interval: 300
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3180]
+        icon: "mdi:solar-power"
+
+      - name: "DCDC Boot Delay"
+        update_interval: 300
+        state_class: "measurement"
+        uom: "s"
+        rule: 1
+        registers: [3186]
+        icon: "mdi:timer-outline"
+
+      - name: "Inverter Model"
+        update_interval: 600
+        class: "enum"
+        rule: 1
+        registers: [3045]
+        lookup:
+          # Single-phase models
+          - key: 0
+            value: "KSE-2K-048S"
+          - key: 1
+            value: "KSE-3K-048S"
+          - key: 2
+            value: "KSE-3.6K-048S"
+          - key: 3
+            value: "KSE-4.6K-048S"
+          - key: 4
+            value: "KSE-5K-048S"
+          - key: 5
+            value: "KSE-3.6K-048"
+          - key: 6
+            value: "KSE-4.6K-048"
+          - key: 7
+            value: "KSE-5K-048"
+          - key: 8
+            value: "KSE-6K-048"
+          - key: 9
+            value: "BluE-S 3680D"
+          - key: 11
+            value: "BluE-S 5000D"
+          - key: 12
+            value: "BluE-S 6000D"
+          - key: 14
+            value: "KSE-3K-048S M1"
+          - key: 15
+            value: "BluE-S 3680D M1"
+          - key: 17
+            value: "BluE-S 5000D M1"
+          - key: 18
+            value: "BluE-S 6000D M1"
+          # Three-phase models
+          - key: 32
+            value: "E10KT"
+          - key: 33
+            value: "E8KT"
+          - key: 34
+            value: "E12KT"
+        icon: "mdi:wrench"
+
+      - name: "System status"
+        update_interval: 30
+        class: "enum"
+        rule: 1
+        registers: [3046]
+        lookup:
+          - key: 0
+            value: "Initialize"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "Hybrid Grid"
+          - key: 3
+            value: "Off-Network"
+          - key: 4
+            value: "Mains Charging"
+          - key: 5
+            value: "PV Charging"
+          - key: 6
+            value: "Mains Bypass"
+          - key: 7
+            value: "Fault"
+          - key: 8
+            value: "Debug"
+          - key: 9
+            value: "Forced Charge"
+          - key: 10
+            value: "Power on the device separately from the"
+          - key: 11
+            value: "DSP Burn"
+          - key: 12
+            value: "MCU Burn"
+          - key: 13
+            value: "Permanent Error"
+        icon: "mdi:wrench"
+
+      - name: "Inverter Status"
+        update_interval: 30
+        class: "enum"
+        rule: 1
+        registers: [3047]
+        lookup:
+          - key: 0
+            value: "Standby"
+          - key: 1
+            value: "Off-Grid"
+          - key: 2
+            value: "On-Grid"
+          - key: 3
+            value: "Off-Grid to On-Grid"
+          - key: 4
+            value: "On-Grid to Off-Grid"
+        icon: "mdi:wrench"
+
+      - name: "DCDC Status"
+        update_interval: 30
+        class: "enum"
+        rule: 1
+        registers: [3048]
+        lookup:
+          - key: 0
+            value: "Standby"
+          - key: 1
+            value: "Soft Boot"
+          - key: 2
+            value: "Charging Mode"
+          - key: 3
+            value: "Discharging Mode"
+        icon: "mdi:wrench"
+
+      - name: "DSP Alarm Code"
+        update_interval: 30
+        rule: 6
+        registers: [3050, 3049]
+        icon: "mdi:wrench"
+
+      - name: "DSP Error Code"
+        update_interval: 30
+        rule: 6
+        registers: [3052, 3051]
+        icon: "mdi:wrench"
+
+      - name: "DSP Alarm Text"
+        update_interval: 30
+        rule: 11
+        registers: [3050, 3049]
+        bit_messages:
+          - {bit: 0, value: "Grid voltage low"}
+          - {bit: 1, value: "Grid voltage high"}
+          - {bit: 2, value: "Grid frequency low"}
+          - {bit: 3, value: "Grid frequency high"}
+          - {bit: 4, value: "Solar loss"}
+          - {bit: 5, value: "Battery loss"}
+          - {bit: 6, value: "Battery under-voltage"}
+          - {bit: 7, value: "Battery voltage low"}
+          - {bit: 8, value: "Battery voltage high"}
+          - {bit: 9, value: "Overload"}
+          - {bit: 10, value: "GFCI over-current"}
+          - {bit: 11, value: "LN fault"}
+          - {bit: 12, value: "Fan fault"}
+          - {bit: 13, value: "Battery capacity low"}
+          - {bit: 14, value: "BMS discharge over-current"}
+          - {bit: 15, value: "BMS charge over-current"}
+          - {bit: 16, value: "BMS voltage over-limit"}
+          - {bit: 17, value: "BMS temperature over-limit"}
+          - {bit: 18, value: "BMS discharge low temperature"}
+          - {bit: 19, value: "BMS cell imbalance"}
+          - {bit: 20, value: "BMS communication fault"}
+          - {bit: 21, value: "BMS voltage under-limit"}
+          - {bit: 22, value: "BMS charge low temperature"}
+          - {bit: 23, value: "BMS minor over-voltage"}
+          - {bit: 24, value: "BMS minor over-temperature"}
+          - {bit: 25, value: "BMS updating"}
+          - {bit: 26, value: "BMS version mismatch"}
+          - {bit: 27, value: "BMS update failed"}
+          - {bit: 28, value: "CT reversed"}
+          - {bit: 29, value: "Clock fault"}
+          - {bit: 30, value: "PV off"}
+          - {bit: 31, value: "System reset"}
+        icon: "mdi:message-alert-outline"
+
+      - name: "DSP Error Text"
+        update_interval: 30
+        rule: 11
+        registers: [3052, 3051]
+        bit_messages:
+          - {bit: 0, value: "Soft-start timeout"}
+          - {bit: 1, value: "Inverter output short circuit"}
+          - {bit: 3, value: "GFCI sensor fault"}
+          - {bit: 4, value: "Bus voltage low"}
+          - {bit: 5, value: "Bus voltage high"}
+          - {bit: 6, value: "Bus short circuit"}
+          - {bit: 8, value: "PV insulation resistance low"}
+          - {bit: 9, value: "PV input short circuit"}
+          - {bit: 10, value: "Output relay fault"}
+          - {bit: 11, value: "Inverter over-current"}
+          - {bit: 12, value: "Inverter DC over-current"}
+          - {bit: 13, value: "Ambient over-temperature"}
+          - {bit: 14, value: "Heatsink over-temperature"}
+          - {bit: 15, value: "Grid relay fault"}
+          - {bit: 16, value: "Battery discharge over-current"}
+          - {bit: 17, value: "Battery charge over-current"}
+          - {bit: 18, value: "Current sensor fault"}
+          - {bit: 19, value: "Inverter abnormal"}
+          - {bit: 20, value: "EPS relay fault"}
+          - {bit: 21, value: "Always overloaded"}
+          - {bit: 22, value: "DSP SPI communication fault"}
+          - {bit: 23, value: "Parallel communication fault"}
+          - {bit: 24, value: "Parallel grid abnormal"}
+          - {bit: 25, value: "Backup air switch abnormal"}
+          - {bit: 26, value: "Parallel power imbalance"}
+          - {bit: 27, value: "Parallel grid phase sequence abnormal"}
+          - {bit: 31, value: "DSP SCI fault"}
+        icon: "mdi:alert-octagon-outline"
+
+      - name: "ARM Error Text"
+        update_interval: 30
+        rule: 11
+        registers: [3194]
+        bit_messages:
+          - {bit: 0, value: "F32: DSP communication error"}
+        icon: "mdi:alert-circle-outline"
+
+      - name: "ARM Error Code"
+        update_interval: 30
+        rule: 6
+        registers: [3194]
+        icon: "mdi:alert-circle-outline"
+
+      - name: "Grid Standard"
+        update_interval: 600
+        class: "enum"
+        rule: 1
+        registers: [3193]
+        lookup:
+          - key: 0
+            value: "China"
+          - key: 1
+            value: "Germany"
+          - key: 2
+            value: "Australia"
+          - key: 3
+            value: "Italy"
+          - key: 4
+            value: "Spain"
+          - key: 5
+            value: "UK"
+          - key: 6
+            value: "Hungary"
+          - key: 7
+            value: "Belgium"
+          - key: 8
+            value: "West Australia"
+          - key: 9
+            value: "Greece"
+          - key: 10
+            value: "France"
+          - key: 11
+            value: "Bangkok"
+          - key: 12
+            value: "Thailand"
+          - key: 13
+            value: "South Africa"
+          - key: 14
+            value: "EN50549"
+          - key: 15
+            value: "Brazil"
+          - key: 16
+            value: "VDE0126"
+          - key: 17
+            value: "Ireland"
+          - key: 18
+            value: "Israel"
+          - key: 19
+            value: "Poland"
+          - key: 20
+            value: "Chile"
+          - key: 21
+            value: "Local"
+        icon: "mdi:wrench"
+
+      - name: "Inverter Model Name"
+        update_interval: 600
+        rule: 5
+        registers: [3200, 3201, 3202, 3203, 3204, 3205, 3206, 3207]
+        code: 0x03
+        icon: "mdi:wrench"
+
+      - name: "Inverter Battery Name"
+        update_interval: 600
+        rule: 5
+        registers: [3208, 3209, 3210, 3211, 3212, 3213, 3214, 3215]
+        code: 0x03
+        icon: "mdi:wrench"
+
+      # ARM AND DSP version numbers ("X.Y.Z") are set in the two bytes on each register. 
+      # The first byte contains the X.Y part (scale 0.1), and the second byte contains the Z part.
+      - name: "ARM Version Number"
+        update_interval: 600
+        rule: 7
+        version_encoding: "u8_major_minor_patch"
+        registers: [3216]
+        code: 0x03
+        icon: "mdi:wrench"
+
+      - name: "DSP Version Number"
+        update_interval: 600
+        rule: 7
+        version_encoding: "u8_major_minor_patch"
+        registers: [3217]
+        code: 0x03
+        icon: "mdi:wrench"
+
+      - name: "Device Serial Number"
+        update_interval: 600
+        rule: 5
+        registers:
+          [3228, 3229, 3230, 3231, 3232, 3233, 3234, 3235, 3236, 3237, 3238]
+        icon: "mdi:wrench"
+
+  - group: Inverter
+    items:
+      - name: "Inverter Bus Voltage"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3053]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Inverter DC Bus Voltage"
+        update_interval: 5
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3054]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Inverter Radiator Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3055]
+        icon: "mdi:thermometer"
+
+      - name: "Chassis Internal Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3057]
+        icon: "mdi:battery-heart-outline"
+
+      - name: "PV Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3156]
+        icon: "mdi:solar-power"
+
+      - name: "LLC Temperature"
+        update_interval: 30
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [3157]
+        icon: "mdi:thermometer"
+
+      - name: Restart
+        platform: button
+        class: restart
+        rule: 0
+        code:
+          write: 0x06
+        registers: [3243]
+
+  - group: Grid
+    update_interval: 5
+    items:
+      - name: "Grid L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3097]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L1 Frequency"
+        l: 1
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3098]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.001
+        rule: 2
+        registers: [3099]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
+        rule: 2
+        registers: [3100]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3101]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L2 Frequency"
+        l: 2
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3102]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.001
+        rule: 2
+        registers: [3103]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
+        rule: 2
+        registers: [3104]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3105]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Frequency"
+        l: 3
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3106]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.001
+        rule: 2
+        registers: [3107]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
+        rule: 2
+        registers: [3108]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        # Inverse value to match standard behavior of the other inverters
+        scale: -1
+        rule: 2
+        sensors:
+          - signed:
+            registers: [3100]
+          - signed:
+            registers: [3104]
+          - signed:
+            registers: [3108]
+        icon: "mdi:transmission-tower"
+
+  - group: Output
+    update_interval: 5
+    items:
+      - name: "L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3123]
+
+      - name: "L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3124]
+
+      - name: "L1 Frequency"
+        l: 1
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3125]
+
+      - name: "L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3126]
+
+      - name: "L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3127]
+
+      - name: "L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3128]
+
+      - name: "L2 Frequency"
+        l: 2
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3129]
+
+      - name: "L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3130]
+
+      - name: "L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3131]
+
+      - name: "L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 2
+        registers: [3132]
+
+      - name: "L3 Frequency"
+        l: 3
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [3133]
+
+      - name: "L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [3134]
+
+      - name: "Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        sensors:
+          - signed:
+            registers: [3126]
+          - signed:
+            registers: [3130]
+          - signed:
+            registers: [3134]
+
+      - name: "Power losses"
+        description: Includes consumption of the inverter device itself as well AC/DC conversion losses
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        digits: 0
+        uint: enforce
+        sensors:
+          - signed:
+            registers: [3024]
+          - signed:
+            registers: [3025]
+          - signed:
+            registers: [3065]
+          - operator: subtract
+            signed:
+            registers: [3126]
+          - operator: subtract
+            signed:
+            registers: [3130]
+          - operator: subtract
+            signed:
+            registers: [3134]
+
+  - group: Load
+    update_interval: 5
+    items:
+      - name: "Load UPS L1 Voltage"
+        l: 1
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3135]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L1 Current"
+        l: 1
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [3136]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3137]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3138]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [3139]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3140]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [3141]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.01
+        rule: 1
+        registers: [3142]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3143]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load UPS Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        sensors:
+          - registers: [3137]
+          - registers: [3140]
+          - registers: [3143]
+        icon: "mdi:home-lightning-bolt"
+
+      - name: "Load L1 Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3144]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3145]
+
+      - name: "Load L3 Power"
+        l: 3
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [3146]
+
+      - name: "Load Power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        sensors:
+          - registers: [3144]
+          - registers: [3145]
+          - registers: [3146]
+
+  - group: Timed
+    update_interval: 300
+    items:
+      - name: "Timed Charge 1 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [3160, 3161]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 1 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3162, 3163]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 1 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3164, 3165]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 1 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3166, 3167]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 Start"
+        platform: time
+        state_class: measurement
+        rule: 9
+        registers: [3168, 3169]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Charge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3170, 3171]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 Start"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3172, 3173]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
+
+      - name: "Timed Discharge 2 End"
+        platform: time
+        state_class: "measurement"
+        rule: 9
+        registers: [3174, 3175]
+        hex:
+        offset: 0x3030
+        icon: "mdi:wrench-clock"
