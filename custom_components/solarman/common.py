@@ -89,6 +89,17 @@ def getipaddress(address: str):
     except AddressValueError:
         return IPv4Address(socket.gethostbyname(address))
 
+async def discover_mac(hass, host):
+    from .discovery import discover
+    try:
+        ip = str(getipaddress(host))
+    except Exception:
+        return None
+    async for v in await discover(hass, ip):
+        if v["ip"] == ip and v.get("mac"):
+            return format_mac(v["mac"])
+    return None
+
 def to_dict(*keys: list):
     return {k: k for k in keys}
 

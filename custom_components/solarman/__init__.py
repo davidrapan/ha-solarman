@@ -57,6 +57,16 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Coord
 
     config_entry.runtime_data = await Coordinator(hass, config_entry).init()
 
+    # Backfill a stable unique_id (MAC) for legacy entries created before MAC-based dedup
+    #
+    if config_entry.unique_id is None and (mac := config_entry.runtime_data.device.endpoint.mac or await discover_mac(hass, config_entry.runtime_data.device.endpoint.host)):
+        mac = format_mac(mac)
+        if hass.config_entries.async_entry_for_domain_unique_id(DOMAIN, mac) is None:
+            _LOGGER.debug(f"async_setup_entry: backfilling unique_id with {mac}")
+            hass.config_entries.async_update_entry(config_entry, unique_id = mac)
+        else:
+            _LOGGER.debug(f"async_setup_entry: skipping backfill, unique_id {mac} already owned by another entry")
+
     # Migrations
     #
     _LOGGER.debug(f"async_setup_entry: async_migrate_entries")
@@ -117,6 +127,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry[Coo
                 m = int(m)
         else:
             del new_options[CONF_ADDITIONAL_OPTIONS]
+        # Intentionally wipe MAC unique_id here — async_setup_entry backfill re-establishes it (prevents dedup regressions on future VERSION bumps)
         hass.config_entries.async_update_entry(config_entry, unique_id = None, data = new_data, options = new_options, minor_version = ConfigFlowHandler.MINOR_VERSION, version = ConfigFlowHandler.VERSION)
 
     return True
