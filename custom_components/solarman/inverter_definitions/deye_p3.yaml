@@ -1520,6 +1520,7 @@ parameters:
             value: Load
 
   - group: BMS
+    bms: 1
     items:
       - name: "Battery BMS Charging Voltage"
         attribute:
@@ -1587,6 +1588,17 @@ parameters:
         registers: [0x00D8]
         icon: "mdi:current-dc"
 
+      - name: "Battery BMS Temperature"
+        attribute:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        scale: 0.1
+        offset: 1000
+        registers: [0x00D9]
+        icon: "mdi:thermometer"
+
       - name: "Battery BMS Max Charging Current"
         attribute:
         class: "current"
@@ -1624,7 +1636,31 @@ parameters:
           max: 65535
         attributes: ["value"]
 
-      - name: "Battery BMS Other Symbol"
+      - name: "Battery BMS Battery 1 Force Charge Flag"
+        attribute:
+        class: "problem"
+        rule: 1
+        registers: [0x00DE]
+        icon: "mdi:battery-alert"
+        bit: 1
+
+      - name: "Battery BMS Battery 2 Force Charge Flag"
+        attribute:
+        class: "problem"
+        rule: 1
+        registers: [0x00DE]
+        icon: "mdi:battery-alert"
+        bit: 2
+
+      - name: "Battery BMS Sleep Flag"
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x00DE]
+        icon: "mdi:battery-outline"
+        bit: 3
+
+      - name: "Battery BMS Other Flag"
         attribute:
         rule: 1
         registers: [0x00DE]
@@ -1633,16 +1669,16 @@ parameters:
           min: 0
           max: 65535
 
-      - name: Battery BMS Type
+      - name: "Battery BMS Type"
         platform: select
         rule: 1
         registers: [0x00DF]
         icon: "mdi:battery"
         lookup:
           - key: 0x0000
-            value: "PYLON"
+            value: "PYLON/CAN"
           - key: 0x0001
-            value: "Tianbangda"
+            value: "Tianbangda RS485"
           - key: 0x0002
             value: "KOK"
           - key: 0x0003
@@ -1661,6 +1697,35 @@ parameters:
             value: "Tianbangda 485"
           - key: 0x000A
             value: "Shenggao Electric CAN"
+
+      - name: "Battery BMS State of Health"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [0x00E0]
+        icon: "mdi:battery-heart"
+
+      - name: "Battery BMS Software Version"
+        attribute:
+        state_class: "measurement"
+        rule: 7
+        registers: [0x00E1]
+        icon: "mdi:alpha-v"
+
+      - name: "Battery BMS Rated Ah"
+        attribute:
+        state_class: "measurement"
+        uom: "Ah"
+        rule: 1
+        registers: [0x00E2]
+        icon: "mdi:battery"
+
+      - name: "Battery BMS Hardware Version"
+        attribute:
+        state_class: "measurement"
+        rule: 7
+        registers: [0x00E3]
+        icon: "mdi:alpha-v"
 
   - group: Meter
     update_interval: 30
@@ -2055,13 +2120,18 @@ parameters:
         scale: 0.1
         rule: 1
         offset: 1000
-        registers: [0x024A]
+        sensors:
+          - signed:
+            registers: [0x024A]
+          - signed:
+            registers: [0x0254]
         range:
           min: 0
           max: 3000
         validation:
           min: -99
           max: 99
+        icon: "mdi:thermometer"
 
       # Battery - The voltage of battery 1 (L:0.01V, H:0.1V)
       - name: "Battery Voltage"
@@ -2070,10 +2140,15 @@ parameters:
         uom: "V"
         scale: [0.01, 0.1]
         rule: 1
-        registers: [0x024B]
+        sensors:
+          - signed:
+            registers: [0x024B]
+          - signed:
+            registers: [0x0251]
 
       # Battery - The State of Charge (SOC) of battery 1
       - name: "Battery"
+        bms: 1
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -2091,13 +2166,14 @@ parameters:
             "Battery BMS SOC",
             "Battery BMS Current",
             "Battery BMS Voltage",
-            "Battery BMS Other Symbol",
+            "Battery BMS Other Flag",
             "Battery BMS Charging Voltage",
             "Battery BMS Discharging Voltage",
             "Battery BMS Charging Current",
             "Battery BMS Discharging Current",
             "Battery BMS Max Charging Current",
             "Battery BMS Max Discharging Current",
+            "Battery BMS Rated Ah",
           ]
 
       # Battery - The power of battery is S16bit
@@ -2107,7 +2183,11 @@ parameters:
         uom: "W"
         scale: [1, 10]
         rule: 2
-        registers: [0x024E]
+        sensors:
+          - signed:
+            registers: [0x024E]
+          - signed:
+            registers: [0x0253]
         attributes: [inverse]
 
       # Battery - The state of health
