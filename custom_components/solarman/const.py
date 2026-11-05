@@ -33,6 +33,7 @@ CONF_PACK = "pack"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
+CONF_SERIAL = "serial"
 
 OLD_ = { "name": "name", "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
@@ -58,6 +59,7 @@ DEFAULT_ = {
     CONF_PORT: 8899,
     CONF_TRANSPORT: "tcp",
     CONF_MB_SLAVE_ID: 1,
+    CONF_SERIAL: 0,
     CONF_LOOKUP_FILE: "Auto",
     CONF_MOD: 0,
     CONF_MPPT: 4,
