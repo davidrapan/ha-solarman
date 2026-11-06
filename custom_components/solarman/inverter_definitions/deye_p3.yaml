@@ -3151,6 +3151,7 @@ parameters:
         registers: [0x02DA]
         icon: "mdi:solar-power-variant"
 
+  # Battery 1 - [LV, HV]. HV (mod 1): BMS block of Deye HV batteries (GB-L / BOS-G), verified against Deye Cloud
   - group: Battery 1
     via_device: "inverter"
     update_interval: 300
@@ -3171,7 +3172,7 @@ parameters:
         uom: "V"
         scale: 0.1
         rule: 1
-        registers: [0x2738]
+        registers: [[0x2738], [0x273F]]
 
       - name: "Battery 1 Current"
         class: "current"
@@ -3179,17 +3180,18 @@ parameters:
         uom: "A"
         scale: 0.1
         rule: 2
-        registers: [0x2739]
+        offset: [0, 30000]
+        registers: [[0x2739], [0x2740]]
         icon: "mdi:current-dc"
 
       - name: "Battery 1 Max Cell Temperature"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        offset: 1000
-        registers: [0x273B]
+        offset: [1000, 40]
+        registers: [[0x273B], [0x274B]]
         range:
           min: 0
           max: 3000
@@ -3201,10 +3203,10 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        offset: 1000
-        registers: [0x273C]
+        offset: [1000, 40]
+        registers: [[0x273C], [0x274E]]
         range:
           min: 0
           max: 3000
@@ -3216,10 +3218,10 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        offset: 1000
-        registers: [0x273D]
+        offset: [1000, 40]
+        registers: [[0x273D], []]
         range:
           min: 0
           max: 3000
@@ -3231,10 +3233,10 @@ parameters:
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        offset: 1000
-        registers: [0x273A]
+        offset: [1000, 40]
+        registers: [[0x273A], [0x274A]]
         range:
           min: 0
           max: 3000
@@ -3246,9 +3248,9 @@ parameters:
         class: "battery"
         state_class: "measurement"
         uom: "%"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        registers: [0x273F]
+        registers: [[0x273F], [0x2742]]
         icon: "mdi:battery"
         validation:
           min: 0
@@ -3264,9 +3266,9 @@ parameters:
       - name: "Battery 1 SOH"
         state_class: "measurement"
         uom: "%"
-        scale: 0.1
+        scale: [0.1, 1]
         rule: 1
-        registers: [0x2740]
+        registers: [[0x2740], [0x2743]]
         icon: "mdi:battery-heart"
 
       - name: "Battery 1 Capacity"
@@ -3274,7 +3276,7 @@ parameters:
         uom: "Ah"
         rule: 1
         scale: 0.1
-        registers: [0x2742]
+        registers: [[0x2742], []]
         icon: "mdi:battery"
 
       - name: "Battery 1 Imbalance"
@@ -3284,7 +3286,7 @@ parameters:
         scale: 0.001
         rule: 1
         sensors:
-          - registers: [0x2746]
+          - registers: [[0x2746], [0x2744]]
           - operator: subtract
             registers: [0x2747]
 
@@ -3294,7 +3296,7 @@ parameters:
         uom: "V"
         scale: 0.001
         rule: 1
-        registers: [0x2746]
+        registers: [[0x2746], [0x2744]]
 
       - name: "Battery 1 Min Cell Voltage"
         class: "voltage"
@@ -3307,20 +3309,20 @@ parameters:
       - name: "Battery 1 Cycles"
         state_class: "total_increasing"
         rule: 1
-        registers: [0x2748]
+        registers: [[0x2748], [0x273E]]
         icon: "mdi:battery-sync"
 
       - name: "Battery 1 MOS"
         attribute:
         rule: 1
         icon: "mdi:state-machine"
-        registers: [0x2749]
+        registers: [[0x2749], []]
 
       - name: "Battery 1 Alarm"
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x274A, 0x274B]
+        registers: [[0x274A, 0x274B], []]
         icon: "mdi:battery-alert"
         attributes: ["value"]
 
@@ -3328,7 +3330,7 @@ parameters:
         platform: binary_sensor
         class: "problem"
         rule: 1
-        registers: [0x274C, 0x274D]
+        registers: [[0x274C, 0x274D], []]
         icon: "mdi:battery-alert-variant"
         attributes: ["value"]
 
@@ -3336,13 +3338,58 @@ parameters:
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x274E]
+        registers: [[0x274E], []]
 
       - name: "Battery 1 Hardware Version"
         attribute:
         rule: 7
         delimiter: ""
-        registers: [0x274F]
+        registers: [[0x274F], []]
+
+      - name: "Battery 1 BMS Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        offset: 40
+        registers: [[], [0x2741]]
+        validation:
+          min: -99
+          max: 99
+
+      - name: "Battery 1 Charge Current Limit"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [[], [0x2751]]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 1 Discharge Current Limit"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [[], [0x2752]]
+        icon: "mdi:current-dc"
+
+      - name: "Battery 1 Total Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [[], [0x275E, 0x275D]]
+        icon: "mdi:battery-plus"
+
+      - name: "Battery 1 Total Discharge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 3
+        registers: [[], [0x2760, 0x275F]]
+        icon: "mdi:battery-minus"
 
   - group: Battery 2
     via_device: "inverter"
