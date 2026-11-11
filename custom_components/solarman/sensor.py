@@ -124,45 +124,59 @@ class SolarmanBatterySensor(SolarmanSensor):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
 class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
+    # Up to 1000 samples each, together close to the recorder's 16 KB attribute limit. They are restored on startup
+    # from the restore state, so the recorder doesn't need them.
+    _unrecorded_attributes = frozenset({"samples", "states"})
+
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
         self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])
         self._threshold = sensor.get("threshold", 200)
         self._nstates = sensor.get("states", 1000)
+        self._window = sensor.get("window", 1)
         self._states = []
-        self._temp = []
+        self._samples = []
+        self._start = None
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-        if (state := await self.async_get_last_state()) and "states" in state.attributes:
-            self._attr_extra_state_attributes["states"] = self._states = state.attributes["states"]
+        if state := await self.async_get_last_state():
+            if "states" in state.attributes:
+                self._attr_extra_state_attributes["states"] = self._states = state.attributes["states"]
+            if "samples" in state.attributes:
+                self._attr_extra_state_attributes["samples"] = self._samples = state.attributes["samples"]
 
     def update(self):
-        if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is not None and (is_charging := power < 0) is not None and (was_charging := (self._temp[-1][0] < 0) if len(self._temp) > 0 else is_charging) is not None:
-            if (power > -self._threshold and was_charging) or (power < self._threshold and not was_charging):
-                self._temp = []
-                return
-            if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is not None and (tb := get_tuple(self.coordinator.data.get("total_battery_charge_sensor" if is_charging else "total_battery_discharge_sensor"))) is not None:
-                self._temp.append((power, soc, tb))
-                h = m = l = s = (soc, tb)
-                for i in reversed(self._temp):
-                    s = (i[1], i[2])
-                    if h[1] > m[1] > l[1] > s[1]:
-                        break
-                    if h[1] == s[1]:
-                        h = m = l = s
-                    if m[1] == h[1] or m[1] == s[1]:
-                        m = l = s
-                    if l[1] == m[1] or l[1] == s[1]:
-                        l = s
-                if h[1] > m[1] > l[1] > s[1] and (diff := abs(h[0] - l[0])) > 0 and (state := get_number((h[1] - l[1]) * (100 / diff), self._digits)):
-                    self._states.append(state)
-                    while len(self._states) > self._nstates:
-                        self._states.pop(0)
-                    self._attr_extra_state_attributes["states"] = self._states
-                    self._temp = [(power, soc, tb)]
-                    if (srtd := sorted(self._states)[5:-5] if len(self._states) > 10 else None):
-                        self.set_state(get_number(sum(srtd) / len(srtd), self._digits) if srtd else None)
+        # Capacity = total energy / total SOC change over windows of a fixed amount of energy (#1218).
+        # The counter (0.1 kWh) and SOC (1 %) are coarse, so a single window is noisy, but the rounding cancels out in
+        # the sums. A window ends on the energy counter only, never on SOC, and windows with no SOC change are kept:
+        # choosing windows by their SOC change would bias the result just like averaging the per-window ratios did.
+        if (power := get_tuple(self.coordinator.data.get("battery_power_sensor"))) is None:
+            return
+        is_charging = power < 0
+        if abs(power) < self._threshold or (self._start is not None and self._start[0] != is_charging):
+            self._start = None
+            return
+        if (soc := get_tuple(self.coordinator.data.get("battery_sensor"))) is None or (tb := get_tuple(self.coordinator.data.get("total_battery_charge_sensor" if is_charging else "total_battery_discharge_sensor"))) is None:
+            return
+        if self._start is None or (energy := tb - self._start[2]) < 0:
+            self._start = (is_charging, soc, tb)
+            return
+        if energy < self._window:
+            return
+        diff = abs(soc - self._start[1])
+        self._start = (is_charging, soc, tb)
+        self._samples.append([round(energy, 3), diff])
+        if diff > 0:
+            self._states.append(get_number(energy * 100 / diff, self._digits))
+        while len(self._samples) > self._nstates:
+            self._samples.pop(0)
+        while len(self._states) > self._nstates:
+            self._states.pop(0)
+        self._attr_extra_state_attributes["samples"] = self._samples
+        self._attr_extra_state_attributes["states"] = self._states
+        if len(self._samples) > 10 and (soc_sum := sum(x[1] for x in self._samples)) > 0:
+            self.set_state(get_number(sum(x[0] for x in self._samples) * 100 / soc_sum, self._digits))
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
