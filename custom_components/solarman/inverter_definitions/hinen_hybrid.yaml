@@ -268,9 +268,6 @@ parameters:
         registers: [105, 104]
         icon: mdi:battery-plus
 
-  - group: Settings
-    update_interval: 300
-    items:
       - name: "Energy Pattern"
         rule: 1
         registers: [125]
@@ -283,7 +280,7 @@ parameters:
           - key: 2
             value: "Grid"
             
-      - name: "Battery Type"
+      - name: "Battery Control Mode"
         rule: 1
         registers: [126]
         icon: "mdi:battery"
