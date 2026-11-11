@@ -38,6 +38,18 @@ PROTOCOL.PLACEHOLDER4 = bytes.fromhex("000000000000000000000000") # delivery|pow
 PROTOCOL.START = bytes.fromhex("A5")
 PROTOCOL.END = bytes.fromhex("15")
 
+# AT command passthrough of the logger's Wi-Fi module (UDP 48899), for loggers which only answer V5 requests
+# with an acknowledge (e.g. the one integrated in the Solarman DDZY422-D2 meter). Needs "Data collection" mode.
+AT = types.SimpleNamespace()
+AT.PORT = 48899
+AT.HANDSHAKE = b"WIFIKIT-214028-READ"
+AT.ACK = b"+ok"
+AT.DATA = b"+ok="
+AT.NO_DATA = b"+ok=no data"
+AT.QUIT = b"AT+Q\n"
+AT.DLE = b"\x10" # Escape byte the module inserts into its hex reply
+AT.TIMEOUT = 2
+
 def log_call(prefix: str):
     def decorator(f):
         @wraps(f)
@@ -59,6 +71,13 @@ def log_return(prefix: str):
 
 class FrameError(Exception):
     """Frame Validation Error"""
+
+class AtProtocol(asyncio.DatagramProtocol):
+    def __init__(self):
+        self.queue: asyncio.Queue[bytes] = asyncio.Queue()
+
+    def datagram_received(self, data: bytes, addr):
+        self.queue.put_nowait(data)
 
 class Solarman:
     def __init__(self, host: str, port: int | str, transport: str, serial: int, slave: int, timeout: int):
@@ -113,6 +132,9 @@ class Solarman:
         if value == "tcp":
             self._get_response = self._parse_adu_from_sol_response
             self._handle_frame = self._handle_protocol_frame
+        elif value == "at":
+            self._get_response = self._parse_adu_from_at_response
+            self._handle_frame = None
         else:
             self._get_response = self._parse_adu_from_tcp_response if not value.endswith("rtu") else self._parse_adu_from_rtu_response
             self._handle_frame = None
@@ -303,6 +325,46 @@ class Solarman:
     async def _parse_adu_from_rtu_response(self, code: int, address: int, **kwargs) -> list[int]:
         req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
         return rtu.parse_response_adu(await self._send_receive_frame(req), req)
+
+    @staticmethod
+    def _parse_at_response(data: bytes) -> bytes:
+        if not data.startswith(AT.DATA) or data.startswith(AT.NO_DATA):
+            raise FrameError(f"No data in AT response: {data[:32]!r}")
+        try:
+            return bytes.fromhex(data[len(AT.DATA):].replace(AT.DLE, b"").strip().decode("ascii"))
+        except (UnicodeDecodeError, ValueError) as e:
+            raise FrameError(f"Invalid AT response: {data[:32]!r}") from e
+
+    async def _parse_adu_from_at_response(self, code: int, address: int, **kwargs) -> list[int]:
+        # One short session per request: a discovery broadcast (same handshake) or another client
+        # (e.g. the vendor app) would otherwise leave a long-lived session dead
+        req = rtu.function_code_to_function_map[code](self.slave, address, **kwargs)
+        frame = b"AT+INVDATA=%d,%s\n" % (len(req), req.hex().encode())
+        udp, protocol = await asyncio.get_running_loop().create_datagram_endpoint(AtProtocol, remote_addr = (self.host, AT.PORT))
+        try:
+            udp.sendto(AT.HANDSHAKE)
+            await asyncio.wait_for(protocol.queue.get(), AT.TIMEOUT) # "ip,mac,serial"
+            udp.sendto(AT.ACK)
+            await asyncio.sleep(0.4)
+            while not protocol.queue.empty():
+                protocol.queue.get_nowait()
+            _LOGGER.debug(f"[{self.host}] AT SENT: {frame!r}")
+            udp.sendto(frame)
+            while not (data := await asyncio.wait_for(protocol.queue.get(), AT.TIMEOUT)).startswith(AT.DATA) and b"ERR" not in data:
+                pass
+            _LOGGER.debug(f"[{self.host}] AT RECV: {data!r}")
+        finally:
+            udp.sendto(AT.QUIT)
+            udp.close()
+        res = self._parse_at_response(data)
+        if len(res) < 5 or res[0] != self.slave:
+            raise FrameError("Invalid modbus frame")
+        if res.endswith(PROTOCOL.PLACEHOLDER2) and get_crc(res[:-4]) == res[-4:-2]: # Double CRC (XXXX0000) correction
+            try:
+                return rtu.parse_response_adu(res, req)
+            except:
+                res = res[:-2]
+        return rtu.parse_response_adu(res, req)
 
     async def _parse_adu_from_tcp_response(self, code: int, address: int, **kwargs) -> list[int]:
         req = tcp.function_code_to_function_map[code](self.slave, address, **kwargs)

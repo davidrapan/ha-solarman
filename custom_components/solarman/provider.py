@@ -90,7 +90,8 @@ class EndPointProvider:
                 self.host = d["ip"]
                 self.mac = d["mac"]
                 self.info = await request(self.host, LOGGER_SET)
-                if next(iter(LOGGER_REGEX["setting_protocol"].finditer(self.info))).group(1) != "TCP" if "tcp" in self.transport else "UDP" or next(iter(LOGGER_REGEX["setting_cs"].finditer(self.info))).group(1) != "SERVER" if "tcp" in self.transport else "" or next(iter(LOGGER_REGEX["setting_port"].finditer(self.info))).group(1) != self.port or next(iter(LOGGER_REGEX["setting_ip"].finditer(self.info))).group(1) != IP_ANY or next(iter(LOGGER_REGEX["setting_timeout"].finditer(self.info))).group(1) != "300":
+                # The AT transport talks to the Wi-Fi module itself: keep the logger's own server settings untouched
+                if self.transport != "at" and (next(iter(LOGGER_REGEX["setting_protocol"].finditer(self.info))).group(1) != "TCP" if "tcp" in self.transport else "UDP" or next(iter(LOGGER_REGEX["setting_cs"].finditer(self.info))).group(1) != "SERVER" if "tcp" in self.transport else "" or next(iter(LOGGER_REGEX["setting_port"].finditer(self.info))).group(1) != self.port or next(iter(LOGGER_REGEX["setting_ip"].finditer(self.info))).group(1) != IP_ANY or next(iter(LOGGER_REGEX["setting_timeout"].finditer(self.info))).group(1) != "300"):
                     await request(self.host, LOGGER_CMD, LOGGER_SET,
                         {
                             "net_setting_pro": "TCP" if "tcp" in self.transport else "UDP",
