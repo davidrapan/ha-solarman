@@ -1923,6 +1923,241 @@ parameters:
           min: 0
           max: 3000
 
+  # EMS / Remote Control (dec 1100-1115) - mapping per Deye MODBUS RTU V105.4, doc-derived, not hardware-verified
+  - group: Remote Control
+    update_interval: 30
+    items:
+      # 1100 (0x044C) - Remote mode enable; 0-vs-1 meaning is firmware-specific (protocol: 0=disable/1-3=modes; EMS doc: 0=enter/1=exit)
+      - name: Remote control mode
+        platform: select
+        rule: 1
+        registers: [0x044C]
+        icon: "mdi:remote"
+        lookup:
+          - key: 0x0000
+            value: "Disabled"
+          - key: 0x0001
+            value: "Enabled (Mode 1)"
+          - key: 0x0002
+            value: "Enabled (Mode 2)"
+          - key: 0x0003
+            value: "Enabled (Mode 3)"
+
+      # 1101 (0x044D) - Watchdog timeout; 0xFFFF (65535) disables it, otherwise inverter exits remote mode on timeout
+      - name: Remote mode watchdog time
+        platform: number
+        uom: "s"
+        rule: 1
+        registers: [0x044D]
+        configurable:
+          min: 10
+          max: 18000
+          mode: box
+        range:
+          min: 10
+          max: 65535
+
+      # 1104 (0x0450) - Inverter output power control mode (AC / battery / grid side)
+      - name: Power control mode selection
+        platform: select
+        rule: 1
+        registers: [0x0450]
+        lookup:
+          - key: 0x0000
+            value: "AC-side control"
+          - key: 0x0001
+            value: "Battery-side control"
+          - key: 0x0002
+            value: "Grid-side control"
+
+      # 1105 (0x0451) - Battery-side control strategy (0=voltage and 1=current are reserved in the doc)
+      - name: Battery-side control strategy
+        platform: select
+        rule: 1
+        registers: [0x0451]
+        lookup:
+          - key: 0x0000
+            value: "Voltage"
+          - key: 0x0001
+            value: "Current"
+          - key: 0x0002
+            value: "Power"
+          - key: 0x0003
+            value: "SOC"
+          - key: 0x0004
+            value: "Volt+Current"
+          - key: 0x0005
+            value: "Power+SOC"
+
+      # 1106 (0x0452) - AC power control mode (0=three phases together via 1111; 1=per phase via 1112/1113/1114)
+      - name: AC power control mode
+        platform: select
+        rule: 1
+        registers: [0x0452]
+        lookup:
+          - key: 0x0000
+            value: "Three phases together"
+          - key: 0x0001
+            value: "Per phase"
+
+      # 1107 (0x0453) - Battery constant-voltage setpoint (0.1 V, unsigned)
+      - name: Battery constant-voltage setpoint
+        platform: number
+        class: "voltage"
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0453]
+        configurable:
+          min: 0
+          max: 1000
+          step: 0.1
+          mode: box
+        range:
+          min: 0
+          max: 10000
+
+      # 1108 (0x0454) - Battery constant-current setpoint (0.1 A, unsigned)
+      - name: Battery constant-current setpoint
+        platform: number
+        class: "current"
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0454]
+        icon: "mdi:current-dc"
+        configurable:
+          min: 0
+          max: 200
+          step: 0.1
+          mode: box
+        range:
+          min: 0
+          max: 2000
+
+      # 1109 (0x0455) - Battery constant-power setpoint (0.1 % of rated, signed: negative=charge, positive=discharge)
+      - name: Battery constant-power setpoint
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0455]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      # 1110 (0x0456) - Battery target SOC (0.1 %, unsigned)
+      - name: Battery target SOC
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x0456]
+        icon: "mdi:battery"
+        configurable:
+          min: 0
+          max: 100
+          step: 0.1
+          mode: box
+        range:
+          min: 0
+          max: 1000
+
+      # 1111 (0x0457) - INV output power, ABC 3-phase total (0.1 % of rated, signed: positive=export, negative=import)
+      - name: INV output power total
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0457]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      # 1112 (0x0458) - INV output power, phase A (0.1 % of rated, signed)
+      - name: INV output power phase A
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0458]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      # 1113 (0x0459) - INV output power, phase B (0.1 % of rated, signed)
+      - name: INV output power phase B
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x0459]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      # 1114 (0x045A) - INV output power, phase C (0.1 % of rated, signed)
+      - name: INV output power phase C
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 2
+        registers: [0x045A]
+        configurable:
+          min: -120
+          max: 120
+          step: 0.1
+          mode: box
+        range:
+          min: -1200
+          max: 1200
+
+      # 1115 (0x045B) - Max solar power (0.1 % of rated, unsigned)
+      - name: Max solar power
+        platform: number
+        state_class: measurement
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x045B]
+        icon: "mdi:solar-power"
+        configurable:
+          min: 0
+          max: 200
+          step: 0.1
+          mode: box
+        range:
+          min: 0
+          max: 2000
+
   - group: State
     update_interval: 30
     items:
