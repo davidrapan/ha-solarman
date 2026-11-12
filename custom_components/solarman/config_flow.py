@@ -29,7 +29,7 @@ CREATION_SCHEMA = {
 CONFIGURATION_SCHEMA = {
     vol.Required(CONF_HOST, default = DEFAULT_[CONF_HOST], description = {SUGGESTED_VALUE: DEFAULT_[CONF_HOST]}): str,
     vol.Optional(CONF_PORT, default = DEFAULT_[CONF_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PORT]}): cv.port,
-    vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}): SelectSelector(SelectSelectorConfig(options = ["tcp", "modbus_tcp", "modbus_rtu"], mode = "dropdown", translation_key = "transport")),
+    vol.Optional(CONF_TRANSPORT, default = DEFAULT_[CONF_TRANSPORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_TRANSPORT]}): SelectSelector(SelectSelectorConfig(options = ["tcp", "modbus_tcp", "modbus_rtu", "at"], mode = "dropdown", translation_key = "transport")),
     vol.Optional(CONF_LOOKUP_FILE, default = DEFAULT_[CONF_LOOKUP_FILE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_LOOKUP_FILE]}): str,
     vol.Required(CONF_ADDITIONAL_OPTIONS): section(
         vol.Schema({
