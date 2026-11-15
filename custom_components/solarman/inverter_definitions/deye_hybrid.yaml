@@ -1692,7 +1692,7 @@ parameters:
         registers: [0x00F5]
         range:
           min: 0
-          max: 12000
+          max: 16000
 
       - name: Export Surplus
         alt: Solar Sell
@@ -2228,6 +2228,40 @@ parameters:
           max: 300
         registers: [0x011A]
 
+      - name: Solar Arc Fault
+        description: Arc fault detection setting
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011B]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "On"
+          - key: 0x0002
+            value: "Reset"
+
+      - name: Grid Mode
+        description: Grid standard; undocumented codes are available in the value attribute
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011C]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "General Standard"
+          - key: 0x0001
+            value: "UL1741 & IEEE1547"
+          - key: 0x0002
+            value: "CPUC RULE21"
+          - key: 0x0003
+            value: "SRD-UL1741"
+
       - name: Grid frequency
         platform: "select"
         rule: 1
@@ -2237,6 +2271,23 @@ parameters:
             value: 50 Hz
           - key: 0x1
             value: 60 Hz
+
+      - name: Grid Type
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011E]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "Single Phase"
+          - key: 0x0001
+            value: "Split Phase 120/240 V"
+          - key: 0x0002
+            value: "Three Phase 120/208 V"
+          - key: 0x0003
+            value: "Single Phase 120 V"
 
       - name: "Grid voltage protection - high"
         platform: number
@@ -2368,6 +2419,12 @@ parameters:
           - bit: 7
             mode: "|"
             value: Load
+
+      - name: CT Ratio
+        description: External CT ratio (N:1)
+        platform: sensor
+        rule: 1
+        registers: [0x0147]
 
   - group: BMS
     update_interval: 60
