@@ -10,6 +10,7 @@ async def async_get_config_entry_diagnostics(_: HomeAssistant, config_entry: Con
     return {
         "title": config_entry.title,
         "config": async_redact_data(config_entry, TO_REDACT),
+        "not_polled_disabled": None if (p := config_entry.runtime_data.device.profile.parser) is None else p.skipped,
         "info": async_redact_data(config_entry.runtime_data.device.info, TO_REDACT),
         "data": async_redact_data(config_entry.runtime_data.data, TO_REDACT)
     }

@@ -20,6 +20,7 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
+        self._skipped: set[str] = set()
         self._previous_result = {}
         self._result = {}
 
@@ -87,6 +88,45 @@ class ParameterParser:
     def get_entity_descriptions(self, platform: str | None = None):
         return [i for i in self._items if self.is_valid(i) and self.is_enabled(i) and not "attribute" in i and (i.get("platform") == platform or platform is None)]
 
+    @property
+    def skipped(self):
+        return sorted(self._skipped)
+
+    def _references(self, source) -> set[str]:
+        refs = set()
+        if isinstance(source, dict):
+            for k, v in source.items():
+                if k == "attributes" and isinstance(v, list):
+                    refs |= {slugify(x, "sensor") for x in v}
+                elif k in ("name_lookup", "lookup") and isinstance(v, str):
+                    refs.add(v)
+                elif k == "enabled_lookup" and isinstance(v, dict):
+                    refs |= set(v)
+                else:
+                    refs |= self._references(v)
+        elif isinstance(source, list):
+            for v in source:
+                refs |= self._references(v)
+        return refs
+
+    def set_disabled(self, is_disabled):
+        """Stop requesting registers of items whose entities are disabled, unless an enabled entity depends on them"""
+        items = {i["key"]: i for i in self._items if self.is_valid(i) and self.is_enabled(i) and "key" in i}
+        disabled = {k for k in items if is_disabled(k)}
+        needed, pending = set(DISABLED_STILL_POLLED), [i for k, i in items.items() if k not in disabled]
+        while pending:
+            new = []
+            for i in pending:
+                for r in self._references(i) - needed:
+                    needed.add(r)
+                    if r in items:
+                        new.append(items[r])
+            pending = new
+        skipped = disabled - needed
+        if skipped != self._skipped:
+            _LOGGER.debug(f"Not requesting {len(skipped)} disabled entit{'y' if len(skipped) == 1 else 'ies'}: {sorted(skipped)}")
+        self._skipped = skipped
+
     def schedule_requests(self, runtime):
         self._result = {}
 
@@ -96,7 +136,7 @@ class ParameterParser:
         registers = []
 
         for i in self._items:
-            if self.is_requestable(i) and self.is_scheduled(i, runtime):
+            if self.is_requestable(i) and i["key"] not in self._skipped and self.is_scheduled(i, runtime):
                 self.set_state(i["key"], self.default_from_unit_of_measurement(i))
                 if "registers" in i:
                     for r in sorted(i["registers"]):
