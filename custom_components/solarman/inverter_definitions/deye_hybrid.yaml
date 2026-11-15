@@ -2,6 +2,7 @@
 # Deye | Hybrid Inverter
 #
 # Reference: https://github.com/user-attachments/files/16597960/Deye.Modbus.protocol.V118.pdf
+# V119: https://github.com/user-attachments/files/23004051/ilide.info-modbus-single-phase-pr_2b076dcda6853bd899eb5a6cd456862d.pdf
 #
 # Tested
 #
@@ -1647,6 +1648,8 @@ parameters:
         platform: "select"
         rule: 1
         registers: [0x00F2]
+        display:
+          mask: 0x0003
         lookup:
           - key: 0x0000
             value: "Normal"
@@ -1692,7 +1695,7 @@ parameters:
         registers: [0x00F5]
         range:
           min: 0
-          max: 12000
+          max: 16000
 
       - name: Export Surplus
         alt: Solar Sell
@@ -1712,7 +1715,7 @@ parameters:
         icon: "mdi:solar-power-variant"
         range:
           min: 0
-          max: 13000
+          max: 18000
 
       - name: Time of Use
         platform: select
@@ -1828,7 +1831,7 @@ parameters:
         registers: [0x0100]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 2 Power"
@@ -1840,7 +1843,7 @@ parameters:
         registers: [0x0101]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 3 Power"
@@ -1852,7 +1855,7 @@ parameters:
         registers: [0x0102]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 4 Power"
@@ -1864,7 +1867,7 @@ parameters:
         registers: [0x0103]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 5 Power"
@@ -1876,7 +1879,7 @@ parameters:
         registers: [0x0104]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: "Program 6 Power"
@@ -1888,7 +1891,7 @@ parameters:
         registers: [0x0105]
         range:
           min: 0000
-          max: 12000
+          max: 16000
         icon: mdi:sun-clock
 
       - name: Program 1 Voltage
@@ -2212,12 +2215,13 @@ parameters:
           bit: 12
 
       - name: Off Grid
+        description: Force off-grid operation
         platform: switch
         rule: 1
         range:
           min: 0
           max: 1
-        registers: [0x0119]
+        registers: [0x01A0]
 
       - name: Grid reconnection time
         platform: number
@@ -2228,6 +2232,40 @@ parameters:
           max: 300
         registers: [0x011A]
 
+      - name: Solar Arc Fault
+        description: Arc fault detection setting
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011B]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "Off"
+          - key: 0x0001
+            value: "On"
+          - key: 0x0002
+            value: "Reset"
+
+      - name: Grid Mode
+        description: Grid standard; undocumented codes are available in the value attribute
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011C]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "General Standard"
+          - key: 0x0001
+            value: "UL1741 & IEEE1547"
+          - key: 0x0002
+            value: "CPUC RULE21"
+          - key: 0x0003
+            value: "SRD-UL1741"
+
       - name: Grid frequency
         platform: "select"
         rule: 1
@@ -2237,6 +2275,23 @@ parameters:
             value: 50 Hz
           - key: 0x1
             value: 60 Hz
+
+      - name: Grid Type
+        platform: sensor
+        class: "enum"
+        rule: 1
+        registers: [0x011E]
+        lookup:
+          - key: default
+            value: "Unknown"
+          - key: 0x0000
+            value: "Single Phase"
+          - key: 0x0001
+            value: "Split Phase 120/240 V"
+          - key: 0x0002
+            value: "Three Phase 120/208 V"
+          - key: 0x0003
+            value: "Single Phase 120 V"
 
       - name: "Grid voltage protection - high"
         platform: number
@@ -2368,6 +2423,53 @@ parameters:
           - bit: 7
             mode: "|"
             value: Load
+
+      - name: CT Ratio
+        description: External CT ratio (N:1)
+        platform: sensor
+        rule: 1
+        registers: [0x0147]
+
+  - group: Advanced Settings
+    update_interval: 300
+    items:
+      - name: ATS Enabled
+        platform: binary_sensor
+        rule: 1
+        registers: [0x001C]
+        bit: 0
+
+      - name: ATS Status
+        platform: binary_sensor
+        rule: 1
+        registers: [0x001C]
+        bit: 1
+
+      - name: Low Power Mode
+        description: Low Power Mode below Low Battery
+        platform: binary_sensor
+        rule: 1
+        registers: [0x001C]
+        bit: 2
+
+      - name: MPPT Multi-Point Scanning
+        platform: binary_sensor
+        rule: 1
+        registers: [0x001C]
+        bit: 5
+
+      - name: Low Noise Mode
+        platform: binary_sensor
+        rule: 1
+        registers: [0x0022]
+        bit: 0
+
+      - name: Import Power Limit
+        platform: sensor
+        class: "power"
+        uom: "W"
+        rule: 1
+        registers: [0x0024]
 
   - group: BMS
     update_interval: 60
