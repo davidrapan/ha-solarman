@@ -10,11 +10,12 @@ from logging import getLogger
 from multiprocessing import Event
 
 from .umodbus.functions import FUNCTION_CODES
-from .umodbus.exceptions import error_code_to_exception_map
+from .umodbus.exceptions import ModbusError, error_code_to_exception_map
 from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
+from ..const import CONNECT_ATTEMPTS, CONNECT_BACKOFF, FAILURE_BACKOFF_BASE, FAILURE_BACKOFF_MAX
 from ..common import retry, throttle, create_task, format
 
 _LOGGER = getLogger(__name__)
@@ -60,6 +61,12 @@ def log_return(prefix: str):
 class FrameError(Exception):
     """Frame Validation Error"""
 
+class ConnectError(ConnectionError):
+    """Connection to the logger cannot be established"""
+
+class BackoffError(ConnectionError):
+    """Request refused without touching the network because the logger failed recently"""
+
 class Solarman:
     def __init__(self, host: str, port: int | str, transport: str, serial: int, slave: int, timeout: int):
         self.host = host
@@ -76,6 +83,8 @@ class Solarman:
         self._data_queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize = 1)
         self._data_event = Event()
         self._last_frame: bytes | None = None
+        self._failures = 0
+        self._cooldown_until = 0.0
 
     @staticmethod
     def _get_response_code(code: int):
@@ -192,8 +201,8 @@ class Solarman:
         while True:
             try:
                 data = await self._reader.read(1024)
-            except ConnectionResetError:
-                _LOGGER.debug(f"[{self.host}] Connection is reset by the peer. Will try to restart the connection")
+            except OSError as e: # ConnectionResetError included
+                _LOGGER.debug(f"[{self.host}] Connection error {e!r}. Will try to restart the connection")
                 break
             if data == b"":
                 _LOGGER.debug(f"[{self.host}] Connection closed. Will try to restart the connection")
@@ -208,22 +217,41 @@ class Solarman:
                 _ = self._data_queue.get_nowait()
             self._data_queue.put_nowait(data)
             self._data_event.clear()
+        await self._close() # Do not keep a dead writer, the next request would be written into a closed socket
         self._keeper = create_task(self._open_connection())
+        self._keeper.add_done_callback(lambda t: t.cancelled() or t.exception()) # Failure is reported to the request waiting for the connection, if any
 
     @throttle(0.2)
     async def _open_connection(self) -> None:
-        try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
-            self._keeper = create_task(self._keeper_loop())
-            if self._data_event.is_set():
-                _LOGGER.debug(f"[{self.host}] Successful reconnection! Data expected. Will retry the last request")
-                await self._write(self._last_frame)
-            else:
-                _LOGGER.debug(f"[{self.host}] Successful connection!")
-        except Exception as e:
-            if self._last_frame is None:
-                raise ConnectionError("Cannot open connection") from e
-            await self._open_connection()
+        for attempt in range(1, CONNECT_ATTEMPTS + 1):
+            try:
+                self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
+                self._keeper = create_task(self._keeper_loop())
+                if self._data_event.is_set() and self._last_frame is not None:
+                    _LOGGER.debug(f"[{self.host}] Successful reconnection! Data expected. Will retry the last request")
+                    await self._write(self._last_frame)
+                else:
+                    _LOGGER.debug(f"[{self.host}] Successful connection!")
+                return
+            except Exception as e:
+                _LOGGER.debug(f"[{self.host}] Connection attempt {attempt}/{CONNECT_ATTEMPTS} failed: {e!r}")
+                if self._keeper and not self._keeper.done() and self._keeper is not asyncio.current_task():
+                    self._keeper.cancel()
+                await self._close()
+                if attempt < CONNECT_ATTEMPTS and self._data_event.is_set():
+                    await asyncio.sleep(CONNECT_BACKOFF * 2 ** (attempt - 1))
+                    continue
+                raise ConnectError("Cannot open connection") from e
+
+    async def _ensure_connection(self):
+        for _ in range(3):
+            if self._writer:
+                return
+            if not self.connected:
+                self._keeper = create_task(self._open_connection())
+            await self._keeper
+        if not self._writer:
+            raise ConnectError("Cannot open connection")
 
     async def _close(self) -> None:
         if self._writer:
@@ -246,23 +274,24 @@ class Solarman:
     @log_call("SENT")
     @log_return("RECV")
     async def _send_receive_frame(self, frame: bytes):
-        if not self._writer:
-            if not self.connected:
-                self._keeper = create_task(self._open_connection())
-            await self._keeper
+        await self._ensure_connection()
 
         self._data_event.set()
         self._last_frame = frame
 
         try:
             await self._write(frame)
-            while True:
+            for attempt in range(2):
                 try:
                     return await asyncio.wait_for(self._data_queue.get(), self.timeout * 3 - 1)
                 except TimeoutError:
+                    if attempt:
+                        raise
+                    # No response: reopen the connection, the last request is resent once reconnected
                     await self._close()
         finally:
             self._data_event.clear()
+            self._last_frame = None
 
     async def _parse_adu_from_sol_response(self, code: int, address: int, **kwargs) -> list[int]:
         async def _get_sol_response(frame: bytes) -> bytes:
@@ -311,7 +340,7 @@ class Solarman:
             res = res[:5] + b'\x06' + res[6:] + (req[len(res):10] if len(req) > 12 else (b'\x00' * (10 - len(res)))) + b'\x00\x01'
         return tcp.parse_response_adu(res, req)
 
-    @retry()
+    @retry(ignore = (TimeoutError, ConnectError, ModbusError)) # A silent or unreachable logger is not helped by asking again, a modbus exception is a valid answer
     async def get_response(self, code: int, address: int, **kwargs):
         return await self._get_response(code, address, **kwargs)
 
@@ -320,9 +349,23 @@ class Solarman:
         if code not in FUNCTION_CODES:
             raise Exception(f"Invalid modbus function code {code:02}")
 
-        async with asyncio.timeout(self.timeout * 6):
-            async with self._lock:
-                return await self.get_response(code, address, **kwargs)
+        try:
+            async with asyncio.timeout(self.timeout * 6):
+                async with self._lock:
+                    if (remaining := self._cooldown_until - time.monotonic()) > 0:
+                        raise BackoffError(f"Logger failed recently. Not sending requests for another {remaining:.0f}s")
+                    result = await self.get_response(code, address, **kwargs)
+        except BackoffError:
+            raise
+        except ModbusError:
+            self._failures, self._cooldown_until = 0, 0.0 # The logger and the inverter did answer
+            raise
+        except Exception:
+            self._failures += 1
+            self._cooldown_until = time.monotonic() + min(FAILURE_BACKOFF_BASE * 2 ** (self._failures - 1), FAILURE_BACKOFF_MAX)
+            raise
+        self._failures, self._cooldown_until = 0, 0.0
+        return result
 
     @log_call("Closing connection")
     async def close(self):

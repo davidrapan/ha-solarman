@@ -1,3 +1,5 @@
+import time
+
 from logging import getLogger
 from datetime import datetime, timedelta
 
@@ -41,6 +43,7 @@ class Device():
         self.modbus: Solarman | None = None
         self.state = DeviceState()
         self.info = {}
+        self._last_discovery = time.monotonic()
 
     async def setup(self):
         try:
@@ -48,8 +51,11 @@ class Device():
             self.modbus = Solarman(*self.endpoint.connection)
             self.profile = await ProfileProvider(self.config, self.endpoint).init(self.get)
         except Exception as e:
+            if self.modbus:
+                await self.modbus.close() # Do not leave a connection behind, the logger accepts very few
             raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {strepr(e)}"}") from e
         else:
+            self._last_discovery = time.monotonic()
             self.state.update(True)
 
     #def check(self, lock):
@@ -67,10 +73,12 @@ class Device():
         try:
             return await self.modbus.execute(code, address, **kwargs)
         except TimeoutError:
-            await self.endpoint.discover()
+            # Discovery (UDP broadcast + HTTP request to the logger) is extra load on a logger that is already not answering
+            if time.monotonic() - self._last_discovery >= DISCOVERY_ON_TIMEOUT_INTERVAL:
+                self._last_discovery = time.monotonic()
+                await self.endpoint.discover()
             raise
 
-    @retry(ignore = TimeoutError)
     async def execute_bulk(self, requests, scheduled) -> dict[str | tuple[int, int], tuple[int | float | str | list, int | float | None] | list[int]]:
         responses: dict[tuple[int, int], list[int]] = {}
 
