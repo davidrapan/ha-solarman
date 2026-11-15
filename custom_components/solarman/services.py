@@ -35,7 +35,7 @@ def _get_device(call: ServiceCall):
     raise ServiceValidationError("No communication interface for the device found", translation_domain = DOMAIN, translation_key = "no_interface_found")
 
 async def _read_registers(call: ServiceCall, code: int):
-    address = call.data.get(SERVICES_PARAM_ADDRESS) or call.data.get(SERVICES_PARAM_REGISTER)
+    address = call.data.get(SERVICES_PARAM_ADDRESS, call.data.get(SERVICES_PARAM_REGISTER))
     count = call.data.get(SERVICES_PARAM_COUNT) or call.data.get(SERVICES_PARAM_QUANTITY)
     try:
         if (response := await _get_device(call).execute(code, address, count = count)) is not None:
