@@ -492,7 +492,7 @@ parameters:
       - name: "ReactivePower_Output_Total"
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0486]
@@ -501,7 +501,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 0.1
+        scale: 10
         rule: 2
         registers: [0x0487]
 
@@ -519,7 +519,7 @@ parameters:
         alt: "Grid reactive power"
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0489]
@@ -530,7 +530,7 @@ parameters:
         state_class: "measurement"
         uom: "VA"
         # Inverse value to match standard behavior of the other inverters
-        scale: -0.1
+        scale: -10
         rule: 2
         registers: [0x048A]
 
@@ -565,7 +565,7 @@ parameters:
         l: 1
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0490]
@@ -601,7 +601,7 @@ parameters:
         l: 1
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0494]
@@ -646,7 +646,7 @@ parameters:
         l: 2
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x049B]
@@ -682,7 +682,7 @@ parameters:
         l: 2
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x049F]
@@ -727,7 +727,7 @@ parameters:
         l: 3
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x04A6]
@@ -763,7 +763,7 @@ parameters:
         l: 3
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x04AA]
@@ -808,7 +808,7 @@ parameters:
       - name: "ReactivePower_Load_Total_EPS"
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0505]
@@ -817,7 +817,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 0.1
+        scale: 10
         rule: 2
         registers: [0x0506]
 
@@ -860,7 +860,7 @@ parameters:
         l: 1
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x050D]
@@ -870,7 +870,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 0.1
+        scale: 10
         rule: 2
         registers: [0x050E]
 
@@ -914,7 +914,7 @@ parameters:
         l: 2
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x0515]
@@ -924,7 +924,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 0.1
+        scale: 10
         rule: 2
         registers: [0x0516]
 
@@ -968,7 +968,7 @@ parameters:
         l: 3
         class: "reactive_power"
         state_class: "measurement"
-        uom: "kvar"
+        uom: "var"
         scale: 10
         rule: 2
         registers: [0x051D]
@@ -978,7 +978,7 @@ parameters:
         class: "apparent_power"
         state_class: "measurement"
         uom: "VA"
-        scale: 0.1
+        scale: 10
         rule: 2
         registers: [0x051E]
 
