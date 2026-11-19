@@ -10,6 +10,7 @@ from homeassistant.exceptions import ServiceValidationError
 from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 
 from .const import *
+from .common import get_device_config_entry_id
 from .coordinator import Coordinator
 from .pysolarman.umodbus.functions import FUNCTION_CODE
 
@@ -30,7 +31,7 @@ VALUE_SCHEMA = {vol.Required(SERVICES_PARAM_VALUE): vol.All(vol.Coerce(int), vol
 VALUES_SCHEMA = {vol.Required(SERVICES_PARAM_VALUES): vol.All(cv.ensure_list, [vol.All(vol.Coerce(int), vol.Range(min = 0, max = 65535))])}
 
 def _get_device(call: ServiceCall):
-    if (config_entry := call.hass.config_entries.async_get_entry(async_get(call.hass).async_get(call.data.get(SERVICES_PARAM_DEVICE)).primary_config_entry)) and config_entry.domain == DOMAIN and isinstance(config_entry.runtime_data, Coordinator):
+    if (config_entry := call.hass.config_entries.async_get_entry(get_device_config_entry_id(async_get(call.hass).async_get(call.data.get(SERVICES_PARAM_DEVICE))))) and config_entry.domain == DOMAIN and isinstance(config_entry.runtime_data, Coordinator):
         return config_entry.runtime_data.device
     raise ServiceValidationError("No communication interface for the device found", translation_domain = DOMAIN, translation_key = "no_interface_found")
 

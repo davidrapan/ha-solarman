@@ -88,17 +88,17 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
 
     async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
-        connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))}
-        if device := dr.async_get(self.hass).async_get_device(connections = connections):
-            for entry in self._async_current_entries():
-                if entry.entry_id == device.primary_config_entry:
-                    if str(getipaddress(entry.options.get(CONF_HOST))) != discovery_info["ip"] and discovery_info["ip"] != IP_ANY:
-                        self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
-                    return self.async_abort(reason = "already_configured_device")
+        connection = (dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))
+        registry = dr.async_get(self.hass)
+        for entry in self._async_current_entries():
+            if find_device(registry, entry.entry_id, connection = connection):
+                if str(getipaddress(entry.options.get(CONF_HOST))) != discovery_info["ip"] and discovery_info["ip"] != IP_ANY:
+                    self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
+                return self.async_abort(reason = "already_configured_device")
         for entry in self._async_current_entries():
             if str(getipaddress(entry.options.get(CONF_HOST))) == discovery_info["ip"]:
-                if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
-                    dr.async_get(self.hass).async_update_device(device.id, new_connections = connections)
+                if device := find_device(registry, entry.entry_id, identifier = (DOMAIN, entry.entry_id)):
+                    registry.async_update_device(device.id, new_connections = {connection})
                 return self.async_abort(reason = "already_configured_device")
         await self.async_set_unique_id(DEFAULT_DISCOVERY_UNIQUE_ID)
         self._abort_if_unique_id_configured()
