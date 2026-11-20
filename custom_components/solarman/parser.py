@@ -109,15 +109,20 @@ class ParameterParser:
                 refs |= self._references(v)
         return refs
 
-    def set_disabled(self, is_disabled):
-        """Stop requesting registers of items whose entities are disabled, unless an enabled entity depends on them"""
+    def set_disabled(self, is_disabled, depends_on = None):
+        """Stop requesting registers of items whose entities are disabled, unless an enabled entity depends on them.
+        depends_on maps an entity key to the keys its code reads from the coordinator data (e.g. computed sensors)."""
+        if self._requests:
+            self._skipped = set()
+            return
+        depends_on = depends_on or {}
         items = {i["key"]: i for i in self._items if self.is_valid(i) and self.is_enabled(i) and "key" in i}
         disabled = {k for k in items if is_disabled(k)}
-        needed, pending = set(DISABLED_STILL_POLLED), [i for k, i in items.items() if k not in disabled]
+        needed, pending = set(), [i for k, i in items.items() if k not in disabled]
         while pending:
             new = []
             for i in pending:
-                for r in self._references(i) - needed:
+                for r in (self._references(i) | set(depends_on.get(i["key"], ()))) - needed:
                     needed.add(r)
                     if r in items:
                         new.append(items[r])

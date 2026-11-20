@@ -108,7 +108,6 @@ TIMINGS_INTERVAL_SCALE = 1
 TIMINGS_UPDATE_INTERVAL = timedelta(seconds = TIMINGS_INTERVAL * TIMINGS_INTERVAL_SCALE)
 
 # Entities which are used by other entities (computed battery sensors, device info) and so are polled even when disabled
-DISABLED_STILL_POLLED = ("battery_power_sensor", "battery_sensor", "total_battery_charge_sensor", "total_battery_discharge_sensor", "today_battery_charge_sensor", "battery_capacity_number", "battery_corrected_capacity_sensor", "device_serial_number_sensor")
 
 REQUEST_UPDATE_INTERVAL = UPDATE_INTERVAL
 REQUEST_MIN_SPAN = "min_span"

@@ -124,6 +124,9 @@ class SolarmanBatterySensor(SolarmanSensor):
             self._attr_extra_state_attributes = self._attr_extra_state_attributes | { "Nominal Voltage": battery_nominal_voltage, "Life Cycle Rating": battery_life_cycle_rating }
 
 class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
+    # Keys of other entities read from the coordinator data, requested while this entity is enabled
+    DEPENDS_ON = {"battery_capacity_sensor": ("battery_power_sensor", "battery_sensor", "total_battery_charge_sensor", "total_battery_discharge_sensor")}
+
     def __init__(self, coordinator, sensor):
         super().__init__(coordinator, sensor)
         self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])
@@ -165,6 +168,14 @@ class SolarmanBatteryCapacitySensor(SolarmanRestoreSensor):
                         self.set_state(get_number(sum(srtd) / len(srtd), self._digits) if srtd else None)
 
 class SolarmanBatteryCustomSensor(SolarmanSensor):
+    # Keys of other entities read from the coordinator data, requested while this entity is enabled
+    DEPENDS_ON = {
+        "battery_soh_sensor": ("total_battery_charge_sensor", "battery_capacity_number", "battery_corrected_capacity_sensor"),
+        "battery_state_sensor": ("battery_power_sensor",),
+        "today_battery_life_cycles_sensor": ("today_battery_charge_sensor", "battery_capacity_number", "battery_corrected_capacity_sensor"),
+        "total_battery_life_cycles_sensor": ("total_battery_charge_sensor", "battery_capacity_number", "battery_corrected_capacity_sensor")
+    }
+
     def __init__(self, coordinator, sensor, battery_nominal_voltage, battery_life_cycle_rating):
         super().__init__(coordinator, sensor)
         self._digits = sensor.get(DIGITS, DEFAULT_[DIGITS])

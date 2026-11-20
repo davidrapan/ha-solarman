@@ -72,7 +72,8 @@ class Coordinator(DataUpdateCoordinator[dict[str, tuple[int | float | str | list
         if (parser := self.device.profile.parser) is not None:
             entry_id = self.config_entry.entry_id
             disabled = {e.unique_id for e in er.async_entries_for_config_entry(er.async_get(self.hass), entry_id) if e.disabled_by is not None}
-            parser.set_disabled(lambda key: slugify(entry_id, key) in disabled)
+            from .sensor import SolarmanBatteryCapacitySensor, SolarmanBatteryCustomSensor
+            parser.set_disabled(lambda key: slugify(entry_id, key) in disabled, SolarmanBatteryCapacitySensor.DEPENDS_ON | SolarmanBatteryCustomSensor.DEPENDS_ON)
 
     @callback
     def _registry_updated(self, event):

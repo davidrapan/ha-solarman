@@ -58,10 +58,15 @@ def test_dependency_is_released_when_its_parent_is_disabled_too(tmp_path):
     p.set_disabled(lambda key: key in ("beta_sensor", "gamma_sensor"))
     assert registers(p) == [100, 400, 500]
 
-def test_entities_used_by_computed_sensors_are_kept(tmp_path):
+def test_declared_dependency_of_an_enabled_entity_is_kept(tmp_path):
     p = make(tmp_path)
-    p.set_disabled(lambda key: key == "battery_power_sensor")
-    assert 500 in registers(p)
+    p.set_disabled(lambda key: key in ("battery_power_sensor", "delta_sensor"), {"alpha_sensor": ("battery_power_sensor",)})
+    assert registers(p) == [100, 200, 300, 500]
+
+def test_declared_dependency_is_released_when_its_consumer_is_disabled(tmp_path):
+    p = make(tmp_path)
+    p.set_disabled(lambda key: key in ("alpha_sensor", "battery_power_sensor"), {"alpha_sensor": ("battery_power_sensor",)})
+    assert registers(p) == [200, 300, 400]
 
 def test_reenabling_requests_again(tmp_path):
     p = make(tmp_path)
@@ -73,3 +78,17 @@ def test_all_disabled_requests_nothing(tmp_path):
     p = make(tmp_path)
     p.set_disabled(lambda key: key in ("alpha_sensor", "beta_sensor", "gamma_sensor", "delta_sensor"))
     assert registers(p) == [500]
+
+def test_fine_control_profile_is_not_filtered(tmp_path):
+    fine = PROFILE.replace("parameters:", """
+requests_fine_control:
+requests:
+  - start: 100
+    end: 500
+
+parameters:""", 1)
+    (tmp_path / "f.yaml").write_text(fine)
+    p = asyncio.run(ParameterParser().init(str(tmp_path) + "/", "f.yaml", dict(PARAMETERS)))
+    p.set_disabled(lambda key: True)
+    assert p.skipped == []
+    assert registers(p) == [100]
