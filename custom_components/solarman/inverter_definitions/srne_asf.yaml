@@ -14,9 +14,29 @@ default:
   digits: 6
 
 parameters:
+  ## Product Information Area
+  - group: General
+    items:
+      - name: "Device Type"
+        rule: 1
+        registers: [0x000B]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0x0000
+            value: "Domestic Controller"
+          - key: 0x0001
+            value: "Controller for Street Light"
+          - key: 0x0003
+            value: "Grid-connected Inverter"
+          - key: 0x0004
+            value: "All-in-one Solar Charger Inverter"
+          - key: 0x0005
+            value: "Power Frequency Off-grid"
+
+  ### Battery
   - group: Battery
     items:
-      - name: "Battery"
+      - name: "Battery SOC"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -61,6 +81,7 @@ parameters:
         rule: 2
         registers: [0x0103]
 
+  ### Photovoltanic
   - group: PV
     items:
       - name: "PV1 Voltage"
@@ -92,7 +113,7 @@ parameters:
         registers: [0x0109]
         icon: "mdi:solar-power-variant"
 
-      - name: "PV Power"
+      - name: "PV Total Power"
         mppt: 1
         class: "power"
         state_class: "measurement"
@@ -138,8 +159,57 @@ parameters:
         registers: [0x0111]
         icon: "mdi:solar-power-variant"
 
+  ## Inverter
   - group: Inverter
     items:
+      - name: State Charge Mode
+        rule: 1
+        registers: [0x010B]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0x0000
+            value: "Charge off"
+          - key: 0x0001
+            value: "Quick charge"
+          - key: 0x0002
+            value: "Const voltage charge"
+          - key: 0x0004
+            value: "Float charge"
+          - key: 0x0005
+            value: "Reserved"
+          - key: 0x0006
+            value: "Li battery activate"
+          - key: 0x0008
+            value: "Full"
+
+      - name: "State"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [0x0210]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "Initialization"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "AC power operation"
+          - key: 3
+            value: "Inverter operation"
+
+      - name: "AC Volt Range"
+        update_interval: 300
+        class: "enum"
+        rule: 1
+        registers: [0x020B]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "UPS"
+          - key: 1
+            value: "APL"
+
       - name: "PV Voltage"
         mppt: 1
         class: "voltage"
@@ -149,6 +219,50 @@ parameters:
         rule: 1
         registers: [0x0212]
         icon: "mdi:solar-power-variant"
+
+      - name: "DC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0220]
+
+      - name: "AC Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0221]
+
+      - name: "Transformer Temperature"
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0222]
+
+      - name: "Ambient Temperature"
+        hidden:
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        scale: 0.1
+        rule: 2
+        registers: [0x0223]
+
+      ### GRID AC
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [0x0215]
 
       - name: "Grid L1 Voltage"
         l: 1
@@ -170,15 +284,56 @@ parameters:
         registers: [0x0214]
         icon: "mdi:transmission-tower"
 
-      - name: "Grid Frequency"
+      - name: "Grid L2 Voltage"
+        l: 2
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022A]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L2 Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0238]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022B]
+        icon: "mdi:transmission-tower"
+
+      - name: "Grid L3 Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0239]
+        icon: "mdi:transmission-tower"
+
+      ### Output AC
+      - name: "Inverter Output Frequency"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
         scale: 0.01
         rule: 1
-        registers: [0x0215]
+        registers: [0x0218]
 
-      - name: "Output L1 Voltage"
+      - name: "Inverter L1 Output Voltage"
         l: 1
         class: "voltage"
         state_class: "measurement"
@@ -187,7 +342,7 @@ parameters:
         rule: 1
         registers: [0x0216]
 
-      - name: "Output L1 Current"
+      - name: "Inverter L1 Inductive Current"
         l: 1
         class: "current"
         state_class: "measurement"
@@ -196,14 +351,43 @@ parameters:
         rule: 2
         registers: [0x0217]
 
-      - name: "Output Frequency"
-        class: "frequency"
+      - name: "Inverter L2 Output Voltage"
+        l: 2
+        class: "voltage"
         state_class: "measurement"
-        uom: "Hz"
-        scale: 0.01
+        uom: "V"
+        scale: 0.1
         rule: 1
-        registers: [0x0218]
+        registers: [0x022C]
 
+      - name: "Inverter L2 Inductive Current"
+        l: 2
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022E]
+
+      - name: "Inverter L3 Output Voltage"
+        l: 3
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x022D]
+
+      - name: "Inverter L3 Inductive Current"
+        l: 3
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [0x022F]
+
+      ### LOAD AC
       - name: "Load L1 Current"
         l: 1
         class: "current"
@@ -229,97 +413,6 @@ parameters:
         rule: 1
         registers: [0x021C]
 
-      - name: "DC Temperature"
-        hidden:
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        registers: [0x0220]
-
-      - name: "AC Temperature"
-        hidden:
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        registers: [0x0221]
-
-      - name: "Temperature"
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        registers: [0x0222]
-
-      - name: "Ambient Temperature"
-        hidden:
-        class: "temperature"
-        state_class: "measurement"
-        uom: "°C"
-        scale: 0.1
-        rule: 1
-        registers: [0x0223]
-
-      - name: "Grid L2 Voltage"
-        l: 2
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022A]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid L3 Voltage"
-        l: 3
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022B]
-        icon: "mdi:transmission-tower"
-
-      - name: "Output L2 Voltage"
-        l: 2
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022C]
-
-      - name: "Output L3 Voltage"
-        l: 3
-        class: "voltage"
-        state_class: "measurement"
-        uom: "V"
-        scale: 0.1
-        rule: 1
-        registers: [0x022D]
-
-      - name: "Output L2 Current"
-        l: 2
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 2
-        registers: [0x022E]
-
-      - name: "Output L3 Current"
-        l: 3
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 2
-        registers: [0x022F]
-
       - name: "Load L2 Current"
         l: 2
         class: "current"
@@ -328,6 +421,22 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x0230]
+
+      - name: "Load L2 Power"
+        l: 2
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [0x0232]
+
+      - name: "Load L2 Apparent Power"
+        l: 2
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        registers: [0x0234]
 
       - name: "Load L3 Current"
         l: 3
@@ -338,14 +447,6 @@ parameters:
         rule: 1
         registers: [0x0231]
 
-      - name: "Load L2 Power"
-        l: 2
-        class: "power"
-        state_class: "measurement"
-        uom: "W"
-        rule: 1
-        registers: [0x0232]
-
       - name: "Load L3 Power"
         l: 3
         class: "power"
@@ -353,14 +454,6 @@ parameters:
         uom: "W"
         rule: 1
         registers: [0x0233]
-
-      - name: "Load L2 Apparent Power"
-        l: 2
-        class: "apparent_power"
-        state_class: "measurement"
-        uom: "VA"
-        rule: 1
-        registers: [0x0234]
 
       - name: "Load L3 Apparent Power"
         l: 3
@@ -370,29 +463,86 @@ parameters:
         rule: 1
         registers: [0x0235]
 
-      - name: "Grid L2 Current"
-        l: 2
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [0x0238]
-        icon: "mdi:transmission-tower"
-
-      - name: "Grid L3 Current"
-        l: 3
-        class: "current"
-        state_class: "measurement"
-        uom: "A"
-        scale: 0.1
-        rule: 1
-        registers: [0x0239]
-        icon: "mdi:transmission-tower"
-
   - group: Settings
     update_interval: 300
     items:
+      - name: "System Date Time"
+        update_interval: 30
+        platform: datetime
+        rule: 8
+        registers: [0x020C, 0x020D, 0x020E]
+        icon: "mdi:clock"
+
+      - name: Charge Over  Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE005]
+        configurable:
+          min: 9
+          max: 15.5
+          step: 0.1
+          mode: box
+
+      - name: Charge Limit  Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE006]
+        configurable:
+          min: 9
+          max: 15.5
+          step: 0.1
+          mode: box
+
+      - name: Charge Boost  Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE008]
+        configurable:
+          min: 9
+          max: 15.5
+          step: 0.1
+          mode: box
+
+      - name: Charge Float  Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE009]
+        configurable:
+          min: 9
+          max: 15.5
+          step: 0.1
+          mode: box
+
+      - name: Charge Equalizing  Voltage
+        platform: number
+        class: voltage
+        state_class: measurement
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0xE007]
+        configurable:
+          min: 9
+          max: 15.5
+          step: 0.1
+          mode: box
+
       - name: Batttery Discharge Limit
         platform: number
         state_class: measurement
@@ -445,6 +595,163 @@ parameters:
           min: 0
           max: 100
 
+      - name: Battery Charge Current - Max
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE20A]
+        icon: mdi:current-dc
+        configurable:
+          min: 0
+          max: 200
+          step: 5
+          mode: box
+        range:
+          min: 0
+          max: 2000
+
+      - name: Battery Charge Current - AC power
+        platform: number
+        class: current
+        state_class: measurement
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0xE205]
+        icon: mdi:current-dc
+        configurable:
+          mode: box
+          min: 0
+          max: 120
+          step: 5
+        range:
+          min: 0
+          max: 1200
+
+      - name: Battery Type
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE004]
+        icon: "mdi:battery"
+        lookup:
+          - key: 0
+            value: "User define"
+          - key: 1
+            value: "SLD"
+          - key: 2
+            value: "FLD"
+          - key: 3
+            value: "GEL"
+          - key: 4
+            value: "LI14"
+          - key: 5
+            value: "LI15"
+          - key: 6
+            value: "LI16"
+
+      - name: Timed Charge
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE02C]
+        icon: "mdi:battery-charging-high"
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+
+      - name: "Timed 1 Charge Start"
+        class: enum
+        state_class: measurement
+        rule: 1
+        registers: [0xE026]
+        icon: mdi:sun-clock
+
+      - name: "Timed 1 Charge End"
+        class: enum
+        state_class: "measurement"
+        rule: 1
+        registers: [0xE027]
+        icon: mdi:sun-clock
+
+      - name: "Timed 2 Charge Start"
+        class: enum
+        state_class: measurement
+        rule: 1
+        registers: [0xE028]
+        icon: mdi:sun-clock
+
+      - name: "Timed 2 Charge End"
+        class: enum
+        state_class: "measurement"
+        rule: 1
+        registers: [0xE029]
+        icon: mdi:sun-clock
+
+      - name: "Timed 3 Charge Start"
+        class: enum
+        state_class: measurement
+        rule: 1
+        registers: [0xE02A]
+        icon: mdi:sun-clock
+
+      - name: "Timed 3 Charge End"
+        class: enum
+        state_class: "measurement"
+        rule: 1
+        registers: [0xE02B]
+        icon: mdi:sun-clock
+
+      - name: Timed Discharge
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE033]
+        icon: "mdi:battery-charging-low"
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+
+      - name: Work Priority Mode
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE204]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "SOL (Solar)"
+          - key: 1
+            value: "UTI (Line)"
+          - key: 2
+            value: "SBU (Solar+Battery)"
+          - key: 3
+            value: "SUB (Solar+Line)"
+
+      - name: Charge Priority Mode
+        platform: select
+        state_class: enum
+        rule: 1
+        registers: [0xE20F]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "PV priority"
+          - key: 1
+            value: "Utility priority"
+          - key: 2
+            value: "Hybrid Mode"
+          - key: 3
+            value: "PV only"
+
+  ### Statistics
   - group: Meter
     update_interval: 30
     items:
