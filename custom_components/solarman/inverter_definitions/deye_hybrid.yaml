@@ -2346,6 +2346,8 @@ parameters:
             value: "Tianbangda 485"
           - key: 0x000A
             value: "Shenggao Electric CAN"
+          - key: 0x000F
+            value: "Unipower"
 
       - name: "Meter"
         description: Ex_Meter For CT
