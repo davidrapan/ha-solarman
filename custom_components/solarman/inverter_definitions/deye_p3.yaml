@@ -1369,6 +1369,18 @@ parameters:
         value:
           bit: 6
 
+      # LCD "Advanced Settings" -> "Signal Island Mode" checkbox.
+      # Bit 8 of 0x00B2 (doc: bit8-9 "external relay enable", bit9 stays the
+      # control bit, bit8 is the on/off flag). Verified on a live Sun-12K by
+      # toggling the LCD checkbox and diffing the raw register (0x2EAA<->0x2FAA).
+      - name: Signal Island Mode
+        platform: "switch"
+        rule: 1
+        registers: [0x00B2]
+        value:
+          bit: 8
+        icon: "mdi:island"
+
       - name: Off Grid
         platform: switch
         rule: 1
@@ -1376,6 +1388,24 @@ parameters:
           min: 0
           max: 1
         registers: [0x00B3]
+
+      # LCD "Advanced Settings" -> "Solar Arc Fault ON" / "Clear Arc Fault".
+      # Register 0x00B5 (doc reg 181): 0x01 = arc-fault detection on,
+      # 0x02 = clear/reset fault (auto-reverts to 0x01), 0 = off (observed).
+      # Verified on a live Sun-12K by diffing the raw register on LCD toggle.
+      - name: Solar Arc Fault
+        platform: switch
+        rule: 1
+        registers: [0x00B5]
+        icon: "mdi:flash-alert"
+
+      - name: Clear Arc Fault
+        platform: button
+        rule: 1
+        registers: [0x00B5]
+        value:
+          on: 2
+        icon: "mdi:flash-off"
 
       - name: Grid reconnection time
         platform: number
