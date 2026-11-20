@@ -852,6 +852,20 @@ parameters:
           min: 0
           max: [32000, 12800]
 
+      - name: UPS Delay
+        description: Switch-over to off-grid when the grid fails, as on the display under Function Set 1 (register holds the delay in ms; "0ms Switch" is the seamless mode)
+        platform: select
+        rule: 1
+        registers: [0x00D1]
+        icon: mdi:power-plug-off
+        lookup:
+          - key: 0
+            value: "0ms Switch"
+          - key: 50
+            value: "Normal"
+          - key: 100
+            value: "100ms"
+
       - name: MPPT multi-point scanning
         description: Find the MPP even when there are partial shading conditions on the solar panels
         platform: "switch"
