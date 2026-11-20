@@ -72,11 +72,16 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
         self._attr_unique_id = slugify(self.coordinator.config_entry.entry_id, self._attr_key)
-        self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
         self._attr_friendly_name = sensor.get(CONF_FRIENDLY_NAME)
         self._attr_icon = sensor.get("icon")
+
+        entity_category = sensor.get("category") or sensor.get("entity_category")
+        if entity_category == "diagnostic":
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        else:
+            self._attr_entity_category = entity_category
 
         if (unit_of_measurement := sensor.get("uom") or sensor.get("unit_of_measurement")):
             self._attr_native_unit_of_measurement = unit_of_measurement
