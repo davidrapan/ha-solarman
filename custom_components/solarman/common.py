@@ -17,7 +17,7 @@ from ipaddress import IPv4Address, AddressValueError
 from aiohttp import ClientSession, ClientError, ContentTypeError
 
 from homeassistant.util import slugify as _slugify
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo, format_mac
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceEntry, DeviceInfo, DeviceRegistry, format_mac
 
 from .const import *
 
@@ -186,6 +186,18 @@ def build_device_info(entry_id, serial, mac, host, info, name):
     device_info["name"] = name
 
     return device_info
+
+def get_device_config_entry_id(device: DeviceEntry):
+    # DeviceEntry.primary_config_entry is deprecated in favour of config_entry_id (it is missing on older Home Assistant)
+    return device.config_entry_id if hasattr(device, "config_entry_id") else device.primary_config_entry
+
+def find_device(registry: DeviceRegistry, entry_id: str, *, connection: tuple[str, str] | None = None, identifier: tuple[str, str] | None = None):
+    """Find the device of a config entry by connection or identifier."""
+    if hasattr(registry, "async_get_device_by_connection"):
+        return registry.async_get_device_by_connection(connection, entry_id) if connection else registry.async_get_device_by_identifier(identifier, entry_id)
+    # async_get_device is deprecated on newer Home Assistant as the lookup can be ambiguous between config entries
+    if (device := registry.async_get_device(connections = {connection} if connection else None, identifiers = {identifier} if identifier else None)) and entry_id in device.config_entries:
+        return device
 
 def all_equals(values, value):
     return all(i == value for i in values)
