@@ -318,3 +318,27 @@ parameters:
           min: 0.1
           dev: 100
           invalidate_all: 2
+
+  - group: Grid
+    items:
+      - name: "Grid Power"
+        description: "Export limiter meter reading. Positive = export, negative = import. Reads 0 without a meter."
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 4
+        registers: [3056, 3055]
+        icon: "mdi:transmission-tower"
+
+      - name: "Consumption Power"
+        description: "Inverter output minus Grid Power. Only meaningful with an export limiter meter fitted."
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        sensors:
+          - registers: [3005, 3004]
+          - operator: subtract
+            signed:
+            registers: [3056, 3055]
+        icon: "mdi:home-lightning-bolt"
