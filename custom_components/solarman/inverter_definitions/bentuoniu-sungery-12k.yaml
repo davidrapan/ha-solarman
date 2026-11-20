@@ -1,0 +1,811 @@
+#############################################################################
+## Bentuoniu / Sungery Inverter                                            ##
+## Tested with:                                                            ##
+##   - WattCycle V2 12kw 48v Inverter (WTINV48V12KW110SP-SGRA-US)          ##
+## Special thanks to Shenzhen Bentuo Electronic Technology Co., Ltd for    ##
+## providing the modbus protocol documentation                             ##
+## Protocol Version: V2.7.0 2026.03.20                                     ##
+## Created by: indiealexh                                                  ##
+#############################################################################
+default:
+  update_interval: 30
+  code: 0x03
+  digits: 6
+
+requests:
+  - start: 30000
+    end: 30031
+    code: 0x03
+  - start: 30032
+    end: 30063
+    code: 0x03
+  - start: 30064
+    end: 30095
+    code: 0x03
+  - start: 30096
+    end: 30127
+    code: 0x03
+  - start: 39628
+    end: 39637
+    code: 0x03
+  - start: 41000
+    end: 41031
+    code: 0x03
+  - start: 41098
+    end: 41129
+    code: 0x03
+  - start: 51000
+    end: 51031
+    code: 0x03
+  - start: 51116
+    end: 51143
+    code: 0x03
+  - start: 52043
+    end: 52074
+    code: 0x03
+
+parameters:
+  - group: Battery
+    items:
+      - name: "Battery Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30000 ]
+
+      - name: "Battery Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30001 ]
+        icon: "mdi:current-dc"
+
+      - name: "Battery State of Charge"
+        class: "battery"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [ 30002 ]
+
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 2
+        registers: [ 39637 ]
+
+      - name: "Battery Charge Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [ 30003 ]
+
+      - name: "Grid Charge Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30004 ]
+
+      - name: "PV Charge Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30005 ]
+
+      - name: "BMS Requested Charge Voltage"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 39628 ]
+
+      - name: "BMS Requested Discharge Cutoff Voltage"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 39629 ]
+
+      - name: "BMS Requested Charge Current Limit"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 39630 ]
+
+      - name: "BMS Requested Discharge Current Limit"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 39631 ]
+
+  - group: PV
+    items:
+      - name: "PV1 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30011 ]
+
+      - name: "PV1 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 30012 ]
+
+      - name: "PV1 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [ 30013 ]
+
+      - name: "PV2 Voltage"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30014 ]
+
+      - name: "PV2 Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 30015 ]
+
+      - name: "PV2 Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        registers: [ 30016 ]
+
+  - group: Inverter Output
+    items:
+      - name: "Output Voltage L1"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30024 ]
+
+      - name: "Output Current L1"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30025 ]
+
+      - name: "Output Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [ 30026 ]
+
+      - name: "Inverter Inductor Current L1"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30027 ]
+
+      - name: "Output Active Power L1"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [ 30028 ]
+
+      - name: "Output Apparent Power L1"
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 2
+        registers: [ 30029 ]
+
+      - name: "Load Percent L1"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [ 30030 ]
+        icon: "mdi:gauge"
+
+      - name: "Output Voltage L2"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30032 ]
+
+      - name: "Output Current L2"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30033 ]
+
+      - name: "Inverter Inductor Current L2"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30034 ]
+
+      - name: "Output Active Power L2"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [ 30035 ]
+
+      - name: "Output Apparent Power L2"
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 2
+        registers: [ 30036 ]
+
+      - name: "Load Percent L2"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [ 30037 ]
+        icon: "mdi:gauge"
+
+      - name: "Output Active Power Total"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        registers: [ 30046 ]
+
+      - name: "Output Apparent Power Total"
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 2
+        registers: [ 30047 ]
+
+      - name: "Load Percent Total"
+        state_class: "measurement"
+        uom: "%"
+        rule: 1
+        registers: [ 30048 ]
+        icon: "mdi:gauge"
+
+  - group: Grid
+    items:
+      - name: "Grid Voltage L1"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30058 ]
+
+      - name: "Grid Current L1"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30059 ]
+
+      - name: "Grid Frequency"
+        class: "frequency"
+        state_class: "measurement"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [ 30060 ]
+
+      - name: "Grid Voltage L2"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 30061 ]
+
+      - name: "Grid Current L2"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 2
+        registers: [ 30062 ]
+
+  - group: Diagnostic
+    items: [ ]
+    
+  - group: Status
+    items:
+      - name: "Startup Status"
+        rule: 1
+        registers: [ 30100 ]
+        icon: "mdi:power-settings"
+        lookup:
+          - key: 0
+            value: "Initialising"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "Line mode"
+          - key: 3
+            value: "Inverter mode"
+
+      - name: "Output Status"
+        rule: 1
+        registers: [ 30101 ]
+        icon: "mdi:transmission-tower-export"
+        lookup:
+          - key: 0
+            value: "No output"
+          - key: 1
+            value: "Line output"
+          - key: 2
+            value: "Inverter output"
+          - key: 3
+            value: "Line overload"
+          - key: 4
+            value: "Inverter overload"
+          - key: 5
+            value: "Generator output"
+          - key: 6
+            value: "Generator overload"
+
+      - name: "Charge Status"
+        rule: 1
+        registers: [ 30102 ]
+        icon: "mdi:battery-charging"
+        lookup:
+          - key: 0
+            value: "Off"
+          - key: 1
+            value: "Constant current"
+          - key: 2
+            value: "Constant voltage"
+          - key: 4
+            value: "Float"
+          - key: 8
+            value: "Battery activating"
+          - key: 16
+            value: "Battery self-test"
+
+      - name: "Parallel Mode"
+        rule: 1
+        registers: [ 30103 ]
+        lookup:
+          - key: 0
+            value: "Single"
+          - key: 1
+            value: "Parallel"
+          - key: 2
+            value: "Split-phase reference"
+          - key: 3
+            value: "Split-phase 120 deg"
+          - key: 4
+            value: "Split-phase 180 deg"
+          - key: 5
+            value: "Three-phase L1"
+          - key: 6
+            value: "Three-phase L2"
+          - key: 7
+            value: "Three-phase L3"
+
+      - name: "Eco Mode"
+        rule: 1
+        registers: [ 30104 ]
+        lookup:
+          - key: 0
+            value: "Off"
+          - key: 1
+            value: "On"
+            
+  - group: Energy
+    items:
+      - name: "Battery Charge Energy Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52045 ]
+
+      - name: "Battery Discharge Energy Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52046 ]
+
+      - name: "PV Energy Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52047 ]
+
+      - name: "Load Energy Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52048 ]
+
+      - name: "Grid Charge Energy Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52058 ]
+
+      - name: "Load Energy From Grid Today"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [ 52059 ]
+        
+      - name: "Battery Charge Energy Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52050, 52051 ]
+
+      - name: "Battery Discharge Energy Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52052, 52053 ]
+
+      - name: "PV Energy Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52054, 52055 ]
+
+      - name: "Load Energy Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52056, 52057 ]
+
+      - name: "Grid Charge Energy Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52065, 52066 ]
+
+      - name: "Load Energy From Grid Total"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        scale: 0.1
+        rule: 3
+        registers: [ 52067, 52068 ]
+
+      - name: "Total Run Days"
+        state_class: "total_increasing"
+        uom: "d"
+        rule: 1
+        registers: [ 52049 ]
+        icon: "mdi:calendar-clock"
+
+      - name: "Inverter Run Time Total"
+        state_class: "total_increasing"
+        uom: "h"
+        rule: 1
+        registers: [ 52069 ]
+
+      - name: "Bypass Run Time Total"
+        state_class: "total_increasing"
+        uom: "h"
+        rule: 1
+        registers: [ 52070 ]
+
+      - name: "Inverter Run Time Today"
+        state_class: "measurement"
+        uom: "min"
+        rule: 1
+        registers: [ 52060 ]
+
+      - name: "Bypass Run Time Today"
+        state_class: "measurement"
+        uom: "min"
+        rule: 1
+        registers: [ 52061 ]
+  - group: Device Info
+    items:
+      - name: "Product Type"
+        rule: 1
+        registers: [ 51001 ]
+        lookup:
+          - key: 0
+            value: "Single phase"
+          - key: 10
+            value: "Split phase"
+          - key: 20
+            value: "Three phase"
+
+      - name: "Rated Output Power"
+        class: "power"
+        uom: "W"
+        rule: 1
+        registers: [ 51124 ]
+
+      - name: "Rated Charge Power"
+        class: "power"
+        uom: "W"
+        rule: 1
+        registers: [ 51134 ]
+
+      - name: "Rated Grid Voltage"
+        class: "voltage"
+        uom: "V"
+        rule: 1
+        registers: [ 51136 ]
+
+      - name: "Manufacturer"
+        rule: 5
+        registers: [ 51002, 51003, 51004, 51005, 51006, 51007, 51008, 51009, 51010, 51011, 51012, 51013 ]
+        icon: "mdi:factory"
+
+      - name: "Serial Number"
+        rule: 5
+        registers: [ 51014, 51015, 51016, 51017, 51018, 51019, 51020, 51021, 51022, 51023, 51024, 51025, 51026, 51027, 51028, 51029, 51030, 51031 ]
+        icon: "mdi:identifier"
+        
+  - group: Settings (read-only)
+    items:
+      - name: "Output Priority"
+        rule: 1
+        registers: [ 41000 ]
+        lookup:
+          - key: 0
+            value: "Solar first"
+          - key: 1
+            value: "Line first"
+          - key: 2
+            value: "Battery first"
+          - key: 3
+            value: "Hybrid"
+
+      - name: "Output Voltage Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41001 ]
+
+      - name: "Output Frequency Setpoint"
+        class: "frequency"
+        uom: "Hz"
+        scale: 0.01
+        rule: 1
+        registers: [ 41002 ]
+
+      - name: "AC Input Range"
+        rule: 1
+        registers: [ 41003 ]
+        lookup:
+          - key: 0
+            value: "UPS"
+          - key: 1
+            value: "APL"
+          - key: 2
+            value: "Generator"
+
+      - name: "Charge Priority"
+        rule: 1
+        registers: [ 41006 ]
+        lookup:
+          - key: 0
+            value: "PV first"
+          - key: 1
+            value: "Grid first"
+          - key: 2
+            value: "Hybrid"
+          - key: 3
+            value: "PV only"
+
+      - name: "Max Charge Current Setpoint"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 41007 ]
+
+      - name: "PV Charge Current Limit"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 41008 ]
+
+      - name: "Grid Charge Current Limit"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [ 41009 ]
+
+      - name: "Battery Type"
+        rule: 1
+        registers: [ 41100 ]
+        lookup:
+          - key: 0
+            value: "User defined"
+          - key: 1
+            value: "Sealed lead acid"
+          - key: 2
+            value: "Flooded lead acid"
+          - key: 3
+            value: "Gel"
+          - key: 4
+            value: "14S LFP"
+          - key: 5
+            value: "15S LFP"
+          - key: 6
+            value: "16S LFP"
+          - key: 7
+            value: "7S LFP"
+          - key: 8
+            value: "8S LFP"
+          - key: 9
+            value: "9S LFP"
+          - key: 10
+            value: "7S NMC"
+          - key: 11
+            value: "8S NMC"
+          - key: 12
+            value: "13S NMC"
+          - key: 13
+            value: "14S NMC"
+          - key: 14
+            value: "10S LFP"
+          - key: 15
+            value: "11S LFP"
+
+      - name: "Constant Voltage Charge Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41101 ]
+
+      - name: "Float Charge Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41102 ]
+
+      - name: "Battery Overvoltage Alarm Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41103 ]
+
+      - name: "Inverter to Line Voltage Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41106 ]
+
+      - name: "Battery Low Voltage Alarm Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41108 ]
+
+      - name: "Battery EOD Voltage Setpoint"
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [ 41110 ]
+
+      - name: "Battery Pack Capacity"
+        uom: "Ah"
+        rule: 1
+        registers: [ 41137 ]
+        icon: "mdi:battery-high"
+
+      - name: "SOC Low Alarm Setpoint"
+        uom: "%"
+        rule: 1
+        registers: [ 41115 ]
+
+      - name: "SOC Discharge Cutoff Setpoint"
+        uom: "%"
+        rule: 1
+        registers: [ 41116 ]
+
+      - name: "Inverter to Line SOC Setpoint"
+        uom: "%"
+        rule: 1
+        registers: [ 41118 ]
+
+      - name: "Line to Inverter SOC Setpoint"
+        uom: "%"
+        rule: 1
+        registers: [ 41119 ]
+
+      - name: "Timed Grid Charge Enabled"
+        rule: 1
+        registers: [ 41120 ]
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+
+      - name: "Timed Discharge Enabled"
+        rule: 1
+        registers: [ 41127 ]
+        lookup:
+          - key: 0
+            value: "Disabled"
+          - key: 1
+            value: "Enabled"
+            
+      - name: "Charge Window 1 Start (raw)"
+        rule: 1
+        registers: [ 41121 ]
+
+      - name: "Charge Window 1 End (raw)"
+        rule: 1
+        registers: [ 41122 ]
+
+      - name: "Discharge Window 1 Start (raw)"
+        rule: 1
+        registers: [ 41128 ]
+
+      - name: "Discharge Window 1 End (raw)"
+        rule: 1
+        registers: [ 41129 ]
