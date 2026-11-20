@@ -839,6 +839,39 @@ parameters:
           register: 0x1023
           count: 2
 
+      # Real-time cap on the inverter's own output: 0x1105 bit 0 enables 0x1106 (0.1 % of nominal power).
+      # Both are volatile, so frequent writes are fine, and the inverter drops them when it restarts.
+      # Older firmware acknowledges the write but ignores it (8.8KTLX-G3: no effect on master 0V010002,
+      # works on V110008), and the address mask at 0x1100 does not tell them apart.
+      # The 8.8KTLX-G3 ships with 0x1105 = 3 and 0x1106 = 1100, hence the 110 % maximum.
+      - name: "Active Power Limitation"
+        platform: switch
+        rule: 1
+        registers: [0x1105]
+        value:
+          bit: 0
+        writeback:
+          register: 0x1105
+          count: 2
+
+      - name: "Active Power Limit"
+        platform: number
+        state_class: "measurement"
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x1106]
+        configurable:
+          min: 0
+          max: 110
+          step: 1
+        range:
+          min: 0
+          max: 1100
+        writeback:
+          register: 0x1105
+          count: 2
+
       - name: "Battery DOD"
         pack: 1
         platform: number
