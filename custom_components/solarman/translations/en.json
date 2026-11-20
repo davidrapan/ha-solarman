@@ -90,8 +90,9 @@
         "tcp": "TCP",
         "udp": "UDP",
         "modbus_tcp": "Modbus TCP",
-        "modbus_rtu": "Modbus RTU"
-      } 
+        "modbus_rtu": "Modbus RTU",
+        "at": "AT commands (UDP 48899)"
+      }
     }
   },
   "entity": {
