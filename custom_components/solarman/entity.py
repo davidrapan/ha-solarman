@@ -72,7 +72,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
         self._attr_unique_id = slugify(self.coordinator.config_entry.entry_id, self._attr_key)
-        self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
+        self._attr_entity_category = EntityCategory(c) if (c := sensor.get("category") or sensor.get("entity_category")) else None
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
         self._attr_friendly_name = sensor.get(CONF_FRIENDLY_NAME)

@@ -1,0 +1,362 @@
+#
+# Eco-Worthy ECO-10000W(SR)  |  SRNE-based split-phase hybrid inverter (10 kW, 48 V)
+#
+# For davidrapan/ha-solarman.  Place in:
+#   custom_components/solarman/inverter_definitions/ecoworthy_srne.yaml
+# then add the Solarman integration and pick profile "ecoworthy_srne".
+#
+# Reverse-engineered live over Modbus fn 0x03 (logger serial 3584526820 @ 172.16.2.2:8899)
+# and verified against the Solarman app readout on 2026-07-25 16:31.
+# rule: 1=u16, 2=s16, 3=u32, 4=s32
+#
+
+info:
+  manufacturer: Eco-Worthy
+  model: ECO-10000W(SR)
+
+default:
+  update_interval: 5
+  digits: 6
+  # This logger returns GatewayPathUnavailable (0x0A) on bulk reads >~24 registers;
+  # cap request span so davidrapan splits them (0x0213..0x023b -> two reads).
+  max_size: 20
+
+parameters:
+  - group: Battery
+    items:
+      - {name: "Battery SOC",     class: "battery", state_class: "measurement", uom: "%", scale: 1,   rule: 1, registers: [0x0100], icon: "mdi:battery-50"}
+      - {name: "Battery Voltage", class: "voltage", state_class: "measurement", uom: "V", scale: 0.1, rule: 1, registers: [0x0101]}
+      # signed: negative = charging, positive = discharging
+      - {name: "Battery Current", class: "current", state_class: "measurement", uom: "A", scale: 0.1, rule: 2, registers: [0x0102], icon: "mdi:current-dc"}
+      # Net battery power = voltage x current (native composite, no template needed).
+      # Sign matches the Energy dashboard "Standard" mode: positive = discharging, negative = charging.
+      - name: "Battery Power"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        icon: "mdi:home-battery"
+        sensors:
+          - registers: [0x0101]
+            scale: 0.1
+            multiply:
+              registers: [0x0102]
+              signed: true
+              scale: 0.1
+
+  - group: Solar PV
+    # PV was idle (night) at capture. Scales/addresses corroborated by SRNE HSI-1500S map
+    # (RAR/esphome-srne-inverter). PV current is x0.1 (SRNE standard), not x0.01. Verify in daylight.
+    # This is a dual-MPPT unit: PV2 (0x010F-0x0111) exists and is readable (single-MPPT models error at 0x0110).
+    items:
+      - {name: "PV1 Voltage", class: "voltage", state_class: "measurement", uom: "V", scale: 0.1, rule: 1, registers: [0x0107]}
+      - {name: "PV1 Current", class: "current", state_class: "measurement", uom: "A", scale: 0.1, rule: 1, registers: [0x0108]}
+      - {name: "PV1 Power",   class: "power",   state_class: "measurement", uom: "W", scale: 1,   rule: 1, registers: [0x0109]}
+      - {name: "PV2 Voltage", class: "voltage", state_class: "measurement", uom: "V", scale: 0.1, rule: 1, registers: [0x010F]}
+      - {name: "PV2 Current", class: "current", state_class: "measurement", uom: "A", scale: 0.1, rule: 1, registers: [0x0110]}
+      - {name: "PV2 Power",   class: "power",   state_class: "measurement", uom: "W", scale: 1,   rule: 1, registers: [0x0111]}
+      # total charge power into battery (PV + mains); matched app "3.22 kW" at capture
+      - {name: "Battery Charge Power", class: "power", state_class: "measurement", uom: "W", scale: 1, rule: 1, registers: [0x010E]}
+
+  - group: AC Output
+    # Inverter output side (to the house/loads) — distinct from Grid (utility input)
+    items:
+      - {name: "AC Output Voltage L1", class: "voltage",   state_class: "measurement", uom: "V",  scale: 0.1,  rule: 1, registers: [0x0216]}
+      - {name: "AC Output Voltage L2", class: "voltage",   state_class: "measurement", uom: "V",  scale: 0.1,  rule: 1, registers: [0x022c]}
+      - {name: "AC Output Current L1", class: "current",   state_class: "measurement", uom: "A",  scale: 0.1,  rule: 1, registers: [0x0217]}
+      - {name: "AC Output Current L2", class: "current",   state_class: "measurement", uom: "A",  scale: 0.1,  rule: 1, registers: [0x022e]}
+      # 0x0218 = inverter/output frequency (was mislabeled 0x0215; corrected per SRNE ref)
+      - {name: "AC Output Frequency",  class: "frequency", state_class: "measurement", uom: "Hz", scale: 0.01, rule: 1, registers: [0x0218]}
+      - name: "AC Output Current Total"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        sensors:
+          - {registers: [0x0217], scale: 0.1}
+          - {registers: [0x022e], scale: 0.1}
+
+  - group: Grid
+    # Utility/mains input side ("Grid" == "Mains" == "Line" in SRNE docs)
+    items:
+      - {name: "Grid Voltage L1", class: "voltage",   state_class: "measurement", uom: "V",  scale: 0.1,  rule: 1, registers: [0x0213]}
+      - {name: "Grid Voltage L2", class: "voltage",   state_class: "measurement", uom: "V",  scale: 0.1,  rule: 1, registers: [0x022a]}
+      # verified: 0x0214=22.3 A vs app 22.70 A, 0x0238=14.1 A vs app 14.10 A
+      - {name: "Grid Current L1", class: "current",   state_class: "measurement", uom: "A",  scale: 0.1,  rule: 1, registers: [0x0214]}
+      - {name: "Grid Current L2", class: "current",   state_class: "measurement", uom: "A",  scale: 0.1,  rule: 1, registers: [0x0238]}
+      - {name: "Grid Frequency",  class: "frequency", state_class: "measurement", uom: "Hz", scale: 0.01, rule: 1, registers: [0x0215]}
+      # signed: allows grid import/export sign
+      - {name: "Grid Power L1",   class: "power",     state_class: "measurement", uom: "W",  scale: 1,    rule: 2, registers: [0x023a]}
+      - {name: "Grid Power L2",   class: "power",     state_class: "measurement", uom: "W",  scale: 1,    rule: 2, registers: [0x023b]}
+      # Totals = L1 + L2 (native composite sum; default operator is add)
+      - name: "Grid Current Total"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        sensors:
+          - {registers: [0x0214], scale: 0.1}
+          - {registers: [0x0238], scale: 0.1}
+      - name: "Grid Power Total"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        sensors:
+          - {registers: [0x023a], signed: true}
+          - {registers: [0x023b], signed: true}
+
+  - group: DC Bus
+    items:
+      - {name: "PCU BusP Voltage", class: "voltage", state_class: "measurement", uom: "V", scale: 0.1, rule: 1, registers: [0x0229]}
+      - {name: "PCU BusN Voltage", class: "voltage", state_class: "measurement", uom: "V", scale: 0.1, rule: 1, registers: [0x0228]}
+
+  - group: Load
+    # Per-phase load/UPS registers confirmed against the SRNE SEI-12K-UPRO map (same family,
+    # confirmed reads). CORRECTION: earlier "L1/L2 Load Rate" (0x0234/0x0235) were actually
+    # apparent-power L2/L3 — the 21≈21%/20VA match was coincidental. Real load % is 0x021F.
+    # Per-phase totals (if wanted) = L1 + L2 via an HA template; L3 is ~0 on split-phase.
+    items:
+      - {name: "Load Active Power L1",   class: "power",          state_class: "measurement", uom: "W",  scale: 1,   rule: 1, registers: [0x021B]}
+      - {name: "Load Active Power L2",   class: "power",          state_class: "measurement", uom: "W",  scale: 1,   rule: 1, registers: [0x0232]}
+      - {name: "Load Apparent Power L1", class: "apparent_power", state_class: "measurement", uom: "VA", scale: 1,   rule: 1, registers: [0x021C]}
+      - {name: "Load Apparent Power L2", class: "apparent_power", state_class: "measurement", uom: "VA", scale: 1,   rule: 1, registers: [0x0234]}
+      - {name: "Load Current L1",        class: "current",        state_class: "measurement", uom: "A",  scale: 0.1, rule: 1, registers: [0x0219]}
+      - {name: "Load Current L2",        class: "current",        state_class: "measurement", uom: "A",  scale: 0.1, rule: 1, registers: [0x0230]}
+      - {name: "Load Percent",           state_class: "measurement", uom: "%", scale: 1, rule: 1, registers: [0x021F]}
+      # Totals = L1 + L2
+      - name: "Load Active Power Total"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 1
+        sensors:
+          - {registers: [0x021B]}
+          - {registers: [0x0232]}
+      - name: "Load Apparent Power Total"
+        class: "apparent_power"
+        state_class: "measurement"
+        uom: "VA"
+        rule: 1
+        sensors:
+          - {registers: [0x021C]}
+          - {registers: [0x0234]}
+      - name: "Load Current Total"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        rule: 1
+        sensors:
+          - {registers: [0x0219], scale: 0.1}
+          - {registers: [0x0230], scale: 0.1}
+
+  - group: Temperature
+    # signed to allow sub-zero ambient
+    items:
+      - {name: "Inverter Heatsink Temp", class: "temperature", state_class: "measurement", uom: "°C", scale: 0.1, rule: 2, registers: [0x0221]}
+      - {name: "Transformer Temp",       class: "temperature", state_class: "measurement", uom: "°C", scale: 0.1, rule: 2, registers: [0x0222]}
+      - {name: "Radiator Temp",          class: "temperature", state_class: "measurement", uom: "°C", scale: 0.1, rule: 2, registers: [0x0220]}
+
+  - group: Status
+    items:
+      # Inverter operating mode (0x0210 "Machine State").
+      # VERIFIED live: 2 = Grid/Mains, 3 = Battery/Inverter (confirmed 2026-07-26 by cutting grid input).
+      # 0/1/4/5 are best-guess SRNE values (transient/rare states) — still to confirm.
+      - name: "Machine State"
+        class: "enum"
+        rule: 1
+        registers: [0x0210]
+        icon: "mdi:state-machine"
+        lookup:
+          - key: 0
+            value: "Power On"
+          - key: 1
+            value: "Standby"
+          - key: 2
+            value: "Grid (Mains)"
+          - key: 3
+            value: "Battery (Inverter)"
+          - key: 4
+            value: "Bypass"
+          - key: 5
+            value: "Fault"
+
+  - group: Energy
+    # Native SRNE statistics counters (0xF0xx block, protocol V1.7+).
+    # All verified against the Solarman app on 2026-07-25 23:27.
+    # 32-bit totals use [low, high] registers (low word first).
+    update_interval: 60
+    items:
+      - {name: "Battery Charge Today",      device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF04D]}
+      - {name: "Battery Charge Total",      device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF050, 0xF051]}
+      - {name: "Battery Discharge Today",   device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF04E]}
+      - {name: "Battery Discharge Total",   device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF052, 0xF053]}
+      - {name: "Load Consumption Today",    device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF030]}
+      - {name: "Load Consumption Total",    device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF03A, 0xF03B]}
+      - {name: "PV Generation Today",       device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF02F]}
+      - {name: "PV Generation Total",       device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF038, 0xF039]}
+      - {name: "Grid Charge Total",         device_class: "energy", state_class: "total_increasing", uom: "kWh", scale: 0.1, rule: 1, registers: [0xF054, 0xF055]}  # grid energy used to charge battery
+      - {name: "Battery Charge Total Ah",    state_class: "total_increasing", uom: "Ah", scale: 1, rule: 1, registers: [0xF034, 0xF035]}
+      - {name: "Battery Discharge Total Ah", state_class: "total_increasing", uom: "Ah", scale: 1, rule: 1, registers: [0xF036, 0xF037]}
+      - {name: "Inverter Hours", device_class: "duration", state_class: "total_increasing", uom: "h", scale: 1, rule: 1, registers: [0xF04A]}
+      - {name: "Bypass Hours",   device_class: "duration", state_class: "total_increasing", uom: "h", scale: 1, rule: 1, registers: [0xF04B]}
+
+  - group: Charger
+    items:
+      - name: "Charge Status"
+        class: "enum"
+        rule: 1
+        registers: [0x010B]
+        icon: "mdi:battery-charging"
+        lookup:
+          - {key: 0, value: "Off"}
+          - {key: 1, value: "Bulk"}
+          - {key: 2, value: "Absorption"}
+          - {key: 4, value: "Float"}
+          - {key: 6, value: "Lithium Activation"}
+      - {name: "Mains Charge Current", class: "current", state_class: "measurement", uom: "A", scale: 0.1, rule: 1, registers: [0x021E]}
+      - {name: "PV Charge Current",    class: "current", state_class: "measurement", uom: "A", scale: 0.1, rule: 1, registers: [0x0224]}
+      - {name: "Load Power Factor",    class: "power_factor", state_class: "measurement", scale: 0.01, rule: 2, registers: [0x021A]}
+
+  - group: Configuration
+    # Read-only settings (0xE0xx/0xE2xx). Polled hourly.
+    update_interval: 3600
+    items:
+      - name: "Battery Type"
+        class: "enum"
+        category: "diagnostic"
+        rule: 1
+        registers: [0xE004]
+        icon: "mdi:battery"
+        lookup:
+          - {key: 0, value: "User"}
+          - {key: 1, value: "Sealed"}
+          - {key: 2, value: "Flooded"}
+          - {key: 3, value: "Gel"}
+          - {key: 4, value: "LFP"}
+          - {key: 5, value: "NCA"}
+          - {key: 6, value: "LFP (BMS)"}
+      - name: "AC Input Range"
+        class: "enum"
+        category: "diagnostic"
+        rule: 1
+        registers: [0xE20B]
+        icon: "mdi:sine-wave"
+        lookup:
+          - {key: 0, value: "Wide (APL)"}
+          - {key: 1, value: "Narrow (UPS)"}
+      - {name: "Nominal Battery Capacity", category: "diagnostic", uom: "Ah", scale: 1,    rule: 1, registers: [0xE002], icon: "mdi:battery-high"}
+      - {name: "System Voltage",           category: "diagnostic", class: "voltage",   uom: "V",  scale: 1,    rule: 1, registers: [0xE003]}
+      - {name: "Output Voltage Setpoint",   category: "diagnostic", class: "voltage",   uom: "V",  scale: 0.1,  rule: 1, registers: [0xE208]}
+      - {name: "Output Frequency Setpoint", category: "diagnostic", class: "frequency", uom: "Hz", scale: 0.01, rule: 1, registers: [0xE209]}
+      - {name: "Low SOC Alarm",             category: "diagnostic", uom: "%", scale: 1, rule: 1, registers: [0xE01E]}
+
+  - group: Controls
+    # WRITABLE settings (Modbus fn 0x06), bounded ranges. Dangerous registers
+    # (output V/F setpoints, power on/off, factory reset, clear stats) intentionally NOT exposed.
+    update_interval: 300
+    items:
+      - name: "Output Priority"
+        platform: select
+        category: "config"
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE204]
+        icon: "mdi:transmission-tower-import"
+        lookup:
+          - {key: 0, value: "Solar First"}
+          - {key: 1, value: "Utility First"}
+          - {key: 2, value: "SBU"}
+      - name: "Charger Priority"
+        platform: select
+        category: "config"
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE20F]
+        icon: "mdi:battery-charging-outline"
+        lookup:
+          - {key: 0, value: "CSO"}
+          - {key: 1, value: "CUB"}
+          - {key: 2, value: "SNU"}
+          - {key: 3, value: "OSO"}
+      - name: "Mains Charge Current Limit"
+        platform: number
+        category: "config"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE205]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+      - name: "Max Charge Current"
+        platform: number
+        category: "config"
+        class: "current"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE20A]
+        configurable:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+      - name: "Stop Charge SOC"
+        platform: number
+        category: "config"
+        uom: "%"
+        scale: 1
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE01D]
+        configurable:
+          min: 50
+          max: 100
+          step: 1
+          mode: box
+      - name: "SOC Switch to Mains"
+        platform: number
+        category: "config"
+        uom: "%"
+        scale: 1
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE01F]
+        configurable:
+          min: 5
+          max: 90
+          step: 1
+          mode: box
+      - name: "SOC Switch to Battery"
+        platform: number
+        category: "config"
+        uom: "%"
+        scale: 1
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x06
+        registers: [0xE020]
+        configurable:
+          min: 20
+          max: 100
+          step: 1
+          mode: box
