@@ -895,6 +895,16 @@ parameters:
         scale: [1, 10, 10] # out of date docs
         registers: [0x00B2]
 
+      - name: "Load UPS Power"
+        description: "Power on the LOAD (UPS/backup) port alone, excluding loads behind the CT on the grid side. Same register as Load L1 Current, which on current firmware carries this power"
+        l: 1
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        rule: 2
+        scale: [1, 10, 10] # out of date docs
+        registers: [0x00B3]
+
       - name: "Load L1 Current"
         l: 1
         class: "current"
