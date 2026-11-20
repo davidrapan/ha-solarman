@@ -496,6 +496,8 @@ parameters:
             value: "No Meter"
           - key: 1
             value: "Current Transformer"
+          - key: 2
+            value: "Meter"
 
       - name: "Battery Control Mode"
         platform: "select"
@@ -507,9 +509,9 @@ parameters:
             value: "No Battery"
           - key: 0x0001
             value: "Lithium"
-          - key: 0x0001
+          - key: 0x0002
             value: "Lead-Battery"
-          - key: 0x0001
+          - key: 0x0003
             value: "Simulated"
 
       - name: Restart
@@ -532,6 +534,84 @@ parameters:
         registers: [0x0210, 0x020F]
         value:
           bit: 5
+
+      - name: "Power On/Off"
+        platform: switch
+        value:
+          bit: 0
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
+      
+      - name: "Soft start"
+        platform: switch
+        value:
+          bit: 1
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
+
+      - name: "UPS mode"
+        platform: switch
+        value:
+          bit: 3
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
+
+      - name: "Timed AC charging"
+        platform: switch
+        value:
+          bit: 4
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
+      
+      - name: "Timed charging"
+        platform: switch
+        value:
+          bit: 5
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
+      
+      - name: "Timed discharging"
+        platform: switch
+        value:
+          bit: 5
+        registers: [0x00CF]
+        rule: 1
+        code:
+          read: 0x03
+          write: 0x10
+        writeback:
+          register: 0x00CE
+          count: 2
 
       - name: Battery Charge & Discharge
         platform: switch
@@ -561,6 +641,20 @@ parameters:
         scale: 0.1
         rule: 1
         registers: [0x09C9]
+        configurable:
+          min: 0
+          max: 100
+          step: 5
+        range:
+          min: 0
+          max: 1000
+
+      - name: Max Discharge
+        platform: number
+        uom: "%"
+        scale: 0.1
+        rule: 1
+        registers: [0x0BBE]
         configurable:
           min: 0
           max: 100
