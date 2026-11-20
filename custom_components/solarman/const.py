@@ -107,6 +107,8 @@ TIMINGS_INTERVAL = 5
 TIMINGS_INTERVAL_SCALE = 1
 TIMINGS_UPDATE_INTERVAL = timedelta(seconds = TIMINGS_INTERVAL * TIMINGS_INTERVAL_SCALE)
 
+# Entities which are used by other entities (computed battery sensors, device info) and so are polled even when disabled
+
 REQUEST_UPDATE_INTERVAL = UPDATE_INTERVAL
 REQUEST_MIN_SPAN = "min_span"
 REQUEST_MAX_SIZE = "max_size"
