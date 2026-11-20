@@ -179,7 +179,7 @@ parameters:
         scale: 0.01
         rule: 2
         registers: [0x0200]
-      
+
       - name: "L1 Frequency"
         l: 1
         class: "frequency"
@@ -188,7 +188,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0201]
-        
+
       - name: "L2 Frequency"
         l: 2
         class: "frequency"
@@ -197,7 +197,7 @@ parameters:
         scale: 0.01
         rule: 1
         registers: [0x0202]
-        
+
       - name: "L3 Frequency"
         l: 3
         class: "frequency"
