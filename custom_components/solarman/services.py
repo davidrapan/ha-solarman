@@ -34,9 +34,13 @@ def _get_device(call: ServiceCall):
         return config_entry.runtime_data.device
     raise ServiceValidationError("No communication interface for the device found", translation_domain = DOMAIN, translation_key = "no_interface_found")
 
+def _get_param(call: ServiceCall, *keys):
+    # First key present in the call data. Do not use `or` here: 0 is a valid address, count and value.
+    return next((v for k in keys if (v := call.data.get(k)) is not None), None)
+
 async def _read_registers(call: ServiceCall, code: int):
-    address = call.data.get(SERVICES_PARAM_ADDRESS) or call.data.get(SERVICES_PARAM_REGISTER)
-    count = call.data.get(SERVICES_PARAM_COUNT) or call.data.get(SERVICES_PARAM_QUANTITY)
+    address = _get_param(call, SERVICES_PARAM_ADDRESS, SERVICES_PARAM_REGISTER)
+    count = _get_param(call, SERVICES_PARAM_COUNT, SERVICES_PARAM_QUANTITY)
     try:
         if (response := await _get_device(call).execute(code, address, count = count)) is not None:
             for i in range(0, count):
@@ -55,14 +59,14 @@ async def _read_input_registers(call: ServiceCall):
 async def _write_single_register(call: ServiceCall):
     _LOGGER.debug(f"write_single_register: {call}")
     try:
-        await _get_device(call).execute(FUNCTION_CODE.WRITE_SINGLE_REGISTER, call.data.get(SERVICES_PARAM_ADDRESS) or call.data.get(SERVICES_PARAM_REGISTER), data = call.data.get(SERVICES_PARAM_VALUE))
+        await _get_device(call).execute(FUNCTION_CODE.WRITE_SINGLE_REGISTER, _get_param(call, SERVICES_PARAM_ADDRESS, SERVICES_PARAM_REGISTER), data = call.data.get(SERVICES_PARAM_VALUE))
     except Exception as e:
         raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
 async def _write_multiple_registers(call: ServiceCall):
     _LOGGER.debug(f"write_multiple_registers: {call}")
     try:
-        await _get_device(call).execute(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, call.data.get(SERVICES_PARAM_ADDRESS) or call.data.get(SERVICES_PARAM_REGISTER), data = call.data.get(SERVICES_PARAM_VALUES) or call.data.get(SERVICES_PARAM_VALUE))
+        await _get_device(call).execute(FUNCTION_CODE.WRITE_MULTIPLE_REGISTERS, _get_param(call, SERVICES_PARAM_ADDRESS, SERVICES_PARAM_REGISTER), data = _get_param(call, SERVICES_PARAM_VALUES, SERVICES_PARAM_VALUE))
     except Exception as e:
         raise ServiceValidationError(e, translation_domain = DOMAIN, translation_key = "call_failed")
 
