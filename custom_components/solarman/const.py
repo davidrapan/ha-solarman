@@ -14,6 +14,8 @@ DISCOVERY_TIMEOUT = .5
 DISCOVERY_MESSAGE = ["WIFIKIT-214028-READ".encode(), "HF-A11ASSISTHREAD".encode()]
 DISCOVERY_INTERVAL = timedelta(minutes = 15)
 DISCOVERY_CACHE = timedelta(seconds = 10)
+# Minimum time between re-discoveries of the logger triggered by request timeouts (it queries the already struggling logger)
+DISCOVERY_ON_TIMEOUT_INTERVAL = 600
 
 COMPONENTS_DIRECTORY = "custom_components"
 
@@ -106,6 +108,13 @@ PARAM_ = { CONF_MOD: CONF_MOD, CONF_MPPT: CONF_MPPT, CONF_PHASE: "l", CONF_PACK:
 TIMINGS_INTERVAL = 5
 TIMINGS_INTERVAL_SCALE = 1
 TIMINGS_UPDATE_INTERVAL = timedelta(seconds = TIMINGS_INTERVAL * TIMINGS_INTERVAL_SCALE)
+
+# Connection resilience (pysolarman)
+#
+CONNECT_ATTEMPTS = 3 # Reconnect attempts while a request is waiting for a response
+CONNECT_BACKOFF = .5 # First delay between reconnect attempts, doubled each time
+FAILURE_BACKOFF_BASE = 10 # After a timeout/connection failure further requests fail fast for this long, doubled for each consecutive failure
+FAILURE_BACKOFF_MAX = 120
 
 REQUEST_UPDATE_INTERVAL = UPDATE_INTERVAL
 REQUEST_MIN_SPAN = "min_span"
