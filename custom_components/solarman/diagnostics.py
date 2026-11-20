@@ -4,7 +4,7 @@ from homeassistant.components.diagnostics import async_redact_data
 
 from .coordinator import Coordinator
 
-TO_REDACT = {"identifiers", "connections", "serial_number", "mac", "device_serial_number_sensor"}
+TO_REDACT = {"identifiers", "connections", "serial", "serial_number", "mac", "device_serial_number_sensor"}
 
 async def async_get_config_entry_diagnostics(_: HomeAssistant, config_entry: ConfigEntry[Coordinator]):
     return {

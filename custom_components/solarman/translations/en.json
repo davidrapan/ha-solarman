@@ -38,7 +38,11 @@
               "pack": "Number of Battery packs",
               "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
-              "mb_slave_id": "Modbus Slave ID (usually 1)"
+              "mb_slave_id": "Modbus Slave ID (usually 1)",
+              "serial": "Data logger serial number"
+            },
+            "data_description": {
+              "serial": "Only needed when the serial cannot be auto-detected (e.g. Home Assistant is on a different subnet than the logger, so UDP discovery on port 48899 can't reach it). Leave at 0 to auto-detect."
             }
           }
         }
@@ -77,7 +81,11 @@
               "pack": "Number of Battery packs",
               "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
-              "mb_slave_id": "Modbus Slave ID (usually 1)"
+              "mb_slave_id": "Modbus Slave ID (usually 1)",
+              "serial": "Data logger serial number"
+            },
+            "data_description": {
+              "serial": "Only needed when the serial cannot be auto-detected (e.g. Home Assistant is on a different subnet than the logger, so UDP discovery on port 48899 can't reach it). Leave at 0 to auto-detect."
             }
           }
         }

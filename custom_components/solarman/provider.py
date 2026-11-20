@@ -54,6 +54,10 @@ class ConfigurationProvider:
         return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_[CONF_MB_SLAVE_ID])
 
     @cached_property
+    def serial(self) -> int:
+        return self._additional_options.get(CONF_SERIAL, DEFAULT_[CONF_SERIAL])
+
+    @cached_property
     def directory(self):
         return self.hass.config.path(LOOKUP_DIRECTORY_PATH)
 
@@ -73,7 +77,9 @@ class EndPointProvider:
 
     @cached_property
     def connection(self) -> tuple[str, int, str, int, int, int]:
-        return self.host, self.port, self.transport, self.serial, self.mb_slave_id, TIMINGS_INTERVAL
+        # A serial configured by the user (non-zero) takes precedence over the auto-discovered one,
+        # which is required when UDP discovery cannot reach the logger (e.g. across subnets).
+        return self.host, self.port, self.transport, self.config.serial or self.serial, self.mb_slave_id, TIMINGS_INTERVAL
 
     @cached_property
     def ip(self):
