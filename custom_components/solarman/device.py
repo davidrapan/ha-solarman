@@ -46,11 +46,40 @@ class Device():
         try:
             self.endpoint = await EndPointProvider(self.config).init()
             self.modbus = Solarman(*self.endpoint.connection)
-            self.profile = await ProfileProvider(self.config, self.endpoint).init(self.get)
+            self.profile = ProfileProvider(self.config, self.endpoint)
+            # A manually selected profile can be parsed without querying the device, so its "slaves" are known up front
+            if not self.profile.auto:
+                await self.profile.init(self.get)
+            await self.select_slave()
+            if self.profile.auto:
+                await self.profile.init(self.get)
         except Exception as e:
             raise type(e)(f"{"Timeout" if (x := isinstance(e, TimeoutError)) else "Error"} setuping {self.config.name}{"" if x else f": {strepr(e)}"}") from e
         else:
             self.state.update(True)
+
+    async def select_slave(self):
+        slaves = list(dict.fromkeys((self.endpoint.mb_slave_id, *(self.profile.parser.slaves if self.profile.parser else AUTODETECTION_SLAVES))))
+        code, address = (self.profile.parser.code, 0) if self.profile.parser else AUTODETECTION_DEVICE_DEYE
+
+        if len(slaves) < 2:
+            return
+
+        for slave_id in slaves:
+            if slave_id != self.endpoint.mb_slave_id:
+                await self.modbus.close()
+                self.modbus = Solarman(self.endpoint.host, self.endpoint.port, self.endpoint.transport, self.endpoint.serial, slave_id, TIMINGS_INTERVAL)
+            try:
+                await self.modbus.execute(code, address, count = 1)
+            except Exception:
+                _LOGGER.debug(f"[{self.endpoint.host}] Slave {slave_id} is not responding", exc_info = True)
+            else:
+                _LOGGER.debug(f"[{self.endpoint.host}] Using slave {slave_id}")
+                return
+
+        # Nobody answered: fall back to the configured slave, so the original error surfaces
+        await self.modbus.close()
+        self.modbus = Solarman(*self.endpoint.connection)
 
     #def check(self, lock):
     #    if lock and self._write_lock:

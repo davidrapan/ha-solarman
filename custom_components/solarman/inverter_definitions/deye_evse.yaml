@@ -1,0 +1,720 @@
+#
+# Deye | EV Charger (EVSE)
+# Modbus slave ID: 162 (default); 3 may also work
+#
+# Tested with SUN-EVSE22K01 with C020 and C022 firmware and MW4_01_5429_SS_04_00.00.00.07 logger firmware.
+#
+
+info:
+  manufacturer: Deye
+  model: EVSE**K01
+
+default:
+  update_interval: 5
+  slaves: [162, 3]
+  digits: 6
+
+parameters:
+  - group: Info
+    update_interval: 3600
+    items:
+      - name: "Device"
+        class: "enum"
+        rule: 1
+        registers: [0x0000]
+        icon: "mdi:information"
+        lookup:
+          - key: 0x0904
+            value: "Deye AC EV Charger"
+        attributes:
+          [
+            "Device Serial Number",
+            "Device Firmware Version",
+            "Device Protocol Version",
+            "Device Public Group Number",
+            "Device Specification",
+            "Device Rated Power",
+          ]
+
+      - name: "Device Serial Number"
+        attribute:
+        rule: 5
+        registers: [0x0002, 0x0003, 0x0004, 0x0005, 0x0006]
+
+      - name: "Device Firmware Version"
+        attribute:
+        rule: 7
+        hex:
+        delimiter: ''
+        registers: [0x0007]
+
+      - name: "Device Protocol Version"
+        attribute:
+        rule: 1
+        registers: [0x0001]
+
+      - name: "Device Public Group Number"
+        attribute:
+        rule: 7
+        hex:
+        delimiter: ''
+        registers: [0x0009]
+
+      - name: "Device Specification"
+        attribute:
+        rule: 1
+        registers: [0x0013]
+        mask: 0xFF00
+        lookup:
+          - key: 0x0000
+            value: "22 kW EV Charger"
+          - key: 0x0100
+            value: "11 kW EV Charger"
+
+      - name: "Device Rated Power"
+        attribute:
+        uom: "W"
+        rule: 1
+        registers: [0x0038]
+
+  - group: Configuration
+    update_interval: 300
+    items:
+      - name: "Charging Start Mode"
+        description: "Selects whether charging starts immediately or follows the configured charging schedule."
+        platform: select
+        rule: 1
+        registers: [0x0015]
+        icon: "mdi:ev-station"
+        display:
+          mask: 0x00FF
+        lookup:
+          - key: 0x0000
+            value: "Plug & Play"
+          - key: 0x0001
+            value: "Time Of Charge"
+
+      - name: "Communication Mode"
+        description: "Selects the communication method used by the EV charger. Switching to WiFi disconnects the charger from inverter (LoRa) control."
+        platform: select
+        rule: 1
+        registers: [0x0015]
+        icon: "mdi:wifi-cog"
+        display:
+          mask: 0xFF00
+        lookup:
+          - key: 0x0000
+            value: "WiFi"
+          - key: 0x0100
+            value: "LoRa"
+            
+      - name: "LoRa Channel"
+        description: "LoRa communication channel used between inverter and EV charger. Must match the inverter Smart TX channel, otherwise the link is lost."
+        rule: 1
+        registers: [0x000A]
+        icon: "mdi:access-point-network"
+        configurable:
+          min: 0
+          max: 9
+          step: 1
+          mode: box
+
+      - name: "Grid voltage protection - high"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x003C]
+        icon: "mdi:transmission-tower-export"
+        configurable:
+          min: 264.5
+          max: 345.0
+          step: 0.1
+          mode: box
+
+      - name: "Grid voltage protection - low"
+        platform: number
+        class: "voltage"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x003D]
+        icon: "mdi:transmission-tower-import"
+        configurable:
+          min: 110.0
+          max: 184.0
+          step: 0.1
+          mode: box
+          
+      - name: "Off-Grid Charge Off"
+        description: "Blocks and stops charging while the inverter is off-grid. No effect on-grid. The battery SOC threshold for off-grid charging is set separately on the inverter."
+        platform: switch
+        rule: 1
+        registers: [0x0025]
+        icon: "mdi:transmission-tower-off"
+        value:
+          bit: 0
+
+      - name: "Disable Ground Detection"
+        description: "Disables protective earth (PE) fault detection. Normally leave off."
+        platform: switch
+        rule: 1
+        registers: [0x003B]
+        icon: "mdi:flash-triangle"
+        value:
+          bit: 0
+
+      - name: "Disable Residual Current Detection"
+        description: "Disables residual current (RCD) fault detection. Normally leave off."
+        platform: switch
+        rule: 1
+        registers: [0x003B]
+        icon: "mdi:flash-triangle"
+        value:
+          bit: 1
+
+  - group: Time Of Charge
+    update_interval: 300
+    items:
+      - name: "Program 1 Charging"
+        description: "Enables the scheduled charging interval from Program 1 Time to Program 2 Time."
+        platform: switch
+        rule: 1
+        registers: [0x0018]
+        icon: "mdi:clock-check-outline"
+        value:
+          bit: 0
+
+      - name: "Program 2 Charging"
+        description: "Enables the scheduled charging interval from Program 2 Time to Program 3 Time."
+        platform: switch
+        rule: 1
+        registers: [0x0018]
+        icon: "mdi:clock-check-outline"
+        value:
+          bit: 1
+
+      - name: "Program 3 Charging"
+        description: "Enables the scheduled charging interval from Program 3 Time to Program 4 Time."
+        platform: switch
+        rule: 1
+        registers: [0x0018]
+        icon: "mdi:clock-check-outline"
+        value:
+          bit: 2
+
+      - name: "Program 4 Charging"
+        description: "Enables the scheduled charging interval from Program 4 Time to Program 1 Time (through midnight)."
+        platform: switch
+        rule: 1
+        registers: [0x0018]
+        icon: "mdi:clock-check-outline"
+        value:
+          bit: 3
+
+      - name: "Program 1 Time"
+        description: "Start of charging interval 1 and end of interval 4, in five-minute steps."
+        platform: "time"
+        rule: 9
+        dec: 12
+        mul: 5
+        registers: [0x0019]
+        range:
+          min: 0
+          max: 287
+        icon: "mdi:sun-clock"
+
+      - name: "Program 2 Time"
+        description: "Start of charging interval 2 and end of interval 1, in five-minute steps."
+        platform: "time"
+        rule: 9
+        dec: 12
+        mul: 5
+        registers: [0x001A]
+        range:
+          min: 0
+          max: 287
+        icon: "mdi:sun-clock"
+
+      - name: "Program 3 Time"
+        description: "Start of charging interval 3 and end of interval 2, in five-minute steps."
+        platform: "time"
+        rule: 9
+        dec: 12
+        mul: 5
+        registers: [0x001B]
+        range:
+          min: 0
+          max: 287
+        icon: "mdi:sun-clock"
+
+      - name: "Program 4 Time"
+        description: "Start of charging interval 4 and end of interval 3, in five-minute steps."
+        platform: "time"
+        rule: 9
+        dec: 12
+        mul: 5
+        registers: [0x001C]
+        range:
+          min: 0
+          max: 287
+        icon: "mdi:sun-clock"
+
+  - group: Control
+    update_interval: 5
+    items:
+      - name: "Charging Power Limit"
+        description: "Sets the charging power limit. While the charger is linked to the inverter over LoRa, the inverter rewrites this value every few seconds. Values below the charger minimum current may be clamped by the charger."
+        class: "power"
+        uom: "W"
+        rule: 1
+        registers: [0x0012]
+        icon: "mdi:lightning-bolt-circle"
+        configurable:
+          min: 0
+          max: 22000
+          step: 100
+          mode: box
+
+  - group: State
+    update_interval: 5
+    items:
+      # NOTE:
+      # The high byte of register 0x0039 represents the EV charger
+      # charging control / authorization state.
+      #
+      # High-byte flags are independent of low-byte state
+      # and can combine with any low-byte value.
+      # e.g. 0x01A0 = Charging with external authorization active.
+      - name: "Charging Control State"
+        description: "High-byte control flags of register 0x0039 reported by the charger firmware. The exact meaning of the flags is not confirmed; Limited is not a verified power limiting status."
+        rule: 1
+        registers: [0x0039]
+        mask: 0xFF00
+        lookup:
+
+          # No external authorization or dynamic limiting active.
+          #
+          # Charger operates in standalone/local mode.
+          - key: 0x0000
+            value: "Standalone"
+
+          # External authorization/control active.
+          #
+          # Typically observed during normal inverter- or
+          # EMS-controlled charging operation.
+          - key: 0x0100
+            value: "Authorized"
+
+          # Dynamic power limiting active.
+          #
+          # Charging may be suspended or restricted due to:
+          # - solar surplus logic
+          # - low available current
+          # - inverter limits
+          - key: 0x0200
+            value: "Limited"
+
+          # Both authorization and dynamic limiting active.
+          #
+          # Observed when charging is externally managed
+          # while simultaneously constrained by EMS logic.
+          - key: 0x0300
+            value: "Authorized + Limited"
+            
+      # NOTE:
+      # The low byte of register 0x0039 represents the EV charger
+      # operational state machine.
+      #
+      # State names intentionally follow OCPP 1.6 connector
+      # status terminology for semantic consistency and
+      # integration convenience.
+      #
+      # Internal charging logic and Control Pilot behavior
+      # may differ from typical IEC 61851 implementations.
+      - name: "Charging Operational State"
+        description: "EV charger operational state derived from the internal charging state machine. State names follow OCPP terminology and do not by themselves confirm vehicle connection, CP voltage or charging current."
+        rule: 1
+        registers: [0x0039]
+        mask: 0x007F
+        lookup:
+
+          # State 0
+          #
+          # CP = +12V (no PWM).
+          # Charger available and idle.
+          #
+          # Observed when:
+          # - no EV is connected
+          # - charger is available
+          # - charging session fully ended
+          #
+          # Corresponds roughly to:
+          # IEC 61851 State A
+          - key: 0x0001
+            value: "Available"
+
+          # State 1
+          #
+          # CP = +12V after a normal charging stop.
+          # Session may still be partially active internally.
+          #
+          # Observed:
+          # - immediately after charging finishes
+          # - during normal session shutdown
+          #
+          # Reconnecting the EV from this state may skip
+          # the full preparation sequence.
+          - key: 0x0002
+            value: "Finishing"
+
+          # State 2
+          #
+          # EV physically connected, but EVSE intentionally
+          # keeps CP at +12V without enabling PWM.
+          #
+          # Used during:
+          # - authorization checks
+          # - solar/power evaluation
+          # - charging preparation
+          # - minimum current validation
+          - key: 0x0004
+            value: "Preparing"
+
+          # State 3
+          #
+          # PWM active and current is being offered to the EV,
+          # but charging current is not currently flowing.
+          #
+          # EVSE is actively advertising available current.
+          #
+          # Roughly corresponds to:
+          # IEC 61851 State B with PWM active
+          - key: 0x0008
+            value: "SuspendedEV"
+
+          # State 4
+          #
+          # Charging suspended by the EVSE while the EV
+          # remains physically connected.
+          # PWM removed and CP returned to +12V.
+          #
+          # Typically triggered by:
+          # - loss of authorization during charging
+          # - solar/power limiting
+          # - external stop command
+          #
+          # Charging may resume directly from this state
+          # once conditions are met, without a full session restart.
+          - key: 0x0010
+            value: "SuspendedEVSE"
+
+          # State 5
+          #
+          # Active charging state.
+          # PWM active, relay closed, current flowing.
+          #
+          # Corresponds roughly to:
+          # IEC 61851 State C
+          - key: 0x0020
+            value: "Charging"
+
+          # State 6
+          #
+          # Faulted or protection-lock state.
+          #
+          # Triggered when the charger safety logic detects
+          # a relay fault or abnormal condition.
+          #
+          # Specific fault causes are reported separately
+          # by dedicated protection/fault registers.
+          - key: 0x0040
+            value: "Faulted"
+
+      - name: "Inverter Grid State"
+        description: "Grid state reported by the inverter over LoRa: on while the inverter is on-grid, off while off-grid."
+        platform: binary_sensor
+        class: "power"
+        rule: 1
+        registers: [0x000D]
+        icon: "mdi:transmission-tower"
+
+      - name: "Emergency Stop"
+        description: "Indicates whether the charging station is in Emergency Stop mode."
+        platform: binary_sensor
+        update_interval: 5
+        rule: 1
+        registers: [0x003e]
+        icon: "mdi:alert-octagon"
+
+  - group: Grid
+    update_interval: 5
+    items:
+      - name: "Grid Voltage L1"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x0029]
+        icon: "mdi:sine-wave"
+
+      - name: "Grid Voltage L2"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x002A]
+        icon: "mdi:sine-wave"
+
+      - name: "Grid Voltage L3"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x002B]
+        icon: "mdi:sine-wave"
+
+  - group: Fault
+    update_interval: 5
+    items:
+      - name: "Charger Fault"
+        description: "Active protection faults (raw bitmask of register 0x0036). Fault indications may stay latched for some time after the condition clears."
+        platform: binary_sensor
+        class: "problem"
+        rule: 1
+        registers: [0x0036]
+        icon: "mdi:alert-circle"
+        attributes:
+          [
+            "Fault: Overcurrent",
+            "Fault: Overvoltage",
+            "Fault: Undervoltage",
+            "Fault: Protective Earth",
+            "Fault: Communication Timeout",
+            "Fault: Guiding Circuit (CP)",
+            "Fault: Stuck Relay",
+            "Fault: Overtemperature",
+            "Fault: Undertemperature",
+            "Fault: Residual Current",
+            "Fault: Stop Button",
+          ]
+
+      - name: "Fault: Overcurrent"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 0
+
+      - name: "Fault: Overvoltage"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 1
+
+      - name: "Fault: Undervoltage"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 2
+
+      - name: "Fault: Protective Earth"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 3
+
+      - name: "Fault: Communication Timeout"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 4
+
+      - name: "Fault: Guiding Circuit (CP)"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 5
+
+      - name: "Fault: Stuck Relay"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 6
+
+      - name: "Fault: Overtemperature"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 7
+
+      - name: "Fault: Undertemperature"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 8
+
+      - name: "Fault: Residual Current"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 9
+
+      - name: "Fault: Stop Button"
+        attribute:
+        rule: 1
+        registers: [0x0036]
+        bit: 10
+
+  - group: Charging
+    update_interval: 5
+    items:
+      - name: "Charging Power"
+        description: "Actual charging power currently delivered to the vehicle."
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0016]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Charging Power L1"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0026]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Charging Power L2"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0027]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Charging Power L3"
+        class: "power"
+        state_class: "measurement"
+        uom: "W"
+        scale: 10
+        rule: 1
+        registers: [0x0028]
+        icon: "mdi:lightning-bolt"
+
+      - name: "Charging Voltage L1"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x002C]
+        icon: "mdi:sine-wave"
+
+      - name: "Charging Voltage L2"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x002D]
+        icon: "mdi:sine-wave"
+
+      - name: "Charging Voltage L3"
+        class: "voltage"
+        state_class: "measurement"
+        uom: "V"
+        scale: 0.1
+        rule: 1
+        registers: [0x002E]
+        icon: "mdi:sine-wave"
+
+      - name: "Charging Current"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x002F]
+        sensors:
+          - registers: [0x002F]
+          - registers: [0x0030]
+          - registers: [0x0031]
+        icon: "mdi:current-ac"
+
+      - name: "Charging Current L1"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x002F]
+        icon: "mdi:current-ac"
+
+      - name: "Charging Current L2"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0030]
+        icon: "mdi:current-ac"
+
+      - name: "Charging Current L3"
+        class: "current"
+        state_class: "measurement"
+        uom: "A"
+        scale: 0.1
+        rule: 1
+        registers: [0x0031]
+        icon: "mdi:current-ac"
+
+      - name: "Relay Temperature 1"
+        description: "NTC relay temperature sensor 1. Overtemperature fault triggers above 110°C; undertemperature fault triggers at or below -40°C."
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        registers: [0x001D]
+        mask: 0x00FF
+        offset: 50
+        icon: "mdi:thermometer"
+
+      - name: "Relay Temperature 2"
+        description: "NTC relay temperature sensor 2. Overtemperature fault triggers above 110°C; undertemperature fault triggers at or below -40°C."
+        class: "temperature"
+        state_class: "measurement"
+        uom: "°C"
+        rule: 1
+        registers: [0x001D]
+        mask: 0xFF00
+        offset: 12800
+        divide: 256
+        icon: "mdi:thermometer"
+
+  - group: Energy
+    update_interval: 10
+    items:
+      - name: "Total EV Charge"
+        class: "energy"
+        state_class: "total_increasing"
+        uom: "kWh"
+        rule: 1
+        registers: [0x0022]
+        icon: "mdi:ev-station"
+
+      - name: "Today EV Charge"
+        class: "energy"
+        state_class: "total"
+        uom: "kWh"
+        scale: 0.1
+        rule: 1
+        registers: [0x0023]
+        icon: "mdi:ev-station"

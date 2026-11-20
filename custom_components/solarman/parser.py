@@ -20,10 +20,19 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
+        self._slaves = []
         self._previous_result = {}
         self._result = {}
 
         self.info: dict[str, str] = {}
+
+    @property
+    def code(self):
+        return self._code
+
+    @property
+    def slaves(self):
+        return self._slaves
 
     async def init(self, path: str, filename: str, parameters: dict):
         profile = await yaml_open(path + filename)
@@ -44,6 +53,8 @@ class ParameterParser:
                 self._max_size = default[REQUEST_MAX_SIZE]
             if DIGITS in default:
                 self._digits = default[DIGITS]
+            if REQUEST_SLAVES in default:
+                self._slaves = default[REQUEST_SLAVES]
 
         if "requests" in profile and "requests_fine_control" in profile:
             _LOGGER.debug("Fine control of request sets is enabled!")
@@ -419,6 +430,7 @@ class ParameterParser:
     def try_parse_time(self, data, definition):
         code = get_code(definition, "read")
         f, d = ("{:02d}", get_or_def(definition, "dec", 100)) if not "hex" in definition else ("{:02x}", get_or_def(definition, "hex", 0x100))
+        mul = definition.get("mul", 1)
         offset = definition.get("offset")
         value = ""
 
@@ -430,7 +442,7 @@ class ParameterParser:
 
             if registers_count == 1:
                 high, low = div_mod(temp, d)
-                value = str(f.format(int(high))) + ":" + str(f.format(int(low)))
+                value = str(f.format(int(high))) + ":" + str(f.format(int(low * mul)))
             else:
                 if temp >= d:
                     f = "{:02d}"
