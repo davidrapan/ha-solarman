@@ -88,24 +88,25 @@ class ConfigFlowHandler(ConfigFlow, domain = DOMAIN):
 
     async def _handle_discovery(self, **discovery_info: str | int) -> ConfigFlowResult:
         _LOGGER.debug(f"Solarman found from {"integration" if "serial" in discovery_info else "dhcp"} discovery on {discovery_info["ip"]}")
-        connections = {(dr.CONNECTION_NETWORK_MAC, dr.format_mac(discovery_info["mac"]))}
-        if device := dr.async_get(self.hass).async_get_device(connections = connections):
-            for entry in self._async_current_entries():
-                if entry.entry_id == device.primary_config_entry:
-                    if str(getipaddress(entry.options.get(CONF_HOST))) != discovery_info["ip"] and discovery_info["ip"] != IP_ANY:
-                        self.hass.config_entries.async_update_entry(entry, options = entry.options | {CONF_HOST: discovery_info["ip"]})
-                    return self.async_abort(reason = "already_configured_device")
+        mac = dr.format_mac(discovery_info["mac"])
+        connections = {(dr.CONNECTION_NETWORK_MAC, mac)}
+        ip = discovery_info["ip"]
+        await self.async_set_unique_id(mac)
         for entry in self._async_current_entries():
-            if str(getipaddress(entry.options.get(CONF_HOST))) == discovery_info["ip"]:
-                if device := dr.async_get(self.hass).async_get_device(identifiers = {(DOMAIN, entry.entry_id)}):
-                    dr.async_get(self.hass).async_update_device(device.id, new_connections = connections)
+            current_ip = str(getipaddress(host)) if (host := entry.options.get(CONF_HOST)) else None
+            if entry.unique_id == mac or (entry.unique_id is None and (((device := dr.async_get(self.hass).async_get_device(connections = connections)) and entry.entry_id == device.primary_config_entry) or current_ip == ip)):
+                changes = {}
+                if entry.unique_id is None:
+                    changes["unique_id"] = mac
+                if ip != IP_ANY and current_ip != ip:
+                    changes["options"] = entry.options | {CONF_HOST: ip}
+                if changes:
+                    self.hass.config_entries.async_update_entry(entry, **changes)
                 return self.async_abort(reason = "already_configured_device")
-        await self.async_set_unique_id(DEFAULT_DISCOVERY_UNIQUE_ID)
-        self._abort_if_unique_id_configured()
         if self._async_in_progress(include_uninitialized = True):
             raise AbortFlow("already_in_progress")
-        input = {CONF_HOST: discovery_info["ip"]} | ({"hostname": hostname} if (hostname := discovery_info.get("hostname")) and (hostname := hostname.capitalize()) else {})
-        self.context.update({"title_placeholders": {CONF_NAME: hostname or discovery_info["ip"]}, "configuration_url": build_configuration_url(discovery_info["ip"])})
+        input = {CONF_HOST: ip} | ({"hostname": hostname} if (hostname := discovery_info.get("hostname")) and (hostname := hostname.capitalize()) else {})
+        self.context.update({"title_placeholders": {CONF_NAME: hostname or ip}, "configuration_url": build_configuration_url(ip)})
         return await self.async_step_user(input)
 
     async def async_step_integration_discovery(self, discovery_info: DiscoveryInfoType) -> ConfigFlowResult:

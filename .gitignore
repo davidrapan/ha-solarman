@@ -5,3 +5,13 @@ __pycache__/
 
 # HACS
 custom_components/solarman/inverter_definitions/custom/
+
+.idea
+CLAUDE.md
+
+# Python venv
+.venv/
+
+# Superpowers scratch & local planning docs
+docs/superpowers
+.superpowers

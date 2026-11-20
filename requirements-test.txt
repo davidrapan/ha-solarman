@@ -1,0 +1,5 @@
+pytest-homeassistant-custom-component==0.13.254
+pytest==8.*
+pytest-asyncio==0.26.*
+pycares<5
+aiofiles
