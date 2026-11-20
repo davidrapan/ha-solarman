@@ -1260,7 +1260,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Program 2 Charging
         platform: select
@@ -1275,7 +1283,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Program 3 Charging
         platform: select
@@ -1290,7 +1306,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Program 4 Charging
         platform: select
@@ -1305,7 +1329,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Program 5 Charging
         platform: select
@@ -1320,7 +1352,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Program 6 Charging
         platform: select
@@ -1335,7 +1375,15 @@ parameters:
           - key: 0x0002
             value: "Generator"
           - key: 0x0003
-            value: "Both"
+            value: "Grid+Gen"
+          - key: 0x0020
+            value: "Sell"
+          - key: 0x0021
+            value: "Grid+Sell"
+          - key: 0x0022
+            value: "Gen+Sell"
+          - key: 0x0023
+            value: "All"
 
       - name: Microinverter Export cut-off
         platform: "switch"
