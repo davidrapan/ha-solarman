@@ -2081,8 +2081,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0112]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
@@ -2098,8 +2097,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0113]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
@@ -2115,8 +2113,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0114]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
@@ -2132,8 +2129,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0115]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
@@ -2149,8 +2145,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0116]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000
@@ -2166,8 +2161,7 @@ parameters:
         platform: select
         rule: 1
         registers: [0x0117]
-        display:
-          mask: 0x3
+        mask: 0x3
         icon: mdi:sun-clock
         lookup:
           - key: 0x0000

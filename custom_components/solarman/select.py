@@ -114,7 +114,7 @@ class SolarmanSelectEntity(SolarmanWritableEntity, SelectEntity):
     def __init__(self, coordinator, sensor):
         SolarmanWritableEntity.__init__(self, coordinator, sensor)
 
-        self.mask = display.get("mask") if (display := sensor.get("display")) else None
+        self.mask = sensor.get("mask")
 
         if "lookup" in sensor:
             self.dictionary = sensor["lookup"]
