@@ -60,9 +60,17 @@ class SolarmanNumberEntity(SolarmanWritableEntity, NumberEntity):
                 self._attr_native_min_value *= self.scale
                 self._attr_native_max_value *= self.scale
 
+        # Packed registers: only the masked bits belong to this entity, the remaining bits are preserved on write
+        self.mask = sensor.get("mask") if len(self.registers) == 1 else None
+
     async def async_set_native_value(self, value: float) -> None:
         """Update the setting."""
         value_int = round(value if self.scale is None else value / self.scale)
         if self.offset is not None:
             value_int += self.offset
+        if self.mask is not None:
+            current = await self.coordinator.device.execute(self.code_read, self.register, count = 1)
+            if not current:
+                raise RuntimeError(f"{self.name}: Cannot read register {self.register} before masked write")
+            value_int = (int(current[0]) & ~self.mask & 0xFFFF) | (value_int & self.mask)
         await self.write(value_int if value_int < 0xFFFF else 0xFFFF, get_number(value))
