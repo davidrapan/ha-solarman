@@ -569,13 +569,25 @@ parameters:
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x007C]
         icon: mdi:battery
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
+
+      - name: "Battery Generator Charging Stop"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x007C]
+        icon: "mdi:engine"
 
       - name: "Battery Generator Charging Current"
         platform: number
@@ -614,13 +626,25 @@ parameters:
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x007F]
         icon: "mdi:battery"
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
+
+      - name: "Battery Grid Charging Stop"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x007F]
+        icon: "mdi:engine"
 
       - name: "Battery Grid Charging Current"
         platform: number
@@ -1174,78 +1198,150 @@ parameters:
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00A6]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 1 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00A6]
+        icon: "mdi:engine"
 
       - name: Program 2 SOC
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00A7]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 2 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00A7]
+        icon: "mdi:engine"
 
       - name: Program 3 SOC
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00A8]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 3 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00A8]
+        icon: "mdi:engine"
 
       - name: Program 4 SOC
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00A9]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 4 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00A9]
+        icon: "mdi:engine"
 
       - name: Program 5 SOC
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00AA]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 5 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00AA]
+        icon: "mdi:engine"
 
       - name: Program 6 SOC
         platform: number
         state_class: measurement
         uom: "%"
         rule: 1
+        mask: 0x00FF
         registers: [0x00AB]
         configurable:
           mode: box
-        range:
           min: 0
           max: 100
+        range:
+          min: 0
+          max: 25700
         icon: mdi:sun-clock
+
+      - name: "Program 6 Generator SOC"
+        state_class: measurement
+        uom: "%"
+        rule: 1
+        mask: 0xFF00
+        divide: 256
+        registers: [0x00AB]
+        icon: "mdi:engine"
 
       - name: Program 1 Charging
         platform: select
