@@ -182,6 +182,17 @@ parameters:
         rule: 1
         registers: [0x0050]
 
+      # Written by the inverter's Gen Force toggle (bit 0: test enable, bit 4: Gen signal relay)
+      - name: "Generator Force"
+        description: Gen Force - starts the generator via the GEN signal relay
+        platform: switch
+        rule: 1
+        registers: [0x005D]
+        icon: "mdi:engine"
+        value:
+          on: 0x0011
+          off: 0x0000
+
   - group: Settings
     update_interval: 300
     items:
@@ -650,6 +661,7 @@ parameters:
 
       - name: "Generator"
         name_lookup: "io_mode_select"
+        description: Force on generator as load (requires IO Mode = SmartLoad / Microinverter output)
         platform: "switch"
         rule: 1
         registers: [0x0084]
