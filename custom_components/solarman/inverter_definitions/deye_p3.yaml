@@ -177,6 +177,24 @@ parameters:
         rule: 8
         registers: [0x003E, 0x003F, 0x0040]
 
+      - name: "Time Sync"
+        description: Lets the clock ("Date & Time") be set over Modbus. The Deye blocks writes to the clock registers while this is off; the Solarman cloud and the dongle switch it on only while they sync the clock. Bit 0 of the comm-board setting register (bits 0–1 read 11 when allowed, 10 when blocked).
+        platform: switch
+        rule: 1
+        registers: [0x00E4]
+        icon: mdi:clock-check-outline
+        value:
+          bit: 0
+
+      - name: "Beep"
+        description: Buzzer of the inverter, as on the display under Basic Settings. Bit 2 of the comm-board setting register (bits 2–3 read 11 when on, 10 when off).
+        platform: switch
+        rule: 1
+        registers: [0x00E4]
+        icon: mdi:volume-high
+        value:
+          bit: 2
+
       - name: "" # On/Off Switch (Empty name so the sensor has same name as the device, looks good! Can be used once per platform though)
         platform: switch
         rule: 1
